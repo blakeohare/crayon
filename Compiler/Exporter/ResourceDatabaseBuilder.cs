@@ -96,13 +96,21 @@ namespace Exporter
                                 break;
 
                             case ResourceDatabase.FileCategory.IGNORE_IMAGE:
-                                System.Console.WriteLine(aliasedPath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
+                                ConsoleWriter.Print(
+                                    ConsoleMessageType.BUILD_WARNING,
+                                    aliasedPath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
                                 break;
+
                             case ResourceDatabase.FileCategory.IGNORE_AUDIO:
-                                System.Console.WriteLine(aliasedPath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
+                                ConsoleWriter.Print(
+                                    ConsoleMessageType.BUILD_WARNING,
+                                    aliasedPath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
                                 break;
+
                             case ResourceDatabase.FileCategory.IGNORE_IMAGE_ASSET:
-                                System.Console.WriteLine(aliasedPath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
+                                ConsoleWriter.Print(
+                                    ConsoleMessageType.BUILD_WARNING,
+                                    aliasedPath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
                                 break;
 
                             case ResourceDatabase.FileCategory.AUDIO:

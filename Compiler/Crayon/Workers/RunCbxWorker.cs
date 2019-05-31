@@ -31,6 +31,8 @@ namespace Crayon
             {
                 if (e.Data != null)
                 {
+                    // Do not use ConsoleWriter. The prefixes are handled by the VM directly.
+                    // TODO: ^ that is silly. Undo that and then use ConsoleWriter. StdErr below, too.
                     Console.WriteLine(e.Data);
                 }
             };

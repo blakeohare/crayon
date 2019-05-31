@@ -1,5 +1,4 @@
 ﻿using Common;
-using System;
 
 namespace Crayon
 {
@@ -40,7 +39,7 @@ namespace Crayon
 
         public void DoWorkImpl()
         {
-            Console.WriteLine(USAGE);
+            ConsoleWriter.Print(ConsoleMessageType.USAGE_NOTES, USAGE);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Common;
 using Exporter;
-using System;
 using System.Collections.Generic;
 
 namespace Crayon
@@ -17,7 +16,9 @@ namespace Crayon
                 generator.ProjectID);
             new FileOutputExporter(directory).ExportFiles(project);
 
-            Console.WriteLine("Empty project exported to directory '" + generator.ProjectID + "/'");
+            ConsoleWriter.Print(
+                ConsoleMessageType.DEFAULT_PROJ_EXPORT_INFO,
+                "Empty project exported to directory '" + generator.ProjectID + "/'");
         }
     }
 }

@@ -25,8 +25,11 @@ namespace Exporter
             if (this.projectId[0] >= '0' && this.projectId[0] <= '9') throw new InvalidOperationException("Project name cannot begin with a number.");
             if (this.projectId != this.originalProjectId)
             {
-                Console.WriteLine("Warning: '" + this.originalProjectId + "' contains non-alphanumeric characters and was canonicalized into '" + this.projectId + "'");
+                ConsoleWriter.Print(
+                    ConsoleMessageType.BUILD_WARNING,
+                    "Warning: '" + this.originalProjectId + "' contains non-alphanumeric characters and was canonicalized into '" + this.projectId + "'");
             }
+
             return this;
         }
 

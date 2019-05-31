@@ -1,4 +1,5 @@
 ﻿using Build;
+using Common;
 using Exporter;
 using System;
 using System.Collections.Generic;
@@ -7,32 +8,25 @@ namespace Crayon.Pipeline
 {
     internal static class MainPipeline
     {
-        private static void NotifyStatusChange(ExportCommand command, string status)
+        private static void NotifyStatusChange(string status)
         {
-            if (command.UseOutputPrefixes)
-            {
-                Console.WriteLine("STATUS: " + status);
-            }
+            ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
         }
 
-        private static void WriteCompileInformation(ExportCommand command, string value)
+        private static void WriteCompileInformation(string value)
         {
-            if (command.UseOutputPrefixes)
-            {
-                foreach (string line in value.Split('\n'))
-                {
-                    Console.WriteLine("COMP: " + line.TrimEnd());
-                }
-            }
-            else
-            {
-                Console.WriteLine(value);
-            }
+            ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, value);
         }
 
         public static void Run()
         {
             ExportCommand command = new TopLevelCheckWorker().DoWorkImpl();
+
+            if (command.UseOutputPrefixes)
+            {
+                ConsoleWriter.EnablePrefixes();
+            }
+
             BuildContext buildContext;
 
             switch (TopLevelCheckWorker.IdentifyUseCase(command))
@@ -50,7 +44,7 @@ namespace Crayon.Pipeline
                     ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
                     if (command.ShowLibraryDepTree)
                     {
-                        new ShowAssemblyDepsWorker().DoWorkImpl(command.UseOutputPrefixes, result.UserCodeScope);
+                        new ShowAssemblyDepsWorker().DoWorkImpl(result.UserCodeScope);
                     }
                     break;
 
@@ -59,7 +53,7 @@ namespace Crayon.Pipeline
                     break;
 
                 case ExecutionType.ERROR_CHECK_ONLY:
-                    NotifyStatusChange(command, "COMPILE-START");
+                    NotifyStatusChange("COMPILE-START");
                     if (command.IsJsonOutput)
                     {
                         try
@@ -76,11 +70,11 @@ namespace Crayon.Pipeline
                         DoExportStandaloneCbxFileAndGetPath(command, true);
                         RenderErrorInfoAsJson(command, null); // renders the JSON object with the right schema, but empty.
                     }
-                    NotifyStatusChange(command, "COMPILE-END");
+                    NotifyStatusChange("COMPILE-END");
                     break;
 
                 case ExecutionType.EXPORT_CBX:
-                    NotifyStatusChange(command, "COMPILE-START");
+                    NotifyStatusChange("COMPILE-START");
                     if (command.IsJsonOutput)
                     {
                         try
@@ -96,31 +90,31 @@ namespace Crayon.Pipeline
                     {
                         DoExportStandaloneCbxFileAndGetPath(command, false);
                     }
-                    NotifyStatusChange(command, "COMPILE-END");
+                    NotifyStatusChange("COMPILE-END");
                     break;
 
                 case ExecutionType.RUN_CBX:
-                    NotifyStatusChange(command, "COMPILE-START");
+                    NotifyStatusChange("COMPILE-START");
                     string cbxFileLocation = null;
                     if (command.IsJsonOutput)
                     {
                         try
                         {
                             cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
-                            NotifyStatusChange(command, "COMPILE-END");
+                            NotifyStatusChange("COMPILE-END");
                         }
                         catch (Exception e)
                         {
                             RenderErrorInfoAsJson(command, e);
-                            NotifyStatusChange(command, "COMPILE-END");
-                            NotifyStatusChange(command, "RUN-ABORTED");
+                            NotifyStatusChange("COMPILE-END");
+                            NotifyStatusChange("RUN-ABORTED");
                             return;
                         }
                     }
                     else
                     {
                         cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
-                        NotifyStatusChange(command, "COMPILE-END");
+                        NotifyStatusChange("COMPILE-END");
                     }
 
                     string cmdLineFlags = new RunCbxFlagBuilderWorker().DoWorkImpl(command, cbxFileLocation);
@@ -130,10 +124,10 @@ namespace Crayon.Pipeline
                         ShowPerformanceMetrics(command);
                     }
 
-                    NotifyStatusChange(command, "RUN-START");
+                    NotifyStatusChange("RUN-START");
 
                     new RunCbxWorker().DoWorkImpl(cmdLineFlags);
-                    NotifyStatusChange(command, "RUN-END");
+                    NotifyStatusChange("RUN-END");
                     return;
             }
 
@@ -160,7 +154,7 @@ namespace Crayon.Pipeline
 
         private static void RenderErrorInfoAsJson(ExportCommand command, Exception exception)
         {
-            List<System.Exception> exceptions = new List<System.Exception>();
+            List<Exception> exceptions = new List<Exception>();
             if (exception != null)
             {
                 if (exception is Parser.MultiParserException)
@@ -210,23 +204,13 @@ namespace Crayon.Pipeline
             }
             sb.Append(" ] }");
             string output = sb.ToString();
-            WriteCompileInformation(command, output);
+            WriteCompileInformation(output);
         }
 
         private static void ShowPerformanceMetrics(ExportCommand command)
         {
 #if DEBUG
-            if (command.UseOutputPrefixes)
-            {
-                foreach (string line in Common.PerformanceTimer.GetSummary().Split('\n'))
-                {
-                    System.Console.WriteLine("PERF: " + line.TrimEnd());
-                }
-            }
-            else
-            {
-                System.Console.WriteLine(Common.PerformanceTimer.GetSummary());
-            }
+            ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
 #endif
         }
     }

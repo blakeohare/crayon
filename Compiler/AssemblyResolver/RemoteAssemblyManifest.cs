@@ -86,7 +86,7 @@ namespace AssemblyResolver
 
             foreach (string line in invalidLines)
             {
-                System.Console.Error.WriteLine("Invalid assembly in manifest! Ignoring: " + line);
+                Common.ConsoleWriter.Print(ConsoleMessageType.REMOTE_ASSEMBLY_ERROR, "Invalid assembly in manifest! Ignoring: " + line);
             }
 
             return remoteAssemblies;

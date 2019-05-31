@@ -19,15 +19,15 @@ namespace Crayon
                 }
                 catch (System.InvalidOperationException e)
                 {
-                    System.Console.WriteLine(e.Message);
+                    ConsoleWriter.Print(ConsoleMessageType.GENERAL_COMPILATION_ERROR, e.Message);
                 }
                 catch (Parser.MultiParserException e)
                 {
-                    System.Console.WriteLine(e.Message);
+                    ConsoleWriter.Print(ConsoleMessageType.PARSER_ERROR, e.Message);
                 }
                 catch (Parser.ParserException e)
                 {
-                    System.Console.WriteLine(e.Message);
+                    ConsoleWriter.Print(ConsoleMessageType.PARSER_ERROR, e.Message);
                 }
 #endif
 

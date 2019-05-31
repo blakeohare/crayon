@@ -1,31 +1,20 @@
 ﻿using AssemblyResolver;
+using Common;
 using Parser;
-using System;
 using System.Linq;
 
 namespace Crayon
 {
     internal class ShowAssemblyDepsWorker
     {
-        public void DoWorkImpl(bool useOutputPrefix, CompilationScope scope)
+        public void DoWorkImpl(CompilationScope scope)
         {
-            AssemblyMetadata[] libraryMetadata = scope
-                .Dependencies
+            AssemblyMetadata[] libraryMetadata = scope.Dependencies
                 .Select(localizedLibView => localizedLibView.Scope.Metadata)
                 .ToArray();
 
             string depTree = AssemblyDependencyResolver.GetDependencyTreeJson(libraryMetadata).Trim();
-            if (!useOutputPrefix)
-            {
-                Console.WriteLine(depTree);
-            }
-            else
-            {
-                foreach (string line in depTree.Split('\n'))
-                {
-                    Console.WriteLine("LIBS: " + line.TrimEnd());
-                }
-            }
+            ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, depTree);
         }
     }
 }
