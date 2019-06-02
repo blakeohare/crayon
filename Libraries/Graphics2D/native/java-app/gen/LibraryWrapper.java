@@ -55,12 +55,10 @@ public final class LibraryWrapper {
       double theta = 0.0;
       if ((rotationValue.type == 4)) {
         theta = ((double) rotationValue.internalValue);
+      } else if ((rotationValue.type == 3)) {
+        theta += ((int) rotationValue.internalValue);
       } else {
-        if ((rotationValue.type == 3)) {
-          theta += ((int) rotationValue.internalValue);
-        } else {
-          isValid = false;
-        }
+        isValid = false;
       }
       eventQueue[(queueLength | 10)] = ((int) (org.crayonlang.interpreter.vm.CrayonWrapper.canonicalizeAngle(theta) * 1048576));
     }
@@ -70,21 +68,17 @@ public final class LibraryWrapper {
       int alpha = 0;
       if ((alphaValue.type == 3)) {
         alpha = ((int) alphaValue.internalValue);
+      } else if ((alphaValue.type == 4)) {
+        alpha = ((int) (0.5 + ((double) alphaValue.internalValue)));
       } else {
-        if ((alphaValue.type == 4)) {
-          alpha = ((int) (0.5 + ((double) alphaValue.internalValue)));
-        } else {
-          isValid = false;
-        }
+        isValid = false;
       }
       if ((i > 254)) {
         eventQueue[(queueLength | 1)] = (flag - 8);
+      } else if ((i < 0)) {
+        isNoop = true;
       } else {
-        if ((i < 0)) {
-          isNoop = true;
-        } else {
-          eventQueue[(queueLength | 11)] = alpha;
-        }
+        eventQueue[(queueLength | 11)] = alpha;
       }
     }
     // Copy values to event queue;
@@ -94,12 +88,10 @@ public final class LibraryWrapper {
       value = args[i];
       if ((value.type == 3)) {
         eventQueue[(queueLength + i - 1)] = ((int) value.internalValue);
+      } else if ((value.type == 4)) {
+        eventQueue[(queueLength + i - 1)] = ((int) (0.5 + ((double) value.internalValue)));
       } else {
-        if ((value.type == 4)) {
-          eventQueue[(queueLength + i - 1)] = ((int) (0.5 + ((double) value.internalValue)));
-        } else {
-          isValid = false;
-        }
+        isValid = false;
       }
       i += 1;
     }
@@ -110,20 +102,16 @@ public final class LibraryWrapper {
       int sourceWidth = eventQueue[(queueLength | 4)];
       if (((sourceX < 0) || ((sourceX + sourceWidth) > actualWidth) || (sourceWidth < 0))) {
         isValid = false;
-      } else {
-        if ((sourceWidth == 0)) {
-          isNoop = true;
-        }
+      } else if ((sourceWidth == 0)) {
+        isNoop = true;
       }
       int actualHeight = ((int) imageNativeData[6]);
       int sourceY = eventQueue[(queueLength | 3)];
       int sourceHeight = eventQueue[(queueLength | 5)];
       if (((sourceY < 0) || ((sourceY + sourceHeight) > actualHeight) || (sourceHeight < 0))) {
         isValid = false;
-      } else {
-        if ((sourceHeight == 0)) {
-          isNoop = true;
-        }
+      } else if ((sourceHeight == 0)) {
+        isNoop = true;
       }
     }
     // stretching;
@@ -361,12 +349,10 @@ public final class LibraryWrapper {
       renderArgs[3] = intList1;
       int callbackId = org.crayonlang.interpreter.vm.CrayonWrapper.getNamedCallbackId(vm, "Game", "set-render-data");
       org.crayonlang.interpreter.vm.CrayonWrapper.invokeNamedCallback(vm, callbackId, renderArgs);
-    } else {
-      if ((command == 2)) {
-        objArray1[1] = 0;
-        objArray1[3] = 0;
-        (intList1).clear();
-      }
+    } else if ((command == 2)) {
+      objArray1[1] = 0;
+      objArray1[3] = 0;
+      (intList1).clear();
     }
     return vm.globalNull;
   }
@@ -390,31 +376,23 @@ public final class LibraryWrapper {
           a = drawEvents[(i | 8)];
           if ((r > 255)) {
             drawEvents[(i | 5)] = 255;
-          } else {
-            if ((r < 0)) {
-              drawEvents[(i | 5)] = 0;
-            }
+          } else if ((r < 0)) {
+            drawEvents[(i | 5)] = 0;
           }
           if ((g > 255)) {
             drawEvents[(i | 6)] = 255;
-          } else {
-            if ((g < 0)) {
-              drawEvents[(i | 6)] = 0;
-            }
+          } else if ((g < 0)) {
+            drawEvents[(i | 6)] = 0;
           }
           if ((b > 255)) {
             drawEvents[(i | 7)] = 255;
-          } else {
-            if ((b < 0)) {
-              drawEvents[(i | 7)] = 0;
-            }
+          } else if ((b < 0)) {
+            drawEvents[(i | 7)] = 0;
           }
           if ((a > 255)) {
             drawEvents[(i | 8)] = 255;
-          } else {
-            if ((a < 0)) {
-              drawEvents[(i | 8)] = 0;
-            }
+          } else if ((a < 0)) {
+            drawEvents[(i | 8)] = 0;
           }
           break;
         case 2:
@@ -424,31 +402,23 @@ public final class LibraryWrapper {
           a = drawEvents[(i | 8)];
           if ((r > 255)) {
             drawEvents[(i | 5)] = 255;
-          } else {
-            if ((r < 0)) {
-              drawEvents[(i | 5)] = 0;
-            }
+          } else if ((r < 0)) {
+            drawEvents[(i | 5)] = 0;
           }
           if ((g > 255)) {
             drawEvents[(i | 6)] = 255;
-          } else {
-            if ((g < 0)) {
-              drawEvents[(i | 6)] = 0;
-            }
+          } else if ((g < 0)) {
+            drawEvents[(i | 6)] = 0;
           }
           if ((b > 255)) {
             drawEvents[(i | 7)] = 255;
-          } else {
-            if ((b < 0)) {
-              drawEvents[(i | 7)] = 0;
-            }
+          } else if ((b < 0)) {
+            drawEvents[(i | 7)] = 0;
           }
           if ((a > 255)) {
             drawEvents[(i | 8)] = 255;
-          } else {
-            if ((a < 0)) {
-              drawEvents[(i | 8)] = 0;
-            }
+          } else if ((a < 0)) {
+            drawEvents[(i | 8)] = 0;
           }
           break;
         case 3:
@@ -458,31 +428,23 @@ public final class LibraryWrapper {
           a = drawEvents[(i | 9)];
           if ((r > 255)) {
             drawEvents[(i | 6)] = 255;
-          } else {
-            if ((r < 0)) {
-              drawEvents[(i | 6)] = 0;
-            }
+          } else if ((r < 0)) {
+            drawEvents[(i | 6)] = 0;
           }
           if ((g > 255)) {
             drawEvents[(i | 7)] = 255;
-          } else {
-            if ((g < 0)) {
-              drawEvents[(i | 7)] = 0;
-            }
+          } else if ((g < 0)) {
+            drawEvents[(i | 7)] = 0;
           }
           if ((b > 255)) {
             drawEvents[(i | 8)] = 255;
-          } else {
-            if ((b < 0)) {
-              drawEvents[(i | 8)] = 0;
-            }
+          } else if ((b < 0)) {
+            drawEvents[(i | 8)] = 0;
           }
           if ((a > 255)) {
             drawEvents[(i | 9)] = 255;
-          } else {
-            if ((a < 0)) {
-              drawEvents[(i | 9)] = 0;
-            }
+          } else if ((a < 0)) {
+            drawEvents[(i | 9)] = 0;
           }
           break;
         case 4:
@@ -492,31 +454,23 @@ public final class LibraryWrapper {
           a = drawEvents[(i | 10)];
           if ((r > 255)) {
             drawEvents[(i | 7)] = 255;
-          } else {
-            if ((r < 0)) {
-              drawEvents[(i | 7)] = 0;
-            }
+          } else if ((r < 0)) {
+            drawEvents[(i | 7)] = 0;
           }
           if ((g > 255)) {
             drawEvents[(i | 8)] = 255;
-          } else {
-            if ((g < 0)) {
-              drawEvents[(i | 8)] = 0;
-            }
+          } else if ((g < 0)) {
+            drawEvents[(i | 8)] = 0;
           }
           if ((b > 255)) {
             drawEvents[(i | 9)] = 255;
-          } else {
-            if ((b < 0)) {
-              drawEvents[(i | 9)] = 0;
-            }
+          } else if ((b < 0)) {
+            drawEvents[(i | 9)] = 0;
           }
           if ((a > 255)) {
             drawEvents[(i | 10)] = 255;
-          } else {
-            if ((a < 0)) {
-              drawEvents[(i | 10)] = 0;
-            }
+          } else if ((a < 0)) {
+            drawEvents[(i | 10)] = 0;
           }
           break;
         case 5:
@@ -526,31 +480,23 @@ public final class LibraryWrapper {
           a = drawEvents[(i | 12)];
           if ((r > 255)) {
             drawEvents[(i | 9)] = 255;
-          } else {
-            if ((r < 0)) {
-              drawEvents[(i | 9)] = 0;
-            }
+          } else if ((r < 0)) {
+            drawEvents[(i | 9)] = 0;
           }
           if ((g > 255)) {
             drawEvents[(i | 10)] = 255;
-          } else {
-            if ((g < 0)) {
-              drawEvents[(i | 10)] = 0;
-            }
+          } else if ((g < 0)) {
+            drawEvents[(i | 10)] = 0;
           }
           if ((b > 255)) {
             drawEvents[(i | 11)] = 255;
-          } else {
-            if ((b < 0)) {
-              drawEvents[(i | 11)] = 0;
-            }
+          } else if ((b < 0)) {
+            drawEvents[(i | 11)] = 0;
           }
           if ((a > 255)) {
             drawEvents[(i | 12)] = 255;
-          } else {
-            if ((a < 0)) {
-              drawEvents[(i | 12)] = 0;
-            }
+          } else if ((a < 0)) {
+            drawEvents[(i | 12)] = 0;
           }
           break;
         case 8:
@@ -560,31 +506,23 @@ public final class LibraryWrapper {
           a = drawEvents[(i | 13)];
           if ((r > 255)) {
             drawEvents[(i | 10)] = 255;
-          } else {
-            if ((r < 0)) {
-              drawEvents[(i | 10)] = 0;
-            }
+          } else if ((r < 0)) {
+            drawEvents[(i | 10)] = 0;
           }
           if ((g > 255)) {
             drawEvents[(i | 11)] = 255;
-          } else {
-            if ((g < 0)) {
-              drawEvents[(i | 11)] = 0;
-            }
+          } else if ((g < 0)) {
+            drawEvents[(i | 11)] = 0;
           }
           if ((b > 255)) {
             drawEvents[(i | 12)] = 255;
-          } else {
-            if ((b < 0)) {
-              drawEvents[(i | 12)] = 0;
-            }
+          } else if ((b < 0)) {
+            drawEvents[(i | 12)] = 0;
           }
           if ((a > 255)) {
             drawEvents[(i | 13)] = 255;
-          } else {
-            if ((a < 0)) {
-              drawEvents[(i | 13)] = 0;
-            }
+          } else if ((a < 0)) {
+            drawEvents[(i | 13)] = 0;
           }
           break;
       }

@@ -36,12 +36,9 @@ namespace Interpreter.Libraries.Http
                         }
                         int1 += 256;
                     }
-                    else
+                    else if ((int1 >= 256))
                     {
-                        if ((int1 >= 256))
-                        {
-                            return vm.globalFalse;
-                        }
+                        return vm.globalFalse;
                     }
                     intArray1[i] = int1;
                 }
@@ -138,18 +135,15 @@ namespace Interpreter.Libraries.Http
             {
                 bodyState = 1;
             }
+            else if ((body.type == 8))
+            {
+                objInstance1 = (ObjectInstance)bodyRawObject;
+                bodyRawObject = objInstance1.nativeData[0];
+                bodyState = 2;
+            }
             else
             {
-                if ((body.type == 8))
-                {
-                    objInstance1 = (ObjectInstance)bodyRawObject;
-                    bodyRawObject = objInstance1.nativeData[0];
-                    bodyState = 2;
-                }
-                else
-                {
-                    bodyRawObject = null;
-                }
+                bodyRawObject = null;
             }
             bool getResponseAsText = ((int)args[6].internalValue == 1);
             if ((bool)args[1].internalValue)

@@ -205,16 +205,12 @@ public final class LibraryWrapper {
       while (!lib_xml_popIfPresent(xml, indexPtr, close)) {
         if (lib_xml_isNext(xml, indexPtr, "</")) {
           error = lib_xml_error(xml, (indexPtr[0] - 2), "Unexpected close tag.");
+        } else if (lib_xml_isNext(xml, indexPtr, "<!--")) {
+          error = lib_xml_skipComment(xml, indexPtr);
+        } else if (lib_xml_isNext(xml, indexPtr, "<")) {
+          error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
         } else {
-          if (lib_xml_isNext(xml, indexPtr, "<!--")) {
-            error = lib_xml_skipComment(xml, indexPtr);
-          } else {
-            if (lib_xml_isNext(xml, indexPtr, "<")) {
-              error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
-            } else {
-              error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
-            }
-          }
+          error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
         }
         if (((error == null) && (indexPtr[0] >= length))) {
           error = lib_xml_error(xml, length, "Unexpected EOF. Unclosed tag.");
@@ -286,10 +282,8 @@ public final class LibraryWrapper {
       c = xml.charAt(i);
       if ((c == '<')) {
         break;
-      } else {
-        if ((c == '&')) {
-          ampFound = true;
-        }
+      } else if ((c == '&')) {
+        ampFound = true;
       }
       i += 1;
     }
@@ -348,10 +342,8 @@ public final class LibraryWrapper {
         if (stringEnders.containsKey(c)) {
           end = i;
           break;
-        } else {
-          if ((c == ((int)('&')))) {
-            ampFound = true;
-          }
+        } else if ((c == ((int)('&')))) {
+          ampFound = true;
         }
         i += 1;
       }
@@ -364,10 +356,8 @@ public final class LibraryWrapper {
           end = i;
           i += 1;
           break;
-        } else {
-          if ((c == ((int)('&')))) {
-            ampFound = true;
-          }
+        } else if ((c == ((int)('&')))) {
+          ampFound = true;
         }
         i += 1;
       }

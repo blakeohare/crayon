@@ -94,19 +94,15 @@ public final class LibraryWrapper {
         if ((j < 20)) {
           f = (((b & c)) | ((lib_cryptosha1_bitwiseNot(b) & d)));
           k = kValues[0];
+        } else if ((j < 40)) {
+          f = (b ^ c ^ d);
+          k = kValues[1];
+        } else if ((j < 60)) {
+          f = (((b & c)) | ((b & d)) | ((c & d)));
+          k = kValues[2];
         } else {
-          if ((j < 40)) {
-            f = (b ^ c ^ d);
-            k = kValues[1];
-          } else {
-            if ((j < 60)) {
-              f = (((b & c)) | ((b & d)) | ((c & d)));
-              k = kValues[2];
-            } else {
-              f = (b ^ c ^ d);
-              k = kValues[3];
-            }
-          }
+          f = (b ^ c ^ d);
+          k = kValues[3];
         }
         temp = (lib_cryptosha1_leftRotate(a, 5) + f + e + k + mWords[j]);
         e = d;

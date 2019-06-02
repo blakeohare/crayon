@@ -40,21 +40,17 @@ public final class LibraryWrapper {
     double float3 = 0.0;
     if ((arg4.type == 3)) {
       float1 = (0.0 + ((int) arg4.internalValue));
+    } else if ((arg4.type == 4)) {
+      float1 = ((double) arg4.internalValue);
     } else {
-      if ((arg4.type == 4)) {
-        float1 = ((double) arg4.internalValue);
-      } else {
-        return vm.globals.valueNull;
-      }
+      return vm.globals.valueNull;
     }
     if ((arg5.type == 3)) {
       float2 = (0.0 + ((int) arg5.internalValue));
+    } else if ((arg5.type == 4)) {
+      float2 = ((double) arg5.internalValue);
     } else {
-      if ((arg5.type == 4)) {
-        float2 = ((double) arg5.internalValue);
-      } else {
-        return vm.globals.valueNull;
-      }
+      return vm.globals.valueNull;
     }
     boolean bool1 = false;
     boolean bool2 = false;
@@ -68,11 +64,9 @@ public final class LibraryWrapper {
       } else {
         float1 *= 2.0;
       }
-    } else {
-      if ((int1 == 1)) {
-        float1 = (float2 - float1);
-        bool1 = true;
-      }
+    } else if ((int1 == 1)) {
+      float1 = (float2 - float1);
+      bool1 = true;
     }
     if ((float2 == 0)) {
       float1 = samples[0];
@@ -83,41 +77,35 @@ public final class LibraryWrapper {
       }
       if ((float1 >= float2)) {
         float1 = samples[(_len - 1)];
+      } else if ((float1 < 0)) {
+        float1 = samples[0];
       } else {
-        if ((float1 < 0)) {
-          float1 = samples[0];
-        } else {
-          float1 = float1 / float2;
-          if ((_len > 2)) {
-            float2 = (float1 * _len);
-            int index = ((int) float2);
-            float2 -= index;
-            float1 = samples[index];
-            if (((index < (_len - 1)) && (float2 > 0))) {
-              float3 = samples[(index + 1)];
-              float1 = ((float1 * (1 - float2)) + (float3 * float2));
-            }
+        float1 = float1 / float2;
+        if ((_len > 2)) {
+          float2 = (float1 * _len);
+          int index = ((int) float2);
+          float2 -= index;
+          float1 = samples[index];
+          if (((index < (_len - 1)) && (float2 > 0))) {
+            float3 = samples[(index + 1)];
+            float1 = ((float1 * (1 - float2)) + (float3 * float2));
           }
         }
       }
     }
     if ((arg2.type == 3)) {
       float2 = (0.0 + ((int) arg2.internalValue));
+    } else if ((arg2.type == 4)) {
+      float2 = ((double) arg2.internalValue);
     } else {
-      if ((arg2.type == 4)) {
-        float2 = ((double) arg2.internalValue);
-      } else {
-        return vm.globals.valueNull;
-      }
+      return vm.globals.valueNull;
     }
     if ((arg3.type == 3)) {
       float3 = (0.0 + ((int) arg3.internalValue));
+    } else if ((arg3.type == 4)) {
+      float3 = ((double) arg3.internalValue);
     } else {
-      if ((arg3.type == 4)) {
-        float3 = ((double) arg3.internalValue);
-      } else {
-        return vm.globals.valueNull;
-      }
+      return vm.globals.valueNull;
     }
     if (bool1) {
       float1 = (1.0 - float1);

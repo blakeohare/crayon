@@ -63,16 +63,13 @@ namespace Interpreter.Libraries.Graphics2D
                 {
                     theta = (double)rotationValue.internalValue;
                 }
+                else if ((rotationValue.type == 3))
+                {
+                    theta += (int)rotationValue.internalValue;
+                }
                 else
                 {
-                    if ((rotationValue.type == 3))
-                    {
-                        theta += (int)rotationValue.internalValue;
-                    }
-                    else
-                    {
-                        isValid = false;
-                    }
+                    isValid = false;
                 }
                 eventQueue[(queueLength | 10)] = (int)(Interpreter.Vm.CrayonWrapper.canonicalizeAngle(theta) * 1048576);
             }
@@ -85,31 +82,25 @@ namespace Interpreter.Libraries.Graphics2D
                 {
                     alpha = (int)alphaValue.internalValue;
                 }
+                else if ((alphaValue.type == 4))
+                {
+                    alpha = (int)(0.5 + (double)alphaValue.internalValue);
+                }
                 else
                 {
-                    if ((alphaValue.type == 4))
-                    {
-                        alpha = (int)(0.5 + (double)alphaValue.internalValue);
-                    }
-                    else
-                    {
-                        isValid = false;
-                    }
+                    isValid = false;
                 }
                 if ((i > 254))
                 {
                     eventQueue[(queueLength | 1)] = (flag - 8);
                 }
+                else if ((i < 0))
+                {
+                    isNoop = true;
+                }
                 else
                 {
-                    if ((i < 0))
-                    {
-                        isNoop = true;
-                    }
-                    else
-                    {
-                        eventQueue[(queueLength | 11)] = alpha;
-                    }
+                    eventQueue[(queueLength | 11)] = alpha;
                 }
             }
             // Copy values to event queue;
@@ -122,16 +113,13 @@ namespace Interpreter.Libraries.Graphics2D
                 {
                     eventQueue[(queueLength + i - 1)] = (int)value.internalValue;
                 }
+                else if ((value.type == 4))
+                {
+                    eventQueue[(queueLength + i - 1)] = (int)(0.5 + (double)value.internalValue);
+                }
                 else
                 {
-                    if ((value.type == 4))
-                    {
-                        eventQueue[(queueLength + i - 1)] = (int)(0.5 + (double)value.internalValue);
-                    }
-                    else
-                    {
-                        isValid = false;
-                    }
+                    isValid = false;
                 }
                 i += 1;
             }
@@ -145,12 +133,9 @@ namespace Interpreter.Libraries.Graphics2D
                 {
                     isValid = false;
                 }
-                else
+                else if ((sourceWidth == 0))
                 {
-                    if ((sourceWidth == 0))
-                    {
-                        isNoop = true;
-                    }
+                    isNoop = true;
                 }
                 int actualHeight = (int)imageNativeData[6];
                 int sourceY = eventQueue[(queueLength | 3)];
@@ -159,12 +144,9 @@ namespace Interpreter.Libraries.Graphics2D
                 {
                     isValid = false;
                 }
-                else
+                else if ((sourceHeight == 0))
                 {
-                    if ((sourceHeight == 0))
-                    {
-                        isNoop = true;
-                    }
+                    isNoop = true;
                 }
             }
             // stretching;
@@ -442,14 +424,11 @@ namespace Interpreter.Libraries.Graphics2D
                 int callbackId = Interpreter.Vm.CrayonWrapper.getNamedCallbackId(vm, "Game", "set-render-data");
                 Interpreter.Vm.CrayonWrapper.invokeNamedCallback(vm, callbackId, renderArgs);
             }
-            else
+            else if ((command == 2))
             {
-                if ((command == 2))
-                {
-                    objArray1[1] = 0;
-                    objArray1[3] = 0;
-                    (intList1).Clear();
-                }
+                objArray1[1] = 0;
+                objArray1[3] = 0;
+                (intList1).Clear();
             }
             return vm.globalNull;
         }
@@ -478,45 +457,33 @@ namespace Interpreter.Libraries.Graphics2D
                         {
                             drawEvents[(i | 5)] = 255;
                         }
-                        else
+                        else if ((r < 0))
                         {
-                            if ((r < 0))
-                            {
-                                drawEvents[(i | 5)] = 0;
-                            }
+                            drawEvents[(i | 5)] = 0;
                         }
                         if ((g > 255))
                         {
                             drawEvents[(i | 6)] = 255;
                         }
-                        else
+                        else if ((g < 0))
                         {
-                            if ((g < 0))
-                            {
-                                drawEvents[(i | 6)] = 0;
-                            }
+                            drawEvents[(i | 6)] = 0;
                         }
                         if ((b > 255))
                         {
                             drawEvents[(i | 7)] = 255;
                         }
-                        else
+                        else if ((b < 0))
                         {
-                            if ((b < 0))
-                            {
-                                drawEvents[(i | 7)] = 0;
-                            }
+                            drawEvents[(i | 7)] = 0;
                         }
                         if ((a > 255))
                         {
                             drawEvents[(i | 8)] = 255;
                         }
-                        else
+                        else if ((a < 0))
                         {
-                            if ((a < 0))
-                            {
-                                drawEvents[(i | 8)] = 0;
-                            }
+                            drawEvents[(i | 8)] = 0;
                         }
                         break;
                     case 2:
@@ -528,45 +495,33 @@ namespace Interpreter.Libraries.Graphics2D
                         {
                             drawEvents[(i | 5)] = 255;
                         }
-                        else
+                        else if ((r < 0))
                         {
-                            if ((r < 0))
-                            {
-                                drawEvents[(i | 5)] = 0;
-                            }
+                            drawEvents[(i | 5)] = 0;
                         }
                         if ((g > 255))
                         {
                             drawEvents[(i | 6)] = 255;
                         }
-                        else
+                        else if ((g < 0))
                         {
-                            if ((g < 0))
-                            {
-                                drawEvents[(i | 6)] = 0;
-                            }
+                            drawEvents[(i | 6)] = 0;
                         }
                         if ((b > 255))
                         {
                             drawEvents[(i | 7)] = 255;
                         }
-                        else
+                        else if ((b < 0))
                         {
-                            if ((b < 0))
-                            {
-                                drawEvents[(i | 7)] = 0;
-                            }
+                            drawEvents[(i | 7)] = 0;
                         }
                         if ((a > 255))
                         {
                             drawEvents[(i | 8)] = 255;
                         }
-                        else
+                        else if ((a < 0))
                         {
-                            if ((a < 0))
-                            {
-                                drawEvents[(i | 8)] = 0;
-                            }
+                            drawEvents[(i | 8)] = 0;
                         }
                         break;
                     case 3:
@@ -578,45 +533,33 @@ namespace Interpreter.Libraries.Graphics2D
                         {
                             drawEvents[(i | 6)] = 255;
                         }
-                        else
+                        else if ((r < 0))
                         {
-                            if ((r < 0))
-                            {
-                                drawEvents[(i | 6)] = 0;
-                            }
+                            drawEvents[(i | 6)] = 0;
                         }
                         if ((g > 255))
                         {
                             drawEvents[(i | 7)] = 255;
                         }
-                        else
+                        else if ((g < 0))
                         {
-                            if ((g < 0))
-                            {
-                                drawEvents[(i | 7)] = 0;
-                            }
+                            drawEvents[(i | 7)] = 0;
                         }
                         if ((b > 255))
                         {
                             drawEvents[(i | 8)] = 255;
                         }
-                        else
+                        else if ((b < 0))
                         {
-                            if ((b < 0))
-                            {
-                                drawEvents[(i | 8)] = 0;
-                            }
+                            drawEvents[(i | 8)] = 0;
                         }
                         if ((a > 255))
                         {
                             drawEvents[(i | 9)] = 255;
                         }
-                        else
+                        else if ((a < 0))
                         {
-                            if ((a < 0))
-                            {
-                                drawEvents[(i | 9)] = 0;
-                            }
+                            drawEvents[(i | 9)] = 0;
                         }
                         break;
                     case 4:
@@ -628,45 +571,33 @@ namespace Interpreter.Libraries.Graphics2D
                         {
                             drawEvents[(i | 7)] = 255;
                         }
-                        else
+                        else if ((r < 0))
                         {
-                            if ((r < 0))
-                            {
-                                drawEvents[(i | 7)] = 0;
-                            }
+                            drawEvents[(i | 7)] = 0;
                         }
                         if ((g > 255))
                         {
                             drawEvents[(i | 8)] = 255;
                         }
-                        else
+                        else if ((g < 0))
                         {
-                            if ((g < 0))
-                            {
-                                drawEvents[(i | 8)] = 0;
-                            }
+                            drawEvents[(i | 8)] = 0;
                         }
                         if ((b > 255))
                         {
                             drawEvents[(i | 9)] = 255;
                         }
-                        else
+                        else if ((b < 0))
                         {
-                            if ((b < 0))
-                            {
-                                drawEvents[(i | 9)] = 0;
-                            }
+                            drawEvents[(i | 9)] = 0;
                         }
                         if ((a > 255))
                         {
                             drawEvents[(i | 10)] = 255;
                         }
-                        else
+                        else if ((a < 0))
                         {
-                            if ((a < 0))
-                            {
-                                drawEvents[(i | 10)] = 0;
-                            }
+                            drawEvents[(i | 10)] = 0;
                         }
                         break;
                     case 5:
@@ -678,45 +609,33 @@ namespace Interpreter.Libraries.Graphics2D
                         {
                             drawEvents[(i | 9)] = 255;
                         }
-                        else
+                        else if ((r < 0))
                         {
-                            if ((r < 0))
-                            {
-                                drawEvents[(i | 9)] = 0;
-                            }
+                            drawEvents[(i | 9)] = 0;
                         }
                         if ((g > 255))
                         {
                             drawEvents[(i | 10)] = 255;
                         }
-                        else
+                        else if ((g < 0))
                         {
-                            if ((g < 0))
-                            {
-                                drawEvents[(i | 10)] = 0;
-                            }
+                            drawEvents[(i | 10)] = 0;
                         }
                         if ((b > 255))
                         {
                             drawEvents[(i | 11)] = 255;
                         }
-                        else
+                        else if ((b < 0))
                         {
-                            if ((b < 0))
-                            {
-                                drawEvents[(i | 11)] = 0;
-                            }
+                            drawEvents[(i | 11)] = 0;
                         }
                         if ((a > 255))
                         {
                             drawEvents[(i | 12)] = 255;
                         }
-                        else
+                        else if ((a < 0))
                         {
-                            if ((a < 0))
-                            {
-                                drawEvents[(i | 12)] = 0;
-                            }
+                            drawEvents[(i | 12)] = 0;
                         }
                         break;
                     case 8:
@@ -728,45 +647,33 @@ namespace Interpreter.Libraries.Graphics2D
                         {
                             drawEvents[(i | 10)] = 255;
                         }
-                        else
+                        else if ((r < 0))
                         {
-                            if ((r < 0))
-                            {
-                                drawEvents[(i | 10)] = 0;
-                            }
+                            drawEvents[(i | 10)] = 0;
                         }
                         if ((g > 255))
                         {
                             drawEvents[(i | 11)] = 255;
                         }
-                        else
+                        else if ((g < 0))
                         {
-                            if ((g < 0))
-                            {
-                                drawEvents[(i | 11)] = 0;
-                            }
+                            drawEvents[(i | 11)] = 0;
                         }
                         if ((b > 255))
                         {
                             drawEvents[(i | 12)] = 255;
                         }
-                        else
+                        else if ((b < 0))
                         {
-                            if ((b < 0))
-                            {
-                                drawEvents[(i | 12)] = 0;
-                            }
+                            drawEvents[(i | 12)] = 0;
                         }
                         if ((a > 255))
                         {
                             drawEvents[(i | 13)] = 255;
                         }
-                        else
+                        else if ((a < 0))
                         {
-                            if ((a < 0))
-                            {
-                                drawEvents[(i | 13)] = 0;
-                            }
+                            drawEvents[(i | 13)] = 0;
                         }
                         break;
                 }

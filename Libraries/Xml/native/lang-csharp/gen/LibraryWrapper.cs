@@ -183,23 +183,17 @@ namespace Interpreter.Libraries.Xml
                     {
                         error = lib_xml_error(xml, (indexPtr[0] - 2), "Unexpected close tag.");
                     }
+                    else if (lib_xml_isNext(xml, indexPtr, "<!--"))
+                    {
+                        error = lib_xml_skipComment(xml, indexPtr);
+                    }
+                    else if (lib_xml_isNext(xml, indexPtr, "<"))
+                    {
+                        error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
+                    }
                     else
                     {
-                        if (lib_xml_isNext(xml, indexPtr, "<!--"))
-                        {
-                            error = lib_xml_skipComment(xml, indexPtr);
-                        }
-                        else
-                        {
-                            if (lib_xml_isNext(xml, indexPtr, "<"))
-                            {
-                                error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
-                            }
-                            else
-                            {
-                                error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
-                            }
-                        }
+                        error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
                     }
                     if (((error == null) && (indexPtr[0] >= length)))
                     {
@@ -285,12 +279,9 @@ namespace Interpreter.Libraries.Xml
                 {
                     break;
                 }
-                else
+                else if ((c == '&'))
                 {
-                    if ((c == '&'))
-                    {
-                        ampFound = true;
-                    }
+                    ampFound = true;
                 }
                 i += 1;
             }
@@ -363,12 +354,9 @@ namespace Interpreter.Libraries.Xml
                         end = i;
                         break;
                     }
-                    else
+                    else if ((c == ((int)('&'))))
                     {
-                        if ((c == ((int)('&'))))
-                        {
-                            ampFound = true;
-                        }
+                        ampFound = true;
                     }
                     i += 1;
                 }
@@ -386,12 +374,9 @@ namespace Interpreter.Libraries.Xml
                         i += 1;
                         break;
                     }
-                    else
+                    else if ((c == ((int)('&'))))
                     {
-                        if ((c == ((int)('&'))))
-                        {
-                            ampFound = true;
-                        }
+                        ampFound = true;
                     }
                     i += 1;
                 }

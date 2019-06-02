@@ -39,10 +39,8 @@ var lib_http_fastEnsureAllBytes = function(vm, args) {
 					return vm[16];
 				}
 				int1 += 256;
-			} else {
-				if ((int1 >= 256)) {
-					return vm[16];
-				}
+			} else if ((int1 >= 256)) {
+				return vm[16];
 			}
 			intArray1[i] = int1;
 		}
@@ -126,14 +124,12 @@ var lib_http_sendRequest = function(vm, args) {
 	var bodyState = 0;
 	if ((body[0] == 5)) {
 		bodyState = 1;
+	} else if ((body[0] == 8)) {
+		objInstance1 = bodyRawObject;
+		bodyRawObject = objInstance1[3][0];
+		bodyState = 2;
 	} else {
-		if ((body[0] == 8)) {
-			objInstance1 = bodyRawObject;
-			bodyRawObject = objInstance1[3][0];
-			bodyState = 2;
-		} else {
-			bodyRawObject = null;
-		}
+		bodyRawObject = null;
 	}
 	var getResponseAsText = (args[6][1] == 1);
 	if (args[1][1]) {

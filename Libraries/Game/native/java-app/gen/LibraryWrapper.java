@@ -322,10 +322,8 @@ public final class LibraryWrapper {
           org.crayonlang.interpreter.vm.CrayonWrapper.addToList(output, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(globals, ev.iarg2));
           if ((t == 37)) {
             org.crayonlang.interpreter.vm.CrayonWrapper.addToList(output, org.crayonlang.interpreter.vm.CrayonWrapper.buildFloat(globals, ev.farg1));
-          } else {
-            if (((t >= 64) && (t < 80))) {
-              org.crayonlang.interpreter.vm.CrayonWrapper.addToList(output, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(globals, ev.iarg3));
-            }
+          } else if (((t >= 64) && (t < 80))) {
+            org.crayonlang.interpreter.vm.CrayonWrapper.addToList(output, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(globals, ev.iarg3));
           }
         }
         i += 1;

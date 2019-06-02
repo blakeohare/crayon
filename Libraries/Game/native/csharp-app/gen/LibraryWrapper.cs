@@ -429,12 +429,9 @@ namespace Interpreter.Libraries.Game
                         {
                             Interpreter.Vm.CrayonWrapper.addToList(output, Interpreter.Vm.CrayonWrapper.buildFloat(globals, ev.farg1));
                         }
-                        else
+                        else if (((t >= 64) && (t < 80)))
                         {
-                            if (((t >= 64) && (t < 80)))
-                            {
-                                Interpreter.Vm.CrayonWrapper.addToList(output, Interpreter.Vm.CrayonWrapper.buildInteger(globals, ev.iarg3));
-                            }
+                            Interpreter.Vm.CrayonWrapper.addToList(output, Interpreter.Vm.CrayonWrapper.buildInteger(globals, ev.iarg3));
                         }
                     }
                     i += 1;

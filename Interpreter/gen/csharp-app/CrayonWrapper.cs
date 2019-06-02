@@ -79,50 +79,32 @@ namespace Interpreter.Vm
             {
                 vm.metadata.literalTableBuilder.Add(g.valueNull);
             }
-            else
+            else if ((type == 2))
             {
-                if ((type == 2))
-                {
-                    vm.metadata.literalTableBuilder.Add(buildBoolean(g, (row[1] == 1)));
-                }
-                else
-                {
-                    if ((type == 3))
-                    {
-                        vm.metadata.literalTableBuilder.Add(buildInteger(g, row[1]));
-                    }
-                    else
-                    {
-                        if ((type == 4))
-                        {
-                            vm.metadata.literalTableBuilder.Add(buildFloat(g, double.Parse(stringArg)));
-                        }
-                        else
-                        {
-                            if ((type == 5))
-                            {
-                                vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
-                            }
-                            else
-                            {
-                                if ((type == 9))
-                                {
-                                    int index = vm.metadata.literalTableBuilder.Count;
-                                    vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
-                                    vm.metadata.invFunctionNameLiterals[stringArg] = index;
-                                }
-                                else
-                                {
-                                    if ((type == 10))
-                                    {
-                                        ClassValue cv = new ClassValue(false, row[1]);
-                                        vm.metadata.literalTableBuilder.Add(new Value(10, cv));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                vm.metadata.literalTableBuilder.Add(buildBoolean(g, (row[1] == 1)));
+            }
+            else if ((type == 3))
+            {
+                vm.metadata.literalTableBuilder.Add(buildInteger(g, row[1]));
+            }
+            else if ((type == 4))
+            {
+                vm.metadata.literalTableBuilder.Add(buildFloat(g, double.Parse(stringArg)));
+            }
+            else if ((type == 5))
+            {
+                vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
+            }
+            else if ((type == 9))
+            {
+                int index = vm.metadata.literalTableBuilder.Count;
+                vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
+                vm.metadata.invFunctionNameLiterals[stringArg] = index;
+            }
+            else if ((type == 10))
+            {
+                ClassValue cv = new ClassValue(false, row[1]);
+                vm.metadata.literalTableBuilder.Add(new Value(10, cv));
             }
             return 0;
         }
@@ -197,12 +179,9 @@ namespace Interpreter.Vm
                     return g.negativeIntegers[-num];
                 }
             }
-            else
+            else if ((num < 2049))
             {
-                if ((num < 2049))
-                {
-                    return g.positiveIntegers[num];
-                }
+                return g.positiveIntegers[num];
             }
             return new Value(3, num);
         }
@@ -885,14 +864,11 @@ namespace Interpreter.Vm
                     return 1;
                 }
             }
-            else
+            else if (((leftType == 4) && (rightType == 3)))
             {
-                if (((leftType == 4) && (rightType == 3)))
+                if (((double)a.internalValue == (int)b.internalValue))
                 {
-                    if (((double)a.internalValue == (int)b.internalValue))
-                    {
-                        return 1;
-                    }
+                    return 1;
                 }
             }
             return 0;
@@ -1054,12 +1030,9 @@ namespace Interpreter.Vm
                     roundDown = true;
                     x += 0.1;
                 }
-                else
+                else if ((u < 0.00000000002250000000))
                 {
-                    if ((u < 0.00000000002250000000))
-                    {
-                        roundDown = true;
-                    }
+                    roundDown = true;
                 }
                 if (roundDown)
                 {
@@ -1482,28 +1455,22 @@ namespace Interpreter.Vm
                 {
                     argc = 1;
                 }
+                else if ((c == '&'))
+                {
+                    argc = 2;
+                }
+                else if ((c == '*'))
+                {
+                    argc = 3;
+                }
                 else
                 {
-                    if ((c == '&'))
+                    if ((c != '~'))
                     {
-                        argc = 2;
+                        stringPresent = false;
+                        index[0] = (index[0] - 1);
                     }
-                    else
-                    {
-                        if ((c == '*'))
-                        {
-                            argc = 3;
-                        }
-                        else
-                        {
-                            if ((c != '~'))
-                            {
-                                stringPresent = false;
-                                index[0] = (index[0] - 1);
-                            }
-                            argc = read_integer(index, raw, length, alphaNums);
-                        }
-                    }
+                    argc = read_integer(index, raw, length, alphaNums);
                 }
                 iarglist = new int[(argc - 1)];
                 j = 0;
@@ -1752,34 +1719,22 @@ namespace Interpreter.Vm
                 {
                     vm.metadata.primitiveMethodFunctionIdFallbackLookup[0] = functionId;
                 }
-                else
+                else if ("_LIB_CORE_list_map" == name)
                 {
-                    if ("_LIB_CORE_list_map" == name)
-                    {
-                        vm.metadata.primitiveMethodFunctionIdFallbackLookup[1] = functionId;
-                    }
-                    else
-                    {
-                        if ("_LIB_CORE_list_sort_by_key" == name)
-                        {
-                            vm.metadata.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
-                        }
-                        else
-                        {
-                            if ("_LIB_CORE_invoke" == name)
-                            {
-                                vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
-                            }
-                            else
-                            {
-                                if ("_LIB_CORE_generateException" == name)
-                                {
-                                    MagicNumbers mn = vm.metadata.magicNumbers;
-                                    mn.coreGenerateExceptionFunctionId = functionId;
-                                }
-                            }
-                        }
-                    }
+                    vm.metadata.primitiveMethodFunctionIdFallbackLookup[1] = functionId;
+                }
+                else if ("_LIB_CORE_list_sort_by_key" == name)
+                {
+                    vm.metadata.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
+                }
+                else if ("_LIB_CORE_invoke" == name)
+                {
+                    vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
+                }
+                else if ("_LIB_CORE_generateException" == name)
+                {
+                    MagicNumbers mn = vm.metadata.magicNumbers;
+                    mn.coreGenerateExceptionFunctionId = functionId;
                 }
             }
             return 0;
@@ -2064,15 +2019,12 @@ namespace Interpreter.Vm
                                     {
                                         hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
                                     }
-                                    else
+                                    else if ((i < 0))
                                     {
+                                        i += list1.size;
                                         if ((i < 0))
                                         {
-                                            i += list1.size;
-                                            if ((i < 0))
-                                            {
-                                                hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
-                                            }
+                                            hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
                                         }
                                     }
                                     if (!hasInterrupt)
@@ -2086,122 +2038,107 @@ namespace Interpreter.Vm
                                 hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.");
                             }
                         }
-                        else
+                        else if ((type == 7))
                         {
-                            if ((type == 7))
+                            dictImpl = (DictImpl)root.internalValue;
+                            if ((dictImpl.valueType != null))
                             {
-                                dictImpl = (DictImpl)root.internalValue;
-                                if ((dictImpl.valueType != null))
+                                value3 = canAssignTypeToGeneric(vm, value, dictImpl.valueType, 0);
+                                if ((value3 == null))
                                 {
-                                    value3 = canAssignTypeToGeneric(vm, value, dictImpl.valueType, 0);
-                                    if ((value3 == null))
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.");
-                                    }
-                                    else
-                                    {
-                                        value = value3;
-                                    }
-                                }
-                                keyType = value2.type;
-                                if ((keyType == 3))
-                                {
-                                    intKey = (int)value2.internalValue;
+                                    hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.");
                                 }
                                 else
                                 {
-                                    if ((keyType == 5))
-                                    {
-                                        stringKey = (string)value2.internalValue;
-                                    }
-                                    else
-                                    {
-                                        if ((keyType == 8))
-                                        {
-                                            objInstance1 = (ObjectInstance)value2.internalValue;
-                                            intKey = objInstance1.objectId;
-                                        }
-                                        else
-                                        {
-                                            hasInterrupt = EX_InvalidArgument(ec, "Invalid key for a dictionary.");
-                                        }
-                                    }
+                                    value = value3;
                                 }
-                                if (!hasInterrupt)
-                                {
-                                    bool2 = (dictImpl.size == 0);
-                                    if ((dictImpl.keyType != keyType))
-                                    {
-                                        if ((dictImpl.valueType != null))
-                                        {
-                                            string1 = string.Join("", new string[] { "Cannot assign a key of type ",typeToStringFromValue(vm, value2)," to a dictionary that requires key types of ",dictKeyInfoToString(vm, dictImpl),"." });
-                                            hasInterrupt = EX_InvalidKey(ec, string1);
-                                        }
-                                        else
-                                        {
-                                            if (!bool2)
-                                            {
-                                                hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (((keyType == 8) && (dictImpl.keyClassId > 0) && (objInstance1.classId != dictImpl.keyClassId)))
-                                        {
-                                            if (isClassASubclassOf(vm, objInstance1.classId, dictImpl.keyClassId))
-                                            {
-                                                hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.");
-                                            }
-                                        }
-                                    }
-                                }
-                                if (!hasInterrupt)
-                                {
-                                    if ((keyType == 5))
-                                    {
-                                        if (!dictImpl.stringToIndex.TryGetValue(stringKey, out int1)) int1 = -1;
-                                        if ((int1 == -1))
-                                        {
-                                            dictImpl.stringToIndex[stringKey] = dictImpl.size;
-                                            dictImpl.size += 1;
-                                            dictImpl.keys.Add(value2);
-                                            dictImpl.values.Add(value);
-                                            if (bool2)
-                                            {
-                                                dictImpl.keyType = keyType;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            dictImpl.values[int1] = value;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (!dictImpl.intToIndex.TryGetValue(intKey, out int1)) int1 = -1;
-                                        if ((int1 == -1))
-                                        {
-                                            dictImpl.intToIndex[intKey] = dictImpl.size;
-                                            dictImpl.size += 1;
-                                            dictImpl.keys.Add(value2);
-                                            dictImpl.values.Add(value);
-                                            if (bool2)
-                                            {
-                                                dictImpl.keyType = keyType;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            dictImpl.values[int1] = value;
-                                        }
-                                    }
-                                }
+                            }
+                            keyType = value2.type;
+                            if ((keyType == 3))
+                            {
+                                intKey = (int)value2.internalValue;
+                            }
+                            else if ((keyType == 5))
+                            {
+                                stringKey = (string)value2.internalValue;
+                            }
+                            else if ((keyType == 8))
+                            {
+                                objInstance1 = (ObjectInstance)value2.internalValue;
+                                intKey = objInstance1.objectId;
                             }
                             else
                             {
-                                hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.");
+                                hasInterrupt = EX_InvalidArgument(ec, "Invalid key for a dictionary.");
                             }
+                            if (!hasInterrupt)
+                            {
+                                bool2 = (dictImpl.size == 0);
+                                if ((dictImpl.keyType != keyType))
+                                {
+                                    if ((dictImpl.valueType != null))
+                                    {
+                                        string1 = string.Join("", new string[] { "Cannot assign a key of type ",typeToStringFromValue(vm, value2)," to a dictionary that requires key types of ",dictKeyInfoToString(vm, dictImpl),"." });
+                                        hasInterrupt = EX_InvalidKey(ec, string1);
+                                    }
+                                    else if (!bool2)
+                                    {
+                                        hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
+                                    }
+                                }
+                                else if (((keyType == 8) && (dictImpl.keyClassId > 0) && (objInstance1.classId != dictImpl.keyClassId)))
+                                {
+                                    if (isClassASubclassOf(vm, objInstance1.classId, dictImpl.keyClassId))
+                                    {
+                                        hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.");
+                                    }
+                                }
+                            }
+                            if (!hasInterrupt)
+                            {
+                                if ((keyType == 5))
+                                {
+                                    if (!dictImpl.stringToIndex.TryGetValue(stringKey, out int1)) int1 = -1;
+                                    if ((int1 == -1))
+                                    {
+                                        dictImpl.stringToIndex[stringKey] = dictImpl.size;
+                                        dictImpl.size += 1;
+                                        dictImpl.keys.Add(value2);
+                                        dictImpl.values.Add(value);
+                                        if (bool2)
+                                        {
+                                            dictImpl.keyType = keyType;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dictImpl.values[int1] = value;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!dictImpl.intToIndex.TryGetValue(intKey, out int1)) int1 = -1;
+                                    if ((int1 == -1))
+                                    {
+                                        dictImpl.intToIndex[intKey] = dictImpl.size;
+                                        dictImpl.size += 1;
+                                        dictImpl.keys.Add(value2);
+                                        dictImpl.values.Add(value);
+                                        if (bool2)
+                                        {
+                                            dictImpl.keyType = keyType;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dictImpl.values[int1] = value;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.");
                         }
                         if (bool1)
                         {
@@ -2344,44 +2281,35 @@ namespace Interpreter.Vm
                                     hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
                                 }
                             }
-                            else
+                            else if ((int1 < -1))
                             {
-                                if ((int1 < -1))
+                                string1 = identifiers[row[0]];
+                                if ((int1 == -2))
                                 {
-                                    string1 = identifiers[row[0]];
-                                    if ((int1 == -2))
-                                    {
-                                        string2 = "private";
-                                    }
-                                    else
-                                    {
-                                        if ((int1 == -3))
-                                        {
-                                            string2 = "internal";
-                                        }
-                                        else
-                                        {
-                                            string2 = "protected";
-                                        }
-                                    }
-                                    hasInterrupt = EX_UnknownField(ec, string.Join("", new string[] { "The field '",string1,"' is marked as ",string2," and cannot be accessed from here." }));
+                                    string2 = "private";
+                                }
+                                else if ((int1 == -3))
+                                {
+                                    string2 = "internal";
                                 }
                                 else
                                 {
-                                    hasInterrupt = EX_InvalidAssignment(ec, string.Join("", new string[] { "'",classInfo.fullyQualifiedName,"' instances do not have a field called '",metadata.identifiers[row[0]],"'" }));
+                                    string2 = "protected";
                                 }
-                            }
-                        }
-                        else
-                        {
-                            if ((value2.type == 1))
-                            {
-                                hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.");
+                                hasInterrupt = EX_UnknownField(ec, string.Join("", new string[] { "The field '",string1,"' is marked as ",string2," and cannot be accessed from here." }));
                             }
                             else
                             {
-                                hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
+                                hasInterrupt = EX_InvalidAssignment(ec, string.Join("", new string[] { "'",classInfo.fullyQualifiedName,"' instances do not have a field called '",metadata.identifiers[row[0]],"'" }));
                             }
+                        }
+                        else if ((value2.type == 1))
+                        {
+                            hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.");
+                        }
+                        else
+                        {
+                            hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
                         }
                         if ((row[1] == 1))
                         {
@@ -2523,16 +2451,13 @@ namespace Interpreter.Vm
                                         value = new Value(3, int1);
                                     }
                                 }
+                                else if ((int1 < 2049))
+                                {
+                                    value = INTEGER_POSITIVE_CACHE[int1];
+                                }
                                 else
                                 {
-                                    if ((int1 < 2049))
-                                    {
-                                        value = INTEGER_POSITIVE_CACHE[int1];
-                                    }
-                                    else
-                                    {
-                                        value = new Value(3, int1);
-                                    }
+                                    value = new Value(3, int1);
                                 }
                                 break;
                             case 509:
@@ -2549,16 +2474,13 @@ namespace Interpreter.Vm
                                         value = new Value(3, int1);
                                     }
                                 }
+                                else if ((int1 < 2049))
+                                {
+                                    value = INTEGER_POSITIVE_CACHE[int1];
+                                }
                                 else
                                 {
-                                    if ((int1 < 2049))
-                                    {
-                                        value = INTEGER_POSITIVE_CACHE[int1];
-                                    }
-                                    else
-                                    {
-                                        value = new Value(3, int1);
-                                    }
+                                    value = new Value(3, int1);
                                 }
                                 break;
                             case 520:
@@ -2575,16 +2497,13 @@ namespace Interpreter.Vm
                                         value = new Value(3, int1);
                                     }
                                 }
+                                else if ((int1 < 2049))
+                                {
+                                    value = INTEGER_POSITIVE_CACHE[int1];
+                                }
                                 else
                                 {
-                                    if ((int1 < 2049))
-                                    {
-                                        value = INTEGER_POSITIVE_CACHE[int1];
-                                    }
-                                    else
-                                    {
-                                        value = new Value(3, int1);
-                                    }
+                                    value = new Value(3, int1);
                                 }
                                 break;
                             case 531:
@@ -2595,53 +2514,44 @@ namespace Interpreter.Vm
                                 {
                                     hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
                                 }
+                                else if ((int1 == 0))
+                                {
+                                    value = VALUE_INT_ZERO;
+                                }
                                 else
                                 {
-                                    if ((int1 == 0))
+                                    if (((int1 % int2) == 0))
                                     {
-                                        value = VALUE_INT_ZERO;
+                                        int3 = (int1) / (int2);
+                                    }
+                                    else if ((((int1 < 0)) != ((int2 < 0))))
+                                    {
+                                        float1 = (1 + ((-1.0 * int1)) / (int2));
+                                        float1 -= (float1 % 1.0);
+                                        int3 = (int)(-float1);
                                     }
                                     else
                                     {
-                                        if (((int1 % int2) == 0))
+                                        int3 = (int1) / (int2);
+                                    }
+                                    if ((int3 < 0))
+                                    {
+                                        if ((int3 > -257))
                                         {
-                                            int3 = (int1) / (int2);
+                                            value = INTEGER_NEGATIVE_CACHE[-int3];
                                         }
                                         else
                                         {
-                                            if ((((int1 < 0)) != ((int2 < 0))))
-                                            {
-                                                float1 = (1 + ((-1.0 * int1)) / (int2));
-                                                float1 -= (float1 % 1.0);
-                                                int3 = (int)(-float1);
-                                            }
-                                            else
-                                            {
-                                                int3 = (int1) / (int2);
-                                            }
+                                            value = new Value(3, int3);
                                         }
-                                        if ((int3 < 0))
-                                        {
-                                            if ((int3 > -257))
-                                            {
-                                                value = INTEGER_NEGATIVE_CACHE[-int3];
-                                            }
-                                            else
-                                            {
-                                                value = new Value(3, int3);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if ((int3 < 2049))
-                                            {
-                                                value = INTEGER_POSITIVE_CACHE[int3];
-                                            }
-                                            else
-                                            {
-                                                value = new Value(3, int3);
-                                            }
-                                        }
+                                    }
+                                    else if ((int3 < 2049))
+                                    {
+                                        value = INTEGER_POSITIVE_CACHE[int3];
+                                    }
+                                    else
+                                    {
+                                        value = new Value(3, int3);
                                     }
                                 }
                                 break;
@@ -2660,16 +2570,13 @@ namespace Interpreter.Vm
                                 {
                                     value = VALUE_FLOAT_ZERO;
                                 }
+                                else if ((float1 == 1))
+                                {
+                                    value = VALUE_FLOAT_ONE;
+                                }
                                 else
                                 {
-                                    if ((float1 == 1))
-                                    {
-                                        value = VALUE_FLOAT_ONE;
-                                    }
-                                    else
-                                    {
-                                        value = new Value(4, float1);
-                                    }
+                                    value = new Value(4, float1);
                                 }
                                 break;
                             case 510:
@@ -2687,16 +2594,13 @@ namespace Interpreter.Vm
                                 {
                                     value = VALUE_FLOAT_ZERO;
                                 }
+                                else if ((float1 == 1))
+                                {
+                                    value = VALUE_FLOAT_ONE;
+                                }
                                 else
                                 {
-                                    if ((float1 == 1))
-                                    {
-                                        value = VALUE_FLOAT_ONE;
-                                    }
-                                    else
-                                    {
-                                        value = new Value(4, float1);
-                                    }
+                                    value = new Value(4, float1);
                                 }
                                 break;
                             case 685:
@@ -3016,16 +2920,13 @@ namespace Interpreter.Vm
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
+                        else if ((bool)value.internalValue)
+                        {
+                            valueStack[(valueStackSize - 1)] = VALUE_FALSE;
+                        }
                         else
                         {
-                            if ((bool)value.internalValue)
-                            {
-                                valueStack[(valueStackSize - 1)] = VALUE_FALSE;
-                            }
-                            else
-                            {
-                                valueStack[(valueStackSize - 1)] = VALUE_TRUE;
-                            }
+                            valueStack[(valueStackSize - 1)] = VALUE_TRUE;
                         }
                         break;
                     case 11:
@@ -3088,23 +2989,20 @@ namespace Interpreter.Vm
                                 {
                                     argCount = 0;
                                 }
+                                else if ((value.type == 6))
+                                {
+                                    list1 = (ListImpl)value.internalValue;
+                                    argCount = list1.size;
+                                    i = (argCount - 1);
+                                    while ((i >= 0))
+                                    {
+                                        funcArgs[i] = list1.array[i];
+                                        i -= 1;
+                                    }
+                                }
                                 else
                                 {
-                                    if ((value.type == 6))
-                                    {
-                                        list1 = (ListImpl)value.internalValue;
-                                        argCount = list1.size;
-                                        i = (argCount - 1);
-                                        while ((i >= 0))
-                                        {
-                                            funcArgs[i] = list1.array[i];
-                                            i -= 1;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
                                 }
                             }
                             else
@@ -3133,106 +3031,100 @@ namespace Interpreter.Vm
                                         }
                                     }
                                 }
-                                else
+                                else if ((type == 5))
                                 {
-                                    if ((type == 5))
+                                    // field invocation;
+                                    valueStackSize -= 1;
+                                    value = valueStack[valueStackSize];
+                                    localeId = row[5];
+                                    switch (value.type)
                                     {
-                                        // field invocation;
-                                        valueStackSize -= 1;
-                                        value = valueStack[valueStackSize];
-                                        localeId = row[5];
-                                        switch (value.type)
-                                        {
-                                            case 1:
-                                                hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
-                                                break;
-                                            case 8:
-                                                // field invoked on an object instance.;
-                                                objInstance1 = (ObjectInstance)value.internalValue;
-                                                int1 = objInstance1.classId;
-                                                classInfo = classTable[int1];
-                                                intIntDict1 = classInfo.localeScopedNameIdToMemberId;
-                                                int1 = ((row[4] * magicNumbers.totalLocaleCount) + row[5]);
-                                                if (!intIntDict1.TryGetValue(int1, out i)) i = -1;
-                                                if ((i != -1))
+                                        case 1:
+                                            hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
+                                            break;
+                                        case 8:
+                                            // field invoked on an object instance.;
+                                            objInstance1 = (ObjectInstance)value.internalValue;
+                                            int1 = objInstance1.classId;
+                                            classInfo = classTable[int1];
+                                            intIntDict1 = classInfo.localeScopedNameIdToMemberId;
+                                            int1 = ((row[4] * magicNumbers.totalLocaleCount) + row[5]);
+                                            if (!intIntDict1.TryGetValue(int1, out i)) i = -1;
+                                            if ((i != -1))
+                                            {
+                                                int1 = intIntDict1[int1];
+                                                functionId = classInfo.functionIds[int1];
+                                                if ((functionId > 0))
                                                 {
-                                                    int1 = intIntDict1[int1];
-                                                    functionId = classInfo.functionIds[int1];
-                                                    if ((functionId > 0))
-                                                    {
-                                                        type = 3;
-                                                    }
-                                                    else
-                                                    {
-                                                        value = objInstance1.members[int1];
-                                                        type = 4;
-                                                        valueStack[valueStackSize] = value;
-                                                        valueStackSize += 1;
-                                                    }
+                                                    type = 3;
                                                 }
                                                 else
                                                 {
-                                                    hasInterrupt = EX_UnknownField(ec, "Unknown field.");
+                                                    value = objInstance1.members[int1];
+                                                    type = 4;
+                                                    valueStack[valueStackSize] = value;
+                                                    valueStackSize += 1;
                                                 }
-                                                break;
-                                            case 10:
-                                                // field invocation on a class object instance.;
-                                                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
-                                                if ((functionId < 0))
-                                                {
-                                                    hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.");
-                                                }
-                                                else
-                                                {
-                                                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
-                                                    if ((functionId < 0))
-                                                    {
-                                                        hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value.type) + " does not have that method.");
-                                                    }
-                                                    else
-                                                    {
-                                                        if ((globalNameIdToPrimitiveMethodName[classId] == 8))
-                                                        {
-                                                            type = 6;
-                                                            classValue = (ClassValue)value.internalValue;
-                                                            if (classValue.isInterface)
-                                                            {
-                                                                hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.");
-                                                            }
-                                                            else
-                                                            {
-                                                                classId = classValue.classId;
-                                                                if (!returnValueUsed)
-                                                                {
-                                                                    hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
-                                                                }
-                                                                else
-                                                                {
-                                                                    classInfo = metadata.classTable[classId];
-                                                                    functionId = classInfo.constructorFunctionId;
-                                                                }
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            type = 9;
-                                                        }
-                                                    }
-                                                }
-                                                break;
-                                            default:
-                                                // primitive method suspected.;
+                                            }
+                                            else
+                                            {
+                                                hasInterrupt = EX_UnknownField(ec, "Unknown field.");
+                                            }
+                                            break;
+                                        case 10:
+                                            // field invocation on a class object instance.;
+                                            functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                                            if ((functionId < 0))
+                                            {
+                                                hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.");
+                                            }
+                                            else
+                                            {
                                                 functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
                                                 if ((functionId < 0))
                                                 {
                                                     hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value.type) + " does not have that method.");
                                                 }
+                                                else if ((globalNameIdToPrimitiveMethodName[classId] == 8))
+                                                {
+                                                    type = 6;
+                                                    classValue = (ClassValue)value.internalValue;
+                                                    if (classValue.isInterface)
+                                                    {
+                                                        hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.");
+                                                    }
+                                                    else
+                                                    {
+                                                        classId = classValue.classId;
+                                                        if (!returnValueUsed)
+                                                        {
+                                                            hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
+                                                        }
+                                                        else
+                                                        {
+                                                            classInfo = metadata.classTable[classId];
+                                                            functionId = classInfo.constructorFunctionId;
+                                                        }
+                                                    }
+                                                }
                                                 else
                                                 {
                                                     type = 9;
                                                 }
-                                                break;
-                                        }
+                                            }
+                                            break;
+                                        default:
+                                            // primitive method suspected.;
+                                            functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                                            if ((functionId < 0))
+                                            {
+                                                hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value.type) + " does not have that method.");
+                                            }
+                                            else
+                                            {
+                                                type = 9;
+                                            }
+                                            break;
                                     }
                                 }
                             }
@@ -3307,16 +3199,13 @@ namespace Interpreter.Vm
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string contains method requires another string as input.");
                                                     }
+                                                    else if (string1.Contains((string)value2.internalValue))
+                                                    {
+                                                        output = VALUE_TRUE;
+                                                    }
                                                     else
                                                     {
-                                                        if (string1.Contains((string)value2.internalValue))
-                                                        {
-                                                            output = VALUE_TRUE;
-                                                        }
-                                                        else
-                                                        {
-                                                            output = VALUE_FALSE;
-                                                        }
+                                                        output = VALUE_FALSE;
                                                     }
                                                 }
                                                 break;
@@ -3332,16 +3221,13 @@ namespace Interpreter.Vm
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string endsWith method requires another string as input.");
                                                     }
+                                                    else if (string1.EndsWith((string)value2.internalValue))
+                                                    {
+                                                        output = VALUE_TRUE;
+                                                    }
                                                     else
                                                     {
-                                                        if (string1.EndsWith((string)value2.internalValue))
-                                                        {
-                                                            output = VALUE_TRUE;
-                                                        }
-                                                        else
-                                                        {
-                                                            output = VALUE_FALSE;
-                                                        }
+                                                        output = VALUE_FALSE;
                                                     }
                                                 }
                                                 break;
@@ -3357,30 +3243,24 @@ namespace Interpreter.Vm
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.");
                                                     }
+                                                    else if ((argCount == 1))
+                                                    {
+                                                        output = buildInteger(globals, string1.IndexOf((string)value2.internalValue));
+                                                    }
+                                                    else if ((funcArgs[1].type != 3))
+                                                    {
+                                                        hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as its second argument.");
+                                                    }
                                                     else
                                                     {
-                                                        if ((argCount == 1))
+                                                        int1 = (int)funcArgs[1].internalValue;
+                                                        if (((int1 < 0) || (int1 >= string1.Length)))
                                                         {
-                                                            output = buildInteger(globals, string1.IndexOf((string)value2.internalValue));
+                                                            hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds.");
                                                         }
                                                         else
                                                         {
-                                                            if ((funcArgs[1].type != 3))
-                                                            {
-                                                                hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as its second argument.");
-                                                            }
-                                                            else
-                                                            {
-                                                                int1 = (int)funcArgs[1].internalValue;
-                                                                if (((int1 < 0) || (int1 >= string1.Length)))
-                                                                {
-                                                                    hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds.");
-                                                                }
-                                                                else
-                                                                {
-                                                                    output = buildInteger(globals, string1.IndexOf((string)value2.internalValue, int1));
-                                                                }
-                                                            }
+                                                            output = buildInteger(globals, string1.IndexOf((string)value2.internalValue, int1));
                                                         }
                                                     }
                                                 }
@@ -3484,16 +3364,13 @@ namespace Interpreter.Vm
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string startsWith method requires another string as input.");
                                                     }
+                                                    else if (string1.StartsWith((string)value2.internalValue))
+                                                    {
+                                                        output = VALUE_TRUE;
+                                                    }
                                                     else
                                                     {
-                                                        if (string1.StartsWith((string)value2.internalValue))
-                                                        {
-                                                            output = VALUE_TRUE;
-                                                        }
-                                                        else
-                                                        {
-                                                            output = VALUE_FALSE;
-                                                        }
+                                                        output = VALUE_FALSE;
                                                     }
                                                 }
                                                 break;
@@ -3587,18 +3464,15 @@ namespace Interpreter.Vm
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
                                                 }
-                                                else
+                                                else if ((list1.size > 0))
                                                 {
-                                                    if ((list1.size > 0))
+                                                    i = (list1.size - 1);
+                                                    while ((i >= 0))
                                                     {
-                                                        i = (list1.size - 1);
-                                                        while ((i >= 0))
-                                                        {
-                                                            list1.array[i] = null;
-                                                            i -= 1;
-                                                        }
-                                                        list1.size = 0;
+                                                        list1.array[i] = null;
+                                                        i -= 1;
                                                     }
+                                                    list1.size = 0;
                                                 }
                                                 break;
                                             case 5:
@@ -3759,25 +3633,22 @@ namespace Interpreter.Vm
                                                                 list1.array[_len] = value2;
                                                                 list1.size += 1;
                                                             }
+                                                            else if (((int1 < 0) || (int1 >= _len)))
+                                                            {
+                                                                hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
+                                                            }
                                                             else
                                                             {
-                                                                if (((int1 < 0) || (int1 >= _len)))
+                                                                i = int1;
+                                                                while ((i < _len))
                                                                 {
-                                                                    hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
+                                                                    value3 = list1.array[i];
+                                                                    list1.array[i] = value2;
+                                                                    value2 = value3;
+                                                                    i += 1;
                                                                 }
-                                                                else
-                                                                {
-                                                                    i = int1;
-                                                                    while ((i < _len))
-                                                                    {
-                                                                        value3 = list1.array[i];
-                                                                        list1.array[i] = value2;
-                                                                        value2 = value3;
-                                                                        i += 1;
-                                                                    }
-                                                                    list1.array[_len] = value2;
-                                                                    list1.size += 1;
-                                                                }
+                                                                list1.array[_len] = value2;
+                                                                list1.size += 1;
                                                             }
                                                         }
                                                     }
@@ -3954,24 +3825,21 @@ namespace Interpreter.Vm
                                                         hasInterrupt = EX_InvalidArgument(ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
                                                     }
                                                 }
-                                                else
+                                                else if ((argCount == 1))
                                                 {
-                                                    if ((argCount == 1))
+                                                    value2 = funcArgs[0];
+                                                    if ((value2.type == 9))
                                                     {
-                                                        value2 = funcArgs[0];
-                                                        if ((value2.type == 9))
-                                                        {
-                                                            primitiveMethodToCoreLibraryFallback = true;
-                                                            functionId = metadata.primitiveMethodFunctionIdFallbackLookup[2];
-                                                            funcArgs[1] = value;
-                                                            argCount = 2;
-                                                        }
-                                                        else
-                                                        {
-                                                            hasInterrupt = EX_InvalidArgument(ec, "list.sort(get_key_function) requires a function pointer as its argument.");
-                                                        }
-                                                        output = null;
+                                                        primitiveMethodToCoreLibraryFallback = true;
+                                                        functionId = metadata.primitiveMethodFunctionIdFallbackLookup[2];
+                                                        funcArgs[1] = value;
+                                                        argCount = 2;
                                                     }
+                                                    else
+                                                    {
+                                                        hasInterrupt = EX_InvalidArgument(ec, "list.sort(get_key_function) requires a function pointer as its argument.");
+                                                    }
+                                                    output = null;
                                                 }
                                                 break;
                                             default:
@@ -3989,16 +3857,13 @@ namespace Interpreter.Vm
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
                                                 }
-                                                else
+                                                else if ((dictImpl.size > 0))
                                                 {
-                                                    if ((dictImpl.size > 0))
-                                                    {
-                                                        dictImpl.intToIndex = new Dictionary<int, int>();
-                                                        dictImpl.stringToIndex = new Dictionary<string, int>();
-                                                        dictImpl.keys.Clear();
-                                                        dictImpl.values.Clear();
-                                                        dictImpl.size = 0;
-                                                    }
+                                                    dictImpl.intToIndex = new Dictionary<int, int>();
+                                                    dictImpl.stringToIndex = new Dictionary<string, int>();
+                                                    dictImpl.keys.Clear();
+                                                    dictImpl.values.Clear();
+                                                    dictImpl.size = 0;
                                                 }
                                                 break;
                                             case 5:
@@ -4136,42 +4001,30 @@ namespace Interpreter.Vm
                                                             {
                                                                 value.internalValue = cloneDictionary(dictImpl2, null);
                                                             }
+                                                            else if ((dictImpl2.keyType != dictImpl.keyType))
+                                                            {
+                                                                hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.");
+                                                            }
+                                                            else if (((dictImpl2.keyType == 8) && (dictImpl2.keyClassId != dictImpl.keyClassId) && (dictImpl.keyClassId != 0) && !isClassASubclassOf(vm, dictImpl2.keyClassId, dictImpl.keyClassId)))
+                                                            {
+                                                                hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
+                                                            }
                                                             else
                                                             {
-                                                                if ((dictImpl2.keyType != dictImpl.keyType))
+                                                                if ((dictImpl.valueType == null))
                                                                 {
-                                                                    hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.");
                                                                 }
-                                                                else
+                                                                else if ((dictImpl2.valueType == null))
                                                                 {
-                                                                    if (((dictImpl2.keyType == 8) && (dictImpl2.keyClassId != dictImpl.keyClassId) && (dictImpl.keyClassId != 0) && !isClassASubclassOf(vm, dictImpl2.keyClassId, dictImpl.keyClassId)))
-                                                                    {
-                                                                        hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        if ((dictImpl.valueType == null))
-                                                                        {
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            if ((dictImpl2.valueType == null))
-                                                                            {
-                                                                                hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.");
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                if (!canAssignGenericToGeneric(vm, dictImpl2.valueType, 0, dictImpl.valueType, 0, intBuffer))
-                                                                                {
-                                                                                    hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.");
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                        if (!hasInterrupt)
-                                                                        {
-                                                                            cloneDictionary(dictImpl2, dictImpl);
-                                                                        }
-                                                                    }
+                                                                    hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.");
+                                                                }
+                                                                else if (!canAssignGenericToGeneric(vm, dictImpl2.valueType, 0, dictImpl.valueType, 0, intBuffer))
+                                                                {
+                                                                    hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.");
+                                                                }
+                                                                if (!hasInterrupt)
+                                                                {
+                                                                    cloneDictionary(dictImpl2, dictImpl);
                                                                 }
                                                             }
                                                         }
@@ -4330,16 +4183,13 @@ namespace Interpreter.Vm
                                                 {
                                                     funcArgs[1] = funcArgs[0];
                                                 }
+                                                else if ((argCount == 0))
+                                                {
+                                                    funcArgs[1] = VALUE_NULL;
+                                                }
                                                 else
                                                 {
-                                                    if ((argCount == 0))
-                                                    {
-                                                        funcArgs[1] = VALUE_NULL;
-                                                    }
-                                                    else
-                                                    {
-                                                        hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.");
-                                                    }
+                                                    hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.");
                                                 }
                                                 funcArgs[0] = value;
                                                 argCount = 2;
@@ -4593,32 +4443,26 @@ namespace Interpreter.Vm
                                             value2 = new Value(3, i);
                                         }
                                     }
+                                    else if ((i < 2049))
+                                    {
+                                        value2 = globals.positiveIntegers[i];
+                                    }
                                     else
                                     {
-                                        if ((i < 2049))
-                                        {
-                                            value2 = globals.positiveIntegers[i];
-                                        }
-                                        else
-                                        {
-                                            value2 = new Value(3, i);
-                                        }
+                                        value2 = new Value(3, i);
                                     }
                                 }
                             }
-                            else
+                            else if (((value.type == 3) && (row[0] == 4)))
                             {
-                                if (((value.type == 3) && (row[0] == 4)))
+                                int1 = (int)value.internalValue;
+                                if ((int1 == 0))
                                 {
-                                    int1 = (int)value.internalValue;
-                                    if ((int1 == 0))
-                                    {
-                                        value2 = VALUE_FLOAT_ZERO;
-                                    }
-                                    else
-                                    {
-                                        value2 = new Value(4, (0.0 + int1));
-                                    }
+                                    value2 = VALUE_FLOAT_ZERO;
+                                }
+                                else
+                                {
+                                    value2 = new Value(4, (0.0 + int1));
                                 }
                             }
                             if ((value2 != null))
@@ -4800,21 +4644,18 @@ namespace Interpreter.Vm
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, "Assertion expression must be a boolean.");
                                 }
+                                else if ((bool)arg1.internalValue)
+                                {
+                                    output = VALUE_NULL;
+                                }
                                 else
                                 {
-                                    if ((bool)arg1.internalValue)
+                                    string1 = valueToString(vm, arg2);
+                                    if ((bool)arg3.internalValue)
                                     {
-                                        output = VALUE_NULL;
+                                        string1 = "Assertion failed: " + string1;
                                     }
-                                    else
-                                    {
-                                        string1 = valueToString(vm, arg2);
-                                        if ((bool)arg3.internalValue)
-                                        {
-                                            string1 = "Assertion failed: " + string1;
-                                        }
-                                        hasInterrupt = EX_AssertionFailed(ec, string1);
-                                    }
+                                    hasInterrupt = EX_AssertionFailed(ec, string1);
                                 }
                                 break;
                             case 8:
@@ -4880,19 +4721,16 @@ namespace Interpreter.Vm
                                         output = buildInteger(globals, -(int)arg1.internalValue);
                                     }
                                 }
+                                else if ((arg1.type == 4))
+                                {
+                                    if (((double)arg1.internalValue < 0))
+                                    {
+                                        output = buildFloat(globals, -(double)arg1.internalValue);
+                                    }
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 4))
-                                    {
-                                        if (((double)arg1.internalValue < 0))
-                                        {
-                                            output = buildFloat(globals, -(double)arg1.internalValue);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
                                 }
                                 break;
                             case 13:
@@ -4902,16 +4740,13 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.");
                                 }
                                 if (!hasInterrupt)
                                 {
@@ -4932,16 +4767,13 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number as input.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number as input.");
                                 }
                                 if (!hasInterrupt)
                                 {
@@ -4965,31 +4797,25 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
+                                else if ((arg2.type == 3))
+                                {
+                                    float2 = (0.0 + (int)arg2.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg2.type == 3))
-                                    {
-                                        float2 = (0.0 + (int)arg2.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if (bool1)
                                 {
@@ -5008,17 +4834,14 @@ namespace Interpreter.Vm
                                     float1 = (double)arg1.internalValue;
                                     output = buildFloat(globals, System.Math.Cos(float1));
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    int1 = (int)arg1.internalValue;
+                                    output = buildFloat(globals, System.Math.Cos(int1));
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        int1 = (int)arg1.internalValue;
-                                        output = buildFloat(globals, System.Math.Cos(int1));
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
                                 }
                                 break;
                             case 17:
@@ -5032,31 +4855,25 @@ namespace Interpreter.Vm
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
+                                else if ((arg2.type == 3))
+                                {
+                                    float2 = (0.0 + (int)arg2.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg2.type == 3))
-                                    {
-                                        float2 = (0.0 + (int)arg2.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if ((arg3.type == 4))
                                 {
                                     float3 = (double)arg3.internalValue;
                                 }
+                                else if ((arg3.type == 3))
+                                {
+                                    float3 = (0.0 + (int)arg3.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg3.type == 3))
-                                    {
-                                        float3 = (0.0 + (int)arg3.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if ((!bool1 && (float3 < float2)))
                                 {
@@ -5071,38 +4888,29 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if (bool1)
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, "ensureRange requires numeric arguments.");
                                 }
+                                else if ((float1 < float2))
+                                {
+                                    output = arg2;
+                                }
+                                else if ((float1 > float3))
+                                {
+                                    output = arg3;
+                                }
                                 else
                                 {
-                                    if ((float1 < float2))
-                                    {
-                                        output = arg2;
-                                    }
-                                    else
-                                    {
-                                        if ((float1 > float3))
-                                        {
-                                            output = arg3;
-                                        }
-                                        else
-                                        {
-                                            output = arg1;
-                                        }
-                                    }
+                                    output = arg1;
                                 }
                                 break;
                             case 18:
@@ -5125,16 +4933,13 @@ namespace Interpreter.Vm
                                         {
                                             output = INTEGER_POSITIVE_CACHE[int1];
                                         }
+                                        else if ((int1 > -257))
+                                        {
+                                            output = INTEGER_NEGATIVE_CACHE[-int1];
+                                        }
                                         else
                                         {
-                                            if ((int1 > -257))
-                                            {
-                                                output = INTEGER_NEGATIVE_CACHE[-int1];
-                                            }
-                                            else
-                                            {
-                                                output = new Value(3, int1);
-                                            }
+                                            output = new Value(3, int1);
                                         }
                                     }
                                     else
@@ -5142,16 +4947,13 @@ namespace Interpreter.Vm
                                         output = new Value(3, int1);
                                     }
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    output = arg1;
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        output = arg1;
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
                                 }
                                 break;
                             case 19:
@@ -5164,46 +4966,37 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
+                                else if ((arg2.type == 3))
+                                {
+                                    float2 = (0.0 + (int)arg2.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg2.type == 3))
-                                    {
-                                        float2 = (0.0 + (int)arg2.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if (bool1)
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, "max requires numeric arguments.");
                                 }
+                                else if ((float1 >= float2))
+                                {
+                                    output = arg1;
+                                }
                                 else
                                 {
-                                    if ((float1 >= float2))
-                                    {
-                                        output = arg1;
-                                    }
-                                    else
-                                    {
-                                        output = arg2;
-                                    }
+                                    output = arg2;
                                 }
                                 break;
                             case 20:
@@ -5216,46 +5009,37 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
+                                else if ((arg2.type == 3))
+                                {
+                                    float2 = (0.0 + (int)arg2.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg2.type == 3))
-                                    {
-                                        float2 = (0.0 + (int)arg2.internalValue);
-                                    }
-                                    else
-                                    {
-                                        bool1 = true;
-                                    }
+                                    bool1 = true;
                                 }
                                 if (bool1)
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, "min requires numeric arguments.");
                                 }
+                                else if ((float1 <= float2))
+                                {
+                                    output = arg1;
+                                }
                                 else
                                 {
-                                    if ((float1 <= float2))
-                                    {
-                                        output = arg1;
-                                    }
-                                    else
-                                    {
-                                        output = arg2;
-                                    }
+                                    output = arg2;
                                 }
                                 break;
                             case 21:
@@ -5288,31 +5072,25 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (0.0 + ((int)arg1.internalValue));
                                 }
+                                else if ((arg1.type == 4))
+                                {
+                                    float1 = (double)arg1.internalValue;
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 4))
-                                    {
-                                        float1 = (double)arg1.internalValue;
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.");
                                 }
                                 if ((float1 == 0))
                                 {
                                     output = VALUE_INT_ZERO;
                                 }
+                                else if ((float1 > 0))
+                                {
+                                    output = VALUE_INT_ONE;
+                                }
                                 else
                                 {
-                                    if ((float1 > 0))
-                                    {
-                                        output = VALUE_INT_ONE;
-                                    }
-                                    else
-                                    {
-                                        output = INTEGER_NEGATIVE_CACHE[1];
-                                    }
+                                    output = INTEGER_NEGATIVE_CACHE[1];
                                 }
                                 break;
                             case 24:
@@ -5322,16 +5100,13 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.");
                                 }
                                 output = buildFloat(globals, System.Math.Sin(float1));
                                 break;
@@ -5342,16 +5117,13 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.");
                                 }
                                 if (!hasInterrupt)
                                 {
@@ -5379,16 +5151,13 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
+                                else if ((arg1.type == 3))
+                                {
+                                    float1 = (0.0 + (int)arg1.internalValue);
+                                }
                                 else
                                 {
-                                    if ((arg1.type == 3))
-                                    {
-                                        float1 = (0.0 + (int)arg1.internalValue);
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.");
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.");
                                 }
                                 if (!hasInterrupt)
                                 {
@@ -5442,18 +5211,15 @@ namespace Interpreter.Vm
                                     {
                                         intArray1[(_len + i)] = (int)value.internalValue;
                                     }
+                                    else if ((value.type == 4))
+                                    {
+                                        float1 = (0.5 + (double)value.internalValue);
+                                        intArray1[(_len + i)] = (int)float1;
+                                    }
                                     else
                                     {
-                                        if ((value.type == 4))
-                                        {
-                                            float1 = (0.5 + (double)value.internalValue);
-                                            intArray1[(_len + i)] = (int)float1;
-                                        }
-                                        else
-                                        {
-                                            hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
-                                            i = -1;
-                                        }
+                                        hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
+                                        i = -1;
                                     }
                                     i -= 1;
                                 }
@@ -5562,27 +5328,24 @@ namespace Interpreter.Vm
                                     {
                                         i += int1;
                                     }
-                                    else
+                                    else if ((value.type == 4))
                                     {
-                                        if ((value.type == 4))
+                                        float1 = (double)value.internalValue;
+                                        if (((float1 < 0) && ((float1 % 1) != 0)))
                                         {
-                                            float1 = (double)value.internalValue;
-                                            if (((float1 < 0) && ((float1 % 1) != 0)))
-                                            {
-                                                int2 = ((int)float1 - 1);
-                                            }
-                                            else
-                                            {
-                                                int2 = (int)float1;
-                                            }
-                                            if (((int2 >= 0) && (int2 < 2049)))
-                                            {
-                                                localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
-                                            }
-                                            else
-                                            {
-                                                localsStack[i] = buildInteger(globals, int2);
-                                            }
+                                            int2 = ((int)float1 - 1);
+                                        }
+                                        else
+                                        {
+                                            int2 = (int)float1;
+                                        }
+                                        if (((int2 >= 0) && (int2 < 2049)))
+                                        {
+                                            localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
+                                        }
+                                        else
+                                        {
+                                            localsStack[i] = buildInteger(globals, int2);
                                         }
                                     }
                                     i += 1;
@@ -5629,12 +5392,9 @@ namespace Interpreter.Vm
                                 type = value2.type;
                                 first = false;
                             }
-                            else
+                            else if ((type != value2.type))
                             {
-                                if ((type != value2.type))
-                                {
-                                    hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.");
-                                }
+                                hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.");
                             }
                             if (!hasInterrupt)
                             {
@@ -5642,24 +5402,18 @@ namespace Interpreter.Vm
                                 {
                                     intKey = (int)value2.internalValue;
                                 }
+                                else if ((type == 5))
+                                {
+                                    stringKey = (string)value2.internalValue;
+                                }
+                                else if ((type == 8))
+                                {
+                                    objInstance1 = (ObjectInstance)value2.internalValue;
+                                    intKey = objInstance1.objectId;
+                                }
                                 else
                                 {
-                                    if ((type == 5))
-                                    {
-                                        stringKey = (string)value2.internalValue;
-                                    }
-                                    else
-                                    {
-                                        if ((type == 8))
-                                        {
-                                            objInstance1 = (ObjectInstance)value2.internalValue;
-                                            intKey = objInstance1.objectId;
-                                        }
-                                        else
-                                        {
-                                            hasInterrupt = EX_InvalidKey(ec, "Only integers, strings, and objects can be used as dictionary keys.");
-                                        }
-                                    }
+                                    hasInterrupt = EX_InvalidKey(ec, "Only integers, strings, and objects can be used as dictionary keys.");
                                 }
                             }
                             if (!hasInterrupt)
@@ -5932,42 +5686,36 @@ namespace Interpreter.Vm
                                 {
                                     hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.");
                                 }
-                                else
+                                else if (((value.type == 8) && (int1 < -1)))
                                 {
-                                    if (((value.type == 8) && (int1 < -1)))
+                                    string1 = identifiers[row[0]];
+                                    if ((int1 == -2))
                                     {
-                                        string1 = identifiers[row[0]];
-                                        if ((int1 == -2))
-                                        {
-                                            string2 = "private";
-                                        }
-                                        else
-                                        {
-                                            if ((int1 == -3))
-                                            {
-                                                string2 = "internal";
-                                            }
-                                            else
-                                            {
-                                                string2 = "protected";
-                                            }
-                                        }
-                                        hasInterrupt = EX_UnknownField(ec, string.Join("", new string[] { "The field '",string1,"' is marked as ",string2," and cannot be accessed from here." }));
+                                        string2 = "private";
+                                    }
+                                    else if ((int1 == -3))
+                                    {
+                                        string2 = "internal";
                                     }
                                     else
                                     {
-                                        if ((value.type == 8))
-                                        {
-                                            classId = ((ObjectInstance)value.internalValue).classId;
-                                            classInfo = classTable[classId];
-                                            string1 = classInfo.fullyQualifiedName + " instance";
-                                        }
-                                        else
-                                        {
-                                            string1 = getTypeFromId(value.type);
-                                        }
-                                        hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
+                                        string2 = "protected";
                                     }
+                                    hasInterrupt = EX_UnknownField(ec, string.Join("", new string[] { "The field '",string1,"' is marked as ",string2," and cannot be accessed from here." }));
+                                }
+                                else
+                                {
+                                    if ((value.type == 8))
+                                    {
+                                        classId = ((ObjectInstance)value.internalValue).classId;
+                                        classInfo = classTable[classId];
+                                        string1 = classInfo.fullyQualifiedName + " instance";
+                                    }
+                                    else
+                                    {
+                                        string1 = getTypeFromId(value.type);
+                                    }
+                                    hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
                                 }
                             }
                         }
@@ -6027,24 +5775,21 @@ namespace Interpreter.Vm
                             }
                             valueStack[valueStackSize++] = value;
                         }
+                        else if ((row[0] == 2))
+                        {
+                            if (((valueStackSize + 1) > valueStackCapacity))
+                            {
+                                valueStackIncreaseCapacity(ec);
+                                valueStack = ec.valueStack;
+                                valueStackCapacity = valueStack.Length;
+                            }
+                            valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
+                            valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
+                            valueStackSize += 2;
+                        }
                         else
                         {
-                            if ((row[0] == 2))
-                            {
-                                if (((valueStackSize + 1) > valueStackCapacity))
-                                {
-                                    valueStackIncreaseCapacity(ec);
-                                    valueStack = ec.valueStack;
-                                    valueStackCapacity = valueStack.Length;
-                                }
-                                valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
-                                valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
-                                valueStackSize += 2;
-                            }
-                            else
-                            {
-                                hasInterrupt = EX_Fatal(ec, "?");
-                            }
+                            hasInterrupt = EX_Fatal(ec, "?");
                         }
                         break;
                     case 29:
@@ -6080,16 +5825,13 @@ namespace Interpreter.Vm
                             {
                                 bool1 = false;
                             }
+                            else if ((int1 == 1))
+                            {
+                                bool1 = true;
+                            }
                             else
                             {
-                                if ((int1 == 1))
-                                {
-                                    bool1 = true;
-                                }
-                                else
-                                {
-                                    hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.");
-                                }
+                                hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.");
                             }
                         }
                         if ((valueStackSize == valueStackCapacity))
@@ -6145,17 +5887,14 @@ namespace Interpreter.Vm
                                     {
                                         pc += row[1];
                                     }
+                                    else if ((int1 == 2))
+                                    {
+                                        intArray1 = esfData[pc];
+                                        pc = intArray1[1];
+                                    }
                                     else
                                     {
-                                        if ((int1 == 2))
-                                        {
-                                            intArray1 = esfData[pc];
-                                            pc = intArray1[1];
-                                        }
-                                        else
-                                        {
-                                            hasInterrupt = EX_Fatal(ec, "break exists without a loop");
-                                        }
+                                        hasInterrupt = EX_Fatal(ec, "break exists without a loop");
                                     }
                                     break;
                                 case 2:
@@ -6165,17 +5904,14 @@ namespace Interpreter.Vm
                                     {
                                         pc += row[3];
                                     }
+                                    else if ((int1 == 2))
+                                    {
+                                        intArray1 = esfData[pc];
+                                        pc = intArray1[1];
+                                    }
                                     else
                                     {
-                                        if ((int1 == 2))
-                                        {
-                                            intArray1 = esfData[pc];
-                                            pc = intArray1[1];
-                                        }
-                                        else
-                                        {
-                                            hasInterrupt = EX_Fatal(ec, "continue exists without a loop");
-                                        }
+                                        hasInterrupt = EX_Fatal(ec, "continue exists without a loop");
                                     }
                                     break;
                                 case 3:
@@ -6283,116 +6019,101 @@ namespace Interpreter.Vm
                                 }
                             }
                         }
-                        else
+                        else if ((root.type == 7))
                         {
-                            if ((root.type == 7))
+                            dictImpl = (DictImpl)root.internalValue;
+                            keyType = value.type;
+                            if ((keyType != dictImpl.keyType))
                             {
-                                dictImpl = (DictImpl)root.internalValue;
-                                keyType = value.type;
-                                if ((keyType != dictImpl.keyType))
+                                if ((dictImpl.size == 0))
                                 {
-                                    if ((dictImpl.size == 0))
-                                    {
-                                        hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
-                                    }
-                                    else
-                                    {
-                                        hasInterrupt = EX_InvalidKey(ec, string.Join("", new string[] { "Incorrect key type. This dictionary contains ",getTypeFromId(dictImpl.keyType)," keys. Provided key is a ",getTypeFromId(keyType),"." }));
-                                    }
+                                    hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
                                 }
                                 else
                                 {
-                                    if ((keyType == 3))
-                                    {
-                                        intKey = (int)value.internalValue;
-                                    }
-                                    else
-                                    {
-                                        if ((keyType == 5))
-                                        {
-                                            stringKey = (string)value.internalValue;
-                                        }
-                                        else
-                                        {
-                                            if ((keyType == 8))
-                                            {
-                                                intKey = ((ObjectInstance)value.internalValue).objectId;
-                                            }
-                                            else
-                                            {
-                                                if ((dictImpl.size == 0))
-                                                {
-                                                    hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
-                                                }
-                                                else
-                                                {
-                                                    hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (!hasInterrupt)
-                                    {
-                                        if ((keyType == 5))
-                                        {
-                                            stringIntDict1 = (Dictionary<string, int>)dictImpl.stringToIndex;
-                                            if (!stringIntDict1.TryGetValue(stringKey, out int1)) int1 = -1;
-                                            if ((int1 == -1))
-                                            {
-                                                hasInterrupt = EX_KeyNotFound(ec, string.Join("", new string[] { "Key not found: '",stringKey,"'" }));
-                                            }
-                                            else
-                                            {
-                                                valueStack[(valueStackSize - 1)] = dictImpl.values[int1];
-                                            }
-                                        }
-                                        else
-                                        {
-                                            intIntDict1 = (Dictionary<int, int>)dictImpl.intToIndex;
-                                            if (!intIntDict1.TryGetValue(intKey, out int1)) int1 = -1;
-                                            if ((int1 == -1))
-                                            {
-                                                hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
-                                            }
-                                            else
-                                            {
-                                                valueStack[(valueStackSize - 1)] = dictImpl.values[intIntDict1[intKey]];
-                                            }
-                                        }
-                                    }
+                                    hasInterrupt = EX_InvalidKey(ec, string.Join("", new string[] { "Incorrect key type. This dictionary contains ",getTypeFromId(dictImpl.keyType)," keys. Provided key is a ",getTypeFromId(keyType),"." }));
                                 }
                             }
                             else
                             {
-                                if ((root.type == 5))
+                                if ((keyType == 3))
                                 {
-                                    string1 = (string)root.internalValue;
-                                    if ((value.type != 3))
-                                    {
-                                        hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.");
-                                    }
-                                    else
-                                    {
-                                        int1 = (int)value.internalValue;
-                                        if ((int1 < 0))
-                                        {
-                                            int1 += string1.Length;
-                                        }
-                                        if (((int1 < 0) || (int1 >= string1.Length)))
-                                        {
-                                            hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.");
-                                        }
-                                        else
-                                        {
-                                            valueStack[(valueStackSize - 1)] = buildCommonString(globals, string1[int1].ToString());
-                                        }
-                                    }
+                                    intKey = (int)value.internalValue;
+                                }
+                                else if ((keyType == 5))
+                                {
+                                    stringKey = (string)value.internalValue;
+                                }
+                                else if ((keyType == 8))
+                                {
+                                    intKey = ((ObjectInstance)value.internalValue).objectId;
+                                }
+                                else if ((dictImpl.size == 0))
+                                {
+                                    hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
                                 }
                                 else
                                 {
-                                    hasInterrupt = EX_InvalidArgument(ec, "Cannot index into this type: " + getTypeFromId(root.type));
+                                    hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
+                                }
+                                if (!hasInterrupt)
+                                {
+                                    if ((keyType == 5))
+                                    {
+                                        stringIntDict1 = (Dictionary<string, int>)dictImpl.stringToIndex;
+                                        if (!stringIntDict1.TryGetValue(stringKey, out int1)) int1 = -1;
+                                        if ((int1 == -1))
+                                        {
+                                            hasInterrupt = EX_KeyNotFound(ec, string.Join("", new string[] { "Key not found: '",stringKey,"'" }));
+                                        }
+                                        else
+                                        {
+                                            valueStack[(valueStackSize - 1)] = dictImpl.values[int1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        intIntDict1 = (Dictionary<int, int>)dictImpl.intToIndex;
+                                        if (!intIntDict1.TryGetValue(intKey, out int1)) int1 = -1;
+                                        if ((int1 == -1))
+                                        {
+                                            hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
+                                        }
+                                        else
+                                        {
+                                            valueStack[(valueStackSize - 1)] = dictImpl.values[intIntDict1[intKey]];
+                                        }
+                                    }
                                 }
                             }
+                        }
+                        else if ((root.type == 5))
+                        {
+                            string1 = (string)root.internalValue;
+                            if ((value.type != 3))
+                            {
+                                hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.");
+                            }
+                            else
+                            {
+                                int1 = (int)value.internalValue;
+                                if ((int1 < 0))
+                                {
+                                    int1 += string1.Length;
+                                }
+                                if (((int1 < 0) || (int1 >= string1.Length)))
+                                {
+                                    hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.");
+                                }
+                                else
+                                {
+                                    valueStack[(valueStackSize - 1)] = buildCommonString(globals, string1[int1].ToString());
+                                }
+                            }
+                        }
+                        else
+                        {
+                            hasInterrupt = EX_InvalidArgument(ec, "Cannot index into this type: " + getTypeFromId(root.type));
                         }
                         break;
                     case 37:
@@ -6489,12 +6210,9 @@ namespace Interpreter.Vm
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
-                        else
+                        else if (!(bool)value.internalValue)
                         {
-                            if (!(bool)value.internalValue)
-                            {
-                                pc += row[0];
-                            }
+                            pc += row[0];
                         }
                         break;
                     case 42:
@@ -6504,16 +6222,13 @@ namespace Interpreter.Vm
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
+                        else if ((bool)value.internalValue)
+                        {
+                            valueStackSize -= 1;
+                        }
                         else
                         {
-                            if ((bool)value.internalValue)
-                            {
-                                valueStackSize -= 1;
-                            }
-                            else
-                            {
-                                pc += row[0];
-                            }
+                            pc += row[0];
                         }
                         break;
                     case 43:
@@ -6523,12 +6238,9 @@ namespace Interpreter.Vm
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
-                        else
+                        else if ((bool)value.internalValue)
                         {
-                            if ((bool)value.internalValue)
-                            {
-                                pc += row[0];
-                            }
+                            pc += row[0];
                         }
                         break;
                     case 44:
@@ -6538,16 +6250,13 @@ namespace Interpreter.Vm
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
+                        else if ((bool)value.internalValue)
+                        {
+                            pc += row[0];
+                        }
                         else
                         {
-                            if ((bool)value.internalValue)
-                            {
-                                pc += row[0];
-                            }
-                            else
-                            {
-                                valueStackSize -= 1;
-                            }
+                            valueStackSize -= 1;
                         }
                         break;
                     case 45:
@@ -6709,16 +6418,13 @@ namespace Interpreter.Vm
                         {
                             valueStack[(valueStackSize - 1)] = buildInteger(globals, -(int)value.internalValue);
                         }
+                        else if ((type == 4))
+                        {
+                            valueStack[(valueStackSize - 1)] = buildFloat(globals, -(double)value.internalValue);
+                        }
                         else
                         {
-                            if ((type == 4))
-                            {
-                                valueStack[(valueStackSize - 1)] = buildFloat(globals, -(double)value.internalValue);
-                            }
-                            else
-                            {
-                                hasInterrupt = EX_InvalidArgument(ec, string.Join("", new string[] { "Negative sign can only be applied to numbers. Found ",getTypeFromId(type)," instead." }));
-                            }
+                            hasInterrupt = EX_InvalidArgument(ec, string.Join("", new string[] { "Negative sign can only be applied to numbers. Found ",getTypeFromId(type)," instead." }));
                         }
                         break;
                     case 53:
@@ -7250,19 +6956,16 @@ namespace Interpreter.Vm
                 originalString = (string)value.internalValue;
                 length = originalString.Length;
             }
+            else if ((value.type == 6))
+            {
+                isString = false;
+                originalList = (ListImpl)value.internalValue;
+                length = originalList.size;
+            }
             else
             {
-                if ((value.type == 6))
-                {
-                    isString = false;
-                    originalList = (ListImpl)value.internalValue;
-                    length = originalList.size;
-                }
-                else
-                {
-                    EX_InvalidArgument(ec, string.Join("", new string[] { "Cannot apply slicing to ",getTypeFromId(value.type),". Must be string or list." }));
-                    return globals.valueNull;
-                }
+                EX_InvalidArgument(ec, string.Join("", new string[] { "Cannot apply slicing to ",getTypeFromId(value.type),". Must be string or list." }));
+                return globals.valueNull;
             }
             if ((status >= 2))
             {
@@ -7357,65 +7060,56 @@ namespace Interpreter.Vm
                     value = new Value(6, outputList);
                 }
             }
-            else
+            else if ((status == 0))
             {
-                if ((status == 0))
+                if (isString)
                 {
-                    if (isString)
-                    {
-                        value = globals.stringEmpty;
-                    }
-                    else
-                    {
-                        value = new Value(6, makeEmptyList(originalList.type, 0));
-                    }
+                    value = globals.stringEmpty;
                 }
                 else
                 {
-                    if ((status == 2))
-                    {
-                        if (!isString)
-                        {
-                            outputList = makeEmptyList(originalList.type, length);
-                            i = 0;
-                            while ((i < length))
-                            {
-                                addToList(outputList, originalList.array[i]);
-                                i += 1;
-                            }
-                            value = new Value(6, outputList);
-                        }
-                    }
-                    else
-                    {
-                        string msg = null;
-                        if (isString)
-                        {
-                            msg = "String";
-                        }
-                        else
-                        {
-                            msg = "List";
-                        }
-                        if ((status == 3))
-                        {
-                            msg += " slice begin index is out of range.";
-                        }
-                        else
-                        {
-                            if (isForward)
-                            {
-                                msg += " slice begin index must occur before the end index when step is positive.";
-                            }
-                            else
-                            {
-                                msg += " slice begin index must occur after the end index when the step is negative.";
-                            }
-                        }
-                        EX_IndexOutOfRange(ec, msg);
-                        return globals.valueNull;
-                    }
+                    value = new Value(6, makeEmptyList(originalList.type, 0));
                 }
+            }
+            else if ((status == 2))
+            {
+                if (!isString)
+                {
+                    outputList = makeEmptyList(originalList.type, length);
+                    i = 0;
+                    while ((i < length))
+                    {
+                        addToList(outputList, originalList.array[i]);
+                        i += 1;
+                    }
+                    value = new Value(6, outputList);
+                }
+            }
+            else
+            {
+                string msg = null;
+                if (isString)
+                {
+                    msg = "String";
+                }
+                else
+                {
+                    msg = "List";
+                }
+                if ((status == 3))
+                {
+                    msg += " slice begin index is out of range.";
+                }
+                else if (isForward)
+                {
+                    msg += " slice begin index must occur before the end index when step is positive.";
+                }
+                else
+                {
+                    msg += " slice begin index must occur after the end index when the step is negative.";
+                }
+                EX_IndexOutOfRange(ec, msg);
+                return globals.valueNull;
             }
             return value;
         }
@@ -7588,16 +7282,13 @@ namespace Interpreter.Vm
             {
                 output = name + " does not accept any arguments.";
             }
+            else if ((expected == 1))
+            {
+                output = name + " accepts exactly 1 argument.";
+            }
             else
             {
-                if ((expected == 1))
-                {
-                    output = name + " accepts exactly 1 argument.";
-                }
-                else
-                {
-                    output = string.Join("", new string[] { name," requires ",(expected).ToString()," arguments." });
-                }
+                output = string.Join("", new string[] { name," requires ",(expected).ToString()," arguments." });
             }
             return string.Join("", new string[] { output," Found: ",(actual).ToString() });
         }
@@ -7688,103 +7379,82 @@ namespace Interpreter.Vm
                 {
                     return null;
                 }
+                else if (isStringEqual("this", step))
+                {
+                    current = stackFrame.objectContext;
+                }
+                else if (isStringEqual("class", step))
+                {
+                    return null;
+                }
+                else if (isStringEqual("local", step))
+                {
+                    i += 1;
+                    step = steps[i];
+                    Dictionary<int, List<string>> localNamesByFuncPc = vm.symbolData.localVarNamesById;
+                    List<string> localNames = null;
+                    if (((localNamesByFuncPc == null) || (localNamesByFuncPc.Count == 0)))
+                    {
+                        return null;
+                    }
+                    j = stackFrame.pc;
+                    while ((j >= 0))
+                    {
+                        if (localNamesByFuncPc.ContainsKey(j))
+                        {
+                            localNames = localNamesByFuncPc[j];
+                            j = -1;
+                        }
+                        j -= 1;
+                    }
+                    if ((localNames == null))
+                    {
+                        return null;
+                    }
+                    int localId = -1;
+                    if ((localNames != null))
+                    {
+                        j = 0;
+                        while ((j < localNames.Count))
+                        {
+                            if (isStringEqual(localNames[j], step))
+                            {
+                                localId = j;
+                                j = localNames.Count;
+                            }
+                            j += 1;
+                        }
+                    }
+                    if ((localId == -1))
+                    {
+                        return null;
+                    }
+                    int localOffset = (localId + stackFrame.localsStackOffset);
+                    if ((ec.localsStackSet[localOffset] != stackFrame.localsStackSetToken))
+                    {
+                        return null;
+                    }
+                    current = ec.localsStack[localOffset];
+                }
+                else if (isStringEqual("index", step))
+                {
+                    return null;
+                }
+                else if (isStringEqual("key-int", step))
+                {
+                    return null;
+                }
+                else if (isStringEqual("key-str", step))
+                {
+                    return null;
+                }
+                else if (isStringEqual("key-obj", step))
+                {
+                    return null;
+                }
                 else
                 {
-                    if (isStringEqual("this", step))
-                    {
-                        current = stackFrame.objectContext;
-                    }
-                    else
-                    {
-                        if (isStringEqual("class", step))
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            if (isStringEqual("local", step))
-                            {
-                                i += 1;
-                                step = steps[i];
-                                Dictionary<int, List<string>> localNamesByFuncPc = vm.symbolData.localVarNamesById;
-                                List<string> localNames = null;
-                                if (((localNamesByFuncPc == null) || (localNamesByFuncPc.Count == 0)))
-                                {
-                                    return null;
-                                }
-                                j = stackFrame.pc;
-                                while ((j >= 0))
-                                {
-                                    if (localNamesByFuncPc.ContainsKey(j))
-                                    {
-                                        localNames = localNamesByFuncPc[j];
-                                        j = -1;
-                                    }
-                                    j -= 1;
-                                }
-                                if ((localNames == null))
-                                {
-                                    return null;
-                                }
-                                int localId = -1;
-                                if ((localNames != null))
-                                {
-                                    j = 0;
-                                    while ((j < localNames.Count))
-                                    {
-                                        if (isStringEqual(localNames[j], step))
-                                        {
-                                            localId = j;
-                                            j = localNames.Count;
-                                        }
-                                        j += 1;
-                                    }
-                                }
-                                if ((localId == -1))
-                                {
-                                    return null;
-                                }
-                                int localOffset = (localId + stackFrame.localsStackOffset);
-                                if ((ec.localsStackSet[localOffset] != stackFrame.localsStackSetToken))
-                                {
-                                    return null;
-                                }
-                                current = ec.localsStack[localOffset];
-                            }
-                            else
-                            {
-                                if (isStringEqual("index", step))
-                                {
-                                    return null;
-                                }
-                                else
-                                {
-                                    if (isStringEqual("key-int", step))
-                                    {
-                                        return null;
-                                    }
-                                    else
-                                    {
-                                        if (isStringEqual("key-str", step))
-                                        {
-                                            return null;
-                                        }
-                                        else
-                                        {
-                                            if (isStringEqual("key-obj", step))
-                                            {
-                                                return null;
-                                            }
-                                            else
-                                            {
-                                                return null;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    return null;
                 }
                 i += 1;
             }
@@ -7801,39 +7471,30 @@ namespace Interpreter.Vm
                 string value = read_till(pindex, raw, length, '%');
                 num = int.Parse(value);
             }
+            else if ((c == '@'))
+            {
+                num = read_integer(pindex, raw, length, alphaNums);
+                num *= 62;
+                num += read_integer(pindex, raw, length, alphaNums);
+            }
+            else if ((c == '#'))
+            {
+                num = read_integer(pindex, raw, length, alphaNums);
+                num *= 62;
+                num += read_integer(pindex, raw, length, alphaNums);
+                num *= 62;
+                num += read_integer(pindex, raw, length, alphaNums);
+            }
+            else if ((c == '^'))
+            {
+                num = (-1 * read_integer(pindex, raw, length, alphaNums));
+            }
             else
             {
-                if ((c == '@'))
+                // TODO: string.IndexOfChar(c);
+                num = alphaNums.IndexOf(c.ToString());
+                if ((num == -1))
                 {
-                    num = read_integer(pindex, raw, length, alphaNums);
-                    num *= 62;
-                    num += read_integer(pindex, raw, length, alphaNums);
-                }
-                else
-                {
-                    if ((c == '#'))
-                    {
-                        num = read_integer(pindex, raw, length, alphaNums);
-                        num *= 62;
-                        num += read_integer(pindex, raw, length, alphaNums);
-                        num *= 62;
-                        num += read_integer(pindex, raw, length, alphaNums);
-                    }
-                    else
-                    {
-                        if ((c == '^'))
-                        {
-                            num = (-1 * read_integer(pindex, raw, length, alphaNums));
-                        }
-                        else
-                        {
-                            // TODO: string.IndexOfChar(c);
-                            num = alphaNums.IndexOf(c.ToString());
-                            if ((num == -1))
-                            {
-                            }
-                        }
-                    }
                 }
             }
             return num;
@@ -8155,30 +7816,21 @@ namespace Interpreter.Vm
                     {
                         intType = 1;
                     }
+                    else if (("IMGSH" == type || "IMG" == type))
+                    {
+                        intType = 2;
+                    }
+                    else if ("SND" == type)
+                    {
+                        intType = 3;
+                    }
+                    else if ("TTF" == type)
+                    {
+                        intType = 4;
+                    }
                     else
                     {
-                        if (("IMGSH" == type || "IMG" == type))
-                        {
-                            intType = 2;
-                        }
-                        else
-                        {
-                            if ("SND" == type)
-                            {
-                                intType = 3;
-                            }
-                            else
-                            {
-                                if ("TTF" == type)
-                                {
-                                    intType = 4;
-                                }
-                                else
-                                {
-                                    intType = 5;
-                                }
-                            }
-                        }
+                        intType = 5;
                     }
                     userPath = stringDecode(itemData[1]);
                     internalPath = itemData[2];
@@ -8248,13 +7900,10 @@ namespace Interpreter.Vm
                 }
                 runShutdownHandlers(vm);
             }
-            else
+            else if ((status == 3))
             {
-                if ((status == 3))
-                {
-                    printToStdOut(vm.environment.stacktracePrefix, result.errorMessage);
-                    runShutdownHandlers(vm);
-                }
+                printToStdOut(vm.environment.stacktracePrefix, result.errorMessage);
+                runShutdownHandlers(vm);
             }
             if ((executionContextId == 0))
             {

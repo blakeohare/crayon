@@ -139,16 +139,12 @@ var lib_xml_parseElement = function(vm, xml, indexPtr, output, entityLookup, str
 		while (!lib_xml_popIfPresent(xml, indexPtr, close)) {
 			if (lib_xml_isNext(xml, indexPtr, "</")) {
 				error = lib_xml_error(xml, (indexPtr[0] - 2), "Unexpected close tag.");
+			} else if (lib_xml_isNext(xml, indexPtr, "<!--")) {
+				error = lib_xml_skipComment(xml, indexPtr);
+			} else if (lib_xml_isNext(xml, indexPtr, "<")) {
+				error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
 			} else {
-				if (lib_xml_isNext(xml, indexPtr, "<!--")) {
-					error = lib_xml_skipComment(xml, indexPtr);
-				} else {
-					if (lib_xml_isNext(xml, indexPtr, "<")) {
-						error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
-					} else {
-						error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
-					}
-				}
+				error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
 			}
 			if (((error == null) && (indexPtr[0] >= length))) {
 				error = lib_xml_error(xml, length, "Unexpected EOF. Unclosed tag.");
@@ -220,10 +216,8 @@ var lib_xml_parseText = function(vm, xml, indexPtr, output, entityLookup) {
 		c = xml.charAt(i);
 		if ((c == "<")) {
 			break;
-		} else {
-			if ((c == "&")) {
-				ampFound = true;
-			}
+		} else if ((c == "&")) {
+			ampFound = true;
 		}
 		i += 1;
 	}
@@ -282,10 +276,8 @@ var lib_xml_popString = function(vm, xml, indexPtr, attributeValueOut, entityLoo
 			if ((stringEnders[c] !== undefined)) {
 				end = i;
 				break;
-			} else {
-				if ((c == ("&").charCodeAt(0))) {
-					ampFound = true;
-				}
+			} else if ((c == ("&").charCodeAt(0))) {
+				ampFound = true;
 			}
 			i += 1;
 		}
@@ -298,10 +290,8 @@ var lib_xml_popString = function(vm, xml, indexPtr, attributeValueOut, entityLoo
 				end = i;
 				i += 1;
 				break;
-			} else {
-				if ((c == ("&").charCodeAt(0))) {
-					ampFound = true;
-				}
+			} else if ((c == ("&").charCodeAt(0))) {
+				ampFound = true;
 			}
 			i += 1;
 		}

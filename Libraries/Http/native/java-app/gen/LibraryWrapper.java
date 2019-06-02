@@ -31,10 +31,8 @@ public final class LibraryWrapper {
             return vm.globalFalse;
           }
           int1 += 256;
-        } else {
-          if ((int1 >= 256)) {
-            return vm.globalFalse;
-          }
+        } else if ((int1 >= 256)) {
+          return vm.globalFalse;
         }
         intArray1[i] = int1;
       }
@@ -121,14 +119,12 @@ public final class LibraryWrapper {
     int bodyState = 0;
     if ((body.type == 5)) {
       bodyState = 1;
+    } else if ((body.type == 8)) {
+      objInstance1 = ((ObjectInstance) bodyRawObject);
+      bodyRawObject = objInstance1.nativeData[0];
+      bodyState = 2;
     } else {
-      if ((body.type == 8)) {
-        objInstance1 = ((ObjectInstance) bodyRawObject);
-        bodyRawObject = objInstance1.nativeData[0];
-        bodyState = 2;
-      } else {
-        bodyRawObject = null;
-      }
+      bodyRawObject = null;
     }
     boolean getResponseAsText = (((int) args[6].internalValue) == 1);
     if (((boolean) args[1].internalValue)) {

@@ -155,12 +155,10 @@ public final class LibraryWrapper {
       if ((byteArrayRef == null)) {
         return ints[6];
       }
+    } else if ((args[2].type != 5)) {
+      return ints[6];
     } else {
-      if ((args[2].type != 5)) {
-        return ints[6];
-      } else {
-        contentString = ((String) args[2].internalValue);
-      }
+      contentString = ((String) args[2].internalValue);
     }
     if ((statusCode == 0)) {
       statusCode = FileIOHelper.fileWrite(((String) args[1].internalValue), format, contentString, byteArrayRef);

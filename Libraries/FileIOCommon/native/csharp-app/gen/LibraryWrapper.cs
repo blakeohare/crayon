@@ -196,16 +196,13 @@ namespace Interpreter.Libraries.FileIOCommon
                     return ints[6];
                 }
             }
+            else if ((args[2].type != 5))
+            {
+                return ints[6];
+            }
             else
             {
-                if ((args[2].type != 5))
-                {
-                    return ints[6];
-                }
-                else
-                {
-                    contentString = (string)args[2].internalValue;
-                }
+                contentString = (string)args[2].internalValue;
             }
             if ((statusCode == 0))
             {

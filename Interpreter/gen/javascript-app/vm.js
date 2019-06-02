@@ -96,33 +96,21 @@ var addLiteralImpl = function(vm, row, stringArg) {
 	var type = row[0];
 	if ((type == 1)) {
 		vm[4][4].push(g[0]);
-	} else {
-		if ((type == 2)) {
-			vm[4][4].push(buildBoolean(g, (row[1] == 1)));
-		} else {
-			if ((type == 3)) {
-				vm[4][4].push(buildInteger(g, row[1]));
-			} else {
-				if ((type == 4)) {
-					vm[4][4].push(buildFloat(g, parseFloat(stringArg)));
-				} else {
-					if ((type == 5)) {
-						vm[4][4].push(buildCommonString(g, stringArg));
-					} else {
-						if ((type == 9)) {
-							var index = vm[4][4].length;
-							vm[4][4].push(buildCommonString(g, stringArg));
-							vm[4][20][stringArg] = index;
-						} else {
-							if ((type == 10)) {
-								var cv = [false, row[1]];
-								vm[4][4].push([10, cv]);
-							}
-						}
-					}
-				}
-			}
-		}
+	} else if ((type == 2)) {
+		vm[4][4].push(buildBoolean(g, (row[1] == 1)));
+	} else if ((type == 3)) {
+		vm[4][4].push(buildInteger(g, row[1]));
+	} else if ((type == 4)) {
+		vm[4][4].push(buildFloat(g, parseFloat(stringArg)));
+	} else if ((type == 5)) {
+		vm[4][4].push(buildCommonString(g, stringArg));
+	} else if ((type == 9)) {
+		var index = vm[4][4].length;
+		vm[4][4].push(buildCommonString(g, stringArg));
+		vm[4][20][stringArg] = index;
+	} else if ((type == 10)) {
+		var cv = [false, row[1]];
+		vm[4][4].push([10, cv]);
 	}
 	return 0;
 };
@@ -179,10 +167,8 @@ var buildInteger = function(g, num) {
 		if ((num > -257)) {
 			return g[10][-num];
 		}
-	} else {
-		if ((num < 2049)) {
-			return g[9][num];
-		}
+	} else if ((num < 2049)) {
+		return g[9][num];
 	}
 	return [3, num];
 };
@@ -712,11 +698,9 @@ var doEqualityComparisonAndReturnCode = function(a, b) {
 		if ((a[1] == b[1])) {
 			return 1;
 		}
-	} else {
-		if (((leftType == 4) && (rightType == 3))) {
-			if ((a[1] == b[1])) {
-				return 1;
-			}
+	} else if (((leftType == 4) && (rightType == 3))) {
+		if ((a[1] == b[1])) {
+			return 1;
 		}
 	}
 	return 0;
@@ -843,10 +827,8 @@ var fixFuzzyFloatPrecision = function(x) {
 		if ((u > 0.9999999999)) {
 			roundDown = true;
 			x += 0.1;
-		} else {
-			if ((u < 0.00000000002250000000)) {
-				roundDown = true;
-			}
+		} else if ((u < 0.00000000002250000000)) {
+			roundDown = true;
 		}
 		if (roundDown) {
 			x = (Math.floor(x) + 0.0);
@@ -1187,20 +1169,16 @@ var initializeByteCode = function(raw) {
 		stringPresent = true;
 		if ((c == "!")) {
 			argc = 1;
+		} else if ((c == "&")) {
+			argc = 2;
+		} else if ((c == "*")) {
+			argc = 3;
 		} else {
-			if ((c == "&")) {
-				argc = 2;
-			} else {
-				if ((c == "*")) {
-					argc = 3;
-				} else {
-					if ((c != "~")) {
-						stringPresent = false;
-						index[0] = (index[0] - 1);
-					}
-					argc = read_integer(index, raw, length, alphaNums);
-				}
+			if ((c != "~")) {
+				stringPresent = false;
+				index[0] = (index[0] - 1);
 			}
+			argc = read_integer(index, raw, length, alphaNums);
 		}
 		iarglist = PST$createNewArray((argc - 1));
 		j = 0;
@@ -1411,23 +1389,15 @@ var initializeFunction = function(vm, args, currentPc, stringArg) {
 		var name = vm[4][0][nameId];
 		if ("_LIB_CORE_list_filter" == name) {
 			vm[4][15][0] = functionId;
-		} else {
-			if ("_LIB_CORE_list_map" == name) {
-				vm[4][15][1] = functionId;
-			} else {
-				if ("_LIB_CORE_list_sort_by_key" == name) {
-					vm[4][15][2] = functionId;
-				} else {
-					if ("_LIB_CORE_invoke" == name) {
-						vm[4][15][3] = functionId;
-					} else {
-						if ("_LIB_CORE_generateException" == name) {
-							var mn = vm[4][19];
-							mn[1] = functionId;
-						}
-					}
-				}
-			}
+		} else if ("_LIB_CORE_list_map" == name) {
+			vm[4][15][1] = functionId;
+		} else if ("_LIB_CORE_list_sort_by_key" == name) {
+			vm[4][15][2] = functionId;
+		} else if ("_LIB_CORE_invoke" == name) {
+			vm[4][15][3] = functionId;
+		} else if ("_LIB_CORE_generateException" == name) {
+			var mn = vm[4][19];
+			mn[1] = functionId;
 		}
 	}
 	return 0;
@@ -1679,12 +1649,10 @@ var interpretImpl = function(vm, executionContextId) {
 						if (!hasInterrupt) {
 							if ((i >= list1[1])) {
 								hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
-							} else {
+							} else if ((i < 0)) {
+								i += list1[1];
 								if ((i < 0)) {
-									i += list1[1];
-									if ((i < 0)) {
-										hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
-									}
+									hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
 								}
 							}
 							if (!hasInterrupt) {
@@ -1694,85 +1662,75 @@ var interpretImpl = function(vm, executionContextId) {
 					} else {
 						hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.");
 					}
-				} else {
-					if ((type == 7)) {
-						dictImpl = root[1];
-						if ((dictImpl[3] != null)) {
-							value3 = canAssignTypeToGeneric(vm, value, dictImpl[3], 0);
-							if ((value3 == null)) {
-								hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.");
-							} else {
-								value = value3;
-							}
-						}
-						keyType = value2[0];
-						if ((keyType == 3)) {
-							intKey = value2[1];
+				} else if ((type == 7)) {
+					dictImpl = root[1];
+					if ((dictImpl[3] != null)) {
+						value3 = canAssignTypeToGeneric(vm, value, dictImpl[3], 0);
+						if ((value3 == null)) {
+							hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.");
 						} else {
-							if ((keyType == 5)) {
-								stringKey = value2[1];
-							} else {
-								if ((keyType == 8)) {
-									objInstance1 = value2[1];
-									intKey = objInstance1[1];
-								} else {
-									hasInterrupt = EX_InvalidArgument(ec, "Invalid key for a dictionary.");
-								}
-							}
+							value = value3;
 						}
-						if (!hasInterrupt) {
-							bool2 = (dictImpl[0] == 0);
-							if ((dictImpl[1] != keyType)) {
-								if ((dictImpl[3] != null)) {
-									string1 = ["Cannot assign a key of type ", typeToStringFromValue(vm, value2), " to a dictionary that requires key types of ", dictKeyInfoToString(vm, dictImpl), "."].join('');
-									hasInterrupt = EX_InvalidKey(ec, string1);
-								} else {
-									if (!bool2) {
-										hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
-									}
-								}
-							} else {
-								if (((keyType == 8) && (dictImpl[2] > 0) && (objInstance1[0] != dictImpl[2]))) {
-									if (isClassASubclassOf(vm, objInstance1[0], dictImpl[2])) {
-										hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.");
-									}
-								}
-							}
-						}
-						if (!hasInterrupt) {
-							if ((keyType == 5)) {
-								int1 = dictImpl[5][stringKey];
-								if (int1 === undefined) int1 = -1;
-								if ((int1 == -1)) {
-									dictImpl[5][stringKey] = dictImpl[0];
-									dictImpl[0] += 1;
-									dictImpl[6].push(value2);
-									dictImpl[7].push(value);
-									if (bool2) {
-										dictImpl[1] = keyType;
-									}
-								} else {
-									dictImpl[7][int1] = value;
-								}
-							} else {
-								int1 = dictImpl[4][intKey];
-								if (int1 === undefined) int1 = -1;
-								if ((int1 == -1)) {
-									dictImpl[4][intKey] = dictImpl[0];
-									dictImpl[0] += 1;
-									dictImpl[6].push(value2);
-									dictImpl[7].push(value);
-									if (bool2) {
-										dictImpl[1] = keyType;
-									}
-								} else {
-									dictImpl[7][int1] = value;
-								}
-							}
-						}
-					} else {
-						hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.");
 					}
+					keyType = value2[0];
+					if ((keyType == 3)) {
+						intKey = value2[1];
+					} else if ((keyType == 5)) {
+						stringKey = value2[1];
+					} else if ((keyType == 8)) {
+						objInstance1 = value2[1];
+						intKey = objInstance1[1];
+					} else {
+						hasInterrupt = EX_InvalidArgument(ec, "Invalid key for a dictionary.");
+					}
+					if (!hasInterrupt) {
+						bool2 = (dictImpl[0] == 0);
+						if ((dictImpl[1] != keyType)) {
+							if ((dictImpl[3] != null)) {
+								string1 = ["Cannot assign a key of type ", typeToStringFromValue(vm, value2), " to a dictionary that requires key types of ", dictKeyInfoToString(vm, dictImpl), "."].join('');
+								hasInterrupt = EX_InvalidKey(ec, string1);
+							} else if (!bool2) {
+								hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
+							}
+						} else if (((keyType == 8) && (dictImpl[2] > 0) && (objInstance1[0] != dictImpl[2]))) {
+							if (isClassASubclassOf(vm, objInstance1[0], dictImpl[2])) {
+								hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.");
+							}
+						}
+					}
+					if (!hasInterrupt) {
+						if ((keyType == 5)) {
+							int1 = dictImpl[5][stringKey];
+							if (int1 === undefined) int1 = -1;
+							if ((int1 == -1)) {
+								dictImpl[5][stringKey] = dictImpl[0];
+								dictImpl[0] += 1;
+								dictImpl[6].push(value2);
+								dictImpl[7].push(value);
+								if (bool2) {
+									dictImpl[1] = keyType;
+								}
+							} else {
+								dictImpl[7][int1] = value;
+							}
+						} else {
+							int1 = dictImpl[4][intKey];
+							if (int1 === undefined) int1 = -1;
+							if ((int1 == -1)) {
+								dictImpl[4][intKey] = dictImpl[0];
+								dictImpl[0] += 1;
+								dictImpl[6].push(value2);
+								dictImpl[7].push(value);
+								if (bool2) {
+									dictImpl[1] = keyType;
+								}
+							} else {
+								dictImpl[7][int1] = value;
+							}
+						}
+					}
+				} else {
+					hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.");
 				}
 				if (bool1) {
 					valueStack[valueStackSize] = value;
@@ -1879,29 +1837,23 @@ var interpretImpl = function(vm, executionContextId) {
 						} else {
 							hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
 						}
-					} else {
-						if ((int1 < -1)) {
-							string1 = identifiers[row[0]];
-							if ((int1 == -2)) {
-								string2 = "private";
-							} else {
-								if ((int1 == -3)) {
-									string2 = "internal";
-								} else {
-									string2 = "protected";
-								}
-							}
-							hasInterrupt = EX_UnknownField(ec, ["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."].join(''));
+					} else if ((int1 < -1)) {
+						string1 = identifiers[row[0]];
+						if ((int1 == -2)) {
+							string2 = "private";
+						} else if ((int1 == -3)) {
+							string2 = "internal";
 						} else {
-							hasInterrupt = EX_InvalidAssignment(ec, ["'", classInfo[16], "' instances do not have a field called '", metadata[0][row[0]], "'"].join(''));
+							string2 = "protected";
 						}
-					}
-				} else {
-					if ((value2[0] == 1)) {
-						hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.");
+						hasInterrupt = EX_UnknownField(ec, ["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."].join(''));
 					} else {
-						hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
+						hasInterrupt = EX_InvalidAssignment(ec, ["'", classInfo[16], "' instances do not have a field called '", metadata[0][row[0]], "'"].join(''));
 					}
+				} else if ((value2[0] == 1)) {
+					hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.");
+				} else {
+					hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
 				}
 				if ((row[1] == 1)) {
 					valueStack[valueStackSize++] = value;
@@ -2016,12 +1968,10 @@ var interpretImpl = function(vm, executionContextId) {
 							} else {
 								value = [3, int1];
 							}
+						} else if ((int1 < 2049)) {
+							value = INTEGER_POSITIVE_CACHE[int1];
 						} else {
-							if ((int1 < 2049)) {
-								value = INTEGER_POSITIVE_CACHE[int1];
-							} else {
-								value = [3, int1];
-							}
+							value = [3, int1];
 						}
 						break;
 					case 509:
@@ -2033,12 +1983,10 @@ var interpretImpl = function(vm, executionContextId) {
 							} else {
 								value = [3, int1];
 							}
+						} else if ((int1 < 2049)) {
+							value = INTEGER_POSITIVE_CACHE[int1];
 						} else {
-							if ((int1 < 2049)) {
-								value = INTEGER_POSITIVE_CACHE[int1];
-							} else {
-								value = [3, int1];
-							}
+							value = [3, int1];
 						}
 						break;
 					case 520:
@@ -2050,12 +1998,10 @@ var interpretImpl = function(vm, executionContextId) {
 							} else {
 								value = [3, int1];
 							}
+						} else if ((int1 < 2049)) {
+							value = INTEGER_POSITIVE_CACHE[int1];
 						} else {
-							if ((int1 < 2049)) {
-								value = INTEGER_POSITIVE_CACHE[int1];
-							} else {
-								value = [3, int1];
-							}
+							value = [3, int1];
 						}
 						break;
 					case 531:
@@ -2064,34 +2010,28 @@ var interpretImpl = function(vm, executionContextId) {
 						int2 = rightValue[1];
 						if ((int2 == 0)) {
 							hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
+						} else if ((int1 == 0)) {
+							value = VALUE_INT_ZERO;
 						} else {
-							if ((int1 == 0)) {
-								value = VALUE_INT_ZERO;
+							if (((int1 % int2) == 0)) {
+								int3 = Math.floor(int1 / int2);
+							} else if ((((int1 < 0)) != ((int2 < 0)))) {
+								float1 = (1 + ((-1.0 * int1) / int2));
+								float1 -= (float1 % 1.0);
+								int3 = Math.floor((-float1));
 							} else {
-								if (((int1 % int2) == 0)) {
-									int3 = Math.floor(int1 / int2);
+								int3 = Math.floor(int1 / int2);
+							}
+							if ((int3 < 0)) {
+								if ((int3 > -257)) {
+									value = INTEGER_NEGATIVE_CACHE[-int3];
 								} else {
-									if ((((int1 < 0)) != ((int2 < 0)))) {
-										float1 = (1 + ((-1.0 * int1) / int2));
-										float1 -= (float1 % 1.0);
-										int3 = Math.floor((-float1));
-									} else {
-										int3 = Math.floor(int1 / int2);
-									}
+									value = [3, int3];
 								}
-								if ((int3 < 0)) {
-									if ((int3 > -257)) {
-										value = INTEGER_NEGATIVE_CACHE[-int3];
-									} else {
-										value = [3, int3];
-									}
-								} else {
-									if ((int3 < 2049)) {
-										value = INTEGER_POSITIVE_CACHE[int3];
-									} else {
-										value = [3, int3];
-									}
-								}
+							} else if ((int3 < 2049)) {
+								value = INTEGER_POSITIVE_CACHE[int3];
+							} else {
+								value = [3, int3];
 							}
 						}
 						break;
@@ -2108,12 +2048,10 @@ var interpretImpl = function(vm, executionContextId) {
 						float1 = (leftValue[1] + rightValue[1]);
 						if ((float1 == 0)) {
 							value = VALUE_FLOAT_ZERO;
+						} else if ((float1 == 1)) {
+							value = VALUE_FLOAT_ONE;
 						} else {
-							if ((float1 == 1)) {
-								value = VALUE_FLOAT_ONE;
-							} else {
-								value = [4, float1];
-							}
+							value = [4, float1];
 						}
 						break;
 					case 510:
@@ -2129,12 +2067,10 @@ var interpretImpl = function(vm, executionContextId) {
 						float1 = (leftValue[1] - rightValue[1]);
 						if ((float1 == 0)) {
 							value = VALUE_FLOAT_ZERO;
+						} else if ((float1 == 1)) {
+							value = VALUE_FLOAT_ONE;
 						} else {
-							if ((float1 == 1)) {
-								value = VALUE_FLOAT_ONE;
-							} else {
-								value = [4, float1];
-							}
+							value = [4, float1];
 						}
 						break;
 					case 685:
@@ -2380,12 +2316,10 @@ var interpretImpl = function(vm, executionContextId) {
 				value = valueStack[(valueStackSize - 1)];
 				if ((value[0] != 2)) {
 					hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
+				} else if (value[1]) {
+					valueStack[(valueStackSize - 1)] = VALUE_FALSE;
 				} else {
-					if (value[1]) {
-						valueStack[(valueStackSize - 1)] = VALUE_FALSE;
-					} else {
-						valueStack[(valueStackSize - 1)] = VALUE_TRUE;
-					}
+					valueStack[(valueStackSize - 1)] = VALUE_TRUE;
 				}
 				break;
 			case 11:
@@ -2435,18 +2369,16 @@ var interpretImpl = function(vm, executionContextId) {
 						value = valueStack[valueStackSize];
 						if ((value[0] == 1)) {
 							argCount = 0;
-						} else {
-							if ((value[0] == 6)) {
-								list1 = value[1];
-								argCount = list1[1];
-								i = (argCount - 1);
-								while ((i >= 0)) {
-									funcArgs[i] = list1[2][i];
-									i -= 1;
-								}
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
+						} else if ((value[0] == 6)) {
+							list1 = value[1];
+							argCount = list1[1];
+							i = (argCount - 1);
+							while ((i >= 0)) {
+								funcArgs[i] = list1[2][i];
+								i -= 1;
 							}
+						} else {
+							hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
 						}
 					} else {
 						i = (argCount - 1);
@@ -2467,80 +2399,76 @@ var interpretImpl = function(vm, executionContextId) {
 									functionId = classInfo[9][int2];
 								}
 							}
-						} else {
-							if ((type == 5)) {
-								// field invocation;
-								valueStackSize -= 1;
-								value = valueStack[valueStackSize];
-								localeId = row[5];
-								switch (value[0]) {
-									case 1:
-										hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
-										break;
-									case 8:
-										// field invoked on an object instance.;
-										objInstance1 = value[1];
-										int1 = objInstance1[0];
-										classInfo = classTable[int1];
-										intIntDict1 = classInfo[14];
-										int1 = ((row[4] * magicNumbers[2]) + row[5]);
-										i = intIntDict1[int1];
-										if (i === undefined) i = -1;
-										if ((i != -1)) {
-											int1 = intIntDict1[int1];
-											functionId = classInfo[9][int1];
-											if ((functionId > 0)) {
-												type = 3;
-											} else {
-												value = objInstance1[2][int1];
-												type = 4;
-												valueStack[valueStackSize] = value;
-												valueStackSize += 1;
-											}
+						} else if ((type == 5)) {
+							// field invocation;
+							valueStackSize -= 1;
+							value = valueStack[valueStackSize];
+							localeId = row[5];
+							switch (value[0]) {
+								case 1:
+									hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
+									break;
+								case 8:
+									// field invoked on an object instance.;
+									objInstance1 = value[1];
+									int1 = objInstance1[0];
+									classInfo = classTable[int1];
+									intIntDict1 = classInfo[14];
+									int1 = ((row[4] * magicNumbers[2]) + row[5]);
+									i = intIntDict1[int1];
+									if (i === undefined) i = -1;
+									if ((i != -1)) {
+										int1 = intIntDict1[int1];
+										functionId = classInfo[9][int1];
+										if ((functionId > 0)) {
+											type = 3;
 										} else {
-											hasInterrupt = EX_UnknownField(ec, "Unknown field.");
+											value = objInstance1[2][int1];
+											type = 4;
+											valueStack[valueStackSize] = value;
+											valueStackSize += 1;
 										}
-										break;
-									case 10:
-										// field invocation on a class object instance.;
-										functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId);
-										if ((functionId < 0)) {
-											hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.");
-										} else {
-											functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId);
-											if ((functionId < 0)) {
-												hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value[0]) + " does not have that method.");
-											} else {
-												if ((globalNameIdToPrimitiveMethodName[classId] == 8)) {
-													type = 6;
-													classValue = value[1];
-													if (classValue[0]) {
-														hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.");
-													} else {
-														classId = classValue[1];
-														if (!returnValueUsed) {
-															hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
-														} else {
-															classInfo = metadata[9][classId];
-															functionId = classInfo[7];
-														}
-													}
-												} else {
-													type = 9;
-												}
-											}
-										}
-										break;
-									default:
-										// primitive method suspected.;
+									} else {
+										hasInterrupt = EX_UnknownField(ec, "Unknown field.");
+									}
+									break;
+								case 10:
+									// field invocation on a class object instance.;
+									functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId);
+									if ((functionId < 0)) {
+										hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.");
+									} else {
 										functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId);
 										if ((functionId < 0)) {
 											hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value[0]) + " does not have that method.");
+										} else if ((globalNameIdToPrimitiveMethodName[classId] == 8)) {
+											type = 6;
+											classValue = value[1];
+											if (classValue[0]) {
+												hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.");
+											} else {
+												classId = classValue[1];
+												if (!returnValueUsed) {
+													hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
+												} else {
+													classInfo = metadata[9][classId];
+													functionId = classInfo[7];
+												}
+											}
 										} else {
 											type = 9;
 										}
-										break;
-								}
+									}
+									break;
+								default:
+									// primitive method suspected.;
+									functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId);
+									if ((functionId < 0)) {
+										hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value[0]) + " does not have that method.");
+									} else {
+										type = 9;
+									}
+									break;
 							}
 						}
 					}
@@ -2602,12 +2530,10 @@ var interpretImpl = function(vm, executionContextId) {
 											value2 = funcArgs[0];
 											if ((value2[0] != 5)) {
 												hasInterrupt = EX_InvalidArgument(ec, "string contains method requires another string as input.");
+											} else if ((string1.indexOf(value2[1]) != -1)) {
+												output = VALUE_TRUE;
 											} else {
-												if ((string1.indexOf(value2[1]) != -1)) {
-													output = VALUE_TRUE;
-												} else {
-													output = VALUE_FALSE;
-												}
+												output = VALUE_FALSE;
 											}
 										}
 										break;
@@ -2618,12 +2544,10 @@ var interpretImpl = function(vm, executionContextId) {
 											value2 = funcArgs[0];
 											if ((value2[0] != 5)) {
 												hasInterrupt = EX_InvalidArgument(ec, "string endsWith method requires another string as input.");
+											} else if (PST$stringEndsWith(string1, value2[1])) {
+												output = VALUE_TRUE;
 											} else {
-												if (PST$stringEndsWith(string1, value2[1])) {
-													output = VALUE_TRUE;
-												} else {
-													output = VALUE_FALSE;
-												}
+												output = VALUE_FALSE;
 											}
 										}
 										break;
@@ -2634,20 +2558,16 @@ var interpretImpl = function(vm, executionContextId) {
 											value2 = funcArgs[0];
 											if ((value2[0] != 5)) {
 												hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.");
+											} else if ((argCount == 1)) {
+												output = buildInteger(globals, string1.indexOf(value2[1]));
+											} else if ((funcArgs[1][0] != 3)) {
+												hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as its second argument.");
 											} else {
-												if ((argCount == 1)) {
-													output = buildInteger(globals, string1.indexOf(value2[1]));
+												int1 = funcArgs[1][1];
+												if (((int1 < 0) || (int1 >= string1.length))) {
+													hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds.");
 												} else {
-													if ((funcArgs[1][0] != 3)) {
-														hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as its second argument.");
-													} else {
-														int1 = funcArgs[1][1];
-														if (((int1 < 0) || (int1 >= string1.length))) {
-															hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds.");
-														} else {
-															output = buildInteger(globals, string1.indexOf(value2[1], int1));
-														}
-													}
+													output = buildInteger(globals, string1.indexOf(value2[1], int1));
 												}
 											}
 										}
@@ -2721,12 +2641,10 @@ var interpretImpl = function(vm, executionContextId) {
 											value2 = funcArgs[0];
 											if ((value2[0] != 5)) {
 												hasInterrupt = EX_InvalidArgument(ec, "string startsWith method requires another string as input.");
+											} else if ((string1.indexOf(value2[1]) == 0)) {
+												output = VALUE_TRUE;
 											} else {
-												if ((string1.indexOf(value2[1]) == 0)) {
-													output = VALUE_TRUE;
-												} else {
-													output = VALUE_FALSE;
-												}
+												output = VALUE_FALSE;
 											}
 										}
 										break;
@@ -2792,11 +2710,9 @@ var interpretImpl = function(vm, executionContextId) {
 									case 4:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
-										} else {
-											if ((list1[1] > 0)) {
-												PST$clearList(list1[2]);
-												list1[1] = 0;
-											}
+										} else if ((list1[1] > 0)) {
+											PST$clearList(list1[2]);
+											list1[1] = 0;
 										}
 										break;
 									case 5:
@@ -2907,13 +2823,11 @@ var interpretImpl = function(vm, executionContextId) {
 													if ((int1 == _len)) {
 														list1[2].push(value2);
 														list1[1] += 1;
+													} else if (((int1 < 0) || (int1 >= _len))) {
+														hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
 													} else {
-														if (((int1 < 0) || (int1 >= _len))) {
-															hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
-														} else {
-															list1[2].splice(int1, 0, value2);
-															list1[1] += 1;
-														}
+														list1[2].splice(int1, 0, value2);
+														list1[1] += 1;
 													}
 												}
 											}
@@ -3029,19 +2943,17 @@ var interpretImpl = function(vm, executionContextId) {
 											if ((PST$intBuffer16[0] > 0)) {
 												hasInterrupt = EX_InvalidArgument(ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 											}
-										} else {
-											if ((argCount == 1)) {
-												value2 = funcArgs[0];
-												if ((value2[0] == 9)) {
-													primitiveMethodToCoreLibraryFallback = true;
-													functionId = metadata[15][2];
-													funcArgs[1] = value;
-													argCount = 2;
-												} else {
-													hasInterrupt = EX_InvalidArgument(ec, "list.sort(get_key_function) requires a function pointer as its argument.");
-												}
-												output = null;
+										} else if ((argCount == 1)) {
+											value2 = funcArgs[0];
+											if ((value2[0] == 9)) {
+												primitiveMethodToCoreLibraryFallback = true;
+												functionId = metadata[15][2];
+												funcArgs[1] = value;
+												argCount = 2;
+											} else {
+												hasInterrupt = EX_InvalidArgument(ec, "list.sort(get_key_function) requires a function pointer as its argument.");
 											}
+											output = null;
 										}
 										break;
 									default:
@@ -3056,14 +2968,12 @@ var interpretImpl = function(vm, executionContextId) {
 									case 4:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
-										} else {
-											if ((dictImpl[0] > 0)) {
-												dictImpl[4] = {};
-												dictImpl[5] = {};
-												PST$clearList(dictImpl[6]);
-												PST$clearList(dictImpl[7]);
-												dictImpl[0] = 0;
-											}
+										} else if ((dictImpl[0] > 0)) {
+											dictImpl[4] = {};
+											dictImpl[5] = {};
+											PST$clearList(dictImpl[6]);
+											PST$clearList(dictImpl[7]);
+											dictImpl[0] = 0;
 										}
 										break;
 									case 5:
@@ -3164,27 +3074,19 @@ var interpretImpl = function(vm, executionContextId) {
 												if ((dictImpl2[0] > 0)) {
 													if ((dictImpl[0] == 0)) {
 														value[1] = cloneDictionary(dictImpl2, null);
+													} else if ((dictImpl2[1] != dictImpl[1])) {
+														hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.");
+													} else if (((dictImpl2[1] == 8) && (dictImpl2[2] != dictImpl[2]) && (dictImpl[2] != 0) && !isClassASubclassOf(vm, dictImpl2[2], dictImpl[2]))) {
+														hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
 													} else {
-														if ((dictImpl2[1] != dictImpl[1])) {
-															hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.");
-														} else {
-															if (((dictImpl2[1] == 8) && (dictImpl2[2] != dictImpl[2]) && (dictImpl[2] != 0) && !isClassASubclassOf(vm, dictImpl2[2], dictImpl[2]))) {
-																hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
-															} else {
-																if ((dictImpl[3] == null)) {
-																} else {
-																	if ((dictImpl2[3] == null)) {
-																		hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.");
-																	} else {
-																		if (!canAssignGenericToGeneric(vm, dictImpl2[3], 0, dictImpl[3], 0, intBuffer)) {
-																			hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.");
-																		}
-																	}
-																}
-																if (!hasInterrupt) {
-																	cloneDictionary(dictImpl2, dictImpl);
-																}
-															}
+														if ((dictImpl[3] == null)) {
+														} else if ((dictImpl2[3] == null)) {
+															hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.");
+														} else if (!canAssignGenericToGeneric(vm, dictImpl2[3], 0, dictImpl[3], 0, intBuffer)) {
+															hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.");
+														}
+														if (!hasInterrupt) {
+															cloneDictionary(dictImpl2, dictImpl);
 														}
 													}
 												}
@@ -3304,12 +3206,10 @@ var interpretImpl = function(vm, executionContextId) {
 									case 15:
 										if ((argCount == 1)) {
 											funcArgs[1] = funcArgs[0];
+										} else if ((argCount == 0)) {
+											funcArgs[1] = VALUE_NULL;
 										} else {
-											if ((argCount == 0)) {
-												funcArgs[1] = VALUE_NULL;
-											} else {
-												hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.");
-											}
+											hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.");
 										}
 										funcArgs[0] = value;
 										argCount = 2;
@@ -3513,22 +3413,18 @@ var interpretImpl = function(vm, executionContextId) {
 								} else {
 									value2 = [3, i];
 								}
+							} else if ((i < 2049)) {
+								value2 = globals[9][i];
 							} else {
-								if ((i < 2049)) {
-									value2 = globals[9][i];
-								} else {
-									value2 = [3, i];
-								}
+								value2 = [3, i];
 							}
 						}
-					} else {
-						if (((value[0] == 3) && (row[0] == 4))) {
-							int1 = value[1];
-							if ((int1 == 0)) {
-								value2 = VALUE_FLOAT_ZERO;
-							} else {
-								value2 = [4, (0.0 + int1)];
-							}
+					} else if (((value[0] == 3) && (row[0] == 4))) {
+						int1 = value[1];
+						if ((int1 == 0)) {
+							value2 = VALUE_FLOAT_ZERO;
+						} else {
+							value2 = [4, (0.0 + int1)];
 						}
 					}
 					if ((value2 != null)) {
@@ -3678,16 +3574,14 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[valueStackSize];
 						if ((arg1[0] != 2)) {
 							hasInterrupt = EX_InvalidArgument(ec, "Assertion expression must be a boolean.");
+						} else if (arg1[1]) {
+							output = VALUE_NULL;
 						} else {
-							if (arg1[1]) {
-								output = VALUE_NULL;
-							} else {
-								string1 = valueToString(vm, arg2);
-								if (arg3[1]) {
-									string1 = "Assertion failed: " + string1;
-								}
-								hasInterrupt = EX_AssertionFailed(ec, string1);
+							string1 = valueToString(vm, arg2);
+							if (arg3[1]) {
+								string1 = "Assertion failed: " + string1;
 							}
+							hasInterrupt = EX_AssertionFailed(ec, string1);
 						}
 						break;
 					case 8:
@@ -3743,14 +3637,12 @@ var interpretImpl = function(vm, executionContextId) {
 							if ((arg1[1] < 0)) {
 								output = buildInteger(globals, -arg1[1]);
 							}
-						} else {
-							if ((arg1[0] == 4)) {
-								if ((arg1[1] < 0)) {
-									output = buildFloat(globals, -arg1[1]);
-								}
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
+						} else if ((arg1[0] == 4)) {
+							if ((arg1[1] < 0)) {
+								output = buildFloat(globals, -arg1[1]);
 							}
+						} else {
+							hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
 						}
 						break;
 					case 13:
@@ -3758,12 +3650,10 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.");
 						}
 						if (!hasInterrupt) {
 							if (((float1 < -1) || (float1 > 1))) {
@@ -3778,12 +3668,10 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number as input.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number as input.");
 						}
 						if (!hasInterrupt) {
 							if (((float1 < -1) || (float1 > 1))) {
@@ -3801,21 +3689,17 @@ var interpretImpl = function(vm, executionContextId) {
 						bool1 = false;
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if ((arg2[0] == 4)) {
 							float2 = arg2[1];
+						} else if ((arg2[0] == 3)) {
+							float2 = (0.0 + arg2[1]);
 						} else {
-							if ((arg2[0] == 3)) {
-								float2 = (0.0 + arg2[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if (bool1) {
 							hasInterrupt = EX_InvalidArgument(ec, "arctan requires numeric arguments.");
@@ -3829,13 +3713,11 @@ var interpretImpl = function(vm, executionContextId) {
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
 							output = buildFloat(globals, Math.cos(float1));
+						} else if ((arg1[0] == 3)) {
+							int1 = arg1[1];
+							output = buildFloat(globals, Math.cos(int1));
 						} else {
-							if ((arg1[0] == 3)) {
-								int1 = arg1[1];
-								output = buildFloat(globals, Math.cos(int1));
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
 						}
 						break;
 					case 17:
@@ -3847,21 +3729,17 @@ var interpretImpl = function(vm, executionContextId) {
 						bool1 = false;
 						if ((arg2[0] == 4)) {
 							float2 = arg2[1];
+						} else if ((arg2[0] == 3)) {
+							float2 = (0.0 + arg2[1]);
 						} else {
-							if ((arg2[0] == 3)) {
-								float2 = (0.0 + arg2[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if ((arg3[0] == 4)) {
 							float3 = arg3[1];
+						} else if ((arg3[0] == 3)) {
+							float3 = (0.0 + arg3[1]);
 						} else {
-							if ((arg3[0] == 3)) {
-								float3 = (0.0 + arg3[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if ((!bool1 && (float3 < float2))) {
 							float1 = float3;
@@ -3873,25 +3751,19 @@ var interpretImpl = function(vm, executionContextId) {
 						}
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if (bool1) {
 							hasInterrupt = EX_InvalidArgument(ec, "ensureRange requires numeric arguments.");
+						} else if ((float1 < float2)) {
+							output = arg2;
+						} else if ((float1 > float3)) {
+							output = arg3;
 						} else {
-							if ((float1 < float2)) {
-								output = arg2;
-							} else {
-								if ((float1 > float3)) {
-									output = arg3;
-								} else {
-									output = arg1;
-								}
-							}
+							output = arg1;
 						}
 						break;
 					case 18:
@@ -3903,22 +3775,18 @@ var interpretImpl = function(vm, executionContextId) {
 							if ((int1 < 2049)) {
 								if ((int1 >= 0)) {
 									output = INTEGER_POSITIVE_CACHE[int1];
+								} else if ((int1 > -257)) {
+									output = INTEGER_NEGATIVE_CACHE[-int1];
 								} else {
-									if ((int1 > -257)) {
-										output = INTEGER_NEGATIVE_CACHE[-int1];
-									} else {
-										output = [3, int1];
-									}
+									output = [3, int1];
 								}
 							} else {
 								output = [3, int1];
 							}
+						} else if ((arg1[0] == 3)) {
+							output = arg1;
 						} else {
-							if ((arg1[0] == 3)) {
-								output = arg1;
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
 						}
 						break;
 					case 19:
@@ -3929,30 +3797,24 @@ var interpretImpl = function(vm, executionContextId) {
 						bool1 = false;
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if ((arg2[0] == 4)) {
 							float2 = arg2[1];
+						} else if ((arg2[0] == 3)) {
+							float2 = (0.0 + arg2[1]);
 						} else {
-							if ((arg2[0] == 3)) {
-								float2 = (0.0 + arg2[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if (bool1) {
 							hasInterrupt = EX_InvalidArgument(ec, "max requires numeric arguments.");
+						} else if ((float1 >= float2)) {
+							output = arg1;
 						} else {
-							if ((float1 >= float2)) {
-								output = arg1;
-							} else {
-								output = arg2;
-							}
+							output = arg2;
 						}
 						break;
 					case 20:
@@ -3963,30 +3825,24 @@ var interpretImpl = function(vm, executionContextId) {
 						bool1 = false;
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if ((arg2[0] == 4)) {
 							float2 = arg2[1];
+						} else if ((arg2[0] == 3)) {
+							float2 = (0.0 + arg2[1]);
 						} else {
-							if ((arg2[0] == 3)) {
-								float2 = (0.0 + arg2[1]);
-							} else {
-								bool1 = true;
-							}
+							bool1 = true;
 						}
 						if (bool1) {
 							hasInterrupt = EX_InvalidArgument(ec, "min requires numeric arguments.");
+						} else if ((float1 <= float2)) {
+							output = arg1;
 						} else {
-							if ((float1 <= float2)) {
-								output = arg1;
-							} else {
-								output = arg2;
-							}
+							output = arg2;
 						}
 						break;
 					case 21:
@@ -4014,21 +3870,17 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						if ((arg1[0] == 3)) {
 							float1 = (0.0 + (arg1[1]));
+						} else if ((arg1[0] == 4)) {
+							float1 = arg1[1];
 						} else {
-							if ((arg1[0] == 4)) {
-								float1 = arg1[1];
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.");
 						}
 						if ((float1 == 0)) {
 							output = VALUE_INT_ZERO;
+						} else if ((float1 > 0)) {
+							output = VALUE_INT_ONE;
 						} else {
-							if ((float1 > 0)) {
-								output = VALUE_INT_ONE;
-							} else {
-								output = INTEGER_NEGATIVE_CACHE[1];
-							}
+							output = INTEGER_NEGATIVE_CACHE[1];
 						}
 						break;
 					case 24:
@@ -4036,12 +3888,10 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.");
 						}
 						output = buildFloat(globals, Math.sin(float1));
 						break;
@@ -4050,12 +3900,10 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.");
 						}
 						if (!hasInterrupt) {
 							float2 = Math.cos(float1);
@@ -4076,12 +3924,10 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[valueStackSize];
 						if ((arg1[0] == 4)) {
 							float1 = arg1[1];
+						} else if ((arg1[0] == 3)) {
+							float1 = (0.0 + arg1[1]);
 						} else {
-							if ((arg1[0] == 3)) {
-								float1 = (0.0 + arg1[1]);
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.");
-							}
+							hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.");
 						}
 						if (!hasInterrupt) {
 							if ((float1 <= 0)) {
@@ -4125,14 +3971,12 @@ var interpretImpl = function(vm, executionContextId) {
 							value = valueStack[((valueStackSize + 1) + i)];
 							if ((value[0] == 3)) {
 								intArray1[(_len + i)] = value[1];
+							} else if ((value[0] == 4)) {
+								float1 = (0.5 + value[1]);
+								intArray1[(_len + i)] = Math.floor(float1);
 							} else {
-								if ((value[0] == 4)) {
-									float1 = (0.5 + value[1]);
-									intArray1[(_len + i)] = Math.floor(float1);
-								} else {
-									hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
-									i = -1;
-								}
+								hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
+								i = -1;
 							}
 							i -= 1;
 						}
@@ -4231,15 +4075,13 @@ var interpretImpl = function(vm, executionContextId) {
 							value = localsStack[i];
 							if ((localsStackSet[i] != localsStackSetToken)) {
 								i += int1;
-							} else {
-								if ((value[0] == 4)) {
-									float1 = value[1];
-									int2 = Math.floor(float1);
-									if (((int2 >= 0) && (int2 < 2049))) {
-										localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
-									} else {
-										localsStack[i] = buildInteger(globals, int2);
-									}
+							} else if ((value[0] == 4)) {
+								float1 = value[1];
+								int2 = Math.floor(float1);
+								if (((int2 >= 0) && (int2 < 2049))) {
+									localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
+								} else {
+									localsStack[i] = buildInteger(globals, int2);
 								}
 							}
 							i += 1;
@@ -4281,25 +4123,19 @@ var interpretImpl = function(vm, executionContextId) {
 					if (first) {
 						type = value2[0];
 						first = false;
-					} else {
-						if ((type != value2[0])) {
-							hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.");
-						}
+					} else if ((type != value2[0])) {
+						hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.");
 					}
 					if (!hasInterrupt) {
 						if ((type == 3)) {
 							intKey = value2[1];
+						} else if ((type == 5)) {
+							stringKey = value2[1];
+						} else if ((type == 8)) {
+							objInstance1 = value2[1];
+							intKey = objInstance1[1];
 						} else {
-							if ((type == 5)) {
-								stringKey = value2[1];
-							} else {
-								if ((type == 8)) {
-									objInstance1 = value2[1];
-									intKey = objInstance1[1];
-								} else {
-									hasInterrupt = EX_InvalidKey(ec, "Only integers, strings, and objects can be used as dictionary keys.");
-								}
-							}
+							hasInterrupt = EX_InvalidKey(ec, "Only integers, strings, and objects can be used as dictionary keys.");
 						}
 					}
 					if (!hasInterrupt) {
@@ -4505,29 +4341,25 @@ var interpretImpl = function(vm, executionContextId) {
 					if ((output == null)) {
 						if ((value[0] == 1)) {
 							hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.");
-						} else {
-							if (((value[0] == 8) && (int1 < -1))) {
-								string1 = identifiers[row[0]];
-								if ((int1 == -2)) {
-									string2 = "private";
-								} else {
-									if ((int1 == -3)) {
-										string2 = "internal";
-									} else {
-										string2 = "protected";
-									}
-								}
-								hasInterrupt = EX_UnknownField(ec, ["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."].join(''));
+						} else if (((value[0] == 8) && (int1 < -1))) {
+							string1 = identifiers[row[0]];
+							if ((int1 == -2)) {
+								string2 = "private";
+							} else if ((int1 == -3)) {
+								string2 = "internal";
 							} else {
-								if ((value[0] == 8)) {
-									classId = (value[1])[0];
-									classInfo = classTable[classId];
-									string1 = classInfo[16] + " instance";
-								} else {
-									string1 = getTypeFromId(value[0]);
-								}
-								hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
+								string2 = "protected";
 							}
+							hasInterrupt = EX_UnknownField(ec, ["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."].join(''));
+						} else {
+							if ((value[0] == 8)) {
+								classId = (value[1])[0];
+								classInfo = classTable[classId];
+								string1 = classInfo[16] + " instance";
+							} else {
+								string1 = getTypeFromId(value[0]);
+							}
+							hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
 						}
 					}
 				}
@@ -4578,19 +4410,17 @@ var interpretImpl = function(vm, executionContextId) {
 						valueStackCapacity = valueStack.length;
 					}
 					valueStack[valueStackSize++] = value;
-				} else {
-					if ((row[0] == 2)) {
-						if (((valueStackSize + 1) > valueStackCapacity)) {
-							valueStackIncreaseCapacity(ec);
-							valueStack = ec[4];
-							valueStackCapacity = valueStack.length;
-						}
-						valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
-						valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
-						valueStackSize += 2;
-					} else {
-						hasInterrupt = EX_Fatal(ec, "?");
+				} else if ((row[0] == 2)) {
+					if (((valueStackSize + 1) > valueStackCapacity)) {
+						valueStackIncreaseCapacity(ec);
+						valueStack = ec[4];
+						valueStackCapacity = valueStack.length;
 					}
+					valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
+					valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
+					valueStackSize += 2;
+				} else {
+					hasInterrupt = EX_Fatal(ec, "?");
 				}
 				break;
 			case 29:
@@ -4620,12 +4450,10 @@ var interpretImpl = function(vm, executionContextId) {
 					int1 = doEqualityComparisonAndReturnCode(leftValue, rightValue);
 					if ((int1 == 0)) {
 						bool1 = false;
+					} else if ((int1 == 1)) {
+						bool1 = true;
 					} else {
-						if ((int1 == 1)) {
-							bool1 = true;
-						} else {
-							hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.");
-						}
+						hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.");
 					}
 				}
 				if ((valueStackSize == valueStackCapacity)) {
@@ -4673,13 +4501,11 @@ var interpretImpl = function(vm, executionContextId) {
 							int1 = row[0];
 							if ((int1 == 1)) {
 								pc += row[1];
+							} else if ((int1 == 2)) {
+								intArray1 = esfData[pc];
+								pc = intArray1[1];
 							} else {
-								if ((int1 == 2)) {
-									intArray1 = esfData[pc];
-									pc = intArray1[1];
-								} else {
-									hasInterrupt = EX_Fatal(ec, "break exists without a loop");
-								}
+								hasInterrupt = EX_Fatal(ec, "break exists without a loop");
 							}
 							break;
 						case 2:
@@ -4687,13 +4513,11 @@ var interpretImpl = function(vm, executionContextId) {
 							int1 = row[2];
 							if ((int1 == 1)) {
 								pc += row[3];
+							} else if ((int1 == 2)) {
+								intArray1 = esfData[pc];
+								pc = intArray1[1];
 							} else {
-								if ((int1 == 2)) {
-									intArray1 = esfData[pc];
-									pc = intArray1[1];
-								} else {
-									hasInterrupt = EX_Fatal(ec, "continue exists without a loop");
-								}
+								hasInterrupt = EX_Fatal(ec, "continue exists without a loop");
 							}
 							break;
 						case 3:
@@ -4780,76 +4604,66 @@ var interpretImpl = function(vm, executionContextId) {
 							valueStack[(valueStackSize - 1)] = list1[2][i];
 						}
 					}
-				} else {
-					if ((root[0] == 7)) {
-						dictImpl = root[1];
-						keyType = value[0];
-						if ((keyType != dictImpl[1])) {
-							if ((dictImpl[0] == 0)) {
-								hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
-							} else {
-								hasInterrupt = EX_InvalidKey(ec, ["Incorrect key type. This dictionary contains ", getTypeFromId(dictImpl[1]), " keys. Provided key is a ", getTypeFromId(keyType), "."].join(''));
-							}
+				} else if ((root[0] == 7)) {
+					dictImpl = root[1];
+					keyType = value[0];
+					if ((keyType != dictImpl[1])) {
+						if ((dictImpl[0] == 0)) {
+							hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
 						} else {
-							if ((keyType == 3)) {
-								intKey = value[1];
-							} else {
-								if ((keyType == 5)) {
-									stringKey = value[1];
-								} else {
-									if ((keyType == 8)) {
-										intKey = (value[1])[1];
-									} else {
-										if ((dictImpl[0] == 0)) {
-											hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
-										} else {
-											hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
-										}
-									}
-								}
-							}
-							if (!hasInterrupt) {
-								if ((keyType == 5)) {
-									stringIntDict1 = dictImpl[5];
-									int1 = stringIntDict1[stringKey];
-									if (int1 === undefined) int1 = -1;
-									if ((int1 == -1)) {
-										hasInterrupt = EX_KeyNotFound(ec, ["Key not found: '", stringKey, "'"].join(''));
-									} else {
-										valueStack[(valueStackSize - 1)] = dictImpl[7][int1];
-									}
-								} else {
-									intIntDict1 = dictImpl[4];
-									int1 = intIntDict1[intKey];
-									if (int1 === undefined) int1 = -1;
-									if ((int1 == -1)) {
-										hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
-									} else {
-										valueStack[(valueStackSize - 1)] = dictImpl[7][intIntDict1[intKey]];
-									}
-								}
-							}
+							hasInterrupt = EX_InvalidKey(ec, ["Incorrect key type. This dictionary contains ", getTypeFromId(dictImpl[1]), " keys. Provided key is a ", getTypeFromId(keyType), "."].join(''));
 						}
 					} else {
-						if ((root[0] == 5)) {
-							string1 = root[1];
-							if ((value[0] != 3)) {
-								hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.");
-							} else {
-								int1 = value[1];
-								if ((int1 < 0)) {
-									int1 += string1.length;
-								}
-								if (((int1 < 0) || (int1 >= string1.length))) {
-									hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.");
+						if ((keyType == 3)) {
+							intKey = value[1];
+						} else if ((keyType == 5)) {
+							stringKey = value[1];
+						} else if ((keyType == 8)) {
+							intKey = (value[1])[1];
+						} else if ((dictImpl[0] == 0)) {
+							hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
+						} else {
+							hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
+						}
+						if (!hasInterrupt) {
+							if ((keyType == 5)) {
+								stringIntDict1 = dictImpl[5];
+								int1 = stringIntDict1[stringKey];
+								if (int1 === undefined) int1 = -1;
+								if ((int1 == -1)) {
+									hasInterrupt = EX_KeyNotFound(ec, ["Key not found: '", stringKey, "'"].join(''));
 								} else {
-									valueStack[(valueStackSize - 1)] = buildCommonString(globals, string1.charAt(int1));
+									valueStack[(valueStackSize - 1)] = dictImpl[7][int1];
+								}
+							} else {
+								intIntDict1 = dictImpl[4];
+								int1 = intIntDict1[intKey];
+								if (int1 === undefined) int1 = -1;
+								if ((int1 == -1)) {
+									hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
+								} else {
+									valueStack[(valueStackSize - 1)] = dictImpl[7][intIntDict1[intKey]];
 								}
 							}
-						} else {
-							hasInterrupt = EX_InvalidArgument(ec, "Cannot index into this type: " + getTypeFromId(root[0]));
 						}
 					}
+				} else if ((root[0] == 5)) {
+					string1 = root[1];
+					if ((value[0] != 3)) {
+						hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.");
+					} else {
+						int1 = value[1];
+						if ((int1 < 0)) {
+							int1 += string1.length;
+						}
+						if (((int1 < 0) || (int1 >= string1.length))) {
+							hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.");
+						} else {
+							valueStack[(valueStackSize - 1)] = buildCommonString(globals, string1.charAt(int1));
+						}
+					}
+				} else {
+					hasInterrupt = EX_InvalidArgument(ec, "Cannot index into this type: " + getTypeFromId(root[0]));
 				}
 				break;
 			case 37:
@@ -4927,10 +4741,8 @@ var interpretImpl = function(vm, executionContextId) {
 				value = valueStack[--valueStackSize];
 				if ((value[0] != 2)) {
 					hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
-				} else {
-					if (!value[1]) {
-						pc += row[0];
-					}
+				} else if (!value[1]) {
+					pc += row[0];
 				}
 				break;
 			case 42:
@@ -4938,12 +4750,10 @@ var interpretImpl = function(vm, executionContextId) {
 				value = valueStack[(valueStackSize - 1)];
 				if ((value[0] != 2)) {
 					hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
+				} else if (value[1]) {
+					valueStackSize -= 1;
 				} else {
-					if (value[1]) {
-						valueStackSize -= 1;
-					} else {
-						pc += row[0];
-					}
+					pc += row[0];
 				}
 				break;
 			case 43:
@@ -4951,10 +4761,8 @@ var interpretImpl = function(vm, executionContextId) {
 				value = valueStack[--valueStackSize];
 				if ((value[0] != 2)) {
 					hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
-				} else {
-					if (value[1]) {
-						pc += row[0];
-					}
+				} else if (value[1]) {
+					pc += row[0];
 				}
 				break;
 			case 44:
@@ -4962,12 +4770,10 @@ var interpretImpl = function(vm, executionContextId) {
 				value = valueStack[(valueStackSize - 1)];
 				if ((value[0] != 2)) {
 					hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
+				} else if (value[1]) {
+					pc += row[0];
 				} else {
-					if (value[1]) {
-						pc += row[0];
-					} else {
-						valueStackSize -= 1;
-					}
+					valueStackSize -= 1;
 				}
 				break;
 			case 45:
@@ -5100,12 +4906,10 @@ var interpretImpl = function(vm, executionContextId) {
 				type = value[0];
 				if ((type == 3)) {
 					valueStack[(valueStackSize - 1)] = buildInteger(globals, -value[1]);
+				} else if ((type == 4)) {
+					valueStack[(valueStackSize - 1)] = buildFloat(globals, -value[1]);
 				} else {
-					if ((type == 4)) {
-						valueStack[(valueStackSize - 1)] = buildFloat(globals, -value[1]);
-					} else {
-						hasInterrupt = EX_InvalidArgument(ec, ["Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."].join(''));
-					}
+					hasInterrupt = EX_InvalidArgument(ec, ["Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."].join(''));
 				}
 				break;
 			case 53:
@@ -5535,15 +5339,13 @@ var performListSlice = function(globals, ec, value, arg1, arg2, arg3) {
 		isString = true;
 		originalString = value[1];
 		length = originalString.length;
+	} else if ((value[0] == 6)) {
+		isString = false;
+		originalList = value[1];
+		length = originalList[1];
 	} else {
-		if ((value[0] == 6)) {
-			isString = false;
-			originalList = value[1];
-			length = originalList[1];
-		} else {
-			EX_InvalidArgument(ec, ["Cannot apply slicing to ", getTypeFromId(value[0]), ". Must be string or list."].join(''));
-			return globals[0];
-		}
+		EX_InvalidArgument(ec, ["Cannot apply slicing to ", getTypeFromId(value[0]), ". Must be string or list."].join(''));
+		return globals[0];
 	}
 	if ((status >= 2)) {
 		var msg = null;
@@ -5610,44 +5412,38 @@ var performListSlice = function(globals, ec, value, arg1, arg2, arg3) {
 			}
 			value = [6, outputList];
 		}
-	} else {
-		if ((status == 0)) {
-			if (isString) {
-				value = globals[8];
-			} else {
-				value = [6, makeEmptyList(originalList[0], 0)];
-			}
+	} else if ((status == 0)) {
+		if (isString) {
+			value = globals[8];
 		} else {
-			if ((status == 2)) {
-				if (!isString) {
-					outputList = makeEmptyList(originalList[0], length);
-					i = 0;
-					while ((i < length)) {
-						addToList(outputList, originalList[2][i]);
-						i += 1;
-					}
-					value = [6, outputList];
-				}
-			} else {
-				var msg = null;
-				if (isString) {
-					msg = "String";
-				} else {
-					msg = "List";
-				}
-				if ((status == 3)) {
-					msg += " slice begin index is out of range.";
-				} else {
-					if (isForward) {
-						msg += " slice begin index must occur before the end index when step is positive.";
-					} else {
-						msg += " slice begin index must occur after the end index when the step is negative.";
-					}
-				}
-				EX_IndexOutOfRange(ec, msg);
-				return globals[0];
-			}
+			value = [6, makeEmptyList(originalList[0], 0)];
 		}
+	} else if ((status == 2)) {
+		if (!isString) {
+			outputList = makeEmptyList(originalList[0], length);
+			i = 0;
+			while ((i < length)) {
+				addToList(outputList, originalList[2][i]);
+				i += 1;
+			}
+			value = [6, outputList];
+		}
+	} else {
+		var msg = null;
+		if (isString) {
+			msg = "String";
+		} else {
+			msg = "List";
+		}
+		if ((status == 3)) {
+			msg += " slice begin index is out of range.";
+		} else if (isForward) {
+			msg += " slice begin index must occur before the end index when step is positive.";
+		} else {
+			msg += " slice begin index must occur after the end index when the step is negative.";
+		}
+		EX_IndexOutOfRange(ec, msg);
+		return globals[0];
 	}
 	return value;
 };
@@ -5779,12 +5575,10 @@ var primitiveMethodWrongArgCountError = function(name, expected, actual) {
 	var output = "";
 	if ((expected == 0)) {
 		output = name + " does not accept any arguments.";
+	} else if ((expected == 1)) {
+		output = name + " accepts exactly 1 argument.";
 	} else {
-		if ((expected == 1)) {
-			output = name + " accepts exactly 1 argument.";
-		} else {
-			output = [name, " requires ", ('' + expected), " arguments."].join('');
-		}
+		output = [name, " requires ", ('' + expected), " arguments."].join('');
 	}
 	return [output, " Found: ", ('' + actual)].join('');
 };
@@ -5855,72 +5649,58 @@ var queryValue = function(vm, execId, stackFrameOffset, steps) {
 		var step = steps[i];
 		if (isStringEqual(".", step)) {
 			return null;
-		} else {
-			if (isStringEqual("this", step)) {
-				current = stackFrame[6];
-			} else {
-				if (isStringEqual("class", step)) {
-					return null;
-				} else {
-					if (isStringEqual("local", step)) {
-						i += 1;
-						step = steps[i];
-						var localNamesByFuncPc = vm[3][5];
-						var localNames = null;
-						if (((localNamesByFuncPc == null) || (Object.keys(localNamesByFuncPc).length == 0))) {
-							return null;
-						}
-						j = stackFrame[0];
-						while ((j >= 0)) {
-							if ((localNamesByFuncPc[j] !== undefined)) {
-								localNames = localNamesByFuncPc[j];
-								j = -1;
-							}
-							j -= 1;
-						}
-						if ((localNames == null)) {
-							return null;
-						}
-						var localId = -1;
-						if ((localNames != null)) {
-							j = 0;
-							while ((j < localNames.length)) {
-								if (isStringEqual(localNames[j], step)) {
-									localId = j;
-									j = localNames.length;
-								}
-								j += 1;
-							}
-						}
-						if ((localId == -1)) {
-							return null;
-						}
-						var localOffset = (localId + stackFrame[2]);
-						if ((ec[6][localOffset] != stackFrame[1])) {
-							return null;
-						}
-						current = ec[5][localOffset];
-					} else {
-						if (isStringEqual("index", step)) {
-							return null;
-						} else {
-							if (isStringEqual("key-int", step)) {
-								return null;
-							} else {
-								if (isStringEqual("key-str", step)) {
-									return null;
-								} else {
-									if (isStringEqual("key-obj", step)) {
-										return null;
-									} else {
-										return null;
-									}
-								}
-							}
-						}
+		} else if (isStringEqual("this", step)) {
+			current = stackFrame[6];
+		} else if (isStringEqual("class", step)) {
+			return null;
+		} else if (isStringEqual("local", step)) {
+			i += 1;
+			step = steps[i];
+			var localNamesByFuncPc = vm[3][5];
+			var localNames = null;
+			if (((localNamesByFuncPc == null) || (Object.keys(localNamesByFuncPc).length == 0))) {
+				return null;
+			}
+			j = stackFrame[0];
+			while ((j >= 0)) {
+				if ((localNamesByFuncPc[j] !== undefined)) {
+					localNames = localNamesByFuncPc[j];
+					j = -1;
+				}
+				j -= 1;
+			}
+			if ((localNames == null)) {
+				return null;
+			}
+			var localId = -1;
+			if ((localNames != null)) {
+				j = 0;
+				while ((j < localNames.length)) {
+					if (isStringEqual(localNames[j], step)) {
+						localId = j;
+						j = localNames.length;
 					}
+					j += 1;
 				}
 			}
+			if ((localId == -1)) {
+				return null;
+			}
+			var localOffset = (localId + stackFrame[2]);
+			if ((ec[6][localOffset] != stackFrame[1])) {
+				return null;
+			}
+			current = ec[5][localOffset];
+		} else if (isStringEqual("index", step)) {
+			return null;
+		} else if (isStringEqual("key-int", step)) {
+			return null;
+		} else if (isStringEqual("key-str", step)) {
+			return null;
+		} else if (isStringEqual("key-obj", step)) {
+			return null;
+		} else {
+			return null;
 		}
 		i += 1;
 	}
@@ -5934,28 +5714,22 @@ var read_integer = function(pindex, raw, length, alphaNums) {
 	if ((c == "%")) {
 		var value = read_till(pindex, raw, length, "%");
 		num = parseInt(value);
+	} else if ((c == "@")) {
+		num = read_integer(pindex, raw, length, alphaNums);
+		num *= 62;
+		num += read_integer(pindex, raw, length, alphaNums);
+	} else if ((c == "#")) {
+		num = read_integer(pindex, raw, length, alphaNums);
+		num *= 62;
+		num += read_integer(pindex, raw, length, alphaNums);
+		num *= 62;
+		num += read_integer(pindex, raw, length, alphaNums);
+	} else if ((c == "^")) {
+		num = (-1 * read_integer(pindex, raw, length, alphaNums));
 	} else {
-		if ((c == "@")) {
-			num = read_integer(pindex, raw, length, alphaNums);
-			num *= 62;
-			num += read_integer(pindex, raw, length, alphaNums);
-		} else {
-			if ((c == "#")) {
-				num = read_integer(pindex, raw, length, alphaNums);
-				num *= 62;
-				num += read_integer(pindex, raw, length, alphaNums);
-				num *= 62;
-				num += read_integer(pindex, raw, length, alphaNums);
-			} else {
-				if ((c == "^")) {
-					num = (-1 * read_integer(pindex, raw, length, alphaNums));
-				} else {
-					// TODO: string.IndexOfChar(c);
-					num = alphaNums.indexOf(c);
-					if ((num == -1)) {
-					}
-				}
-			}
+		// TODO: string.IndexOfChar(c);
+		num = alphaNums.indexOf(c);
+		if ((num == -1)) {
 		}
 	}
 	return num;
@@ -6228,20 +6002,14 @@ var resourceManagerInitialize = function(globals, manifest) {
 			isText = "TXT" == type;
 			if (isText) {
 				intType = 1;
+			} else if (("IMGSH" == type || "IMG" == type)) {
+				intType = 2;
+			} else if ("SND" == type) {
+				intType = 3;
+			} else if ("TTF" == type) {
+				intType = 4;
 			} else {
-				if (("IMGSH" == type || "IMG" == type)) {
-					intType = 2;
-				} else {
-					if ("SND" == type) {
-						intType = 3;
-					} else {
-						if ("TTF" == type) {
-							intType = 4;
-						} else {
-							intType = 5;
-						}
-					}
-				}
+				intType = 5;
 			}
 			userPath = stringDecode(itemData[1]);
 			internalPath = itemData[2];
@@ -6289,11 +6057,9 @@ var runInterpreter = function(vm, executionContextId) {
 			delete vm[0][executionContextId];
 		}
 		runShutdownHandlers(vm);
-	} else {
-		if ((status == 3)) {
-			printToStdOut(vm[11][3], result[1]);
-			runShutdownHandlers(vm);
-		}
+	} else if ((status == 3)) {
+		printToStdOut(vm[11][3], result[1]);
+		runShutdownHandlers(vm);
 	}
 	if ((executionContextId == 0)) {
 		result[4] = true;

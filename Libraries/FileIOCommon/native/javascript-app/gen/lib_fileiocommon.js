@@ -160,12 +160,10 @@ var lib_fileiocommon_fileWrite = function(vm, args) {
 		if ((byteArrayRef == null)) {
 			return ints[6];
 		}
+	} else if ((args[2][0] != 5)) {
+		return ints[6];
 	} else {
-		if ((args[2][0] != 5)) {
-			return ints[6];
-		} else {
-			contentString = args[2][1];
-		}
+		contentString = args[2][1];
 	}
 	if ((statusCode == 0)) {
 		statusCode = LIB$fileiocommon$fakedisk$fileWrite(lib_fileiocommon_getDiskObject(args[0]), args[1][1], format, contentString, byteArrayRef);

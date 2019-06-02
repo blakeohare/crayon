@@ -29,20 +29,18 @@ public final class LibraryWrapper {
     boolean isInline = (args[3].type == 1);
     if (isInline) {
       nd1[4] = true;
+    } else if (!((boolean) args[4].internalValue)) {
+      nd1[5] = "Output value must be a matrix";
+      return vm.globalNull;
     } else {
-      if (!((boolean) args[4].internalValue)) {
-        nd1[5] = "Output value must be a matrix";
+      obj = ((ObjectInstance) args[3].internalValue);
+      Object[] nd3 = obj.nativeData;
+      output = ((double[]) nd3[0]);
+      if (((((int) nd3[1]) != width) || (((int) nd3[2]) != height))) {
+        nd1[5] = "Output matrix must have the same size as the inputs.";
         return vm.globalNull;
-      } else {
-        obj = ((ObjectInstance) args[3].internalValue);
-        Object[] nd3 = obj.nativeData;
-        output = ((double[]) nd3[0]);
-        if (((((int) nd3[1]) != width) || (((int) nd3[2]) != height))) {
-          nd1[5] = "Output matrix must have the same size as the inputs.";
-          return vm.globalNull;
-        }
-        nd3[4] = true;
       }
+      nd3[4] = true;
     }
     int length = (width * height);
     int i = 0;
@@ -148,11 +146,9 @@ public final class LibraryWrapper {
     boolean isInline = false;
     if ((args[3].type == 1)) {
       isInline = true;
-    } else {
-      if (!((boolean) args[4].internalValue)) {
-        nd1[5] = "output matrix was unrecognized type.";
-        return vm.globalNull;
-      }
+    } else if (!((boolean) args[4].internalValue)) {
+      nd1[5] = "output matrix was unrecognized type.";
+      return vm.globalNull;
     }
     int m1width = ((int) nd1[1]);
     int m1height = ((int) nd1[2]);
@@ -224,31 +220,27 @@ public final class LibraryWrapper {
     double[] m2data = m1data;
     if (isInline) {
       nd[4] = true;
+    } else if (!((boolean) args[3].internalValue)) {
+      nd[5] = "output must be a matrix instance";
+      return vm.globalNull;
     } else {
-      if (!((boolean) args[3].internalValue)) {
-        nd[5] = "output must be a matrix instance";
+      obj = ((ObjectInstance) args[2].internalValue);
+      Object[] nd2 = obj.nativeData;
+      if (((((int) nd[1]) != ((int) nd2[1])) || (((int) nd[2]) != ((int) nd2[2])))) {
+        nd[5] = "output matrix must be the same size.";
         return vm.globalNull;
-      } else {
-        obj = ((ObjectInstance) args[2].internalValue);
-        Object[] nd2 = obj.nativeData;
-        if (((((int) nd[1]) != ((int) nd2[1])) || (((int) nd[2]) != ((int) nd2[2])))) {
-          nd[5] = "output matrix must be the same size.";
-          return vm.globalNull;
-        }
-        m2data = ((double[]) nd2[0]);
-        nd2[4] = true;
       }
+      m2data = ((double[]) nd2[0]);
+      nd2[4] = true;
     }
     double scalar = 0.0;
     if ((args[1].type == 4)) {
       scalar = ((double) args[1].internalValue);
+    } else if ((args[1].type == 3)) {
+      scalar = (0.0 + ((int) args[1].internalValue));
     } else {
-      if ((args[1].type == 3)) {
-        scalar = (0.0 + ((int) args[1].internalValue));
-      } else {
-        nd[5] = "scalar must be a number";
-        return vm.globalNull;
-      }
+      nd[5] = "scalar must be a number";
+      return vm.globalNull;
     }
     int i = 0;
     int length = m1data.length;
@@ -278,13 +270,11 @@ public final class LibraryWrapper {
     double value = 0.0;
     if ((args[3].type == 4)) {
       value = ((double) args[3].internalValue);
+    } else if ((args[3].type == 3)) {
+      value = (0.0 + ((int) args[3].internalValue));
     } else {
-      if ((args[3].type == 3)) {
-        value = (0.0 + ((int) args[3].internalValue));
-      } else {
-        nd[5] = "Value must be a number.";
-        return vm.globalNull;
-      }
+      nd[5] = "Value must be a number.";
+      return vm.globalNull;
     }
     int index = ((y * width) + x);
     double[] data = ((double[]) nd[0]);
@@ -316,12 +306,10 @@ public final class LibraryWrapper {
       value = data[i];
       if ((value == 0)) {
         toList = vm.globals.floatZero;
+      } else if ((value == 1)) {
+        toList = vm.globals.floatOne;
       } else {
-        if ((value == 1)) {
-          toList = vm.globals.floatOne;
-        } else {
-          toList = new Value(4, data[i]);
-        }
+        toList = new Value(4, data[i]);
       }
       output.array[i] = toList;
       i += 1;

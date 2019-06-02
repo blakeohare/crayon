@@ -229,26 +229,20 @@ namespace Interpreter.Libraries.CryptoMd5
                 t = (((b & c)) | ((lib_md5_bitwiseNot(b) & d)));
                 mWord = mWords[counter];
             }
+            else if ((roundNumber == 1))
+            {
+                t = (((b & d)) | ((c & lib_md5_bitwiseNot(d))));
+                mWord = mWords[((((5 * counter) + 1)) & 15)];
+            }
+            else if ((roundNumber == 2))
+            {
+                t = (b ^ c ^ d);
+                mWord = mWords[((((3 * counter) + 5)) & 15)];
+            }
             else
             {
-                if ((roundNumber == 1))
-                {
-                    t = (((b & d)) | ((c & lib_md5_bitwiseNot(d))));
-                    mWord = mWords[((((5 * counter) + 1)) & 15)];
-                }
-                else
-                {
-                    if ((roundNumber == 2))
-                    {
-                        t = (b ^ c ^ d);
-                        mWord = mWords[((((3 * counter) + 5)) & 15)];
-                    }
-                    else
-                    {
-                        t = (c ^ ((b | lib_md5_bitwiseNot(d))));
-                        mWord = mWords[(((7 * counter)) & 15)];
-                    }
-                }
+                t = (c ^ ((b | lib_md5_bitwiseNot(d))));
+                mWord = mWords[(((7 * counter)) & 15)];
             }
             t = (((a + t + mWord + sineValue)) & mask32);
             t = (b + lib_md5_leftRotate(t, shiftAmount));

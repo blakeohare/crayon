@@ -97,33 +97,21 @@
 			$type = $row->arr[0];
 			if (($type == 1)) {
 				array_push($vm->metadata->literalTableBuilder->arr, $g->valueNull);
-			} else {
-				if (($type == 2)) {
-					array_push($vm->metadata->literalTableBuilder->arr, self::buildBoolean($g, ($row->arr[1] == 1)));
-				} else {
-					if (($type == 3)) {
-						array_push($vm->metadata->literalTableBuilder->arr, self::buildInteger($g, $row->arr[1]));
-					} else {
-						if (($type == 4)) {
-							array_push($vm->metadata->literalTableBuilder->arr, self::buildFloat($g, floatval($stringArg)));
-						} else {
-							if (($type == 5)) {
-								array_push($vm->metadata->literalTableBuilder->arr, self::buildCommonString($g, $stringArg));
-							} else {
-								if (($type == 9)) {
-									$index = count($vm->metadata->literalTableBuilder->arr);
-									array_push($vm->metadata->literalTableBuilder->arr, self::buildCommonString($g, $stringArg));
-									$vm->metadata->invFunctionNameLiterals->arr[$stringArg] = $index;
-								} else {
-									if (($type == 10)) {
-										$cv = new ClassValue(false, $row->arr[1]);
-										array_push($vm->metadata->literalTableBuilder->arr, new Value(10, $cv));
-									}
-								}
-							}
-						}
-					}
-				}
+			} else if (($type == 2)) {
+				array_push($vm->metadata->literalTableBuilder->arr, self::buildBoolean($g, ($row->arr[1] == 1)));
+			} else if (($type == 3)) {
+				array_push($vm->metadata->literalTableBuilder->arr, self::buildInteger($g, $row->arr[1]));
+			} else if (($type == 4)) {
+				array_push($vm->metadata->literalTableBuilder->arr, self::buildFloat($g, floatval($stringArg)));
+			} else if (($type == 5)) {
+				array_push($vm->metadata->literalTableBuilder->arr, self::buildCommonString($g, $stringArg));
+			} else if (($type == 9)) {
+				$index = count($vm->metadata->literalTableBuilder->arr);
+				array_push($vm->metadata->literalTableBuilder->arr, self::buildCommonString($g, $stringArg));
+				$vm->metadata->invFunctionNameLiterals->arr[$stringArg] = $index;
+			} else if (($type == 10)) {
+				$cv = new ClassValue(false, $row->arr[1]);
+				array_push($vm->metadata->literalTableBuilder->arr, new Value(10, $cv));
 			}
 			return 0;
 		}
@@ -179,10 +167,8 @@
 				if (($num > -257)) {
 					return $g->negativeIntegers->arr[-$num];
 				}
-			} else {
-				if (($num < 2049)) {
-					return $g->positiveIntegers->arr[$num];
-				}
+			} else if (($num < 2049)) {
+				return $g->positiveIntegers->arr[$num];
 			}
 			return new Value(3, $num);
 		}
@@ -712,11 +698,9 @@
 				if (($a->internalValue == $b->internalValue)) {
 					return 1;
 				}
-			} else {
-				if ((($leftType == 4) && ($rightType == 3))) {
-					if (($a->internalValue == $b->internalValue)) {
-						return 1;
-					}
+			} else if ((($leftType == 4) && ($rightType == 3))) {
+				if (($a->internalValue == $b->internalValue)) {
+					return 1;
 				}
 			}
 			return 0;
@@ -843,10 +827,8 @@
 				if (($u > 0.9999999999)) {
 					$roundDown = true;
 					$x += 0.1;
-				} else {
-					if (($u < 0.00000000002250000000)) {
-						$roundDown = true;
-					}
+				} else if (($u < 0.00000000002250000000)) {
+					$roundDown = true;
 				}
 				if ($roundDown) {
 					if ((false || ($x > 0))) {
@@ -1189,20 +1171,16 @@
 				$stringPresent = true;
 				if (($c == "!")) {
 					$argc = 1;
+				} else if (($c == "&")) {
+					$argc = 2;
+				} else if (($c == "*")) {
+					$argc = 3;
 				} else {
-					if (($c == "&")) {
-						$argc = 2;
-					} else {
-						if (($c == "*")) {
-							$argc = 3;
-						} else {
-							if (($c != "~")) {
-								$stringPresent = false;
-								$index->arr[0] = ($index->arr[0] - 1);
-							}
-							$argc = self::read_integer($index, $raw, $length, $alphaNums);
-						}
+					if (($c != "~")) {
+						$stringPresent = false;
+						$index->arr[0] = ($index->arr[0] - 1);
 					}
+					$argc = self::read_integer($index, $raw, $length, $alphaNums);
 				}
 				$iarglist = pastelWrapList(array_fill(0, ($argc - 1), 0));
 				$j = 0;
@@ -1413,23 +1391,15 @@
 				$name = $vm->metadata->identifiers->arr[$nameId];
 				if ("_LIB_CORE_list_filter" === $name) {
 					self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 0, $functionId);
-				} else {
-					if ("_LIB_CORE_list_map" === $name) {
-						self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 1, $functionId);
-					} else {
-						if ("_LIB_CORE_list_sort_by_key" === $name) {
-							self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 2, $functionId);
-						} else {
-							if ("_LIB_CORE_invoke" === $name) {
-								self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 3, $functionId);
-							} else {
-								if ("_LIB_CORE_generateException" === $name) {
-									$mn = $vm->metadata->magicNumbers;
-									$mn->coreGenerateExceptionFunctionId = $functionId;
-								}
-							}
-						}
-					}
+				} else if ("_LIB_CORE_list_map" === $name) {
+					self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 1, $functionId);
+				} else if ("_LIB_CORE_list_sort_by_key" === $name) {
+					self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 2, $functionId);
+				} else if ("_LIB_CORE_invoke" === $name) {
+					self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 3, $functionId);
+				} else if ("_LIB_CORE_generateException" === $name) {
+					$mn = $vm->metadata->magicNumbers;
+					$mn->coreGenerateExceptionFunctionId = $functionId;
 				}
 			}
 			return 0;
@@ -1681,12 +1651,10 @@
 								if (!$hasInterrupt) {
 									if (($i >= $list1->size)) {
 										$hasInterrupt = self::EX_IndexOutOfRange($ec, "Index is out of range.");
-									} else {
+									} else if (($i < 0)) {
+										$i += $list1->size;
 										if (($i < 0)) {
-											$i += $list1->size;
-											if (($i < 0)) {
-												$hasInterrupt = self::EX_IndexOutOfRange($ec, "Index is out of range.");
-											}
+											$hasInterrupt = self::EX_IndexOutOfRange($ec, "Index is out of range.");
 										}
 									}
 									if (!$hasInterrupt) {
@@ -1696,83 +1664,73 @@
 							} else {
 								$hasInterrupt = self::EX_InvalidArgument($ec, "List index must be an integer.");
 							}
-						} else {
-							if (($type == 7)) {
-								$dictImpl = $root->internalValue;
-								if (($dictImpl->valueType != null)) {
-									$value3 = self::canAssignTypeToGeneric($vm, $value, $dictImpl->valueType, 0);
-									if (($value3 == null)) {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "Cannot assign a value to this dictionary of this type.");
-									} else {
-										$value = $value3;
-									}
-								}
-								$keyType = $value2->type;
-								if (($keyType == 3)) {
-									$intKey = $value2->internalValue;
+						} else if (($type == 7)) {
+							$dictImpl = $root->internalValue;
+							if (($dictImpl->valueType != null)) {
+								$value3 = self::canAssignTypeToGeneric($vm, $value, $dictImpl->valueType, 0);
+								if (($value3 == null)) {
+									$hasInterrupt = self::EX_InvalidArgument($ec, "Cannot assign a value to this dictionary of this type.");
 								} else {
-									if (($keyType == 5)) {
-										$stringKey = $value2->internalValue;
-									} else {
-										if (($keyType == 8)) {
-											$objInstance1 = $value2->internalValue;
-											$intKey = $objInstance1->objectId;
-										} else {
-											$hasInterrupt = self::EX_InvalidArgument($ec, "Invalid key for a dictionary.");
-										}
-									}
+									$value = $value3;
 								}
-								if (!$hasInterrupt) {
-									$bool2 = ($dictImpl->size == 0);
-									if (($dictImpl->keyType != $keyType)) {
-										if (($dictImpl->valueType != null)) {
-											$string1 = implode(array("Cannot assign a key of type ", self::typeToStringFromValue($vm, $value2), " to a dictionary that requires key types of ", self::dictKeyInfoToString($vm, $dictImpl), "."));
-											$hasInterrupt = self::EX_InvalidKey($ec, $string1);
-										} else {
-											if (!$bool2) {
-												$hasInterrupt = self::EX_InvalidKey($ec, "Cannot have multiple keys in one dictionary with different types.");
-											}
-										}
-									} else {
-										if ((($keyType == 8) && ($dictImpl->keyClassId > 0) && ($objInstance1->classId != $dictImpl->keyClassId))) {
-											if (self::isClassASubclassOf($vm, $objInstance1->classId, $dictImpl->keyClassId)) {
-												$hasInterrupt = self::EX_InvalidKey($ec, "Cannot use this type of object as a key for this dictionary.");
-											}
-										}
-									}
-								}
-								if (!$hasInterrupt) {
-									if (($keyType == 5)) {
-										$int1 = isset($dictImpl->stringToIndex->arr[$stringKey]) ? $dictImpl->stringToIndex->arr[$stringKey] : (-1);
-										if (($int1 == -1)) {
-											$dictImpl->stringToIndex->arr[$stringKey] = $dictImpl->size;
-											$dictImpl->size += 1;
-											array_push($dictImpl->keys->arr, $value2);
-											array_push($dictImpl->values->arr, $value);
-											if ($bool2) {
-												$dictImpl->keyType = $keyType;
-											}
-										} else {
-											self::PST_assignIndexHack($dictImpl->values, $int1, $value);
-										}
-									} else {
-										$int1 = isset($dictImpl->intToIndex->arr['i'.$intKey]) ? $dictImpl->intToIndex->arr['i'.$intKey] : (-1);
-										if (($int1 == -1)) {
-											$dictImpl->intToIndex->arr['i'.$intKey] = $dictImpl->size;
-											$dictImpl->size += 1;
-											array_push($dictImpl->keys->arr, $value2);
-											array_push($dictImpl->values->arr, $value);
-											if ($bool2) {
-												$dictImpl->keyType = $keyType;
-											}
-										} else {
-											self::PST_assignIndexHack($dictImpl->values, $int1, $value);
-										}
-									}
-								}
-							} else {
-								$hasInterrupt = self::EX_UnsupportedOperation($ec, ((self::getTypeFromId($type)) . (" type does not support assigning to an index.")));
 							}
+							$keyType = $value2->type;
+							if (($keyType == 3)) {
+								$intKey = $value2->internalValue;
+							} else if (($keyType == 5)) {
+								$stringKey = $value2->internalValue;
+							} else if (($keyType == 8)) {
+								$objInstance1 = $value2->internalValue;
+								$intKey = $objInstance1->objectId;
+							} else {
+								$hasInterrupt = self::EX_InvalidArgument($ec, "Invalid key for a dictionary.");
+							}
+							if (!$hasInterrupt) {
+								$bool2 = ($dictImpl->size == 0);
+								if (($dictImpl->keyType != $keyType)) {
+									if (($dictImpl->valueType != null)) {
+										$string1 = implode(array("Cannot assign a key of type ", self::typeToStringFromValue($vm, $value2), " to a dictionary that requires key types of ", self::dictKeyInfoToString($vm, $dictImpl), "."));
+										$hasInterrupt = self::EX_InvalidKey($ec, $string1);
+									} else if (!$bool2) {
+										$hasInterrupt = self::EX_InvalidKey($ec, "Cannot have multiple keys in one dictionary with different types.");
+									}
+								} else if ((($keyType == 8) && ($dictImpl->keyClassId > 0) && ($objInstance1->classId != $dictImpl->keyClassId))) {
+									if (self::isClassASubclassOf($vm, $objInstance1->classId, $dictImpl->keyClassId)) {
+										$hasInterrupt = self::EX_InvalidKey($ec, "Cannot use this type of object as a key for this dictionary.");
+									}
+								}
+							}
+							if (!$hasInterrupt) {
+								if (($keyType == 5)) {
+									$int1 = isset($dictImpl->stringToIndex->arr[$stringKey]) ? $dictImpl->stringToIndex->arr[$stringKey] : (-1);
+									if (($int1 == -1)) {
+										$dictImpl->stringToIndex->arr[$stringKey] = $dictImpl->size;
+										$dictImpl->size += 1;
+										array_push($dictImpl->keys->arr, $value2);
+										array_push($dictImpl->values->arr, $value);
+										if ($bool2) {
+											$dictImpl->keyType = $keyType;
+										}
+									} else {
+										self::PST_assignIndexHack($dictImpl->values, $int1, $value);
+									}
+								} else {
+									$int1 = isset($dictImpl->intToIndex->arr['i'.$intKey]) ? $dictImpl->intToIndex->arr['i'.$intKey] : (-1);
+									if (($int1 == -1)) {
+										$dictImpl->intToIndex->arr['i'.$intKey] = $dictImpl->size;
+										$dictImpl->size += 1;
+										array_push($dictImpl->keys->arr, $value2);
+										array_push($dictImpl->values->arr, $value);
+										if ($bool2) {
+											$dictImpl->keyType = $keyType;
+										}
+									} else {
+										self::PST_assignIndexHack($dictImpl->values, $int1, $value);
+									}
+								}
+							}
+						} else {
+							$hasInterrupt = self::EX_UnsupportedOperation($ec, ((self::getTypeFromId($type)) . (" type does not support assigning to an index.")));
 						}
 						if ($bool1) {
 							$valueStack->arr[$valueStackSize] = $value;
@@ -1878,29 +1836,23 @@
 								} else {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "Cannot override a method with assignment.");
 								}
-							} else {
-								if (($int1 < -1)) {
-									$string1 = $identifiers->arr[$row->arr[0]];
-									if (($int1 == -2)) {
-										$string2 = "private";
-									} else {
-										if (($int1 == -3)) {
-											$string2 = "internal";
-										} else {
-											$string2 = "protected";
-										}
-									}
-									$hasInterrupt = self::EX_UnknownField($ec, implode(array("The field '", $string1, "' is marked as ", $string2, " and cannot be accessed from here.")));
+							} else if (($int1 < -1)) {
+								$string1 = $identifiers->arr[$row->arr[0]];
+								if (($int1 == -2)) {
+									$string2 = "private";
+								} else if (($int1 == -3)) {
+									$string2 = "internal";
 								} else {
-									$hasInterrupt = self::EX_InvalidAssignment($ec, implode(array("'", $classInfo->fullyQualifiedName, "' instances do not have a field called '", $metadata->identifiers->arr[$row->arr[0]], "'")));
+									$string2 = "protected";
 								}
-							}
-						} else {
-							if (($value2->type == 1)) {
-								$hasInterrupt = self::EX_NullReference($ec, "Cannot assign to a field on null.");
+								$hasInterrupt = self::EX_UnknownField($ec, implode(array("The field '", $string1, "' is marked as ", $string2, " and cannot be accessed from here.")));
 							} else {
-								$hasInterrupt = self::EX_InvalidAssignment($ec, "Cannot assign to a field on this type.");
+								$hasInterrupt = self::EX_InvalidAssignment($ec, implode(array("'", $classInfo->fullyQualifiedName, "' instances do not have a field called '", $metadata->identifiers->arr[$row->arr[0]], "'")));
 							}
+						} else if (($value2->type == 1)) {
+							$hasInterrupt = self::EX_NullReference($ec, "Cannot assign to a field on null.");
+						} else {
+							$hasInterrupt = self::EX_InvalidAssignment($ec, "Cannot assign to a field on this type.");
 						}
 						if (($row->arr[1] == 1)) {
 							$valueStack->arr[$valueStackSize++] = $value;
@@ -2015,12 +1967,10 @@
 									} else {
 										$value = new Value(3, $int1);
 									}
+								} else if (($int1 < 2049)) {
+									$value = $INTEGER_POSITIVE_CACHE->arr[$int1];
 								} else {
-									if (($int1 < 2049)) {
-										$value = $INTEGER_POSITIVE_CACHE->arr[$int1];
-									} else {
-										$value = new Value(3, $int1);
-									}
+									$value = new Value(3, $int1);
 								}
 								break;
 							case 509:
@@ -2032,12 +1982,10 @@
 									} else {
 										$value = new Value(3, $int1);
 									}
+								} else if (($int1 < 2049)) {
+									$value = $INTEGER_POSITIVE_CACHE->arr[$int1];
 								} else {
-									if (($int1 < 2049)) {
-										$value = $INTEGER_POSITIVE_CACHE->arr[$int1];
-									} else {
-										$value = new Value(3, $int1);
-									}
+									$value = new Value(3, $int1);
 								}
 								break;
 							case 520:
@@ -2049,12 +1997,10 @@
 									} else {
 										$value = new Value(3, $int1);
 									}
+								} else if (($int1 < 2049)) {
+									$value = $INTEGER_POSITIVE_CACHE->arr[$int1];
 								} else {
-									if (($int1 < 2049)) {
-										$value = $INTEGER_POSITIVE_CACHE->arr[$int1];
-									} else {
-										$value = new Value(3, $int1);
-									}
+									$value = new Value(3, $int1);
 								}
 								break;
 							case 531:
@@ -2063,34 +2009,28 @@
 								$int2 = $rightValue->internalValue;
 								if (($int2 == 0)) {
 									$hasInterrupt = self::EX_DivisionByZero($ec, "Division by 0.");
+								} else if (($int1 == 0)) {
+									$value = $VALUE_INT_ZERO;
 								} else {
-									if (($int1 == 0)) {
-										$value = $VALUE_INT_ZERO;
+									if ((($int1 % $int2) == 0)) {
+										$int3 = intval(($int1) / ($int2));
+									} else if (((($int1 < 0)) != (($int2 < 0)))) {
+										$float1 = (1 + (((-1.0 * $int1)) / ($int2)));
+										$float1 -= ($float1 % 1.0);
+										$int3 = intval((-$float1));
 									} else {
-										if ((($int1 % $int2) == 0)) {
-											$int3 = intval(($int1) / ($int2));
+										$int3 = intval(($int1) / ($int2));
+									}
+									if (($int3 < 0)) {
+										if (($int3 > -257)) {
+											$value = $INTEGER_NEGATIVE_CACHE->arr[-$int3];
 										} else {
-											if (((($int1 < 0)) != (($int2 < 0)))) {
-												$float1 = (1 + (((-1.0 * $int1)) / ($int2)));
-												$float1 -= ($float1 % 1.0);
-												$int3 = intval((-$float1));
-											} else {
-												$int3 = intval(($int1) / ($int2));
-											}
+											$value = new Value(3, $int3);
 										}
-										if (($int3 < 0)) {
-											if (($int3 > -257)) {
-												$value = $INTEGER_NEGATIVE_CACHE->arr[-$int3];
-											} else {
-												$value = new Value(3, $int3);
-											}
-										} else {
-											if (($int3 < 2049)) {
-												$value = $INTEGER_POSITIVE_CACHE->arr[$int3];
-											} else {
-												$value = new Value(3, $int3);
-											}
-										}
+									} else if (($int3 < 2049)) {
+										$value = $INTEGER_POSITIVE_CACHE->arr[$int3];
+									} else {
+										$value = new Value(3, $int3);
 									}
 								}
 								break;
@@ -2107,12 +2047,10 @@
 								$float1 = ($leftValue->internalValue + $rightValue->internalValue);
 								if (($float1 == 0)) {
 									$value = $VALUE_FLOAT_ZERO;
+								} else if (($float1 == 1)) {
+									$value = $VALUE_FLOAT_ONE;
 								} else {
-									if (($float1 == 1)) {
-										$value = $VALUE_FLOAT_ONE;
-									} else {
-										$value = new Value(4, $float1);
-									}
+									$value = new Value(4, $float1);
 								}
 								break;
 							case 510:
@@ -2128,12 +2066,10 @@
 								$float1 = ($leftValue->internalValue - $rightValue->internalValue);
 								if (($float1 == 0)) {
 									$value = $VALUE_FLOAT_ZERO;
+								} else if (($float1 == 1)) {
+									$value = $VALUE_FLOAT_ONE;
 								} else {
-									if (($float1 == 1)) {
-										$value = $VALUE_FLOAT_ONE;
-									} else {
-										$value = new Value(4, $float1);
-									}
+									$value = new Value(4, $float1);
 								}
 								break;
 							case 685:
@@ -2379,12 +2315,10 @@
 						$value = $valueStack->arr[($valueStackSize - 1)];
 						if (($value->type != 2)) {
 							$hasInterrupt = self::EX_InvalidArgument($ec, "Boolean expected.");
+						} else if ($value->internalValue) {
+							$valueStack->arr[($valueStackSize - 1)] = $VALUE_FALSE;
 						} else {
-							if ($value->internalValue) {
-								$valueStack->arr[($valueStackSize - 1)] = $VALUE_FALSE;
-							} else {
-								$valueStack->arr[($valueStackSize - 1)] = $VALUE_TRUE;
-							}
+							$valueStack->arr[($valueStackSize - 1)] = $VALUE_TRUE;
 						}
 						break;
 					case 11:
@@ -2434,18 +2368,16 @@
 								$value = $valueStack->arr[$valueStackSize];
 								if (($value->type == 1)) {
 									$argCount = 0;
-								} else {
-									if (($value->type == 6)) {
-										$list1 = $value->internalValue;
-										$argCount = $list1->size;
-										$i = ($argCount - 1);
-										while (($i >= 0)) {
-											$funcArgs->arr[$i] = $list1->list->arr[$i];
-											$i -= 1;
-										}
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "Function pointers' .invoke method requires a list argument.");
+								} else if (($value->type == 6)) {
+									$list1 = $value->internalValue;
+									$argCount = $list1->size;
+									$i = ($argCount - 1);
+									while (($i >= 0)) {
+										$funcArgs->arr[$i] = $list1->list->arr[$i];
+										$i -= 1;
 									}
+								} else {
+									$hasInterrupt = self::EX_InvalidArgument($ec, "Function pointers' .invoke method requires a list argument.");
 								}
 							} else {
 								$i = ($argCount - 1);
@@ -2466,79 +2398,75 @@
 											$functionId = $classInfo->functionIds->arr[$int2];
 										}
 									}
-								} else {
-									if (($type == 5)) {
-										// field invocation;
-										$valueStackSize -= 1;
-										$value = $valueStack->arr[$valueStackSize];
-										$localeId = $row->arr[5];
-										switch ($value->type) {
-											case 1:
-												$hasInterrupt = self::EX_NullReference($ec, "Invoked method on null.");
-												break;
-											case 8:
-												// field invoked on an object instance.;
-												$objInstance1 = $value->internalValue;
-												$int1 = $objInstance1->classId;
-												$classInfo = $classTable->arr[$int1];
-												$intIntDict1 = $classInfo->localeScopedNameIdToMemberId;
-												$int1 = (($row->arr[4] * $magicNumbers->totalLocaleCount) + $row->arr[5]);
-												$i = isset($intIntDict1->arr['i'.$int1]) ? $intIntDict1->arr['i'.$int1] : (-1);
-												if (($i != -1)) {
-													$int1 = $intIntDict1->arr['i'.$int1];
-													$functionId = $classInfo->functionIds->arr[$int1];
-													if (($functionId > 0)) {
-														$type = 3;
-													} else {
-														$value = $objInstance1->members->arr[$int1];
-														$type = 4;
-														$valueStack->arr[$valueStackSize] = $value;
-														$valueStackSize += 1;
-													}
+								} else if (($type == 5)) {
+									// field invocation;
+									$valueStackSize -= 1;
+									$value = $valueStack->arr[$valueStackSize];
+									$localeId = $row->arr[5];
+									switch ($value->type) {
+										case 1:
+											$hasInterrupt = self::EX_NullReference($ec, "Invoked method on null.");
+											break;
+										case 8:
+											// field invoked on an object instance.;
+											$objInstance1 = $value->internalValue;
+											$int1 = $objInstance1->classId;
+											$classInfo = $classTable->arr[$int1];
+											$intIntDict1 = $classInfo->localeScopedNameIdToMemberId;
+											$int1 = (($row->arr[4] * $magicNumbers->totalLocaleCount) + $row->arr[5]);
+											$i = isset($intIntDict1->arr['i'.$int1]) ? $intIntDict1->arr['i'.$int1] : (-1);
+											if (($i != -1)) {
+												$int1 = $intIntDict1->arr['i'.$int1];
+												$functionId = $classInfo->functionIds->arr[$int1];
+												if (($functionId > 0)) {
+													$type = 3;
 												} else {
-													$hasInterrupt = self::EX_UnknownField($ec, "Unknown field.");
+													$value = $objInstance1->members->arr[$int1];
+													$type = 4;
+													$valueStack->arr[$valueStackSize] = $value;
+													$valueStackSize += 1;
 												}
-												break;
-											case 10:
-												// field invocation on a class object instance.;
-												$functionId = self::resolvePrimitiveMethodName2($globalNameIdToPrimitiveMethodName, $value->type, $classId);
-												if (($functionId < 0)) {
-													$hasInterrupt = self::EX_InvalidInvocation($ec, "Class definitions do not have that method.");
-												} else {
-													$functionId = self::resolvePrimitiveMethodName2($globalNameIdToPrimitiveMethodName, $value->type, $classId);
-													if (($functionId < 0)) {
-														$hasInterrupt = self::EX_InvalidInvocation($ec, ((self::getTypeFromId($value->type)) . (" does not have that method.")));
-													} else {
-														if (($globalNameIdToPrimitiveMethodName->arr[$classId] == 8)) {
-															$type = 6;
-															$classValue = $value->internalValue;
-															if ($classValue->isInterface) {
-																$hasInterrupt = self::EX_UnsupportedOperation($ec, "Cannot create an instance of an interface.");
-															} else {
-																$classId = $classValue->classId;
-																if (!$returnValueUsed) {
-																	$hasInterrupt = self::EX_UnsupportedOperation($ec, "Cannot create an instance and not use the output.");
-																} else {
-																	$classInfo = $metadata->classTable->arr[$classId];
-																	$functionId = $classInfo->constructorFunctionId;
-																}
-															}
-														} else {
-															$type = 9;
-														}
-													}
-												}
-												break;
-											default:
-												// primitive method suspected.;
+											} else {
+												$hasInterrupt = self::EX_UnknownField($ec, "Unknown field.");
+											}
+											break;
+										case 10:
+											// field invocation on a class object instance.;
+											$functionId = self::resolvePrimitiveMethodName2($globalNameIdToPrimitiveMethodName, $value->type, $classId);
+											if (($functionId < 0)) {
+												$hasInterrupt = self::EX_InvalidInvocation($ec, "Class definitions do not have that method.");
+											} else {
 												$functionId = self::resolvePrimitiveMethodName2($globalNameIdToPrimitiveMethodName, $value->type, $classId);
 												if (($functionId < 0)) {
 													$hasInterrupt = self::EX_InvalidInvocation($ec, ((self::getTypeFromId($value->type)) . (" does not have that method.")));
+												} else if (($globalNameIdToPrimitiveMethodName->arr[$classId] == 8)) {
+													$type = 6;
+													$classValue = $value->internalValue;
+													if ($classValue->isInterface) {
+														$hasInterrupt = self::EX_UnsupportedOperation($ec, "Cannot create an instance of an interface.");
+													} else {
+														$classId = $classValue->classId;
+														if (!$returnValueUsed) {
+															$hasInterrupt = self::EX_UnsupportedOperation($ec, "Cannot create an instance and not use the output.");
+														} else {
+															$classInfo = $metadata->classTable->arr[$classId];
+															$functionId = $classInfo->constructorFunctionId;
+														}
+													}
 												} else {
 													$type = 9;
 												}
-												break;
-										}
+											}
+											break;
+										default:
+											// primitive method suspected.;
+											$functionId = self::resolvePrimitiveMethodName2($globalNameIdToPrimitiveMethodName, $value->type, $classId);
+											if (($functionId < 0)) {
+												$hasInterrupt = self::EX_InvalidInvocation($ec, ((self::getTypeFromId($value->type)) . (" does not have that method.")));
+											} else {
+												$type = 9;
+											}
+											break;
 									}
 								}
 							}
@@ -2600,12 +2528,10 @@
 													$value2 = $funcArgs->arr[0];
 													if (($value2->type != 5)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "string contains method requires another string as input.");
+													} else if ((strpos($string1, $value2->internalValue) !== false)) {
+														$output = $VALUE_TRUE;
 													} else {
-														if ((strpos($string1, $value2->internalValue) !== false)) {
-															$output = $VALUE_TRUE;
-														} else {
-															$output = $VALUE_FALSE;
-														}
+														$output = $VALUE_FALSE;
 													}
 												}
 												break;
@@ -2616,12 +2542,10 @@
 													$value2 = $funcArgs->arr[0];
 													if (($value2->type != 5)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "string endsWith method requires another string as input.");
+													} else if (self::PST_stringEndsWith($string1, $value2->internalValue)) {
+														$output = $VALUE_TRUE;
 													} else {
-														if (self::PST_stringEndsWith($string1, $value2->internalValue)) {
-															$output = $VALUE_TRUE;
-														} else {
-															$output = $VALUE_FALSE;
-														}
+														$output = $VALUE_FALSE;
 													}
 												}
 												break;
@@ -2632,20 +2556,16 @@
 													$value2 = $funcArgs->arr[0];
 													if (($value2->type != 5)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires another string as input.");
+													} else if (($argCount == 1)) {
+														$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, 0));
+													} else if (($funcArgs->arr[1]->type != 3)) {
+														$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires an integer as its second argument.");
 													} else {
-														if (($argCount == 1)) {
-															$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, 0));
+														$int1 = $funcArgs->arr[1]->internalValue;
+														if ((($int1 < 0) || ($int1 >= strlen($string1)))) {
+															$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index is out of bounds.");
 														} else {
-															if (($funcArgs->arr[1]->type != 3)) {
-																$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires an integer as its second argument.");
-															} else {
-																$int1 = $funcArgs->arr[1]->internalValue;
-																if ((($int1 < 0) || ($int1 >= strlen($string1)))) {
-																	$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index is out of bounds.");
-																} else {
-																	$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, $int1));
-																}
-															}
+															$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, $int1));
 														}
 													}
 												}
@@ -2719,12 +2639,10 @@
 													$value2 = $funcArgs->arr[0];
 													if (($value2->type != 5)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "string startsWith method requires another string as input.");
+													} else if (self::PST_stringStartsWith($string1, $value2->internalValue)) {
+														$output = $VALUE_TRUE;
 													} else {
-														if (self::PST_stringStartsWith($string1, $value2->internalValue)) {
-															$output = $VALUE_TRUE;
-														} else {
-															$output = $VALUE_FALSE;
-														}
+														$output = $VALUE_FALSE;
 													}
 												}
 												break;
@@ -2790,11 +2708,9 @@
 											case 4:
 												if (($argCount > 0)) {
 													$hasInterrupt = self::EX_InvalidArgument($ec, self::primitiveMethodWrongArgCountError("list clear method", 0, $argCount));
-												} else {
-													if (($list1->size > 0)) {
-														$list1->list->arr = array();
-														$list1->size = 0;
-													}
+												} else if (($list1->size > 0)) {
+													$list1->list->arr = array();
+													$list1->size = 0;
 												}
 												break;
 											case 5:
@@ -2905,13 +2821,11 @@
 															if (($int1 == $_len)) {
 																array_push($list1->list->arr, $value2);
 																$list1->size += 1;
+															} else if ((($int1 < 0) || ($int1 >= $_len))) {
+																$hasInterrupt = self::EX_IndexOutOfRange($ec, "Index out of range.");
 															} else {
-																if ((($int1 < 0) || ($int1 >= $_len))) {
-																	$hasInterrupt = self::EX_IndexOutOfRange($ec, "Index out of range.");
-																} else {
-																	array_splice($list1->list->arr, $int1, 0, array($value2));
-																	$list1->size += 1;
-																}
+																array_splice($list1->list->arr, $int1, 0, array($value2));
+																$list1->size += 1;
 															}
 														}
 													}
@@ -3027,19 +2941,17 @@
 													if (((self::PST_intBuffer16)->arr[0] > 0)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 													}
-												} else {
-													if (($argCount == 1)) {
-														$value2 = $funcArgs->arr[0];
-														if (($value2->type == 9)) {
-															$primitiveMethodToCoreLibraryFallback = true;
-															$functionId = $metadata->primitiveMethodFunctionIdFallbackLookup->arr[2];
-															$funcArgs->arr[1] = $value;
-															$argCount = 2;
-														} else {
-															$hasInterrupt = self::EX_InvalidArgument($ec, "list.sort(get_key_function) requires a function pointer as its argument.");
-														}
-														$output = null;
+												} else if (($argCount == 1)) {
+													$value2 = $funcArgs->arr[0];
+													if (($value2->type == 9)) {
+														$primitiveMethodToCoreLibraryFallback = true;
+														$functionId = $metadata->primitiveMethodFunctionIdFallbackLookup->arr[2];
+														$funcArgs->arr[1] = $value;
+														$argCount = 2;
+													} else {
+														$hasInterrupt = self::EX_InvalidArgument($ec, "list.sort(get_key_function) requires a function pointer as its argument.");
 													}
+													$output = null;
 												}
 												break;
 											default:
@@ -3054,14 +2966,12 @@
 											case 4:
 												if (($argCount > 0)) {
 													$hasInterrupt = self::EX_InvalidArgument($ec, self::primitiveMethodWrongArgCountError("dictionary clear method", 0, $argCount));
-												} else {
-													if (($dictImpl->size > 0)) {
-														$dictImpl->intToIndex = new PastelPtrArray();
-														$dictImpl->stringToIndex = new PastelPtrArray();
-														$dictImpl->keys->arr = array();
-														$dictImpl->values->arr = array();
-														$dictImpl->size = 0;
-													}
+												} else if (($dictImpl->size > 0)) {
+													$dictImpl->intToIndex = new PastelPtrArray();
+													$dictImpl->stringToIndex = new PastelPtrArray();
+													$dictImpl->keys->arr = array();
+													$dictImpl->values->arr = array();
+													$dictImpl->size = 0;
 												}
 												break;
 											case 5:
@@ -3159,27 +3069,19 @@
 														if (($dictImpl2->size > 0)) {
 															if (($dictImpl->size == 0)) {
 																$value->internalValue = self::cloneDictionary($dictImpl2, null);
+															} else if (($dictImpl2->keyType != $dictImpl->keyType)) {
+																$hasInterrupt = self::EX_InvalidKey($ec, "Dictionaries with different key types cannot be merged.");
+															} else if ((($dictImpl2->keyType == 8) && ($dictImpl2->keyClassId != $dictImpl->keyClassId) && ($dictImpl->keyClassId != 0) && !self::isClassASubclassOf($vm, $dictImpl2->keyClassId, $dictImpl->keyClassId))) {
+																$hasInterrupt = self::EX_InvalidKey($ec, "Dictionary key types are incompatible.");
 															} else {
-																if (($dictImpl2->keyType != $dictImpl->keyType)) {
-																	$hasInterrupt = self::EX_InvalidKey($ec, "Dictionaries with different key types cannot be merged.");
-																} else {
-																	if ((($dictImpl2->keyType == 8) && ($dictImpl2->keyClassId != $dictImpl->keyClassId) && ($dictImpl->keyClassId != 0) && !self::isClassASubclassOf($vm, $dictImpl2->keyClassId, $dictImpl->keyClassId))) {
-																		$hasInterrupt = self::EX_InvalidKey($ec, "Dictionary key types are incompatible.");
-																	} else {
-																		if (($dictImpl->valueType == null)) {
-																		} else {
-																			if (($dictImpl2->valueType == null)) {
-																				$hasInterrupt = self::EX_InvalidKey($ec, "Dictionaries with different value types cannot be merged.");
-																			} else {
-																				if (!self::canAssignGenericToGeneric($vm, $dictImpl2->valueType, 0, $dictImpl->valueType, 0, $intBuffer)) {
-																					$hasInterrupt = self::EX_InvalidKey($ec, "The dictionary value types are incompatible.");
-																				}
-																			}
-																		}
-																		if (!$hasInterrupt) {
-																			self::cloneDictionary($dictImpl2, $dictImpl);
-																		}
-																	}
+																if (($dictImpl->valueType == null)) {
+																} else if (($dictImpl2->valueType == null)) {
+																	$hasInterrupt = self::EX_InvalidKey($ec, "Dictionaries with different value types cannot be merged.");
+																} else if (!self::canAssignGenericToGeneric($vm, $dictImpl2->valueType, 0, $dictImpl->valueType, 0, $intBuffer)) {
+																	$hasInterrupt = self::EX_InvalidKey($ec, "The dictionary value types are incompatible.");
+																}
+																if (!$hasInterrupt) {
+																	self::cloneDictionary($dictImpl2, $dictImpl);
 																}
 															}
 														}
@@ -3299,12 +3201,10 @@
 											case 15:
 												if (($argCount == 1)) {
 													$funcArgs->arr[1] = $funcArgs->arr[0];
+												} else if (($argCount == 0)) {
+													$funcArgs->arr[1] = $VALUE_NULL;
 												} else {
-													if (($argCount == 0)) {
-														$funcArgs->arr[1] = $VALUE_NULL;
-													} else {
-														$hasInterrupt = self::EX_InvalidArgument($ec, "invoke requires a list of arguments.");
-													}
+													$hasInterrupt = self::EX_InvalidArgument($ec, "invoke requires a list of arguments.");
 												}
 												$funcArgs->arr[0] = $value;
 												$argCount = 2;
@@ -3512,22 +3412,18 @@
 										} else {
 											$value2 = new Value(3, $i);
 										}
+									} else if (($i < 2049)) {
+										$value2 = $globals->positiveIntegers->arr[$i];
 									} else {
-										if (($i < 2049)) {
-											$value2 = $globals->positiveIntegers->arr[$i];
-										} else {
-											$value2 = new Value(3, $i);
-										}
+										$value2 = new Value(3, $i);
 									}
 								}
-							} else {
-								if ((($value->type == 3) && ($row->arr[0] == 4))) {
-									$int1 = $value->internalValue;
-									if (($int1 == 0)) {
-										$value2 = $VALUE_FLOAT_ZERO;
-									} else {
-										$value2 = new Value(4, (0.0 + $int1));
-									}
+							} else if ((($value->type == 3) && ($row->arr[0] == 4))) {
+								$int1 = $value->internalValue;
+								if (($int1 == 0)) {
+									$value2 = $VALUE_FLOAT_ZERO;
+								} else {
+									$value2 = new Value(4, (0.0 + $int1));
 								}
 							}
 							if (($value2 != null)) {
@@ -3677,16 +3573,14 @@
 								$arg1 = $valueStack->arr[$valueStackSize];
 								if (($arg1->type != 2)) {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "Assertion expression must be a boolean.");
+								} else if ($arg1->internalValue) {
+									$output = $VALUE_NULL;
 								} else {
-									if ($arg1->internalValue) {
-										$output = $VALUE_NULL;
-									} else {
-										$string1 = self::valueToString($vm, $arg2);
-										if ($arg3->internalValue) {
-											$string1 = (("Assertion failed: ") . ($string1));
-										}
-										$hasInterrupt = self::EX_AssertionFailed($ec, $string1);
+									$string1 = self::valueToString($vm, $arg2);
+									if ($arg3->internalValue) {
+										$string1 = (("Assertion failed: ") . ($string1));
 									}
+									$hasInterrupt = self::EX_AssertionFailed($ec, $string1);
 								}
 								break;
 							case 8:
@@ -3742,14 +3636,12 @@
 									if (($arg1->internalValue < 0)) {
 										$output = self::buildInteger($globals, -$arg1->internalValue);
 									}
-								} else {
-									if (($arg1->type == 4)) {
-										if (($arg1->internalValue < 0)) {
-											$output = self::buildFloat($globals, -$arg1->internalValue);
-										}
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "abs requires a number as input.");
+								} else if (($arg1->type == 4)) {
+									if (($arg1->internalValue < 0)) {
+										$output = self::buildFloat($globals, -$arg1->internalValue);
 									}
+								} else {
+									$hasInterrupt = self::EX_InvalidArgument($ec, "abs requires a number as input.");
 								}
 								break;
 							case 13:
@@ -3757,12 +3649,10 @@
 								$arg1 = $valueStack->arr[--$valueStackSize];
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "arccos requires a number as input.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "arccos requires a number as input.");
 								}
 								if (!$hasInterrupt) {
 									if ((($float1 < -1) || ($float1 > 1))) {
@@ -3777,12 +3667,10 @@
 								$arg1 = $valueStack->arr[--$valueStackSize];
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "arcsin requires a number as input.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "arcsin requires a number as input.");
 								}
 								if (!$hasInterrupt) {
 									if ((($float1 < -1) || ($float1 > 1))) {
@@ -3800,21 +3688,17 @@
 								$bool1 = false;
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if (($arg2->type == 4)) {
 									$float2 = $arg2->internalValue;
+								} else if (($arg2->type == 3)) {
+									$float2 = (0.0 + $arg2->internalValue);
 								} else {
-									if (($arg2->type == 3)) {
-										$float2 = (0.0 + $arg2->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if ($bool1) {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "arctan requires numeric arguments.");
@@ -3828,13 +3712,11 @@
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
 									$output = self::buildFloat($globals, cos($float1));
+								} else if (($arg1->type == 3)) {
+									$int1 = $arg1->internalValue;
+									$output = self::buildFloat($globals, cos($int1));
 								} else {
-									if (($arg1->type == 3)) {
-										$int1 = $arg1->internalValue;
-										$output = self::buildFloat($globals, cos($int1));
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "cos requires a number argument.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "cos requires a number argument.");
 								}
 								break;
 							case 17:
@@ -3846,21 +3728,17 @@
 								$bool1 = false;
 								if (($arg2->type == 4)) {
 									$float2 = $arg2->internalValue;
+								} else if (($arg2->type == 3)) {
+									$float2 = (0.0 + $arg2->internalValue);
 								} else {
-									if (($arg2->type == 3)) {
-										$float2 = (0.0 + $arg2->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if (($arg3->type == 4)) {
 									$float3 = $arg3->internalValue;
+								} else if (($arg3->type == 3)) {
+									$float3 = (0.0 + $arg3->internalValue);
 								} else {
-									if (($arg3->type == 3)) {
-										$float3 = (0.0 + $arg3->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if ((!$bool1 && ($float3 < $float2))) {
 									$float1 = $float3;
@@ -3872,25 +3750,19 @@
 								}
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if ($bool1) {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "ensureRange requires numeric arguments.");
+								} else if (($float1 < $float2)) {
+									$output = $arg2;
+								} else if (($float1 > $float3)) {
+									$output = $arg3;
 								} else {
-									if (($float1 < $float2)) {
-										$output = $arg2;
-									} else {
-										if (($float1 > $float3)) {
-											$output = $arg3;
-										} else {
-											$output = $arg1;
-										}
-									}
+									$output = $arg1;
 								}
 								break;
 							case 18:
@@ -3906,22 +3778,18 @@
 									if (($int1 < 2049)) {
 										if (($int1 >= 0)) {
 											$output = $INTEGER_POSITIVE_CACHE->arr[$int1];
+										} else if (($int1 > -257)) {
+											$output = $INTEGER_NEGATIVE_CACHE->arr[-$int1];
 										} else {
-											if (($int1 > -257)) {
-												$output = $INTEGER_NEGATIVE_CACHE->arr[-$int1];
-											} else {
-												$output = new Value(3, $int1);
-											}
+											$output = new Value(3, $int1);
 										}
 									} else {
 										$output = new Value(3, $int1);
 									}
+								} else if (($arg1->type == 3)) {
+									$output = $arg1;
 								} else {
-									if (($arg1->type == 3)) {
-										$output = $arg1;
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "floor expects a numeric argument.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "floor expects a numeric argument.");
 								}
 								break;
 							case 19:
@@ -3932,30 +3800,24 @@
 								$bool1 = false;
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if (($arg2->type == 4)) {
 									$float2 = $arg2->internalValue;
+								} else if (($arg2->type == 3)) {
+									$float2 = (0.0 + $arg2->internalValue);
 								} else {
-									if (($arg2->type == 3)) {
-										$float2 = (0.0 + $arg2->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if ($bool1) {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "max requires numeric arguments.");
+								} else if (($float1 >= $float2)) {
+									$output = $arg1;
 								} else {
-									if (($float1 >= $float2)) {
-										$output = $arg1;
-									} else {
-										$output = $arg2;
-									}
+									$output = $arg2;
 								}
 								break;
 							case 20:
@@ -3966,30 +3828,24 @@
 								$bool1 = false;
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if (($arg2->type == 4)) {
 									$float2 = $arg2->internalValue;
+								} else if (($arg2->type == 3)) {
+									$float2 = (0.0 + $arg2->internalValue);
 								} else {
-									if (($arg2->type == 3)) {
-										$float2 = (0.0 + $arg2->internalValue);
-									} else {
-										$bool1 = true;
-									}
+									$bool1 = true;
 								}
 								if ($bool1) {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "min requires numeric arguments.");
+								} else if (($float1 <= $float2)) {
+									$output = $arg1;
 								} else {
-									if (($float1 <= $float2)) {
-										$output = $arg1;
-									} else {
-										$output = $arg2;
-									}
+									$output = $arg2;
 								}
 								break;
 							case 21:
@@ -4017,21 +3873,17 @@
 								$arg1 = $valueStack->arr[--$valueStackSize];
 								if (($arg1->type == 3)) {
 									$float1 = (0.0 + ($arg1->internalValue));
+								} else if (($arg1->type == 4)) {
+									$float1 = $arg1->internalValue;
 								} else {
-									if (($arg1->type == 4)) {
-										$float1 = $arg1->internalValue;
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "sign requires a number as input.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "sign requires a number as input.");
 								}
 								if (($float1 == 0)) {
 									$output = $VALUE_INT_ZERO;
+								} else if (($float1 > 0)) {
+									$output = $VALUE_INT_ONE;
 								} else {
-									if (($float1 > 0)) {
-										$output = $VALUE_INT_ONE;
-									} else {
-										$output = $INTEGER_NEGATIVE_CACHE->arr[1];
-									}
+									$output = $INTEGER_NEGATIVE_CACHE->arr[1];
 								}
 								break;
 							case 24:
@@ -4039,12 +3891,10 @@
 								$arg1 = $valueStack->arr[--$valueStackSize];
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "sin requires a number argument.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "sin requires a number argument.");
 								}
 								$output = self::buildFloat($globals, sin($float1));
 								break;
@@ -4053,12 +3903,10 @@
 								$arg1 = $valueStack->arr[--$valueStackSize];
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "tan requires a number argument.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "tan requires a number argument.");
 								}
 								if (!$hasInterrupt) {
 									$float2 = cos($float1);
@@ -4079,12 +3927,10 @@
 								$arg1 = $valueStack->arr[$valueStackSize];
 								if (($arg1->type == 4)) {
 									$float1 = $arg1->internalValue;
+								} else if (($arg1->type == 3)) {
+									$float1 = (0.0 + $arg1->internalValue);
 								} else {
-									if (($arg1->type == 3)) {
-										$float1 = (0.0 + $arg1->internalValue);
-									} else {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "logarithms require a number argument.");
-									}
+									$hasInterrupt = self::EX_InvalidArgument($ec, "logarithms require a number argument.");
 								}
 								if (!$hasInterrupt) {
 									if (($float1 <= 0)) {
@@ -4128,14 +3974,12 @@
 									$value = $valueStack->arr[(($valueStackSize + 1) + $i)];
 									if (($value->type == 3)) {
 										$intArray1->arr[($_len + $i)] = $value->internalValue;
+									} else if (($value->type == 4)) {
+										$float1 = (0.5 + $value->internalValue);
+										$intArray1->arr[($_len + $i)] = intval($float1);
 									} else {
-										if (($value->type == 4)) {
-											$float1 = (0.5 + $value->internalValue);
-											$intArray1->arr[($_len + $i)] = intval($float1);
-										} else {
-											$hasInterrupt = self::EX_InvalidArgument($ec, "Input must be integers.");
-											$i = -1;
-										}
+										$hasInterrupt = self::EX_InvalidArgument($ec, "Input must be integers.");
+										$i = -1;
 									}
 									$i -= 1;
 								}
@@ -4234,19 +4078,17 @@
 									$value = $localsStack->arr[$i];
 									if (($localsStackSet->arr[$i] != $localsStackSetToken)) {
 										$i += $int1;
-									} else {
-										if (($value->type == 4)) {
-											$float1 = $value->internalValue;
-											if ((($float1 < 0) && (($float1 % 1) != 0))) {
-												$int2 = (intval($float1) - 1);
-											} else {
-												$int2 = intval($float1);
-											}
-											if ((($int2 >= 0) && ($int2 < 2049))) {
-												$localsStack->arr[$i] = $INTEGER_POSITIVE_CACHE->arr[$int2];
-											} else {
-												$localsStack->arr[$i] = self::buildInteger($globals, $int2);
-											}
+									} else if (($value->type == 4)) {
+										$float1 = $value->internalValue;
+										if ((($float1 < 0) && (($float1 % 1) != 0))) {
+											$int2 = (intval($float1) - 1);
+										} else {
+											$int2 = intval($float1);
+										}
+										if ((($int2 >= 0) && ($int2 < 2049))) {
+											$localsStack->arr[$i] = $INTEGER_POSITIVE_CACHE->arr[$int2];
+										} else {
+											$localsStack->arr[$i] = self::buildInteger($globals, $int2);
 										}
 									}
 									$i += 1;
@@ -4288,25 +4130,19 @@
 							if ($first) {
 								$type = $value2->type;
 								$first = false;
-							} else {
-								if (($type != $value2->type)) {
-									$hasInterrupt = self::EX_InvalidKey($ec, "Dictionary keys must be of the same type.");
-								}
+							} else if (($type != $value2->type)) {
+								$hasInterrupt = self::EX_InvalidKey($ec, "Dictionary keys must be of the same type.");
 							}
 							if (!$hasInterrupt) {
 								if (($type == 3)) {
 									$intKey = $value2->internalValue;
+								} else if (($type == 5)) {
+									$stringKey = $value2->internalValue;
+								} else if (($type == 8)) {
+									$objInstance1 = $value2->internalValue;
+									$intKey = $objInstance1->objectId;
 								} else {
-									if (($type == 5)) {
-										$stringKey = $value2->internalValue;
-									} else {
-										if (($type == 8)) {
-											$objInstance1 = $value2->internalValue;
-											$intKey = $objInstance1->objectId;
-										} else {
-											$hasInterrupt = self::EX_InvalidKey($ec, "Only integers, strings, and objects can be used as dictionary keys.");
-										}
-									}
+									$hasInterrupt = self::EX_InvalidKey($ec, "Only integers, strings, and objects can be used as dictionary keys.");
 								}
 							}
 							if (!$hasInterrupt) {
@@ -4511,29 +4347,25 @@
 							if (($output == null)) {
 								if (($value->type == 1)) {
 									$hasInterrupt = self::EX_NullReference($ec, "Tried to dereference a field on null.");
-								} else {
-									if ((($value->type == 8) && ($int1 < -1))) {
-										$string1 = $identifiers->arr[$row->arr[0]];
-										if (($int1 == -2)) {
-											$string2 = "private";
-										} else {
-											if (($int1 == -3)) {
-												$string2 = "internal";
-											} else {
-												$string2 = "protected";
-											}
-										}
-										$hasInterrupt = self::EX_UnknownField($ec, implode(array("The field '", $string1, "' is marked as ", $string2, " and cannot be accessed from here.")));
+								} else if ((($value->type == 8) && ($int1 < -1))) {
+									$string1 = $identifiers->arr[$row->arr[0]];
+									if (($int1 == -2)) {
+										$string2 = "private";
+									} else if (($int1 == -3)) {
+										$string2 = "internal";
 									} else {
-										if (($value->type == 8)) {
-											$classId = ($value->internalValue)->classId;
-											$classInfo = $classTable->arr[$classId];
-											$string1 = (($classInfo->fullyQualifiedName) . (" instance"));
-										} else {
-											$string1 = self::getTypeFromId($value->type);
-										}
-										$hasInterrupt = self::EX_UnknownField($ec, (($string1) . (" does not have that field.")));
+										$string2 = "protected";
 									}
+									$hasInterrupt = self::EX_UnknownField($ec, implode(array("The field '", $string1, "' is marked as ", $string2, " and cannot be accessed from here.")));
+								} else {
+									if (($value->type == 8)) {
+										$classId = ($value->internalValue)->classId;
+										$classInfo = $classTable->arr[$classId];
+										$string1 = (($classInfo->fullyQualifiedName) . (" instance"));
+									} else {
+										$string1 = self::getTypeFromId($value->type);
+									}
+									$hasInterrupt = self::EX_UnknownField($ec, (($string1) . (" does not have that field.")));
 								}
 							}
 						}
@@ -4584,19 +4416,17 @@
 								$valueStackCapacity = count($valueStack->arr);
 							}
 							$valueStack->arr[$valueStackSize++] = $value;
-						} else {
-							if (($row->arr[0] == 2)) {
-								if ((($valueStackSize + 1) > $valueStackCapacity)) {
-									self::valueStackIncreaseCapacity($ec);
-									$valueStack = $ec->valueStack;
-									$valueStackCapacity = count($valueStack->arr);
-								}
-								$valueStack->arr[$valueStackSize] = $valueStack->arr[($valueStackSize - 2)];
-								$valueStack->arr[($valueStackSize + 1)] = $valueStack->arr[($valueStackSize - 1)];
-								$valueStackSize += 2;
-							} else {
-								$hasInterrupt = self::EX_Fatal($ec, "?");
+						} else if (($row->arr[0] == 2)) {
+							if ((($valueStackSize + 1) > $valueStackCapacity)) {
+								self::valueStackIncreaseCapacity($ec);
+								$valueStack = $ec->valueStack;
+								$valueStackCapacity = count($valueStack->arr);
 							}
+							$valueStack->arr[$valueStackSize] = $valueStack->arr[($valueStackSize - 2)];
+							$valueStack->arr[($valueStackSize + 1)] = $valueStack->arr[($valueStackSize - 1)];
+							$valueStackSize += 2;
+						} else {
+							$hasInterrupt = self::EX_Fatal($ec, "?");
 						}
 						break;
 					case 29:
@@ -4626,12 +4456,10 @@
 							$int1 = self::doEqualityComparisonAndReturnCode($leftValue, $rightValue);
 							if (($int1 == 0)) {
 								$bool1 = false;
+							} else if (($int1 == 1)) {
+								$bool1 = true;
 							} else {
-								if (($int1 == 1)) {
-									$bool1 = true;
-								} else {
-									$hasInterrupt = self::EX_UnsupportedOperation($ec, "== and != not defined here.");
-								}
+								$hasInterrupt = self::EX_UnsupportedOperation($ec, "== and != not defined here.");
 							}
 						}
 						if (($valueStackSize == $valueStackCapacity)) {
@@ -4679,13 +4507,11 @@
 									$int1 = $row->arr[0];
 									if (($int1 == 1)) {
 										$pc += $row->arr[1];
+									} else if (($int1 == 2)) {
+										$intArray1 = $esfData->arr[$pc];
+										$pc = $intArray1->arr[1];
 									} else {
-										if (($int1 == 2)) {
-											$intArray1 = $esfData->arr[$pc];
-											$pc = $intArray1->arr[1];
-										} else {
-											$hasInterrupt = self::EX_Fatal($ec, "break exists without a loop");
-										}
+										$hasInterrupt = self::EX_Fatal($ec, "break exists without a loop");
 									}
 									break;
 								case 2:
@@ -4693,13 +4519,11 @@
 									$int1 = $row->arr[2];
 									if (($int1 == 1)) {
 										$pc += $row->arr[3];
+									} else if (($int1 == 2)) {
+										$intArray1 = $esfData->arr[$pc];
+										$pc = $intArray1->arr[1];
 									} else {
-										if (($int1 == 2)) {
-											$intArray1 = $esfData->arr[$pc];
-											$pc = $intArray1->arr[1];
-										} else {
-											$hasInterrupt = self::EX_Fatal($ec, "continue exists without a loop");
-										}
+										$hasInterrupt = self::EX_Fatal($ec, "continue exists without a loop");
 									}
 									break;
 								case 3:
@@ -4786,74 +4610,64 @@
 									$valueStack->arr[($valueStackSize - 1)] = $list1->list->arr[$i];
 								}
 							}
-						} else {
-							if (($root->type == 7)) {
-								$dictImpl = $root->internalValue;
-								$keyType = $value->type;
-								if (($keyType != $dictImpl->keyType)) {
-									if (($dictImpl->size == 0)) {
-										$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found. Dictionary is empty.");
-									} else {
-										$hasInterrupt = self::EX_InvalidKey($ec, implode(array("Incorrect key type. This dictionary contains ", self::getTypeFromId($dictImpl->keyType), " keys. Provided key is a ", self::getTypeFromId($keyType), ".")));
-									}
+						} else if (($root->type == 7)) {
+							$dictImpl = $root->internalValue;
+							$keyType = $value->type;
+							if (($keyType != $dictImpl->keyType)) {
+								if (($dictImpl->size == 0)) {
+									$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found. Dictionary is empty.");
 								} else {
-									if (($keyType == 3)) {
-										$intKey = $value->internalValue;
-									} else {
-										if (($keyType == 5)) {
-											$stringKey = $value->internalValue;
-										} else {
-											if (($keyType == 8)) {
-												$intKey = ($value->internalValue)->objectId;
-											} else {
-												if (($dictImpl->size == 0)) {
-													$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found. Dictionary is empty.");
-												} else {
-													$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found.");
-												}
-											}
-										}
-									}
-									if (!$hasInterrupt) {
-										if (($keyType == 5)) {
-											$stringIntDict1 = $dictImpl->stringToIndex;
-											$int1 = isset($stringIntDict1->arr[$stringKey]) ? $stringIntDict1->arr[$stringKey] : (-1);
-											if (($int1 == -1)) {
-												$hasInterrupt = self::EX_KeyNotFound($ec, implode(array("Key not found: '", $stringKey, "'")));
-											} else {
-												$valueStack->arr[($valueStackSize - 1)] = $dictImpl->values->arr[$int1];
-											}
-										} else {
-											$intIntDict1 = $dictImpl->intToIndex;
-											$int1 = isset($intIntDict1->arr['i'.$intKey]) ? $intIntDict1->arr['i'.$intKey] : (-1);
-											if (($int1 == -1)) {
-												$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found.");
-											} else {
-												$valueStack->arr[($valueStackSize - 1)] = $dictImpl->values->arr[$intIntDict1->arr['i'.$intKey]];
-											}
-										}
-									}
+									$hasInterrupt = self::EX_InvalidKey($ec, implode(array("Incorrect key type. This dictionary contains ", self::getTypeFromId($dictImpl->keyType), " keys. Provided key is a ", self::getTypeFromId($keyType), ".")));
 								}
 							} else {
-								if (($root->type == 5)) {
-									$string1 = $root->internalValue;
-									if (($value->type != 3)) {
-										$hasInterrupt = self::EX_InvalidArgument($ec, "String indices must be integers.");
-									} else {
-										$int1 = $value->internalValue;
-										if (($int1 < 0)) {
-											$int1 += strlen($string1);
-										}
-										if ((($int1 < 0) || ($int1 >= strlen($string1)))) {
-											$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index out of range.");
+								if (($keyType == 3)) {
+									$intKey = $value->internalValue;
+								} else if (($keyType == 5)) {
+									$stringKey = $value->internalValue;
+								} else if (($keyType == 8)) {
+									$intKey = ($value->internalValue)->objectId;
+								} else if (($dictImpl->size == 0)) {
+									$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found. Dictionary is empty.");
+								} else {
+									$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found.");
+								}
+								if (!$hasInterrupt) {
+									if (($keyType == 5)) {
+										$stringIntDict1 = $dictImpl->stringToIndex;
+										$int1 = isset($stringIntDict1->arr[$stringKey]) ? $stringIntDict1->arr[$stringKey] : (-1);
+										if (($int1 == -1)) {
+											$hasInterrupt = self::EX_KeyNotFound($ec, implode(array("Key not found: '", $stringKey, "'")));
 										} else {
-											$valueStack->arr[($valueStackSize - 1)] = self::buildCommonString($globals, $string1[$int1]);
+											$valueStack->arr[($valueStackSize - 1)] = $dictImpl->values->arr[$int1];
+										}
+									} else {
+										$intIntDict1 = $dictImpl->intToIndex;
+										$int1 = isset($intIntDict1->arr['i'.$intKey]) ? $intIntDict1->arr['i'.$intKey] : (-1);
+										if (($int1 == -1)) {
+											$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found.");
+										} else {
+											$valueStack->arr[($valueStackSize - 1)] = $dictImpl->values->arr[$intIntDict1->arr['i'.$intKey]];
 										}
 									}
-								} else {
-									$hasInterrupt = self::EX_InvalidArgument($ec, (("Cannot index into this type: ") . (self::getTypeFromId($root->type))));
 								}
 							}
+						} else if (($root->type == 5)) {
+							$string1 = $root->internalValue;
+							if (($value->type != 3)) {
+								$hasInterrupt = self::EX_InvalidArgument($ec, "String indices must be integers.");
+							} else {
+								$int1 = $value->internalValue;
+								if (($int1 < 0)) {
+									$int1 += strlen($string1);
+								}
+								if ((($int1 < 0) || ($int1 >= strlen($string1)))) {
+									$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index out of range.");
+								} else {
+									$valueStack->arr[($valueStackSize - 1)] = self::buildCommonString($globals, $string1[$int1]);
+								}
+							}
+						} else {
+							$hasInterrupt = self::EX_InvalidArgument($ec, (("Cannot index into this type: ") . (self::getTypeFromId($root->type))));
 						}
 						break;
 					case 37:
@@ -4931,10 +4745,8 @@
 						$value = $valueStack->arr[--$valueStackSize];
 						if (($value->type != 2)) {
 							$hasInterrupt = self::EX_InvalidArgument($ec, "Boolean expected.");
-						} else {
-							if (!$value->internalValue) {
-								$pc += $row->arr[0];
-							}
+						} else if (!$value->internalValue) {
+							$pc += $row->arr[0];
 						}
 						break;
 					case 42:
@@ -4942,12 +4754,10 @@
 						$value = $valueStack->arr[($valueStackSize - 1)];
 						if (($value->type != 2)) {
 							$hasInterrupt = self::EX_InvalidArgument($ec, "Boolean expected.");
+						} else if ($value->internalValue) {
+							$valueStackSize -= 1;
 						} else {
-							if ($value->internalValue) {
-								$valueStackSize -= 1;
-							} else {
-								$pc += $row->arr[0];
-							}
+							$pc += $row->arr[0];
 						}
 						break;
 					case 43:
@@ -4955,10 +4765,8 @@
 						$value = $valueStack->arr[--$valueStackSize];
 						if (($value->type != 2)) {
 							$hasInterrupt = self::EX_InvalidArgument($ec, "Boolean expected.");
-						} else {
-							if ($value->internalValue) {
-								$pc += $row->arr[0];
-							}
+						} else if ($value->internalValue) {
+							$pc += $row->arr[0];
 						}
 						break;
 					case 44:
@@ -4966,12 +4774,10 @@
 						$value = $valueStack->arr[($valueStackSize - 1)];
 						if (($value->type != 2)) {
 							$hasInterrupt = self::EX_InvalidArgument($ec, "Boolean expected.");
+						} else if ($value->internalValue) {
+							$pc += $row->arr[0];
 						} else {
-							if ($value->internalValue) {
-								$pc += $row->arr[0];
-							} else {
-								$valueStackSize -= 1;
-							}
+							$valueStackSize -= 1;
 						}
 						break;
 					case 45:
@@ -5104,12 +4910,10 @@
 						$type = $value->type;
 						if (($type == 3)) {
 							$valueStack->arr[($valueStackSize - 1)] = self::buildInteger($globals, -$value->internalValue);
+						} else if (($type == 4)) {
+							$valueStack->arr[($valueStackSize - 1)] = self::buildFloat($globals, -$value->internalValue);
 						} else {
-							if (($type == 4)) {
-								$valueStack->arr[($valueStackSize - 1)] = self::buildFloat($globals, -$value->internalValue);
-							} else {
-								$hasInterrupt = self::EX_InvalidArgument($ec, implode(array("Negative sign can only be applied to numbers. Found ", self::getTypeFromId($type), " instead.")));
-							}
+							$hasInterrupt = self::EX_InvalidArgument($ec, implode(array("Negative sign can only be applied to numbers. Found ", self::getTypeFromId($type), " instead.")));
 						}
 						break;
 					case 53:
@@ -5537,15 +5341,13 @@
 				$isString = true;
 				$originalString = $value->internalValue;
 				$length = strlen($originalString);
+			} else if (($value->type == 6)) {
+				$isString = false;
+				$originalList = $value->internalValue;
+				$length = $originalList->size;
 			} else {
-				if (($value->type == 6)) {
-					$isString = false;
-					$originalList = $value->internalValue;
-					$length = $originalList->size;
-				} else {
-					self::EX_InvalidArgument($ec, implode(array("Cannot apply slicing to ", self::getTypeFromId($value->type), ". Must be string or list.")));
-					return $globals->valueNull;
-				}
+				self::EX_InvalidArgument($ec, implode(array("Cannot apply slicing to ", self::getTypeFromId($value->type), ". Must be string or list.")));
+				return $globals->valueNull;
 			}
 			if (($status >= 2)) {
 				$msg = null;
@@ -5612,44 +5414,38 @@
 					}
 					$value = new Value(6, $outputList);
 				}
-			} else {
-				if (($status == 0)) {
-					if ($isString) {
-						$value = $globals->stringEmpty;
-					} else {
-						$value = new Value(6, self::makeEmptyList($originalList->type, 0));
-					}
+			} else if (($status == 0)) {
+				if ($isString) {
+					$value = $globals->stringEmpty;
 				} else {
-					if (($status == 2)) {
-						if (!$isString) {
-							$outputList = self::makeEmptyList($originalList->type, $length);
-							$i = 0;
-							while (($i < $length)) {
-								self::addToList($outputList, $originalList->list->arr[$i]);
-								$i += 1;
-							}
-							$value = new Value(6, $outputList);
-						}
-					} else {
-						$msg = null;
-						if ($isString) {
-							$msg = "String";
-						} else {
-							$msg = "List";
-						}
-						if (($status == 3)) {
-							$msg .= " slice begin index is out of range.";
-						} else {
-							if ($isForward) {
-								$msg .= " slice begin index must occur before the end index when step is positive.";
-							} else {
-								$msg .= " slice begin index must occur after the end index when the step is negative.";
-							}
-						}
-						self::EX_IndexOutOfRange($ec, $msg);
-						return $globals->valueNull;
-					}
+					$value = new Value(6, self::makeEmptyList($originalList->type, 0));
 				}
+			} else if (($status == 2)) {
+				if (!$isString) {
+					$outputList = self::makeEmptyList($originalList->type, $length);
+					$i = 0;
+					while (($i < $length)) {
+						self::addToList($outputList, $originalList->list->arr[$i]);
+						$i += 1;
+					}
+					$value = new Value(6, $outputList);
+				}
+			} else {
+				$msg = null;
+				if ($isString) {
+					$msg = "String";
+				} else {
+					$msg = "List";
+				}
+				if (($status == 3)) {
+					$msg .= " slice begin index is out of range.";
+				} else if ($isForward) {
+					$msg .= " slice begin index must occur before the end index when step is positive.";
+				} else {
+					$msg .= " slice begin index must occur after the end index when the step is negative.";
+				}
+				self::EX_IndexOutOfRange($ec, $msg);
+				return $globals->valueNull;
 			}
 			return $value;
 		}
@@ -5781,12 +5577,10 @@
 			$output = "";
 			if (($expected == 0)) {
 				$output = (($name) . (" does not accept any arguments."));
+			} else if (($expected == 1)) {
+				$output = (($name) . (" accepts exactly 1 argument."));
 			} else {
-				if (($expected == 1)) {
-					$output = (($name) . (" accepts exactly 1 argument."));
-				} else {
-					$output = implode(array($name, " requires ", ('' . ($expected)), " arguments."));
-				}
+				$output = implode(array($name, " requires ", ('' . ($expected)), " arguments."));
 			}
 			return implode(array($output, " Found: ", ('' . ($actual))));
 		}
@@ -5857,72 +5651,58 @@
 				$step = $steps->arr[$i];
 				if (self::isStringEqual(".", $step)) {
 					return null;
-				} else {
-					if (self::isStringEqual("this", $step)) {
-						$current = $stackFrame->objectContext;
-					} else {
-						if (self::isStringEqual("class", $step)) {
-							return null;
-						} else {
-							if (self::isStringEqual("local", $step)) {
-								$i += 1;
-								$step = $steps->arr[$i];
-								$localNamesByFuncPc = $vm->symbolData->localVarNamesById;
-								$localNames = null;
-								if ((($localNamesByFuncPc == null) || (count($localNamesByFuncPc->arr) == 0))) {
-									return null;
-								}
-								$j = $stackFrame->pc;
-								while (($j >= 0)) {
-									if (isset($localNamesByFuncPc->arr['i'.$j])) {
-										$localNames = $localNamesByFuncPc->arr['i'.$j];
-										$j = -1;
-									}
-									$j -= 1;
-								}
-								if (($localNames == null)) {
-									return null;
-								}
-								$localId = -1;
-								if (($localNames != null)) {
-									$j = 0;
-									while (($j < count($localNames->arr))) {
-										if (self::isStringEqual($localNames->arr[$j], $step)) {
-											$localId = $j;
-											$j = count($localNames->arr);
-										}
-										$j += 1;
-									}
-								}
-								if (($localId == -1)) {
-									return null;
-								}
-								$localOffset = ($localId + $stackFrame->localsStackOffset);
-								if (($ec->localsStackSet->arr[$localOffset] != $stackFrame->localsStackSetToken)) {
-									return null;
-								}
-								$current = $ec->localsStack->arr[$localOffset];
-							} else {
-								if (self::isStringEqual("index", $step)) {
-									return null;
-								} else {
-									if (self::isStringEqual("key-int", $step)) {
-										return null;
-									} else {
-										if (self::isStringEqual("key-str", $step)) {
-											return null;
-										} else {
-											if (self::isStringEqual("key-obj", $step)) {
-												return null;
-											} else {
-												return null;
-											}
-										}
-									}
-								}
+				} else if (self::isStringEqual("this", $step)) {
+					$current = $stackFrame->objectContext;
+				} else if (self::isStringEqual("class", $step)) {
+					return null;
+				} else if (self::isStringEqual("local", $step)) {
+					$i += 1;
+					$step = $steps->arr[$i];
+					$localNamesByFuncPc = $vm->symbolData->localVarNamesById;
+					$localNames = null;
+					if ((($localNamesByFuncPc == null) || (count($localNamesByFuncPc->arr) == 0))) {
+						return null;
+					}
+					$j = $stackFrame->pc;
+					while (($j >= 0)) {
+						if (isset($localNamesByFuncPc->arr['i'.$j])) {
+							$localNames = $localNamesByFuncPc->arr['i'.$j];
+							$j = -1;
+						}
+						$j -= 1;
+					}
+					if (($localNames == null)) {
+						return null;
+					}
+					$localId = -1;
+					if (($localNames != null)) {
+						$j = 0;
+						while (($j < count($localNames->arr))) {
+							if (self::isStringEqual($localNames->arr[$j], $step)) {
+								$localId = $j;
+								$j = count($localNames->arr);
 							}
+							$j += 1;
 						}
 					}
+					if (($localId == -1)) {
+						return null;
+					}
+					$localOffset = ($localId + $stackFrame->localsStackOffset);
+					if (($ec->localsStackSet->arr[$localOffset] != $stackFrame->localsStackSetToken)) {
+						return null;
+					}
+					$current = $ec->localsStack->arr[$localOffset];
+				} else if (self::isStringEqual("index", $step)) {
+					return null;
+				} else if (self::isStringEqual("key-int", $step)) {
+					return null;
+				} else if (self::isStringEqual("key-str", $step)) {
+					return null;
+				} else if (self::isStringEqual("key-obj", $step)) {
+					return null;
+				} else {
+					return null;
 				}
 				$i += 1;
 			}
@@ -5936,28 +5716,22 @@
 			if (($c == "%")) {
 				$value = self::read_till($pindex, $raw, $length, "%");
 				$num = intval($value);
+			} else if (($c == "@")) {
+				$num = self::read_integer($pindex, $raw, $length, $alphaNums);
+				$num *= 62;
+				$num += self::read_integer($pindex, $raw, $length, $alphaNums);
+			} else if (($c == "#")) {
+				$num = self::read_integer($pindex, $raw, $length, $alphaNums);
+				$num *= 62;
+				$num += self::read_integer($pindex, $raw, $length, $alphaNums);
+				$num *= 62;
+				$num += self::read_integer($pindex, $raw, $length, $alphaNums);
+			} else if (($c == "^")) {
+				$num = (-1 * self::read_integer($pindex, $raw, $length, $alphaNums));
 			} else {
-				if (($c == "@")) {
-					$num = self::read_integer($pindex, $raw, $length, $alphaNums);
-					$num *= 62;
-					$num += self::read_integer($pindex, $raw, $length, $alphaNums);
-				} else {
-					if (($c == "#")) {
-						$num = self::read_integer($pindex, $raw, $length, $alphaNums);
-						$num *= 62;
-						$num += self::read_integer($pindex, $raw, $length, $alphaNums);
-						$num *= 62;
-						$num += self::read_integer($pindex, $raw, $length, $alphaNums);
-					} else {
-						if (($c == "^")) {
-							$num = (-1 * self::read_integer($pindex, $raw, $length, $alphaNums));
-						} else {
-							// TODO: string.IndexOfChar(c);
-							$num = self::PST_stringIndexOf($alphaNums, $c, 0);
-							if (($num == -1)) {
-							}
-						}
-					}
+				// TODO: string.IndexOfChar(c);
+				$num = self::PST_stringIndexOf($alphaNums, $c, 0);
+				if (($num == -1)) {
 				}
 			}
 			return $num;
@@ -6230,20 +6004,14 @@
 					$isText = "TXT" === $type;
 					if ($isText) {
 						$intType = 1;
+					} else if (("IMGSH" === $type || "IMG" === $type)) {
+						$intType = 2;
+					} else if ("SND" === $type) {
+						$intType = 3;
+					} else if ("TTF" === $type) {
+						$intType = 4;
 					} else {
-						if (("IMGSH" === $type || "IMG" === $type)) {
-							$intType = 2;
-						} else {
-							if ("SND" === $type) {
-								$intType = 3;
-							} else {
-								if ("TTF" === $type) {
-									$intType = 4;
-								} else {
-									$intType = 5;
-								}
-							}
-						}
+						$intType = 5;
 					}
 					$userPath = self::stringDecode($itemData->arr[1]);
 					$internalPath = $itemData->arr[2];
@@ -6291,11 +6059,9 @@
 					unset($vm->executionContexts->arr['i'.$executionContextId]);
 				}
 				self::runShutdownHandlers($vm);
-			} else {
-				if (($status == 3)) {
-					self::printToStdOut($vm->environment->stacktracePrefix, $result->errorMessage);
-					self::runShutdownHandlers($vm);
-				}
+			} else if (($status == 3)) {
+				self::printToStdOut($vm->environment->stacktracePrefix, $result->errorMessage);
+				self::runShutdownHandlers($vm);
 			}
 			if (($executionContextId == 0)) {
 				$result->isRootContext = true;

@@ -36,21 +36,17 @@ var lib_easing_interpolate = function(vm, args) {
 	var float3 = 0.0;
 	if ((arg4[0] == 3)) {
 		float1 = (0.0 + arg4[1]);
+	} else if ((arg4[0] == 4)) {
+		float1 = arg4[1];
 	} else {
-		if ((arg4[0] == 4)) {
-			float1 = arg4[1];
-		} else {
-			return vm[13][0];
-		}
+		return vm[13][0];
 	}
 	if ((arg5[0] == 3)) {
 		float2 = (0.0 + arg5[1]);
+	} else if ((arg5[0] == 4)) {
+		float2 = arg5[1];
 	} else {
-		if ((arg5[0] == 4)) {
-			float2 = arg5[1];
-		} else {
-			return vm[13][0];
-		}
+		return vm[13][0];
 	}
 	var bool1 = false;
 	var bool2 = false;
@@ -64,11 +60,9 @@ var lib_easing_interpolate = function(vm, args) {
 		} else {
 			float1 *= 2.0;
 		}
-	} else {
-		if ((int1 == 1)) {
-			float1 = (float2 - float1);
-			bool1 = true;
-		}
+	} else if ((int1 == 1)) {
+		float1 = (float2 - float1);
+		bool1 = true;
 	}
 	if ((float2 == 0)) {
 		float1 = samples[0];
@@ -79,41 +73,35 @@ var lib_easing_interpolate = function(vm, args) {
 		}
 		if ((float1 >= float2)) {
 			float1 = samples[(_len - 1)];
+		} else if ((float1 < 0)) {
+			float1 = samples[0];
 		} else {
-			if ((float1 < 0)) {
-				float1 = samples[0];
-			} else {
-				float1 = (float1 / float2);
-				if ((_len > 2)) {
-					float2 = (float1 * _len);
-					var index = Math.floor(float2);
-					float2 -= index;
-					float1 = samples[index];
-					if (((index < (_len - 1)) && (float2 > 0))) {
-						float3 = samples[(index + 1)];
-						float1 = ((float1 * (1 - float2)) + (float3 * float2));
-					}
+			float1 = (float1 / float2);
+			if ((_len > 2)) {
+				float2 = (float1 * _len);
+				var index = Math.floor(float2);
+				float2 -= index;
+				float1 = samples[index];
+				if (((index < (_len - 1)) && (float2 > 0))) {
+					float3 = samples[(index + 1)];
+					float1 = ((float1 * (1 - float2)) + (float3 * float2));
 				}
 			}
 		}
 	}
 	if ((arg2[0] == 3)) {
 		float2 = (0.0 + arg2[1]);
+	} else if ((arg2[0] == 4)) {
+		float2 = arg2[1];
 	} else {
-		if ((arg2[0] == 4)) {
-			float2 = arg2[1];
-		} else {
-			return vm[13][0];
-		}
+		return vm[13][0];
 	}
 	if ((arg3[0] == 3)) {
 		float3 = (0.0 + arg3[1]);
+	} else if ((arg3[0] == 4)) {
+		float3 = arg3[1];
 	} else {
-		if ((arg3[0] == 4)) {
-			float3 = arg3[1];
-		} else {
-			return vm[13][0];
-		}
+		return vm[13][0];
 	}
 	if (bool1) {
 		float1 = (1.0 - float1);

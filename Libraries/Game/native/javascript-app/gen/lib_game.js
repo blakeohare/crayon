@@ -374,10 +374,8 @@ var lib_game_pump_events = function(vm, args) {
 				addToList(output, buildInteger(globals, ev[2]));
 				if ((t == 37)) {
 					addToList(output, buildFloat(globals, ev[4]));
-				} else {
-					if (((t >= 64) && (t < 80))) {
-						addToList(output, buildInteger(globals, ev[3]));
-					}
+				} else if (((t >= 64) && (t < 80))) {
+					addToList(output, buildInteger(globals, ev[3]));
 				}
 			}
 			i += 1;
