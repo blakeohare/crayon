@@ -362,8 +362,8 @@ public final class LibraryWrapper {
     while ((i < names.length)) {
       java.lang.reflect.Method fn = null;
       String name = names[i];
-      java.lang.reflect.Method dictLookup0 = functionLookup.get(name);
-      fn = dictLookup0 == null ? (functionLookup.containsKey(name) ? null : (null)) : dictLookup0;
+      java.lang.reflect.Method _PST_dictLookup0 = functionLookup.get(name);
+      fn = _PST_dictLookup0 == null ? (functionLookup.containsKey(name) ? null : (null)) : _PST_dictLookup0;
       if ((fn != null)) {
         org.crayonlang.interpreter.vm.CrayonWrapper.registerNamedCallback(vm, "Game", name, fn);
       }

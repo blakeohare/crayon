@@ -329,8 +329,8 @@ public final class CrayonWrapper {
 
   public static Value buildCommonString(VmGlobals g, String s) {
     Value value = null;
-    Value dictLookup0 = g.commonStrings.get(s);
-    value = dictLookup0 == null ? (g.commonStrings.containsKey(s) ? null : (null)) : dictLookup0;
+    Value _PST_dictLookup0 = g.commonStrings.get(s);
+    value = _PST_dictLookup0 == null ? (g.commonStrings.containsKey(s) ? null : (null)) : _PST_dictLookup0;
     if ((value == null)) {
       value = buildString(g, s);
       g.commonStrings.put(s, value);
@@ -1238,15 +1238,15 @@ public final class CrayonWrapper {
   public static int getNamedCallbackIdImpl(VmContext vm, String scope, String functionName, boolean allocIfMissing) {
     HashMap<String, HashMap<String, Integer>> lookup = vm.namedCallbacks.callbackIdLookup;
     HashMap<String, Integer> idsForScope = null;
-    HashMap<String, Integer> dictLookup1 = lookup.get(scope);
-    idsForScope = dictLookup1 == null ? (lookup.containsKey(scope) ? null : (null)) : dictLookup1;
+    HashMap<String, Integer> _PST_dictLookup1 = lookup.get(scope);
+    idsForScope = _PST_dictLookup1 == null ? (lookup.containsKey(scope) ? null : (null)) : _PST_dictLookup1;
     if ((idsForScope == null)) {
       idsForScope = new HashMap<String, Integer>();
       lookup.put(scope, idsForScope);
     }
     int id = -1;
-    Integer dictLookup2 = idsForScope.get(functionName);
-    id = dictLookup2 == null ? (idsForScope.containsKey(functionName) ? null : (-1)) : dictLookup2;
+    Integer _PST_dictLookup2 = idsForScope.get(functionName);
+    id = _PST_dictLookup2 == null ? (idsForScope.containsKey(functionName) ? null : (-1)) : _PST_dictLookup2;
     if (((id == -1) && allocIfMissing)) {
       id = vm.namedCallbacks.callbacksById.size();
       vm.namedCallbacks.callbacksById.add(null);
@@ -1945,8 +1945,8 @@ public final class CrayonWrapper {
               }
               if (!hasInterrupt) {
                 if ((keyType == 5)) {
-                  Integer dictLookup3 = dictImpl.stringToIndex.get(stringKey);
-                  int1 = dictLookup3 == null ? (dictImpl.stringToIndex.containsKey(stringKey) ? null : (-1)) : dictLookup3;
+                  Integer _PST_dictLookup3 = dictImpl.stringToIndex.get(stringKey);
+                  int1 = _PST_dictLookup3 == null ? (dictImpl.stringToIndex.containsKey(stringKey) ? null : (-1)) : _PST_dictLookup3;
                   if ((int1 == -1)) {
                     dictImpl.stringToIndex.put(stringKey, dictImpl.size);
                     dictImpl.size += 1;
@@ -1959,8 +1959,8 @@ public final class CrayonWrapper {
                     dictImpl.values.set(int1, value);
                   }
                 } else {
-                  Integer dictLookup4 = dictImpl.intToIndex.get(intKey);
-                  int1 = dictLookup4 == null ? (-1) : dictLookup4;
+                  Integer _PST_dictLookup4 = dictImpl.intToIndex.get(intKey);
+                  int1 = _PST_dictLookup4 == null ? (-1) : _PST_dictLookup4;
                   if ((int1 == -1)) {
                     dictImpl.intToIndex.put(intKey, dictImpl.size);
                     dictImpl.size += 1;
@@ -2020,8 +2020,8 @@ public final class CrayonWrapper {
             if ((row[5] == classId)) {
               int1 = row[6];
             } else {
-              Integer dictLookup5 = intIntDict1.get(nameId);
-              int1 = dictLookup5 == null ? (-1) : dictLookup5;
+              Integer _PST_dictLookup5 = intIntDict1.get(nameId);
+              int1 = _PST_dictLookup5 == null ? (-1) : _PST_dictLookup5;
               if ((int1 != -1)) {
                 int3 = classInfo.fieldAccessModifiers[int1];
                 if ((int3 > 1)) {
@@ -2688,8 +2688,8 @@ public final class CrayonWrapper {
                       classInfo = classTable[int1];
                       intIntDict1 = classInfo.localeScopedNameIdToMemberId;
                       int1 = ((row[4] * magicNumbers.totalLocaleCount) + row[5]);
-                      Integer dictLookup6 = intIntDict1.get(int1);
-                      i = dictLookup6 == null ? (-1) : dictLookup6;
+                      Integer _PST_dictLookup6 = intIntDict1.get(int1);
+                      i = _PST_dictLookup6 == null ? (-1) : _PST_dictLookup6;
                       if ((i != -1)) {
                         int1 = intIntDict1.get(int1);
                         functionId = classInfo.functionIds[int1];
@@ -3330,18 +3330,18 @@ public final class CrayonWrapper {
                         switch (value.type) {
                           case 3:
                             int1 = value.intValue;
-                            Integer dictLookup7 = dictImpl.intToIndex.get(int1);
-                            i = dictLookup7 == null ? (-1) : dictLookup7;
+                            Integer _PST_dictLookup7 = dictImpl.intToIndex.get(int1);
+                            i = _PST_dictLookup7 == null ? (-1) : _PST_dictLookup7;
                             break;
                           case 8:
                             int1 = (((ObjectInstance) value.internalValue)).objectId;
-                            Integer dictLookup8 = dictImpl.intToIndex.get(int1);
-                            i = dictLookup8 == null ? (-1) : dictLookup8;
+                            Integer _PST_dictLookup8 = dictImpl.intToIndex.get(int1);
+                            i = _PST_dictLookup8 == null ? (-1) : _PST_dictLookup8;
                             break;
                           case 5:
                             string1 = ((String) value.internalValue);
-                            Integer dictLookup9 = dictImpl.stringToIndex.get(string1);
-                            i = dictLookup9 == null ? (dictImpl.stringToIndex.containsKey(string1) ? null : (-1)) : dictLookup9;
+                            Integer _PST_dictLookup9 = dictImpl.stringToIndex.get(string1);
+                            i = _PST_dictLookup9 == null ? (dictImpl.stringToIndex.containsKey(string1) ? null : (-1)) : _PST_dictLookup9;
                             break;
                         }
                         if ((i == -1)) {
@@ -4653,8 +4653,8 @@ public final class CrayonWrapper {
                 int1 = row[5];
               } else {
                 intIntDict1 = classInfo.localeScopedNameIdToMemberId;
-                Integer dictLookup10 = intIntDict1.get(int2);
-                int1 = dictLookup10 == null ? (-1) : dictLookup10;
+                Integer _PST_dictLookup10 = intIntDict1.get(int2);
+                int1 = _PST_dictLookup10 == null ? (-1) : _PST_dictLookup10;
                 if ((int1 != -1)) {
                   int3 = classInfo.fieldAccessModifiers[int1];
                   if ((int3 > 1)) {
@@ -5051,8 +5051,8 @@ public final class CrayonWrapper {
                 if (!hasInterrupt) {
                   if ((keyType == 5)) {
                     stringIntDict1 = ((HashMap<String, Integer>) dictImpl.stringToIndex);
-                    Integer dictLookup11 = stringIntDict1.get(stringKey);
-                    int1 = dictLookup11 == null ? (stringIntDict1.containsKey(stringKey) ? null : (-1)) : dictLookup11;
+                    Integer _PST_dictLookup11 = stringIntDict1.get(stringKey);
+                    int1 = _PST_dictLookup11 == null ? (stringIntDict1.containsKey(stringKey) ? null : (-1)) : _PST_dictLookup11;
                     if ((int1 == -1)) {
                       hasInterrupt = EX_KeyNotFound(ec, "Key not found: '" + stringKey + "'");
                     } else {
@@ -5060,8 +5060,8 @@ public final class CrayonWrapper {
                     }
                   } else {
                     intIntDict1 = ((HashMap<Integer, Integer>) dictImpl.intToIndex);
-                    Integer dictLookup12 = intIntDict1.get(intKey);
-                    int1 = dictLookup12 == null ? (-1) : dictLookup12;
+                    Integer _PST_dictLookup12 = intIntDict1.get(intKey);
+                    int1 = _PST_dictLookup12 == null ? (-1) : _PST_dictLookup12;
                     if ((int1 == -1)) {
                       hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
                     } else {
@@ -5475,8 +5475,8 @@ public final class CrayonWrapper {
             if ((integerSwitch == null)) {
               integerSwitch = initializeIntSwitchStatement(vm, pc, row);
             }
-            Integer dictLookup13 = integerSwitch.get(intKey);
-            i = dictLookup13 == null ? (-1) : dictLookup13;
+            Integer _PST_dictLookup13 = integerSwitch.get(intKey);
+            i = _PST_dictLookup13 == null ? (-1) : _PST_dictLookup13;
             if ((i == -1)) {
               pc += row[0];
             } else {
@@ -5495,8 +5495,8 @@ public final class CrayonWrapper {
             if ((stringSwitch == null)) {
               stringSwitch = initializeStringSwitchStatement(vm, pc, row);
             }
-            Integer dictLookup14 = stringSwitch.get(stringKey);
-            i = dictLookup14 == null ? (stringSwitch.containsKey(stringKey) ? null : (-1)) : dictLookup14;
+            Integer _PST_dictLookup14 = stringSwitch.get(stringKey);
+            i = _PST_dictLookup14 == null ? (stringSwitch.containsKey(stringKey) ? null : (-1)) : _PST_dictLookup14;
             if ((i == -1)) {
               pc += row[0];
             } else {
