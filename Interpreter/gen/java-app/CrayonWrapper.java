@@ -4655,47 +4655,49 @@ public final class CrayonWrapper {
                 intIntDict1 = classInfo.localeScopedNameIdToMemberId;
                 Integer dictLookup10 = intIntDict1.get(int2);
                 int1 = dictLookup10 == null ? (-1) : dictLookup10;
-                int3 = classInfo.fieldAccessModifiers[int1];
-                if ((int3 > 1)) {
-                  if ((int3 == 2)) {
-                    if ((classId != row[2])) {
-                      int1 = -2;
-                    }
-                  } else {
-                    if (((int3 == 3) || (int3 == 5))) {
-                      if ((classInfo.assemblyId != row[3])) {
-                        int1 = -3;
+                if ((int1 != -1)) {
+                  int3 = classInfo.fieldAccessModifiers[int1];
+                  if ((int3 > 1)) {
+                    if ((int3 == 2)) {
+                      if ((classId != row[2])) {
+                        int1 = -2;
                       }
-                    }
-                    if (((int3 == 4) || (int3 == 5))) {
-                      i = row[2];
-                      if ((classId == i)) {
-                      } else {
-                        classInfo = classTable[classInfo.id];
-                        while (((classInfo.baseClassId != -1) && (int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.length))) {
-                          classInfo = classTable[classInfo.baseClassId];
+                    } else {
+                      if (((int3 == 3) || (int3 == 5))) {
+                        if ((classInfo.assemblyId != row[3])) {
+                          int1 = -3;
                         }
-                        j = classInfo.id;
-                        if ((j != i)) {
-                          bool1 = false;
-                          while (((i != -1) && (classTable[i].baseClassId != -1))) {
-                            i = classTable[i].baseClassId;
-                            if ((i == j)) {
-                              bool1 = true;
-                              i = -1;
+                      }
+                      if (((int3 == 4) || (int3 == 5))) {
+                        i = row[2];
+                        if ((classId == i)) {
+                        } else {
+                          classInfo = classTable[classInfo.id];
+                          while (((classInfo.baseClassId != -1) && (int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.length))) {
+                            classInfo = classTable[classInfo.baseClassId];
+                          }
+                          j = classInfo.id;
+                          if ((j != i)) {
+                            bool1 = false;
+                            while (((i != -1) && (classTable[i].baseClassId != -1))) {
+                              i = classTable[i].baseClassId;
+                              if ((i == j)) {
+                                bool1 = true;
+                                i = -1;
+                              }
+                            }
+                            if (!bool1) {
+                              int1 = -4;
                             }
                           }
-                          if (!bool1) {
-                            int1 = -4;
-                          }
                         }
+                        classInfo = classTable[classId];
                       }
-                      classInfo = classTable[classId];
                     }
                   }
+                  row[4] = objInstance1.classId;
+                  row[5] = int1;
                 }
-                row[4] = objInstance1.classId;
-                row[5] = int1;
               }
               if ((int1 > -1)) {
                 functionId = classInfo.functionIds[int1];

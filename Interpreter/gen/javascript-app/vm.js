@@ -4402,47 +4402,49 @@ var interpretImpl = function(vm, executionContextId) {
 							intIntDict1 = classInfo[14];
 							int1 = intIntDict1[int2];
 							if (int1 === undefined) int1 = -1;
-							int3 = classInfo[12][int1];
-							if ((int3 > 1)) {
-								if ((int3 == 2)) {
-									if ((classId != row[2])) {
-										int1 = -2;
-									}
-								} else {
-									if (((int3 == 3) || (int3 == 5))) {
-										if ((classInfo[3] != row[3])) {
-											int1 = -3;
+							if ((int1 != -1)) {
+								int3 = classInfo[12][int1];
+								if ((int3 > 1)) {
+									if ((int3 == 2)) {
+										if ((classId != row[2])) {
+											int1 = -2;
 										}
-									}
-									if (((int3 == 4) || (int3 == 5))) {
-										i = row[2];
-										if ((classId == i)) {
-										} else {
-											classInfo = classTable[classInfo[0]];
-											while (((classInfo[2] != -1) && (int1 < classTable[classInfo[2]][12].length))) {
-												classInfo = classTable[classInfo[2]];
+									} else {
+										if (((int3 == 3) || (int3 == 5))) {
+											if ((classInfo[3] != row[3])) {
+												int1 = -3;
 											}
-											j = classInfo[0];
-											if ((j != i)) {
-												bool1 = false;
-												while (((i != -1) && (classTable[i][2] != -1))) {
-													i = classTable[i][2];
-													if ((i == j)) {
-														bool1 = true;
-														i = -1;
+										}
+										if (((int3 == 4) || (int3 == 5))) {
+											i = row[2];
+											if ((classId == i)) {
+											} else {
+												classInfo = classTable[classInfo[0]];
+												while (((classInfo[2] != -1) && (int1 < classTable[classInfo[2]][12].length))) {
+													classInfo = classTable[classInfo[2]];
+												}
+												j = classInfo[0];
+												if ((j != i)) {
+													bool1 = false;
+													while (((i != -1) && (classTable[i][2] != -1))) {
+														i = classTable[i][2];
+														if ((i == j)) {
+															bool1 = true;
+															i = -1;
+														}
+													}
+													if (!bool1) {
+														int1 = -4;
 													}
 												}
-												if (!bool1) {
-													int1 = -4;
-												}
 											}
+											classInfo = classTable[classId];
 										}
-										classInfo = classTable[classId];
 									}
 								}
+								row[4] = objInstance1[0];
+								row[5] = int1;
 							}
-							row[4] = objInstance1[0];
-							row[5] = int1;
 						}
 						if ((int1 > -1)) {
 							functionId = classInfo[9][int1];

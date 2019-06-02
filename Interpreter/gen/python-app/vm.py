@@ -3434,36 +3434,37 @@ def interpretImpl(vm, executionContextId):
               else:
                 intIntDict1 = classInfo[14]
                 int1 = intIntDict1.get(int2, -1)
-                int3 = classInfo[12][int1]
-                if (int3 > 1):
-                  if (int3 == 2):
-                    if (classId != row[2]):
-                      int1 = -2
-                  else:
-                    if ((int3 == 3) or (int3 == 5)):
-                      if (classInfo[3] != row[3]):
-                        int1 = -3
-                    if ((int3 == 4) or (int3 == 5)):
-                      i = row[2]
-                      if (classId == i):
-                        pass
-                      else:
-                        classInfo = classTable[classInfo[0]]
-                        while ((classInfo[2] != -1) and (int1 < len(classTable[classInfo[2]][12]))):
-                          classInfo = classTable[classInfo[2]]
-                        j = classInfo[0]
-                        if (j != i):
-                          bool1 = False
-                          while ((i != -1) and (classTable[i][2] != -1)):
-                            i = classTable[i][2]
-                            if (i == j):
-                              bool1 = True
-                              i = -1
-                          if not (bool1):
-                            int1 = -4
-                      classInfo = classTable[classId]
-                row[4] = objInstance1[0]
-                row[5] = int1
+                if (int1 != -1):
+                  int3 = classInfo[12][int1]
+                  if (int3 > 1):
+                    if (int3 == 2):
+                      if (classId != row[2]):
+                        int1 = -2
+                    else:
+                      if ((int3 == 3) or (int3 == 5)):
+                        if (classInfo[3] != row[3]):
+                          int1 = -3
+                      if ((int3 == 4) or (int3 == 5)):
+                        i = row[2]
+                        if (classId == i):
+                          pass
+                        else:
+                          classInfo = classTable[classInfo[0]]
+                          while ((classInfo[2] != -1) and (int1 < len(classTable[classInfo[2]][12]))):
+                            classInfo = classTable[classInfo[2]]
+                          j = classInfo[0]
+                          if (j != i):
+                            bool1 = False
+                            while ((i != -1) and (classTable[i][2] != -1)):
+                              i = classTable[i][2]
+                              if (i == j):
+                                bool1 = True
+                                i = -1
+                            if not (bool1):
+                              int1 = -4
+                        classInfo = classTable[classId]
+                  row[4] = objInstance1[0]
+                  row[5] = int1
               if (int1 > -1):
                 functionId = classInfo[9][int1]
                 if (functionId == -1):

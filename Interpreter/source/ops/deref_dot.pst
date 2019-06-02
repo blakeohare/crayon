@@ -18,59 +18,61 @@ switch (value.type) {
         } else {
             intIntDict1 = classInfo.localeScopedNameIdToMemberId;
             int1 = intIntDict1.TryGet(int2, -1);
-            int3 = classInfo.fieldAccessModifiers[int1];
-            if (int3 > 1) { // if not public...
-                // NOTE: this code is duplicated in assign_field.pst
-                // TODO: merge them either in a function or an inline include
-                // Is it private?
-                if (int3 == 2) {
-                    if (classId != row[2]) {
-                        int1 = -2; // Nope. Can't do that. It's private.
-                    }
-                } else {
-                    // Is it internal?
-                    if (int3 == 3 || int3 == 5) {
-                        if (classInfo.assemblyId != row[3]) {
-                            int1 = -3; // Nope. Can't do that. It's internal.
+            if (int1 != -1) {
+                int3 = classInfo.fieldAccessModifiers[int1];
+                if (int3 > 1) { // if not public...
+                    // NOTE: this code is duplicated in assign_field.pst
+                    // TODO: merge them either in a function or an inline include
+                    // Is it private?
+                    if (int3 == 2) {
+                        if (classId != row[2]) {
+                            int1 = -2; // Nope. Can't do that. It's private.
                         }
-                    }
-
-                    // Is it protected?
-                    if (int3 == 4 || int3 == 5) {
-                        i = row[2]; // class ID walker
-                        if (classId == i) {
-                            // this is fine and likely relatively common, so special case it.
-                        } else {
-                            // which class ID actually defines this method?
-                            // Figure this out by walking up the class metadata until you find a base class that doesn't
-                            // define this member ID. Then that's your target ID.
-                            classInfo = classTable[classInfo.id];
-                            while (classInfo.baseClassId != -1 && int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.Length()) {
-                                classInfo = classTable[classInfo.baseClassId];
+                    } else {
+                        // Is it internal?
+                        if (int3 == 3 || int3 == 5) {
+                            if (classInfo.assemblyId != row[3]) {
+                                int1 = -3; // Nope. Can't do that. It's internal.
                             }
-                            j = classInfo.id; // this is the target ID that you want to see if the calling class implements from
-                            if (j != i) {
-                                bool1 = false;
-                                while (i != -1 && classTable[i].baseClassId != -1) {
-                                    i = classTable[i].baseClassId;
-                                    if (i == j) {
-                                        bool1 = true;
-                                        i = -1;
+                        }
+
+                        // Is it protected?
+                        if (int3 == 4 || int3 == 5) {
+                            i = row[2]; // class ID walker
+                            if (classId == i) {
+                                // this is fine and likely relatively common, so special case it.
+                            } else {
+                                // which class ID actually defines this method?
+                                // Figure this out by walking up the class metadata until you find a base class that doesn't
+                                // define this member ID. Then that's your target ID.
+                                classInfo = classTable[classInfo.id];
+                                while (classInfo.baseClassId != -1 && int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.Length()) {
+                                    classInfo = classTable[classInfo.baseClassId];
+                                }
+                                j = classInfo.id; // this is the target ID that you want to see if the calling class implements from
+                                if (j != i) {
+                                    bool1 = false;
+                                    while (i != -1 && classTable[i].baseClassId != -1) {
+                                        i = classTable[i].baseClassId;
+                                        if (i == j) {
+                                            bool1 = true;
+                                            i = -1;
+                                        }
+                                    }
+
+                                    if (!bool1) {
+                                        int1 = -4;
                                     }
                                 }
-
-                                if (!bool1) {
-                                    int1 = -4;
-                                }
                             }
+                            classInfo = classTable[classId];
                         }
-                        classInfo = classTable[classId];
                     }
                 }
-            }
 
-            row[4] = objInstance1.classId;
-            row[5] = int1;
+                row[4] = objInstance1.classId;
+                row[5] = int1;
+            }
         }
 
         if (int1 > -1) {
