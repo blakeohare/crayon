@@ -2637,11 +2637,11 @@
 															$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, 0));
 														} else {
 															if (($funcArgs->arr[1]->type != 3)) {
-																$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires an integer as it second argument");
+																$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires an integer as its second argument.");
 															} else {
 																$int1 = $funcArgs->arr[1]->internalValue;
 																if ((($int1 < 0) || ($int1 >= strlen($string1)))) {
-																	$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index is out of bounds");
+																	$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index is out of bounds.");
 																} else {
 																	$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, $int1));
 																}

@@ -3367,14 +3367,14 @@ namespace Interpreter.Vm
                                                         {
                                                             if ((funcArgs[1].type != 3))
                                                             {
-                                                                hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as it second argument");
+                                                                hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as its second argument.");
                                                             }
                                                             else
                                                             {
                                                                 int1 = (int)funcArgs[1].internalValue;
                                                                 if (((int1 < 0) || (int1 >= string1.Length)))
                                                                 {
-                                                                    hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds");
+                                                                    hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds.");
                                                                 }
                                                                 else
                                                                 {

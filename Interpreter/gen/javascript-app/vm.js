@@ -2639,11 +2639,11 @@ var interpretImpl = function(vm, executionContextId) {
 													output = buildInteger(globals, string1.indexOf(value2[1]));
 												} else {
 													if ((funcArgs[1][0] != 3)) {
-														hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as it second argument");
+														hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as its second argument.");
 													} else {
 														int1 = funcArgs[1][1];
 														if (((int1 < 0) || (int1 >= string1.length))) {
-															hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds");
+															hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds.");
 														} else {
 															output = buildInteger(globals, string1.indexOf(value2[1], int1));
 														}
