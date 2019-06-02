@@ -2042,14 +2042,22 @@ def interpretImpl(vm, executionContextId):
                             else:
                               output = VALUE_FALSE
                         elif (sc_5 == 2):
-                          if (argCount != 1):
+                          if ((argCount < 1) or (argCount > 2)):
                             hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string indexOf method", 1, argCount))
                           else:
                             value2 = funcArgs[0]
                             if (value2[0] != 5):
                               hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.")
-                            else:
+                            elif (argCount == 1):
                               output = buildInteger(globals, string1.find(value2[1]))
+                            elif (funcArgs[1][0] != 3):
+                              hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as it second argument")
+                            else:
+                              int1 = funcArgs[1][1]
+                              if ((int1 < 0) or (int1 >= len(string1))):
+                                hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds")
+                              else:
+                                output = buildInteger(globals, string1.find(value2[1], int1))
                         elif (argCount > 0):
                           hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string lower method", 0, argCount))
                         else:

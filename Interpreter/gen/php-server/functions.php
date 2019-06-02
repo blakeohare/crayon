@@ -14,8 +14,8 @@
 			$list->arr[$index] = $value;
 		}
 
-		private static function PST_stringIndexOf($haystack, $needle) {
-			$o = strpos($haystack, $needle);
+		private static function PST_stringIndexOf($haystack, $needle, $index) {
+			$o = strpos($haystack, $needle, $index);
 			if ($o === false) return -1;
 			return $o;
 		}
@@ -1146,7 +1146,7 @@
 				while (($i < count($filenames->arr))) {
 					$sourceCode = $symbolData->sourceCode->arr[$i];
 					if (($sourceCode != null)) {
-						$colon = self::PST_stringIndexOf($sourceCode, "\n");
+						$colon = self::PST_stringIndexOf($sourceCode, "\n", 0);
 						if (($colon != -1)) {
 							$filename = substr($sourceCode, 0, $colon);
 							$filenames->arr[$i] = $filename;
@@ -2626,14 +2626,27 @@
 												}
 												break;
 											case 13:
-												if (($argCount != 1)) {
+												if ((($argCount < 1) || ($argCount > 2))) {
 													$hasInterrupt = self::EX_InvalidArgument($ec, self::primitiveMethodWrongArgCountError("string indexOf method", 1, $argCount));
 												} else {
 													$value2 = $funcArgs->arr[0];
 													if (($value2->type != 5)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires another string as input.");
 													} else {
-														$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue));
+														if (($argCount == 1)) {
+															$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, 0));
+														} else {
+															if (($funcArgs->arr[1]->type != 3)) {
+																$hasInterrupt = self::EX_InvalidArgument($ec, "string indexOf method requires an integer as it second argument");
+															} else {
+																$int1 = $funcArgs->arr[1]->internalValue;
+																if ((($int1 < 0) || ($int1 >= strlen($string1)))) {
+																	$hasInterrupt = self::EX_IndexOutOfRange($ec, "String index is out of bounds");
+																} else {
+																	$output = self::buildInteger($globals, self::PST_stringIndexOf($string1, $value2->internalValue, $int1));
+																}
+															}
+														}
 													}
 												}
 												break;
@@ -4408,47 +4421,49 @@
 								} else {
 									$intIntDict1 = $classInfo->localeScopedNameIdToMemberId;
 									$int1 = isset($intIntDict1->arr['i'.$int2]) ? $intIntDict1->arr['i'.$int2] : (-1);
-									$int3 = $classInfo->fieldAccessModifiers->arr[$int1];
-									if (($int3 > 1)) {
-										if (($int3 == 2)) {
-											if (($classId != $row->arr[2])) {
-												$int1 = -2;
-											}
-										} else {
-											if ((($int3 == 3) || ($int3 == 5))) {
-												if (($classInfo->assemblyId != $row->arr[3])) {
-													$int1 = -3;
+									if (($int1 != -1)) {
+										$int3 = $classInfo->fieldAccessModifiers->arr[$int1];
+										if (($int3 > 1)) {
+											if (($int3 == 2)) {
+												if (($classId != $row->arr[2])) {
+													$int1 = -2;
 												}
-											}
-											if ((($int3 == 4) || ($int3 == 5))) {
-												$i = $row->arr[2];
-												if (($classId == $i)) {
-												} else {
-													$classInfo = $classTable->arr[$classInfo->id];
-													while ((($classInfo->baseClassId != -1) && ($int1 < count($classTable->arr[$classInfo->baseClassId]->fieldAccessModifiers->arr)))) {
-														$classInfo = $classTable->arr[$classInfo->baseClassId];
+											} else {
+												if ((($int3 == 3) || ($int3 == 5))) {
+													if (($classInfo->assemblyId != $row->arr[3])) {
+														$int1 = -3;
 													}
-													$j = $classInfo->id;
-													if (($j != $i)) {
-														$bool1 = false;
-														while ((($i != -1) && ($classTable->arr[$i]->baseClassId != -1))) {
-															$i = $classTable->arr[$i]->baseClassId;
-															if (($i == $j)) {
-																$bool1 = true;
-																$i = -1;
+												}
+												if ((($int3 == 4) || ($int3 == 5))) {
+													$i = $row->arr[2];
+													if (($classId == $i)) {
+													} else {
+														$classInfo = $classTable->arr[$classInfo->id];
+														while ((($classInfo->baseClassId != -1) && ($int1 < count($classTable->arr[$classInfo->baseClassId]->fieldAccessModifiers->arr)))) {
+															$classInfo = $classTable->arr[$classInfo->baseClassId];
+														}
+														$j = $classInfo->id;
+														if (($j != $i)) {
+															$bool1 = false;
+															while ((($i != -1) && ($classTable->arr[$i]->baseClassId != -1))) {
+																$i = $classTable->arr[$i]->baseClassId;
+																if (($i == $j)) {
+																	$bool1 = true;
+																	$i = -1;
+																}
+															}
+															if (!$bool1) {
+																$int1 = -4;
 															}
 														}
-														if (!$bool1) {
-															$int1 = -4;
-														}
 													}
+													$classInfo = $classTable->arr[$classId];
 												}
-												$classInfo = $classTable->arr[$classId];
 											}
 										}
+										$row->arr[4] = $objInstance1->classId;
+										$row->arr[5] = $int1;
 									}
-									$row->arr[4] = $objInstance1->classId;
-									$row->arr[5] = $int1;
 								}
 								if (($int1 > -1)) {
 									$functionId = $classInfo->functionIds->arr[$int1];
@@ -5938,7 +5953,7 @@
 							$num = (-1 * self::read_integer($pindex, $raw, $length, $alphaNums));
 						} else {
 							// TODO: string.IndexOfChar(c);
-							$num = self::PST_stringIndexOf($alphaNums, $c);
+							$num = self::PST_stringIndexOf($alphaNums, $c, 0);
 							if (($num == -1)) {
 							}
 						}
@@ -6412,8 +6427,8 @@
 			if (($stackInfo[0] != "[")) {
 				return false;
 			}
-			$cIndex = self::PST_stringIndexOf($stackInfo, ":");
-			return (($cIndex > 0) && ($cIndex < self::PST_stringIndexOf($stackInfo, "]")));
+			$cIndex = self::PST_stringIndexOf($stackInfo, ":", 0);
+			return (($cIndex > 0) && ($cIndex < self::PST_stringIndexOf($stackInfo, "]", 0)));
 		}
 
 		public static function startVm($vm) {
@@ -6451,12 +6466,12 @@
 			$i = 0;
 			while ((($i + 1) < $length)) {
 				$c = (("") . ($encoded[$i]));
-				$a = self::PST_stringIndexOf($hex, $c);
+				$a = self::PST_stringIndexOf($hex, $c, 0);
 				if (($a == -1)) {
 					return null;
 				}
 				$c = (("") . ($encoded[($i + 1)]));
-				$b = self::PST_stringIndexOf($hex, $c);
+				$b = self::PST_stringIndexOf($hex, $c, 0);
 				if (($b == -1)) {
 					return null;
 				}

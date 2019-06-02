@@ -2832,14 +2832,27 @@ public final class CrayonWrapper {
                       }
                       break;
                     case 13:
-                      if ((argCount != 1)) {
+                      if (((argCount < 1) || (argCount > 2))) {
                         hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string indexOf method", 1, argCount));
                       } else {
                         value2 = funcArgs[0];
                         if ((value2.type != 5)) {
                           hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.");
                         } else {
-                          output = buildInteger(globals, string1.indexOf(((String) value2.internalValue)));
+                          if ((argCount == 1)) {
+                            output = buildInteger(globals, string1.indexOf(((String) value2.internalValue)));
+                          } else {
+                            if ((funcArgs[1].type != 3)) {
+                              hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as it second argument");
+                            } else {
+                              int1 = funcArgs[1].intValue;
+                              if (((int1 < 0) || (int1 >= string1.length()))) {
+                                hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds");
+                              } else {
+                                output = buildInteger(globals, string1.indexOf(((String) value2.internalValue), int1));
+                              }
+                            }
+                          }
                         }
                       }
                       break;

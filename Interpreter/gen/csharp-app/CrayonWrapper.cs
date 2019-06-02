@@ -3346,7 +3346,7 @@ namespace Interpreter.Vm
                                                 }
                                                 break;
                                             case 13:
-                                                if ((argCount != 1))
+                                                if (((argCount < 1) || (argCount > 2)))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string indexOf method", 1, argCount));
                                                 }
@@ -3359,7 +3359,29 @@ namespace Interpreter.Vm
                                                     }
                                                     else
                                                     {
-                                                        output = buildInteger(globals, string1.IndexOf((string)value2.internalValue));
+                                                        if ((argCount == 1))
+                                                        {
+                                                            output = buildInteger(globals, string1.IndexOf((string)value2.internalValue));
+                                                        }
+                                                        else
+                                                        {
+                                                            if ((funcArgs[1].type != 3))
+                                                            {
+                                                                hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires an integer as it second argument");
+                                                            }
+                                                            else
+                                                            {
+                                                                int1 = (int)funcArgs[1].internalValue;
+                                                                if (((int1 < 0) || (int1 >= string1.Length)))
+                                                                {
+                                                                    hasInterrupt = EX_IndexOutOfRange(ec, "String index is out of bounds");
+                                                                }
+                                                                else
+                                                                {
+                                                                    output = buildInteger(globals, string1.IndexOf((string)value2.internalValue, int1));
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                                 break;
