@@ -1,6 +1,7 @@
 ﻿using Common;
 using Platform;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PhpServer
@@ -53,6 +54,32 @@ namespace PhpServer
             output["crayon_gen/structs.php"] = FileOutput.OfString(structs);
             output["index.php"] = FileOutput.OfString(this.LoadTextResource("Resources/index.php", replacements));
             output[".htaccess"] = FileOutput.OfString(this.LoadTextResource("Resources/htaccess.txt", replacements));
+
+            List<string> libsIncluder = new List<string>() { "<?php" };
+
+            foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
+            {
+                foreach (string key in library.ExportEntities.Keys)
+                {
+                    foreach (ExportEntity entity in library.ExportEntities[key])
+                    {
+                        switch (key)
+                        {
+                            case "COPY_CODE":
+                                string target = entity.Values["target"];
+                                output["crayon_gen/" + target] = entity.FileOutput;
+                                libsIncluder.Add("\trequire 'crayon_gen/" + target + "';");
+                                break;
+
+                            default:
+                                throw new System.NotImplementedException();
+                        }
+                    }
+                }
+            }
+
+            libsIncluder.Add("?>");
+            output["crayon_gen/libs.php"] = FileOutput.OfString(string.Join("\n", libsIncluder));
         }
 
         public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<LibraryForExport> everyLibrary)

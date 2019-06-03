@@ -43,7 +43,7 @@
 		if ($status == 1) { // FINISHED
 			if (PastelGeneratedCode::isVmResultRootExecContext($result)) {
 				exit;
-		}
+			}
 			return $result;
 		}
 
@@ -59,8 +59,7 @@
 	}
 
 	function TranslationHelper_getFunction($name) {
-		// TODO: implement this.
-		return null;
+		throw new Exception($name);
 	}
 
 	function TranslationHelper_LoadAssembly($name, $version, $startupFunc) {
@@ -77,6 +76,7 @@
 	require 'crayon_gen/functions.php';
 	require 'crayon_gen/bytecode.php';
 	require 'crayon_gen/resource_manifest.php';
+	require 'crayon_gen/libs.php';
 
 	$vm_context = PastelGeneratedCode::createVm($_CRAYON_BYTE_CODE, $_CRAYON_RESOURCE_MANIFEST);
 	TranslationHelper_setProgramData($vm_context);
