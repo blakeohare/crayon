@@ -4,7 +4,7 @@
 		public static function lib_json_parse($vm, $args) {
 			$raw = $args->arr[0]->internalValue;
 			if ((strlen($raw) > 0)) {
-				$output = (new LibJsonHelper($vm->globals, $raw)->parse());
+				$output = (new LibJsonHelper($vm->globals, $raw))->parse();
 				if (($output != null)) {
 					return $output;
 				}
@@ -51,7 +51,7 @@
 					case "{": return $this->parse_object();
 					case "[": return $this->parse_list();
 					case "t":
-						if ($this->is_next('true')) return $this->globals->boolTrue
+						if ($this->is_next('true')) return $this->globals->boolTrue;
 						return $this->error();
 					case "f":
 						if ($this->is_next('false')) return $this->globals->boolFalse;
@@ -63,6 +63,42 @@
 					default: return $this->parse_number();
 				}
 			}
+		}
+		
+		private function parse_number() {
+			$num = array();
+			$dec = array();
+			$dec_found = false;
+			$n0 = ord('0');
+			$n9 = ord('9');
+			for ($i = $this->index; $i < $this->length; ++$i) {
+				$c = $this->text[$i];
+				if ($c == '.') {
+					if ($dec_found) {
+						return $this->error();
+					}
+					$dec_found = true;
+				} else if ($c >= $n0 && $c <= $n9) {
+					if ($dec_found) {
+						array_push($dec, $c);
+					} else {
+						array_push($num, $c);
+					}
+				}
+			}
+			if (!$dec_found) {
+				if (count($num) == 0) return $this->error();
+				return intval(implode($num));
+			}
+			// TODO: are things like 1. valid?
+			if (count($dec) == 0) {
+				if (count($num) == 0) {
+					$i--;
+					return $this->error();
+				}
+				array_push($dec, '0');
+			}
+			return floatval(implode($num) . '.' . implode($dec));
 		}
 		
 		private function get_unicode_char($four_digit_hex) {

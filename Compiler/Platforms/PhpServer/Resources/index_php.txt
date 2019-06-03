@@ -59,7 +59,12 @@
 	}
 
 	function TranslationHelper_getFunction($name) {
-		throw new Exception($name);
+		global $_CRAYON_LIBS;
+		$parts = explode(',', $name);
+		$lib_name = explode(':', $parts[0]);
+		$func_name = trim($parts[1]);
+		$fp = $_CRAYON_LIBS[trim($lib_name[1])][$func_name];
+		return $fp;
 	}
 
 	function TranslationHelper_LoadAssembly($name, $version, $startupFunc) {
@@ -72,10 +77,23 @@
 		}
 	}
 
+	function crayon_generateFunctionLookup($className) {
+		$class = new ReflectionClass($className);
+		$output = array();
+		foreach ($class->getMethods(ReflectionMethod::IS_STATIC) as $method) {
+			$methodName = $method->name;
+			$output[$methodName] = $className . '::' . $methodName;
+		}
+		return $output;
+	}
+
 	require 'crayon_gen/structs.php';
 	require 'crayon_gen/functions.php';
 	require 'crayon_gen/bytecode.php';
 	require 'crayon_gen/resource_manifest.php';
+
+	$_CRAYON_LIBS = array(); // populated with library name => array(function name => function pointer)
+	
 	require 'crayon_gen/libs.php';
 
 	$vm_context = PastelGeneratedCode::createVm($_CRAYON_BYTE_CODE, $_CRAYON_RESOURCE_MANIFEST);

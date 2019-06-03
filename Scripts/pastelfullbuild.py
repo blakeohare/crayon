@@ -15,7 +15,7 @@ PLATFORMS = [
   'csharp-app',
   'java-app',
   'javascript-app',
-  'php-app',
+  'php-server',
   'python-app',
   'javascript-app-android',
   'javascript-app-ios',

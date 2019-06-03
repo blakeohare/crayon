@@ -67,7 +67,17 @@ namespace PhpServer
                         {
                             case "COPY_CODE":
                                 string target = entity.Values["target"];
-                                output["crayon_gen/" + target] = entity.FileOutput;
+                                string fileContent = entity.FileOutput.TextContent;
+                                int lastLine = fileContent.LastIndexOf('\n');
+                                fileContent = fileContent.Substring(0, lastLine); // trim off '?>'
+                                fileContent = fileContent.TrimEnd() + string.Join("\n", new string[] {
+                                    "",
+                                    "",
+                                    "\t$_CRAYON_LIBS['" + library.Name + "'] = crayon_generateFunctionLookup('CrayonLibWrapper_" + library.Name + "');",
+                                    "?>",
+                                });
+
+                                output["crayon_gen/" + target] = FileOutput.OfString(fileContent);
                                 libsIncluder.Add("\trequire 'crayon_gen/" + target + "';");
                                 break;
 

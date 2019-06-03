@@ -4,6 +4,10 @@
 	class PastelPtrArray {
 		var $arr = array();
 	}
+	class PastelPtr {
+		var $value = null;
+		function __constructor($value) { $this->value = $value; }
+	}
 	function _pastelWrapValue($value) { $o = new PastelPtrArray(); $o->arr = $value; return $o; }
 	// redundant-but-pleasantly-named helper methods for external callers
 	function pastelWrapList($arr) { return _pastelWrapValue($arr); }
@@ -55,10 +59,6 @@
 
 		private static function PST_reverseArray($a) {
 			$a->arr = array_reverse($a->arr);
-		}
-
-		private static function PST_createFunctionPointer($name) {
-			throw new Exception("Not implemented");
 		}
 
 		private static function PST_isValidInteger($s) {
@@ -3476,7 +3476,7 @@
 						break;
 					case 16:
 						// CNI_REGISTER;
-						$nativeFp = self::PST_createFunctionPointer($stringArgs->arr[$pc]);
+						$nativeFp = TranslationHelper_getFunction($stringArgs->arr[$pc]);
 						$metadata->cniFunctionsById->arr['i'.$row->arr[0]] = $nativeFp;
 						break;
 					case 17:
