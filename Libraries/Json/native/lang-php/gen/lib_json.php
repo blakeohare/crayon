@@ -71,6 +71,7 @@
 			$dec_found = false;
 			$n0 = ord('0');
 			$n9 = ord('9');
+			$terminated = false;
 			for ($i = $this->index; $i < $this->length; ++$i) {
 				$c = $this->text[$i];
 				if ($c == '.') {
@@ -78,17 +79,25 @@
 						return $this->error();
 					}
 					$dec_found = true;
-				} else if ($c >= $n0 && $c <= $n9) {
+				} else if (ord($c) >= $n0 && ord($c) <= $n9) {
 					if ($dec_found) {
 						array_push($dec, $c);
 					} else {
 						array_push($num, $c);
 					}
+				} else {
+					$this->index = $i;
+					$terminated = true;
+					break;
 				}
 			}
+			
+			if (!$terminated) $this->index = $this->length;
+			
 			if (!$dec_found) {
 				if (count($num) == 0) return $this->error();
-				return intval(implode($num));
+				$n = intval(implode($num));
+				return PastelGeneratedCode::buildInteger($this->globals, $n);
 			}
 			// TODO: are things like 1. valid?
 			if (count($dec) == 0) {
@@ -98,7 +107,7 @@
 				}
 				array_push($dec, '0');
 			}
-			return floatval(implode($num) . '.' . implode($dec));
+			return PastelGeneratedCode::buildFloat($this->globals, floatval(implode($num) . '.' . implode($dec)));
 		}
 		
 		private function get_unicode_char($four_digit_hex) {
@@ -122,7 +131,7 @@
 		private function parse_string_raw() {
 			$output = array();
 			if (!$this->pop('"')) return $this->error();
-			for ($i = $this->index + 1; $i < $this->length; ++$i) {
+			for ($i = $this->index; $i < $this->length; ++$i) {
 				$c = $this->text[$i];
 				switch ($c) {
 					case '"':
@@ -178,7 +187,7 @@
 				if ($value === null) return $this->error();
 				$this->skip_whitespace();
 				
-				if (!isset($values_by_key)) {
+				if (!isset($values_by_key[$key])) {
 					array_push($keys, $key);
 				}
 				$values_by_key[$key] = $value;
@@ -188,7 +197,7 @@
 			foreach ($keys as $key) {
 				array_push($values, $values_by_key[$key]);
 			}
-			return PastelGeneratedCode::buildStringDictionary($this->globals, $keys, $values);
+			return PastelGeneratedCode::buildStringDictionary($this->globals, pastelWrapList($keys), pastelWrapList($values));
 		}
 		
 		private function parse_list() {
@@ -205,7 +214,7 @@
 				array_push($output, $item);
 				$this->skip_whitespace();
 			}
-			return PastselGeneratedCode::buildList($output);
+			return PastselGeneratedCode::buildList(pastelWrapList($output));
 		}
 		
 		private function pop($value) {
