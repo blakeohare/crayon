@@ -161,7 +161,7 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
       C$game$ctx.scale(pwidth / width, pheight / height);
   }
 
-  C$game$runFrame();
+  window.setTimeout(C$game$runFrame, 0);
 };
 
 C$game$doRender = function() {
