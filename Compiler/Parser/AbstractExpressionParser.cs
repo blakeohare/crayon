@@ -313,6 +313,7 @@ namespace Parser
                                 lambdaArgs.Add(nextArg);
                                 comma = tokens.Peek();
                             }
+                            tokens.PopExpected(")");
 
                             root = this.ParseLambda(tokens, firstToken, lambdaArgTypes, lambdaArgs, owner);
                         }
