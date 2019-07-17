@@ -63,7 +63,7 @@ namespace Interpreter.Libraries.Game
                 this.AxisCount = this.axisNames.Length;
             }
 
-            public string Name { get; private set;  }
+            public string Name { get; private set; }
 
             public int DPadCount { get; private set; }
             public int[] GetDPad(int dpadIndex)
@@ -91,7 +91,7 @@ namespace Interpreter.Libraries.Game
                 }
             }
 
-            public int ButtonCount {  get { return this.buttonNames.Length; } }
+            public int ButtonCount { get { return this.buttonNames.Length; } }
             private ButtonState GetButtonState(int btnIndex)
             {
                 GamePadButtons b = this.state.Buttons;
@@ -119,17 +119,17 @@ namespace Interpreter.Libraries.Game
         }
 
         private static bool isInitialized = false;
-        private static CrayonGamepad[] joysticks = null;
+        private static CrayonGamepad[] gamepads = null;
 
         private static void InitializeJoysticks()
         {
             if (!isInitialized)
             {
                 int count = GameWindow.Instance.GetGamepadCount();
-                GamepadTranslationHelper.joysticks = new CrayonGamepad[count];
+                GamepadTranslationHelper.gamepads = new CrayonGamepad[count];
                 for (int i = 0; i < count; ++i)
                 {
-                    GamepadTranslationHelper.joysticks[i] = new CrayonGamepad(i);
+                    GamepadTranslationHelper.gamepads[i] = new CrayonGamepad(i);
                 }
             }
         }
@@ -153,7 +153,7 @@ namespace Interpreter.Libraries.Game
         {
             InitializeJoysticks();
 
-            return joysticks.Length;
+            return gamepads.Length;
         }
 
         public static string GetDeviceName(object nativeDevice)
@@ -165,7 +165,7 @@ namespace Interpreter.Libraries.Game
         {
             InitializeJoysticks();
 
-            return joysticks[index];
+            return gamepads[index];
         }
 
         public static int GetDeviceButtonCount(object nativeDevice)
@@ -193,7 +193,8 @@ namespace Interpreter.Libraries.Game
             return ((CrayonGamepad)nativeDevice).DPadCount;
         }
 
-        public static void GetDeviceAxis2dState(object nativeDevice, int axisIndex, int[] intBuffer) {
+        public static void GetDeviceAxis2dState(object nativeDevice, int axisIndex, int[] intBuffer)
+        {
             int[] state = ((CrayonGamepad)nativeDevice).GetDPad(axisIndex);
             intBuffer[0] = state[0];
             intBuffer[1] = state[1];
