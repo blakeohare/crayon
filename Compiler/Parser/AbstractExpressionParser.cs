@@ -482,7 +482,19 @@ namespace Parser
             if (nextToken.Type == TokenType.WORD)
             {
                 Token varToken = tokens.Pop();
-                return new Variable(varToken, varToken.Value, owner);
+                if (tokens.IsNext("=>"))
+                {
+                    return this.ParseLambda(
+                        tokens,
+                        varToken,
+                        new AType[] { AType.Any() },
+                        new Token[] { varToken },
+                        owner);
+                }
+                else
+                {
+                    return new Variable(varToken, varToken.Value, owner);
+                }
             }
 
             if (firstChar == '[' && nextToken.File.CompilationScope.IsCrayon)

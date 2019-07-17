@@ -29,6 +29,17 @@ class LambdaAndClosureTest : Test {
         assertThat(t).contains([2, 4, 8, 10]).inOrder();
     }
 
+    function testLambdaSyntax() {
+        fn1 = (a) => { return a + 1; };
+        fn2 = a => { return a + 2; };
+        fn3 = (a, b) => { return a + b; };
+        fn4 = (a) => { a + 3; };
+        assertThat(fn1(100)).isEqualTo(101);
+        assertThat(fn2(200)).isEqualTo(202);
+        assertThat(fn3(300, 400)).isEqualTo(700);
+        assertThat(fn4(500)).isEqualTo(503);
+    }
+
     function closureNoInteractionsTestHelper(startingValue) {
 
         value = startingValue;
