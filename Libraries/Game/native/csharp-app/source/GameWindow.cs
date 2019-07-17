@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using OpenTK.Input;
 using OpenTK.Graphics.OpenGL;
 using Interpreter.Structs;
 using Interpreter.Vm;
@@ -65,12 +66,6 @@ namespace Interpreter.Libraries.Game
             this.Load += (sender, e) => this.Startup();
             this.Resize += (sender, e) => this.Resizing();
 
-            this.Mouse.Move += (sender, e) => this.MouseMove(e.X, e.Y);
-            this.Mouse.ButtonDown += (sender, e) => this.MouseButton(e.Button, e.X, e.Y, true);
-            this.Mouse.ButtonUp += (sender, e) => this.MouseButton(e.Button, e.X, e.Y, false);
-            this.Keyboard.KeyDown += (sender, e) => this.KeyEvent(e.Key, true);
-            this.Keyboard.KeyUp += (sender, e) => this.KeyEvent(e.Key, false);
-
             if (UniversalBitmap.IconSupported)
             {
                 UniversalBitmap bmp = ResourceReader.ReadIconResource("icon.ico");
@@ -81,6 +76,12 @@ namespace Interpreter.Libraries.Game
             }
         }
 
+        protected override void OnMouseMove(MouseMoveEventArgs e) { this.MouseMoveImpl(e.X, e.Y); }
+        protected override void OnMouseDown(MouseButtonEventArgs e) { this.MouseButton(e.Button, e.X, e.Y, true); }
+        protected override void OnMouseUp(MouseButtonEventArgs e) { this.MouseButton(e.Button, e.X, e.Y, false); }
+        protected override void OnKeyDown(KeyboardKeyEventArgs e) { this.KeyEvent(e.Key, true); }
+        protected override void OnKeyUp(KeyboardKeyEventArgs e) { this.KeyEvent(e.Key, false); }
+
         public static bool InitializeScreen(int gameWidth, int gameHeight, int screenWidth, int screenHeight, int executionContextId)
         {
             GameWindow gw = new GameWindow(fps, gameWidth, gameHeight, screenWidth, screenHeight, executionContextId);
@@ -88,7 +89,7 @@ namespace Interpreter.Libraries.Game
             return false;
         }
 
-        private void MouseMove(int x, int y)
+        private void MouseMoveImpl(int x, int y)
         {
             events.Enqueue(MOUSE_EVENT);
             events.Enqueue(x * this.gameWidth / this.screenWidth);
@@ -288,7 +289,7 @@ namespace Interpreter.Libraries.Game
         private void Startup()
         {
             GL.ClearColor(1f, 1f, 1f, 1f);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Enable(EnableCap.Blend);
             GL.Disable(EnableCap.ColorMaterial);
         }
@@ -391,12 +392,14 @@ namespace Interpreter.Libraries.Game
 
         internal int GetGamepadCount()
         {
-            return this.Joysticks.Count;
+            return 0;
+            //return this.Joysticks.Count;
         }
 
         internal object GetGamepadRawDevice(int index)
         {
-            return this.Joysticks[index];
+            return null;
+            //return this.Joysticks[index];
         }
 
         internal void GamepadEnableDevice(OpenTK.Input.JoystickDevice device)
@@ -486,11 +489,13 @@ namespace Interpreter.Libraries.Game
         {
             Dictionary<string, System.Func<object[], object>> lookup = new Dictionary<string, System.Func<object[], object>>();
 
-            lookup["force-load-texture"] = new System.Func<object[], object>(args => {
+            lookup["force-load-texture"] = new System.Func<object[], object>(args =>
+            {
                 return GlUtil.ForceLoadTexture((UniversalBitmap)args[0]);
             });
 
-            lookup["set-render-data"] = new System.Func<object[], object>(args => {
+            lookup["set-render-data"] = new System.Func<object[], object>(args =>
+            {
                 SetRenderData((int[])args[0], (int)args[1], (object[][])args[2], (List<int>)args[3]);
                 return null;
             });
