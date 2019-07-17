@@ -224,7 +224,17 @@ namespace Parser
         {
             tokens.PopExpected("=>");
             Lambda lambda = new Lambda(firstToken, owner, args, argTypes);
-            IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, false, lambda, false);
+            IList<Executable> lambdaCode;
+            if (tokens.IsNext("{"))
+            {
+                lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, false, lambda, false);
+            }
+            else
+            {
+                Expression lambdaBodyExpression = this.parser.ExpressionParser.ParseTernary(tokens, lambda);
+                lambdaCode = new Executable[] { new ExpressionAsExecutable(lambdaBodyExpression, lambda) };
+            }
+
             if (lambdaCode.Count == 1 && lambdaCode[0] is ExpressionAsExecutable)
             {
                 // If a lambda contains a single expression as its code body, then this is an implicit return statement.

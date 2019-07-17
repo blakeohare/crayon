@@ -34,10 +34,12 @@ class LambdaAndClosureTest : Test {
         fn2 = a => { return a + 2; };
         fn3 = (a, b) => { return a + b; };
         fn4 = (a) => { a + 3; };
+		fn5 = a => a + 5;
         assertThat(fn1(100)).isEqualTo(101);
         assertThat(fn2(200)).isEqualTo(202);
         assertThat(fn3(300, 400)).isEqualTo(700);
         assertThat(fn4(500)).isEqualTo(503);
+		assertThat(fn5(600)).isEqualTo(605);
     }
 
     function closureNoInteractionsTestHelper(startingValue) {
