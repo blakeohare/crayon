@@ -23,8 +23,8 @@ class LambdaAndClosureTest : Test {
 
     function testMapAndFilter() {
         t = [1, 2, 3, 4, 5, 6]
-            .map((x) => { x * 2; })
-            .filter((x) => { x % 3 != 0; });
+            .map(x => x * 2)
+            .filter(x => x % 3 != 0);
 
         assertThat(t).contains([2, 4, 8, 10]).inOrder();
     }
@@ -34,13 +34,24 @@ class LambdaAndClosureTest : Test {
         fn2 = a => { return a + 2; };
         fn3 = (a, b) => { return a + b; };
         fn4 = (a) => { a + 3; };
-		fn5 = a => a + 5;
+        fn5 = a => a + 5;
         assertThat(fn1(100)).isEqualTo(101);
         assertThat(fn2(200)).isEqualTo(202);
         assertThat(fn3(300, 400)).isEqualTo(700);
         assertThat(fn4(500)).isEqualTo(503);
-		assertThat(fn5(600)).isEqualTo(605);
+        assertThat(fn5(600)).isEqualTo(605);
     }
+
+    // TODO(https://github.com/blakeohare/crayon/issues/263)
+    // Fix this. This is currently not supported.
+    /*
+    function testArgCollision() {
+        x = 42;
+        fn = x => 2 * x;
+        assertThat(fn(5)).isEqualTo(10);
+        assertThat(x).isEqualTo(42);
+    }
+    */
 
     function closureNoInteractionsTestHelper(startingValue) {
 
