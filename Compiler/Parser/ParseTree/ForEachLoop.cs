@@ -69,6 +69,13 @@ namespace Parser.ParseTree
 
         internal override Executable ResolveEntityNames(ParserContext parser)
         {
+            string iterationVariableName = this.IterationVariable.Value;
+            TopLevelEntity exec = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(iterationVariableName, this.Owner);
+            if (exec != null)
+            {
+                throw new ParserException(this.IterationVariable, "The name '" + iterationVariableName + "' collides with an existing definition.");
+            }
+
             this.IterationExpression = this.IterationExpression.ResolveEntityNames(parser);
             this.BatchExecutableEntityNameResolver(parser, this.Code);
             return this;

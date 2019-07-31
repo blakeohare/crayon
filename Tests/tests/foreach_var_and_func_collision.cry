@@ -1,0 +1,12 @@
+function collidingName() {
+	return 42;
+}
+
+function test() {
+	// The name of this iterating variable collides with the function name.
+	for (collidingName : [1, 2, 3]) {
+		print("Hi");
+	}
+	
+	collidingName = 4;
+}
