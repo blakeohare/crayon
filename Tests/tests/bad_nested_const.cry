@@ -1,0 +1,5 @@
+const CONSTANT_A = 4 * CONSTANT_B; // not defined.
+
+function test() {
+	print(CONSTANT_A);
+}

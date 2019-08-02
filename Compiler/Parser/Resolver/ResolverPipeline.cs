@@ -74,6 +74,10 @@ namespace Parser.Resolver
                         foreach (ConstDefinition cnst in dependencySortedConstants)
                         {
                             TypeResolver typeResolver = new TypeResolver(cnst);
+
+                            // This shouldn't pick anything up, but it'll fire any errors when undeclared variable-like expressions are used.
+                            cnst.Expression.ResolveVariableOrigins(parser, VariableScope.NewEmptyScope(false), VariableIdAllocPhase.REGISTER_AND_ALLOC);
+
                             cnst.ResolveTypes(parser, typeResolver);
                             cnst.ValidateConstTypeSignature();
                         }

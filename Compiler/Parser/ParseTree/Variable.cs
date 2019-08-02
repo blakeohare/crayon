@@ -121,6 +121,11 @@ namespace Parser.ParseTree
                         }
                     }
 
+                    if (this.Owner is ConstDefinition)
+                    {
+                        throw new ParserException(this, "The expression '" + name + "' is not defined. Are you missing a const definition?");
+                    }
+
                     // TODO: But if it's being called like a function then...
                     // - give a better error message "function 'foo' is not defined"
                     // - give an even better error message when there's a class or instance function with the same name
