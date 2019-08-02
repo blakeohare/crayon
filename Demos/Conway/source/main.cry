@@ -10,10 +10,7 @@ const CELL_SIZE = 16;
 const SCREEN_WIDTH = CELL_SIZE * WIDTH;
 const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
-const FOO = DOES_NOT_EXIST;
-
 function getRandomColor() {
-    //a = does_not_exist;
     return [
         Random.randomInt(40),
         Random.randomInt(100, 200),
