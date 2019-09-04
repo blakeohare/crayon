@@ -92,6 +92,9 @@ namespace Graphics2DText {
         @localized('es', 'ESdrawWithAlpha')
         @localized('jp', 'JPdrawWithAlpha')
         function drawWithAlpha(x, y, alpha) {
+            x = Math.floor(x);
+            y = Math.floor(y);
+            alpha = Math.floor(alpha);
             if (this._isGl) {
                 return $lib_graphics2dtext_glRenderTextSurface(this, this.tiles, Graphics2D.Draw._queue, x, y, alpha);
             } else {
