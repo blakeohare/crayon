@@ -20,7 +20,7 @@ namespace Build.BuildParseNodes
             List<Target> targets = new List<Target>();
             foreach (JsonLookup targetRoot in root.GetAsList("targets")
                 .OfType<IDictionary<string, object>>()
-                .Select((IDictionary<string, object> t) => new JsonLookup(t)))
+                .Select(t => new JsonLookup(t)))
             {
                 Target target = new Target();
                 target.Name = targetRoot.GetAsString("name");
@@ -68,8 +68,8 @@ namespace Build.BuildParseNodes
             }
 
             item.LocalDeps = fileDeps
-                .Select((string t) => t.Replace('\\', '/'))
-                .Select((string t) => t.TrimEnd('/'))
+                .Select(t => t.Replace('\\', '/'))
+                .Select(t => t.TrimEnd('/'))
                 .Distinct()
                 .ToArray();
 
@@ -81,7 +81,7 @@ namespace Build.BuildParseNodes
             {
                 foreach (JsonLookup imageSheetJson in imageSheetsRaw
                     .OfType<IDictionary<string, object>>()
-                    .Select((IDictionary<string, object> t) => new JsonLookup(t)))
+                    .Select(t => new JsonLookup(t)))
                 {
                     ImageSheet imgSheet = new ImageSheet();
                     imgSheet.Id = imageSheetJson.GetAsString("id");
@@ -121,7 +121,7 @@ namespace Build.BuildParseNodes
             List<BuildVar> buildVars = new List<BuildVar>();
             foreach (Common.JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
                 .OfType<IDictionary<string, object>>()
-                .Select((IDictionary<string, object> t) => new JsonLookup(t)))
+                .Select(t => new JsonLookup(t)))
             {
                 BuildVar bv = new BuildVar() { Id = varJson.GetAsString("name") };
                 object value = varJson.Get("value");

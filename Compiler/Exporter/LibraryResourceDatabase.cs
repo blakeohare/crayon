@@ -47,7 +47,7 @@ namespace Exporter
             }
         }
 
-        private static readonly char[] COLON_CHAR = { ':' };
+        private static readonly char[] COLON_CHAR = new char[] { ':' };
 
         public bool HasNativeCode
         {

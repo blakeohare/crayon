@@ -46,7 +46,7 @@ namespace Parser
             TopLevelEntity owner,
             FileScope fileScope)
         {
-            AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
+            AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
 
             ModifierCollection modifiers = ModifierCollection.Parse(tokens);
 
