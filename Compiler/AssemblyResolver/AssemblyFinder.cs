@@ -141,7 +141,7 @@ namespace AssemblyResolver
                 string version = null;
                 if (parts.Length == 2)
                 {
-                    version = parts[1] == "LATEST" ? null : parts[1]; ;
+                    version = parts[1] == "LATEST" ? null : parts[1];
                 }
                 bool isLatestStableRequested = version == null;
 
