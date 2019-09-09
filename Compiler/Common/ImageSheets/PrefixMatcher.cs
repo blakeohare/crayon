@@ -10,13 +10,13 @@ namespace Common.ImageSheets
 
         public PrefixMatcher() { }
 
-        public void RegisterId(String id)
+        public void RegisterId(string id)
         {
             this.ids.Add(id);
             this.prefixesById.Add(id, new List<string>());
         }
 
-        public void RegisterPrefix(String id, String prefix)
+        public void RegisterPrefix(string id, string prefix)
         {
             this.prefixesById[id].Add(prefix);
         }
