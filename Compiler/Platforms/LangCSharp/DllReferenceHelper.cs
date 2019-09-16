@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonUtil;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,14 +19,14 @@ namespace LangCSharp
                 {
                     if (dll.SpecificVersion) throw new NotImplementedException();
 
-                    strongDllReferences.Append(CommonUtil.Core.StringUtil.JoinLines(
+                    strongDllReferences.Append(StringUtil.JoinLines(
                         "",
                         "    <Reference Include=\"" + dll.Name + ", Version=" + dll.Version + ", Culture=" + dll.Culture + ", PublicKeyToken=" + dll.PublicKeyToken + ", processorArchitecture=" + dll.ProcessorArchitecture + "\">",
                         "      <SpecificVersion>False</SpecificVersion>",
                         "      <HintPath>.\\" + dll.HintPath + "</HintPath>",
                         "    </Reference>"));
                 }
-                dllsByHint.Append(CommonUtil.Core.StringUtil.JoinLines(
+                dllsByHint.Append(StringUtil.JoinLines(
                     "",
                     "    <None Include=\"" + dll.HintPath + "\">",
                     "      <CopyToOutputDirectory>Always</CopyToOutputDirectory>",

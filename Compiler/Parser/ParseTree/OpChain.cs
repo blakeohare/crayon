@@ -1,4 +1,5 @@
-﻿using Parser.Resolver;
+﻿using CommonUtil;
+using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -158,7 +159,7 @@ namespace Parser.ParseTree
             }
             else
             {
-                isZero = CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(((FloatConstant)expr).Value, 0);
+                isZero = FloatUtil.FloatAbsoluteEqualsNoEpislon(((FloatConstant)expr).Value, 0);
             }
             if (isZero)
             {
@@ -376,8 +377,8 @@ namespace Parser.ParseTree
                     {
                         double right = GetFloat(opChain.Right);
                         int left = GetInt(opChain.Left);
-                        if (CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
-                        if (!CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
+                        if (FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
                         {
                             throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
                         }
@@ -418,8 +419,8 @@ namespace Parser.ParseTree
                     {
                         double right = GetFloat(opChain.Right);
                         double left = GetFloat(opChain.Left);
-                        if (CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
-                        if (!CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
+                        if (FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
                         {
                             throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
                         }

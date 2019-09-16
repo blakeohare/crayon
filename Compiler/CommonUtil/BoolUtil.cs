@@ -1,4 +1,4 @@
-﻿namespace CommonUtil.Core
+﻿namespace CommonUtil
 {
     public static class BoolUtil
     {

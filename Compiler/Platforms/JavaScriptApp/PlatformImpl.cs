@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -109,7 +110,7 @@ namespace JavaScriptApp
                 resourcesJs.Append("C$common$addBinaryRes(");
                 resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(fontResource.CanonicalFileName));
                 resourcesJs.Append(", '");
-                resourcesJs.Append(CommonUtil.Core.Base64.ToBase64(fontResource.GetFinalBinaryContent()));
+                resourcesJs.Append(Base64.ToBase64(fontResource.GetFinalBinaryContent()));
                 resourcesJs.Append("');\n");
             }
 

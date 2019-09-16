@@ -68,7 +68,7 @@ namespace CommonUtil.Http
         public bool GetHeaderAsBoolean(string name)
         {
             string value = this.GetHeader(name);
-            return CommonUtil.Core.BoolUtil.Parse(value);
+            return BoolUtil.Parse(value);
         }
 
         public string[] GetHeaderAsList(string name)

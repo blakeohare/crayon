@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil;
 using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
@@ -122,7 +123,7 @@ namespace Platform
         {
             if (text.Contains("%%%"))
             {
-                string[] segments = CommonUtil.Core.StringUtil.Split(text, "%%%");
+                string[] segments = StringUtil.Split(text, "%%%");
                 for (int i = 1; i < segments.Length; i += 2)
                 {
                     string replacement;

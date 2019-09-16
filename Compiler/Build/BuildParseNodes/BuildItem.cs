@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil;
 
 namespace Build.BuildParseNodes
 {
@@ -41,7 +42,7 @@ namespace Build.BuildParseNodes
 
         public bool ExportDebugByteCode
         {
-            get { return CommonUtil.Core.BoolUtil.Parse(this.ExportDebugByteCodeRaw); }
+            get { return BoolUtil.Parse(this.ExportDebugByteCodeRaw); }
         }
     }
 }

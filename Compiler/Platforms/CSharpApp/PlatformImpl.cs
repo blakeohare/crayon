@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil;
 using CommonUtil.Images;
 using CommonUtil.Random;
 using Platform;
@@ -210,7 +211,7 @@ namespace CSharpApp
 
         private static string GetFrameworkReferencesCsProjCode(ICollection<string> dotNetReferences)
         {
-            return CommonUtil.Core.StringUtil.JoinLines(
+            return StringUtil.JoinLines(
                 dotNetReferences
                     .OrderBy(v => v.ToLower())
                     .Select(dotNetLib => "    <Reference Include=\"" + dotNetLib + "\" />")

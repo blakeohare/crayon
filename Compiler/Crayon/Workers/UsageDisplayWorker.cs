@@ -1,10 +1,11 @@
 ﻿using Common;
+using CommonUtil;
 
 namespace Crayon
 {
     internal class UsageDisplayWorker
     {
-        private static readonly string USAGE = CommonUtil.Core.StringUtil.JoinLines(
+        private static readonly string USAGE = StringUtil.JoinLines(
             "Crayon version " + VersionInfo.VersionString,
             "",
             "To export:",

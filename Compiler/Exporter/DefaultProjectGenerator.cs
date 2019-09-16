@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil;
 using CommonUtil.Images;
 using CommonUtil.Resources;
 using System;
@@ -18,7 +19,7 @@ namespace Exporter
         {
             this.originalProjectId = projectId.Trim();
             this.projectLocale = Localization.Locale.Get(localeId);
-            this.projectId = CommonUtil.Core.StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
+            this.projectId = StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
         }
 
         public DefaultProjectGenerator Validate()

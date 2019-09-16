@@ -1,4 +1,5 @@
-﻿using Parser;
+﻿using CommonUtil;
+using Parser;
 using System;
 using System.Collections.Generic;
 
@@ -42,7 +43,7 @@ namespace Exporter
 
             if (text.Contains("%%%"))
             {
-                string[] parts = CommonUtil.Core.StringUtil.Split(text, "%%%");
+                string[] parts = StringUtil.Split(text, "%%%");
                 bool lastWasReplacement = false;
 
                 List<string> replaced = new List<string>() { parts[0] };
