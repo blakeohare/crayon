@@ -49,9 +49,7 @@
     <Compile Include="FileOutput.cs" />
     <Compile Include="FileOutputExporter.cs" />
     <Compile Include="FilePath.cs" />
-    <Compile Include="IconGenerator.cs" />
     <Compile Include="IconSetGenerator.cs" />
-    <Compile Include="IdGenerator.cs" />
     <Compile Include="KeyValuePairParser.cs" />
     <Compile Include="Multimap.cs" />
     <Compile Include="Options.cs" />
@@ -61,7 +59,6 @@
     <Compile Include="PkgAwareFileUtil.cs" />
     <Compile Include="ResourceDatabase.cs" />
     <Compile Include="SourceDirectoryFinder.cs" />
-    <Compile Include="SystemBitmap.cs" />
     <Compile Include="TODO.cs" />
     <Compile Include="Utf8Base64.cs" />
     <Compile Include="Util.cs" />

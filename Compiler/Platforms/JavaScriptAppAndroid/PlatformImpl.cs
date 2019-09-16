@@ -1,5 +1,6 @@
 ﻿using Common;
 using CommonUtil.Disk;
+using CommonUtil.Images;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -192,11 +193,11 @@ namespace JavaScriptAppAndroid
                 string iconPaths = options.GetString(ExportOptionKey.ICON_PATH);
                 foreach (string iconPath in iconPaths.Split(',').Select(s => s.Trim()))
                 {
-                    SystemBitmap icon = new SystemBitmap(iconPath);
+                    Bitmap icon = new Bitmap(iconPath);
                     icons.AddInputImage(icon);
                 }
             }
-            Dictionary<int, SystemBitmap> iconImagesBySize = icons
+            Dictionary<int, Bitmap> iconImagesBySize = icons
                 .AddOutputSize(48)
                 .AddOutputSize(72)
                 .AddOutputSize(96)

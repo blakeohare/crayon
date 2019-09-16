@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace CommonUtil.Images
 {
     public class IconGenerator
     {
-        private Dictionary<int, SystemBitmap> bitmaps = new Dictionary<int, SystemBitmap>();
+        private Dictionary<int, Bitmap> bitmaps = new Dictionary<int, Bitmap>();
 
-        public void AddImage(SystemBitmap bmp)
+        public void AddImage(Bitmap bmp)
         {
             int width = bmp.Width;
             int height = bmp.Height;
@@ -42,13 +42,13 @@ namespace Common
 
             foreach (int size in sizes)
             {
-                SystemBitmap originalImage = this.bitmaps[size];
+                Bitmap originalImage = this.bitmaps[size];
                 int width = originalImage.Width;
                 int height = originalImage.Height;
                 int x = (size - width) / 2;
                 int y = (size - height) / 2;
-                SystemBitmap resource = new SystemBitmap(size, size);
-                SystemBitmap.Graphics g = resource.MakeGraphics();
+                Bitmap resource = new Bitmap(size, size);
+                Bitmap.Graphics g = resource.MakeGraphics();
                 g.Blit(originalImage, x, y);
                 g.Cleanup();
 

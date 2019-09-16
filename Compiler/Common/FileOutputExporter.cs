@@ -1,4 +1,5 @@
 ﻿using CommonUtil.Disk;
+using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +96,7 @@ namespace Common
             }
         }
 
-        private void ExportImageFile(string path, SystemBitmap image)
+        private void ExportImageFile(string path, Bitmap image)
         {
             using (new PerformanceSection("ExportImageFile"))
             {

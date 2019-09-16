@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonUtil.Images;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,11 +11,11 @@ namespace Common
     public class IconSetGenerator
     {
         private HashSet<int> outputSizes = new HashSet<int>();
-        private List<SystemBitmap> bitmaps = new List<SystemBitmap>();
+        private List<Bitmap> bitmaps = new List<Bitmap>();
         private List<int> bitmapMaxDimenion = new List<int>();
 
         // Temporary images whose lifetimes are owned by the icon generator.
-        private HashSet<SystemBitmap> ownedBitmapReferences = new HashSet<SystemBitmap>();
+        private HashSet<Bitmap> ownedBitmapReferences = new HashSet<Bitmap>();
 
         public IconSetGenerator() { }
 
@@ -24,14 +25,14 @@ namespace Common
             return this;
         }
 
-        public IconSetGenerator AddInputImage(SystemBitmap bmp)
+        public IconSetGenerator AddInputImage(Bitmap bmp)
         {
             if (bmp.Width != bmp.Height)
             {
                 int size = Math.Max(bmp.Width, bmp.Height);
-                SystemBitmap newBmp = new SystemBitmap(size, size);
+                Bitmap newBmp = new Bitmap(size, size);
                 this.ownedBitmapReferences.Add(newBmp);
-                SystemBitmap.Graphics g = newBmp.MakeGraphics();
+                Bitmap.Graphics g = newBmp.MakeGraphics();
                 int x = (size - bmp.Width) / 2;
                 int y = (size - bmp.Height) / 2;
                 g.Blit(bmp, x, y);
@@ -43,12 +44,12 @@ namespace Common
             return this;
         }
 
-        public Dictionary<int, SystemBitmap> GenerateWithDefaultFallback()
+        public Dictionary<int, Bitmap> GenerateWithDefaultFallback()
         {
             if (this.bitmaps.Count == 0)
             {
                 byte[] bytes = Util.ReadAssemblyFileBytes(typeof(Util).Assembly, "icons/crayon_logo.png");
-                SystemBitmap defaultIcon = new SystemBitmap(bytes);
+                Bitmap defaultIcon = new Bitmap(bytes);
                 this.ownedBitmapReferences.Add(defaultIcon);
                 this.AddInputImage(defaultIcon);
             }
@@ -56,17 +57,17 @@ namespace Common
             return Generate();
         }
 
-        public Dictionary<int, SystemBitmap> Generate()
+        public Dictionary<int, Bitmap> Generate()
         {
-            Dictionary<int, SystemBitmap> lookup = new Dictionary<int, SystemBitmap>();
+            Dictionary<int, Bitmap> lookup = new Dictionary<int, Bitmap>();
 
-            SystemBitmap[] sources = this.bitmaps.OrderBy(b => -b.Width).ToArray();
+            Bitmap[] sources = this.bitmaps.OrderBy(b => -b.Width).ToArray();
 
             foreach (int desiredSize in this.outputSizes)
             {
-                SystemBitmap source = this.FindBestMatch(sources, desiredSize);
-                SystemBitmap bmp = new SystemBitmap(desiredSize, desiredSize);
-                SystemBitmap.Graphics g = bmp.MakeGraphics();
+                Bitmap source = this.FindBestMatch(sources, desiredSize);
+                Bitmap bmp = new Bitmap(desiredSize, desiredSize);
+                Bitmap.Graphics g = bmp.MakeGraphics();
                 g.Blit(source, 0, 0, desiredSize, desiredSize);
                 g.Cleanup();
                 lookup.Add(desiredSize, bmp);
@@ -79,21 +80,21 @@ namespace Common
 
         private void Cleanup()
         {
-            foreach (SystemBitmap bmp in this.ownedBitmapReferences)
+            foreach (Bitmap bmp in this.ownedBitmapReferences)
             {
                 bmp.CheesyCleanup();
             }
         }
 
-        private SystemBitmap FindBestMatch(SystemBitmap[] imagesFromLargestToSmallest, int desiredSize)
+        private Bitmap FindBestMatch(Bitmap[] imagesFromLargestToSmallest, int desiredSize)
         {
             if (imagesFromLargestToSmallest.Length == 0) return null;
-            SystemBitmap best = imagesFromLargestToSmallest[0];
+            Bitmap best = imagesFromLargestToSmallest[0];
             if (imagesFromLargestToSmallest.Length == 1) return best;
 
             for (int i = 1; i < imagesFromLargestToSmallest.Length; ++i)
             {
-                SystemBitmap current = imagesFromLargestToSmallest[i];
+                Bitmap current = imagesFromLargestToSmallest[i];
                 if (current.Width == desiredSize) return current;
                 if (current.Width < desiredSize)
                 {

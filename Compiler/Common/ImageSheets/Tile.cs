@@ -3,7 +3,7 @@
     public class Tile
     {
         public string GeneratedFilename { get; set; }
-        public SystemBitmap Bitmap { get; set; }
+        public CommonUtil.Images.Bitmap Bitmap { get; set; }
         public int ChunkX { get; set; }
         public int ChunkY { get; set; }
         public int Width { get; set; }

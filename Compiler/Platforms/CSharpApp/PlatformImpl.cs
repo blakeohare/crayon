@@ -1,4 +1,6 @@
 ﻿using Common;
+using CommonUtil.Images;
+using CommonUtil.Random;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -288,7 +290,7 @@ namespace CSharpApp
                 IconGenerator iconGen = new IconGenerator();
                 foreach (string path in iconPaths)
                 {
-                    iconGen.AddImage(new SystemBitmap(path.Trim()));
+                    iconGen.AddImage(new Bitmap(path.Trim()));
                 }
 
                 output[baseDir + "icon.ico"] = new FileOutput()

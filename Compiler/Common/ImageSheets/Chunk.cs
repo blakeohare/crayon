@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonUtil.Images;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Common.ImageSheets
@@ -31,7 +32,7 @@ namespace Common.ImageSheets
             }
 
             Tile[] tiles = new Tile[16];
-            SystemBitmap.Graphics[] graphics = new SystemBitmap.Graphics[16];
+            Bitmap.Graphics[] graphics = new Bitmap.Graphics[16];
             foreach (Image member in this.Members)
             {
                 int startX = member.ChunkX;
@@ -48,12 +49,12 @@ namespace Common.ImageSheets
                     for (int tileX = tileStartX; tileX <= tileEndX; ++tileX)
                     {
                         int tileIndex = tileX + tileY * 4;
-                        SystemBitmap.Graphics tile = graphics[tileIndex];
+                        Bitmap.Graphics tile = graphics[tileIndex];
                         if (tile == null)
                         {
                             tiles[tileIndex] = new Tile()
                             {
-                                Bitmap = new SystemBitmap(256, 256),
+                                Bitmap = new Bitmap(256, 256),
                                 ChunkX = 256 * tileX,
                                 ChunkY = 256 * tileY,
                                 Width = 256,
@@ -70,7 +71,7 @@ namespace Common.ImageSheets
                 this.Tiles = new List<Tile>(tiles.Where(t => t != null));
             }
 
-            foreach (SystemBitmap.Graphics graphicsInstance in graphics)
+            foreach (Bitmap.Graphics graphicsInstance in graphics)
             {
                 if (graphicsInstance != null)
                 {

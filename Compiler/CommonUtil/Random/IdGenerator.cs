@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace CommonUtil.Random
 {
     public static class IdGenerator
     {
@@ -34,7 +34,7 @@ namespace Common
             return GenerateGuid(seed, salt + "-xc", XCODE_PROJ.ToCharArray());
         }
 
-        private static readonly Random random = new Random((int)(DateTime.Now.Ticks % 2000000000));
+        private static readonly System.Random random = new System.Random((int)(DateTime.Now.Ticks % 2000000000));
 
         public static string GetRandomSeed()
         {

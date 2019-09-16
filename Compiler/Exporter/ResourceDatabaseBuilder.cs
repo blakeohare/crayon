@@ -1,6 +1,7 @@
 ﻿using Build;
 using Common;
 using CommonUtil.Disk;
+using CommonUtil.Images;
 using Exporter.ByteCode;
 using System;
 using System.Collections.Generic;
@@ -157,7 +158,7 @@ namespace Exporter
                                     resDb.ImageResources.Add(new FileOutput()
                                     {
                                         Type = FileOutputType.Image,
-                                        Bitmap = new SystemBitmap(absolutePath),
+                                        Bitmap = new Bitmap(absolutePath),
                                         OriginalPath = aliasedPath,
                                         AbsoluteInputPath = absolutePath,
                                     });
@@ -167,7 +168,7 @@ namespace Exporter
                                     resDb.ImageResources.Add(new FileOutput()
                                     {
                                         Type = FileOutputType.Image,
-                                        Bitmap = new SystemBitmap(absolutePath),
+                                        Bitmap = new Bitmap(absolutePath),
                                         OriginalPath = aliasedPath,
                                         AbsoluteInputPath = absolutePath,
                                         IsLossy = true,
@@ -180,7 +181,7 @@ namespace Exporter
                                     resDb.ImageResources.Add(new FileOutput()
                                     {
                                         Type = FileOutputType.Copy,
-                                        Bitmap = new SystemBitmap(absolutePath),
+                                        Bitmap = new Bitmap(absolutePath),
                                         RelativeInputPath = aliasedPath,
                                         OriginalPath = aliasedPath,
                                         AbsoluteInputPath = absolutePath,

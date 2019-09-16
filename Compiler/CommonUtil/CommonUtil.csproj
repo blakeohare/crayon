@@ -43,6 +43,7 @@
     <Compile Include="Disk\*.cs" />
     <Compile Include="Images\*.cs" />
     <Compile Include="Json\*.cs" />
+    <Compile Include="Random\IdGenerator.cs" />
     <Compile Include="Text\*.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

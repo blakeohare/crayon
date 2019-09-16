@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
 
@@ -45,7 +46,7 @@ namespace Exporter
             };
 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-            Dictionary<int, SystemBitmap> icons = new IconSetGenerator()
+            Dictionary<int, Bitmap> icons = new IconSetGenerator()
                 .AddOutputSize(32)
                 .AddOutputSize(256)
                 .GenerateWithDefaultFallback();

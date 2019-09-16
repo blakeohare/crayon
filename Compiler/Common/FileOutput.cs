@@ -23,7 +23,7 @@ namespace Common
         public string AbsoluteInputPath { get; set; }
         public string TextContent { get; set; }
         public byte[] BinaryContent { get; set; }
-        public SystemBitmap Bitmap { get; set; }
+        public CommonUtil.Images.Bitmap Bitmap { get; set; }
         public bool IsLossy { get; set; } // e.g. JPEG's will change if re-encoded.
 
         // Re-encode all text files as UTF-8 for consistent readback. If re-encoding fails, then this

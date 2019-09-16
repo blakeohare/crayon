@@ -1,5 +1,6 @@
 ﻿using Common;
 using CommonUtil.Disk;
+using CommonUtil.Images;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace JavaScriptAppIos
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,
-                    Bitmap = new SystemBitmap(options.GetString(ExportOptionKey.LAUNCHSCREEN_PATH)),
+                    Bitmap = new Bitmap(options.GetString(ExportOptionKey.LAUNCHSCREEN_PATH)),
                 };
             }
             else
@@ -67,7 +68,7 @@ namespace JavaScriptAppIos
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,
-                    Bitmap = new SystemBitmap(bytes),
+                    Bitmap = new Bitmap(bytes),
                 };
             }
             files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"] = launchScreen;
@@ -78,11 +79,11 @@ namespace JavaScriptAppIos
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
                 string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
-                SystemBitmap icon = new SystemBitmap(iconPath);
+                Bitmap icon = new Bitmap(iconPath);
                 icons.AddInputImage(icon);
             }
 
-            Dictionary<int, SystemBitmap> iconImagesBySize = icons
+            Dictionary<int, Bitmap> iconImagesBySize = icons
                 .AddOutputSize(20 * 1)
                 .AddOutputSize(20 * 2)
                 .AddOutputSize(20 * 3)
