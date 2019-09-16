@@ -54,7 +54,6 @@ namespace Exporter
             output["assets/icon32.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[32] };
             output["assets/icon256.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[256] };
 
-            System.Reflection.Assembly thisAsm = typeof(DefaultProjectGenerator).Assembly;
             foreach (string file in new string[]
                 {
                     "DefaultProject/BuildFile.txt|%%%PROJECT_ID%%%.build",
@@ -73,7 +72,7 @@ namespace Exporter
                 };
             }
             // TODO: why is this here? Isn't this dead code?
-            new ResourceStore(thisAsm).ReadAssemblyFileText("DefaultProject/BuildFile.txt");
+            new ResourceStore(typeof(DefaultProjectGenerator)).ReadAssemblyFileText("DefaultProject/BuildFile.txt");
             return output;
         }
 
