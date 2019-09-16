@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil.Disk;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,7 @@ namespace AssemblyResolver
                         throw new System.InvalidOperationException("No %APPDATA% environment variable currently set.");
                     }
                     this.directory = System.IO.Path.Combine(appData, "Crayon", "libstore");
-                    Common.FileUtil.EnsureFolderExists(this.directory);
+                    FileUtil.EnsureFolderExists(this.directory);
                 }
                 return this.directory;
             }

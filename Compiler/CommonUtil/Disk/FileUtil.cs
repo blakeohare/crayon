@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Common
+namespace CommonUtil.Disk
 {
     public static class FileUtil
     {

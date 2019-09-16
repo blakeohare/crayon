@@ -49,7 +49,6 @@
     <Compile Include="FileOutput.cs" />
     <Compile Include="FileOutputExporter.cs" />
     <Compile Include="FilePath.cs" />
-    <Compile Include="FileUtil.cs" />
     <Compile Include="IconGenerator.cs" />
     <Compile Include="IconSetGenerator.cs" />
     <Compile Include="IdGenerator.cs" />

@@ -1,4 +1,6 @@
-﻿namespace Common
+﻿using CommonUtil.Disk;
+
+namespace Common
 {
     // Represents a source path root in the build file that may have an alias.
     public class FilePath
