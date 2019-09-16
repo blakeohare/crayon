@@ -55,11 +55,6 @@ namespace Common
             return System.IO.File.ReadAllBytes(path);
         }
 
-        public static void WriteFileImage(string path, SystemBitmap image)
-        {
-            image.Save(path);
-        }
-
         public static string JoinPath(params string[] parts)
         {
             string output = NormalizePath(string.Join(DIR_SEP, parts));
@@ -402,7 +397,8 @@ namespace Common
             return GetAbsolutePathFromRelativeOrAbsolutePath(FileUtil.GetCurrentDirectory(), path);
         }
 
-        public static string GetAbsolutePathFromRelativeOrAbsolutePath(string dirForAbsoluteFallback, string path) {
+        public static string GetAbsolutePathFromRelativeOrAbsolutePath(string dirForAbsoluteFallback, string path)
+        {
             if (FileUtil.IsAbsolutePath(path)) return path;
 
             return System.IO.Path.GetFullPath(
