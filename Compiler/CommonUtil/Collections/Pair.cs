@@ -1,4 +1,4 @@
-﻿namespace Common
+﻿namespace CommonUtil.Collections
 {
     public class Pair<T1, T2>
     {

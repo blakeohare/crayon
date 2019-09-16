@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Common
+namespace CommonUtil.Collections
 {
     public class Multimap<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {

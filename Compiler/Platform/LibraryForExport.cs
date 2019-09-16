@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using CommonUtil.Collections;
 
 namespace Platform
 {
