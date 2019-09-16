@@ -1,4 +1,5 @@
-﻿using CommonUtil.Disk;
+﻿using CommonUtil;
+using CommonUtil.Disk;
 using System;
 
 namespace Crayon
@@ -26,12 +27,12 @@ namespace Crayon
                 // TODO: Use ConsoleWriter here. Currently the prefixes are being
                 // added by the VM itself, which is not a very good place to put that
                 // logic. Also update StdErr below as well.
-                Console.WriteLine(data);
+                Print.Line(data);
             }
 
             public override void OnStdErrReceived(string data)
             {
-                Console.Error.WriteLine(data);
+                Print.ErrorLine(data);
             }
         }
 

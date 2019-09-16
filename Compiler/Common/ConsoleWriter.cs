@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Common
 {
@@ -33,7 +32,7 @@ namespace Common
             string prefix = prefixesEnabled ? (messageType.ToString() + ":") : "";
             foreach (string line in message.Split('\n').Select(s => s.TrimEnd()))
             {
-                Console.WriteLine(prefix + line);
+                CommonUtil.Print.Line(prefix + line);
             }
 
             return instance;
