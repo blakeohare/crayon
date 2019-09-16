@@ -46,7 +46,7 @@ namespace AssemblyResolver
         private IList<RemoteAssemblyState> Parse()
         {
             string manifestFile = this.ManifestFilePath;
-            if (!System.IO.File.Exists(manifestFile))
+            if (!File.Exists(manifestFile))
             {
                 return new RemoteAssemblyState[0];
             }
@@ -55,7 +55,7 @@ namespace AssemblyResolver
 
             List<RemoteAssemblyState> remoteAssemblies = new List<RemoteAssemblyState>();
             List<string> invalidLines = new List<string>();
-            foreach (string line in System.IO.File.ReadAllLines(manifestFile))
+            foreach (string line in File.ReadLines(manifestFile))
             {
                 string trimmedLine = line.Trim();
                 if (trimmedLine.Length > 0)

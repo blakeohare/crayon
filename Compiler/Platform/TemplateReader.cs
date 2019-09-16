@@ -46,9 +46,9 @@ namespace Platform
                 foreach (string platformName in this.platformNamesMostGeneralFirst)
                 {
                     string packagedVmSource = Path.Join(crayonHome, "vmsrc", platformName + ".crypkg");
-                    if (System.IO.File.Exists(packagedVmSource))
+                    if (File.Exists(packagedVmSource))
                     {
-                        byte[] pkgBytes = System.IO.File.ReadAllBytes(packagedVmSource);
+                        byte[] pkgBytes = File.ReadBytes(packagedVmSource);
                         Common.CryPkgDecoder pkgDecoder = new Common.CryPkgDecoder(pkgBytes);
                         ReadAllFilesCryPkg(pkgDecoder, output, "");
                     }
@@ -67,7 +67,7 @@ namespace Platform
                 foreach (string platformName in this.platformNamesMostGeneralFirst)
                 {
                     string vmTemplateDir = Path.Join(crayonSourceDir, "Interpreter", "gen", platformName);
-                    if (System.IO.Directory.Exists(vmTemplateDir))
+                    if (Directory.Exists(vmTemplateDir))
                     {
                         ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
                     }

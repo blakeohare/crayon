@@ -1,4 +1,5 @@
-﻿using CommonUtil.Text;
+﻿using CommonUtil.Disk;
+using CommonUtil.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace Common
         public bool FileExists(string path)
         {
             string fullPath = System.IO.Path.GetFullPath(path);
-            if (System.IO.File.Exists(fullPath)) return true;
+            if (File.Exists(fullPath)) return true;
 
             CryPkgPath pkgPath = GetPackagedPath(fullPath, false);
             if (pkgPath == null) return false;
@@ -40,7 +41,7 @@ namespace Common
         public bool DirectoryExists(string path)
         {
             string fullPath = System.IO.Path.GetFullPath(path);
-            if (System.IO.Directory.Exists(fullPath)) return true;
+            if (Directory.Exists(fullPath)) return true;
 
             CryPkgPath pkgPath = GetPackagedPath(fullPath, true);
             if (pkgPath == null) return false;
@@ -50,7 +51,7 @@ namespace Common
         public byte[] ReadFileBytes(string path)
         {
             string fullPath = System.IO.Path.GetFullPath(path);
-            if (System.IO.File.Exists(fullPath)) return System.IO.File.ReadAllBytes(fullPath);
+            if (File.Exists(fullPath)) return File.ReadBytes(fullPath);
 
             CryPkgPath pkgPath = GetPackagedPath(fullPath, false);
             if (pkgPath == null) throw new System.IO.FileNotFoundException(path);
@@ -76,10 +77,10 @@ namespace Common
         private string[] ListDirectoryContents(string path, bool includeFiles, bool includeDirectories)
         {
             string fullPath = System.IO.Path.GetFullPath(path);
-            if (System.IO.Directory.Exists(fullPath))
+            if (Directory.Exists(fullPath))
             {
-                IEnumerable<string> files = includeFiles ? System.IO.Directory.GetFiles(fullPath) : emptyStringArray;
-                IEnumerable<string> dirs = includeDirectories ? System.IO.Directory.GetDirectories(fullPath) : emptyStringArray;
+                IEnumerable<string> files = includeFiles ? Directory.ListFilesWithAbsolutePaths(fullPath) : emptyStringArray;
+                IEnumerable<string> dirs = includeDirectories ? Directory.ListDirectoriesWithAbsolutePaths(fullPath) : emptyStringArray;
                 return dirs.Concat(files).ToArray();
             }
 
@@ -141,10 +142,10 @@ namespace Common
             {
                 if (!packageStatuses.ContainsKey(pkgPath))
                 {
-                    string pkgRealPath = pkgPath.Replace('/', System.IO.Path.DirectorySeparatorChar);
-                    if (System.IO.File.Exists(pkgRealPath))
+                    string pkgRealPath = pkgPath.Replace("/", Path.Separator);
+                    if (File.Exists(pkgRealPath))
                     {
-                        CryPkgDecoder pkg = new CryPkgDecoder(System.IO.File.ReadAllBytes(pkgRealPath));
+                        CryPkgDecoder pkg = new CryPkgDecoder(File.ReadBytes(pkgRealPath));
                         packageStatuses[pkgPath] = pkg;
                     }
                     else

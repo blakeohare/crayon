@@ -97,7 +97,7 @@ namespace AssemblyResolver
             {
                 string directoryName = baseName + (numSuffix == 0 ? "" : ("_" + numSuffix));
                 string directoryFullPath = Path.Join(manifestDir, directoryName);
-                if (!System.IO.Directory.Exists(directoryFullPath))
+                if (!Directory.Exists(directoryFullPath))
                 {
                     FileUtil.EnsureFolderExists(Path.Join(directoryFullPath, libraryName));
                     return directoryName;

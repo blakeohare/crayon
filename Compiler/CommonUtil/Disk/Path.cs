@@ -2,6 +2,8 @@
 {
     public static class Path
     {
+        public static string Separator { get; } = System.IO.Path.DirectorySeparatorChar + "";
+
         public static string Join(params string[] parts)
         {
             return System.IO.Path.Combine(parts);

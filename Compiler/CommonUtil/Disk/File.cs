@@ -2,6 +2,21 @@
 {
     public static class File
     {
+        public static bool Exists(string path)
+        {
+            return System.IO.File.Exists(path);
+        }
+
+        public static byte[] ReadBytes(string path)
+        {
+            return System.IO.File.ReadAllBytes(path);
+        }
+
+        public static string[] ReadLines(string path)
+        {
+            return System.IO.File.ReadAllLines(path);
+        }
+
         public static void Move(string source, string dest, bool overwriteOkay)
         {
             if (!Environment.Platform.IsWindows)
