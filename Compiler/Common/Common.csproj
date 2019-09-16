@@ -41,7 +41,34 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImageSheets\*.cs" />
-    <Compile Include="*.cs" />
+    <Compile Include="AcrylicConversionHelper.cs" />
+    <Compile Include="ConsoleWriter.cs" />
+    <Compile Include="CryPkgDecoder.cs" />
+    <Compile Include="EnvironmentVariableUtil.cs" />
+    <Compile Include="ExportOptionKey.cs" />
+    <Compile Include="FileOutput.cs" />
+    <Compile Include="FileOutputExporter.cs" />
+    <Compile Include="FilePath.cs" />
+    <Compile Include="FileUtil.cs" />
+    <Compile Include="IconGenerator.cs" />
+    <Compile Include="IconSetGenerator.cs" />
+    <Compile Include="IdGenerator.cs" />
+    <Compile Include="KeyValuePairParser.cs" />
+    <Compile Include="Multimap.cs" />
+    <Compile Include="MysteryTextDecoder.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="OrientationParser.cs" />
+    <Compile Include="Pair.cs" />
+    <Compile Include="PerformanceTimer.cs" />
+    <Compile Include="PkgAwareFileUtil.cs" />
+    <Compile Include="ResourceDatabase.cs" />
+    <Compile Include="SourceDirectoryFinder.cs" />
+    <Compile Include="SystemBitmap.cs" />
+    <Compile Include="TODO.cs" />
+    <Compile Include="Utf8Base64.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="VersionComparator.cs" />
+    <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

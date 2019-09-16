@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonUtil.Json;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AssemblyResolver
@@ -16,7 +17,7 @@ namespace AssemblyResolver
         public int StatusCode { get; private set; }
         public string ContentType { get; private set; }
         public byte[] Content { get; private set; }
-        public Common.JsonLookup ContentJson { get; private set; }
+        public JsonLookup ContentJson { get; private set; }
         public bool HasNoConnection { get; private set; }
         public bool IsServerUnresponseive { get; private set; }
         public bool IsJson { get; private set; }
@@ -33,7 +34,7 @@ namespace AssemblyResolver
             {
                 case "application/json":
                     this.IsJson = true;
-                    this.ContentJson = new Common.JsonLookup(new Common.JsonParser(this.ContentUtf8).ParseAsDictionary());
+                    this.ContentJson = new JsonLookup(new JsonParser(this.ContentUtf8).ParseAsDictionary());
                     break;
 
                 default:

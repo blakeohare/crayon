@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil.Json;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,7 +33,7 @@ namespace Build.BuildParseNodes
             return rootOut;
         }
 
-        private static void ParseBuildItem(BuildItem item, Common.JsonLookup json)
+        private static void ParseBuildItem(BuildItem item, JsonLookup json)
         {
             item.CompilerLocale = json.GetAsString("compiler-locale");
             item.ProjectTitle = json.GetAsString("title");
@@ -119,7 +120,7 @@ namespace Build.BuildParseNodes
             item.Sources = sourceDirectories.ToArray();
 
             List<BuildVar> buildVars = new List<BuildVar>();
-            foreach (Common.JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
+            foreach (JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
                 .OfType<IDictionary<string, object>>()
                 .Select(t => new JsonLookup(t)))
             {
