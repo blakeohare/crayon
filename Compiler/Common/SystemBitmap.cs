@@ -72,9 +72,8 @@ namespace Common
 #endif
         }
 
-        public SystemBitmap(System.Reflection.Assembly assembly, string path)
+        public SystemBitmap(byte[] bytes)
         {
-            byte[] bytes = Util.ReadAssemblyFileBytes(assembly, path);
 #if WINDOWS
             using (System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes))
             {

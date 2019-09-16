@@ -47,7 +47,8 @@ namespace Common
         {
             if (this.bitmaps.Count == 0)
             {
-                SystemBitmap defaultIcon = new SystemBitmap(typeof(Util).Assembly, "icons/crayon_logo.png");
+                byte[] bytes = Util.ReadAssemblyFileBytes(typeof(Util).Assembly, "icons/crayon_logo.png");
+                SystemBitmap defaultIcon = new SystemBitmap(bytes);
                 this.ownedBitmapReferences.Add(defaultIcon);
                 this.AddInputImage(defaultIcon);
             }

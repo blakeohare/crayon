@@ -61,11 +61,13 @@ namespace JavaScriptAppIos
             }
             else
             {
+                byte[] bytes = Util.ReadAssemblyFileBytes(
+                    typeof(JavaScriptAppIos.PlatformImpl).Assembly,
+                    "SwiftResources/" + (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png"));
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,
-                    Bitmap = new SystemBitmap(typeof(JavaScriptAppIos.PlatformImpl).Assembly, "SwiftResources/" +
-                       (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png")),
+                    Bitmap = new SystemBitmap(bytes),
                 };
             }
             files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"] = launchScreen;
