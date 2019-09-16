@@ -263,7 +263,7 @@ namespace JavaScriptAppAndroid
                 }
             }
 
-            return System.Environment.GetEnvironmentVariable("CRAYON_ANDROID_SDK")
+            return CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_ANDROID_SDK")
                 ?? @"C:\Program Files (x86)\Android\android-studio\sdk";
         }
     }

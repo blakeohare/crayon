@@ -128,7 +128,7 @@ namespace Build.BuildParseNodes
                 object value = varJson.Get("value");
                 if (value == null && varJson.GetAsString("env") != null)
                 {
-                    bv.Value = EnvironmentVariableUtil.GetVariable(varJson.GetAsString("env")) ?? "";
+                    bv.Value = CommonUtil.Environment.EnvironmentVariables.Get(varJson.GetAsString("env")) ?? "";
                     bv.Type = VarType.STRING;
                 }
                 else

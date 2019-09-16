@@ -45,7 +45,7 @@ namespace AssemblyResolver
             string[] nullableBuildFileLocalDepsList,
             string nullableProjectDirectory)
         {
-            string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+            string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
 
 #if RELEASE
             if (crayonHome == null)
@@ -60,7 +60,7 @@ namespace AssemblyResolver
             {
                 placesWhereLibraryDirectoriesCanExist += ";" + FileUtil.JoinPath(crayonHome, "libs");
             }
-            placesWhereLibraryDirectoriesCanExist += ";" + (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
+            placesWhereLibraryDirectoriesCanExist += ";" + (CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_PATH") ?? "");
 
 #if OSX
             placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');

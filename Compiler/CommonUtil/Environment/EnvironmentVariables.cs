@@ -1,8 +1,8 @@
-﻿namespace Common
+﻿namespace CommonUtil.Environment
 {
-    public static class EnvironmentVariableUtil
+    public static class EnvironmentVariables
     {
-        public static string GetVariable(string name)
+        public static string Get(string name)
         {
             name = name.Trim();
             if (name.StartsWith("%") && name.EndsWith("%"))

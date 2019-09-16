@@ -17,7 +17,7 @@ namespace AssemblyResolver
             {
                 if (this.directory == null)
                 {
-                    string appData = System.Environment.GetEnvironmentVariable("APPDATA");
+                    string appData = CommonUtil.Environment.EnvironmentVariables.Get("APPDATA");
                     if (appData == null)
                     {
                         throw new System.InvalidOperationException("No %APPDATA% environment variable currently set.");

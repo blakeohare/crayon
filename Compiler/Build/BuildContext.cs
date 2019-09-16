@@ -171,7 +171,7 @@ namespace Build
             javaPackage = pr.Replace(javaPackage);
             programmingLanguage = pr.Replace(programmingLanguage);
             localDeps = localDeps
-                .Select(t => EnvironmentVariableUtil.DoReplacementsInString(t))
+                .Select(t => CommonUtil.Environment.EnvironmentVariables.DoReplacementsInString(t))
                 .Select(t => pr.Replace(t))
                 .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
                 .ToArray();
@@ -327,7 +327,7 @@ namespace Build
 
             foreach (SourceItem sourceDir in sourceDirs)
             {
-                string sourceDirValue = EnvironmentVariableUtil.DoReplacementsInString(sourceDir.Value);
+                string sourceDirValue = CommonUtil.Environment.EnvironmentVariables.DoReplacementsInString(sourceDir.Value);
                 string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDirValue);
                 FilePath filePath = new FilePath(relative, projectDir, sourceDir.Alias);
                 paths[filePath.AbsolutePath] = filePath;

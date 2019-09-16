@@ -59,7 +59,7 @@ namespace Crayon
 #if DEBUG
             if (actualArgs.Length == 0)
             {
-                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+                string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
                 if (crayonHome != null)
                 {
                     string debugArgsFile = FileUtil.JoinPath(crayonHome, "DEBUG_ARGS.txt");

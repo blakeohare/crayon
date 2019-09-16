@@ -37,7 +37,7 @@ namespace Platform
         {
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
 
-            string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+            string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
             if (crayonHome != null)
             {
                 // Search %CRAYON_HOME%/vmsrc directory for the VM files for the given platforms.
