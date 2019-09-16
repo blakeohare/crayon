@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonUtil.Disk;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -134,7 +135,7 @@ namespace AssemblyResolver
         public string LocalDirectory { get; set; }
 
         // Absolute path of the library directory itself.
-        public string AbsolutePathToLibrary { get { return System.IO.Path.Combine(this.remoteAssemblyManifest.Directory, this.LocalDirectory, this.Id); } }
+        public string AbsolutePathToLibrary { get { return Path.Join(this.remoteAssemblyManifest.Directory, this.LocalDirectory, this.Id); } }
 
         // Basic name of the library
         public string Id { get; set; }

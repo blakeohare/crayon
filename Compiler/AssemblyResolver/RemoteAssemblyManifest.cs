@@ -22,14 +22,14 @@ namespace AssemblyResolver
                     {
                         throw new System.InvalidOperationException("No %APPDATA% environment variable currently set.");
                     }
-                    this.directory = System.IO.Path.Combine(appData, "Crayon", "libstore");
+                    this.directory = Path.Join(appData, "Crayon", "libstore");
                     FileUtil.EnsureFolderExists(this.directory);
                 }
                 return this.directory;
             }
         }
 
-        private string ManifestFilePath { get { return System.IO.Path.Combine(this.Directory, "libmanifest.txt"); } }
+        private string ManifestFilePath { get { return Path.Join(this.Directory, "libmanifest.txt"); } }
 
         private List<RemoteAssemblyState> remoteAssemblies = null;
         public RemoteAssemblyState[] RemoteAssemblies
@@ -68,10 +68,10 @@ namespace AssemblyResolver
                     }
                     else
                     {
-                        string outermostPath = System.IO.Path.Combine(this.Directory, state.LocalDirectory);
+                        string outermostPath = Path.Join(this.Directory, state.LocalDirectory);
                         if (FileUtil.DirectoryExists(outermostPath))
                         {
-                            if (FileUtil.FileExists(System.IO.Path.Combine(state.AbsolutePathToLibrary, "manifest.json")) &&
+                            if (FileUtil.FileExists(Path.Join(state.AbsolutePathToLibrary, "manifest.json")) &&
                                 now - state.LastUsed < DELETE_ASSEMBLIES_THAT_HAVENT_BEEN_USED_IN_THIS_MANY_DAYS * 24 * 3600)
                             {
                                 remoteAssemblies.Add(state);

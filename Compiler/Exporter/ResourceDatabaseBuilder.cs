@@ -73,7 +73,7 @@ namespace Exporter
                     {
                         string absolutePath = FileUtil.GetCanonicalizeUniversalPath(sourceRoot.AbsolutePath + "/" + relativeFilePath);
                         string aliasedPath = sourceRoot.GetAliasedOrRelativePathh(absolutePath);
-                        string fileName = FileUtil.GetFileNameFromPath(absolutePath);
+                        string fileName = Path.GetFileName(absolutePath);
                         string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
 
                         ResourceDatabase.FileCategory category;

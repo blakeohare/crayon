@@ -26,7 +26,7 @@ namespace Exporter.Workers
             string outputDirectory = command.HasOutputDirectoryOverride
                 ? command.OutputDirectoryOverride
                 : buildContext.OutputFolder;
-            if (!FileUtil.IsAbsolutePath(outputDirectory))
+            if (!Path.IsAbsolute(outputDirectory))
             {
                 outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);
             }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonUtil.Disk;
+using System.Collections.Generic;
 
 namespace Platform
 {
@@ -24,7 +25,7 @@ namespace Platform
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
             foreach (string platformName in this.platformNamesMostGeneralFirst)
             {
-                string libTemplateDir = System.IO.Path.Combine(library.Directory, "native", platformName);
+                string libTemplateDir = Path.Join(library.Directory, "native", platformName);
                 if (fileUtil.DirectoryExists(libTemplateDir))
                 {
                     ReadAllFiles(output, System.IO.Path.GetFullPath(libTemplateDir).Length + 1, libTemplateDir);
@@ -44,7 +45,7 @@ namespace Platform
                 // Files associated with more specific platforms will overwrite the less specific ones.
                 foreach (string platformName in this.platformNamesMostGeneralFirst)
                 {
-                    string packagedVmSource = System.IO.Path.Combine(crayonHome, "vmsrc", platformName + ".crypkg");
+                    string packagedVmSource = Path.Join(crayonHome, "vmsrc", platformName + ".crypkg");
                     if (System.IO.File.Exists(packagedVmSource))
                     {
                         byte[] pkgBytes = System.IO.File.ReadAllBytes(packagedVmSource);
@@ -65,7 +66,7 @@ namespace Platform
 
                 foreach (string platformName in this.platformNamesMostGeneralFirst)
                 {
-                    string vmTemplateDir = System.IO.Path.Combine(crayonSourceDir, "Interpreter", "gen", platformName);
+                    string vmTemplateDir = Path.Join(crayonSourceDir, "Interpreter", "gen", platformName);
                     if (System.IO.Directory.Exists(vmTemplateDir))
                     {
                         ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
@@ -103,13 +104,13 @@ namespace Platform
         {
             foreach (string path in fileUtil.ListFiles(dir))
             {
-                string fullPath = System.IO.Path.Combine(dir, path);
+                string fullPath = Path.Join(dir, path);
                 output[fullPath.Substring(pathTrimLength).Replace('\\', '/')] = fileUtil.ReadFileBytes(fullPath);
             }
 
             foreach (string path in fileUtil.ListDirectories(dir))
             {
-                string fullPath = System.IO.Path.Combine(dir, path);
+                string fullPath = Path.Join(dir, path);
                 ReadAllFiles(output, pathTrimLength, fullPath);
             }
         }

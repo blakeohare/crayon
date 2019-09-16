@@ -50,7 +50,7 @@ namespace AssemblyResolver
             CryPkgDecoder crypkgDecoder = new CryPkgDecoder(response.Content);
             // TODO: crypkgDecoder.IsValid
 
-            this.ExpandCryPkgToDirectory(crypkgDecoder, System.IO.Path.Combine(manifest.Directory, directoryName, libraryName));
+            this.ExpandCryPkgToDirectory(crypkgDecoder, Path.Join(manifest.Directory, directoryName, libraryName));
             int now = CommonUtil.DateTime.Time.UnixTimeNow;
             RemoteAssemblyState ras = new RemoteAssemblyState(manifest)
             {
@@ -97,10 +97,10 @@ namespace AssemblyResolver
             while (true)
             {
                 string directoryName = baseName + (numSuffix == 0 ? "" : ("_" + numSuffix));
-                string directoryFullPath = System.IO.Path.Combine(manifestDir, directoryName);
+                string directoryFullPath = Path.Join(manifestDir, directoryName);
                 if (!System.IO.Directory.Exists(directoryFullPath))
                 {
-                    FileUtil.EnsureFolderExists(System.IO.Path.Combine(directoryFullPath, libraryName));
+                    FileUtil.EnsureFolderExists(Path.Join(directoryFullPath, libraryName));
                     return directoryName;
                 }
                 numSuffix++;
@@ -149,7 +149,7 @@ namespace AssemblyResolver
             foreach (string file in crypkg.ListDirectory(current, true, false))
             {
                 string pkgPath = current == "." ? file : (current + "/" + file);
-                string diskPath = System.IO.Path.Combine(diskCurrent, file);
+                string diskPath = Path.Join(diskCurrent, file);
                 byte[] data = crypkg.ReadFileBytes(pkgPath);
                 FileUtil.WriteFileBytes(diskPath, data);
             }
@@ -157,7 +157,7 @@ namespace AssemblyResolver
             foreach (string dir in crypkg.ListDirectory(current, false, true))
             {
                 string pkgPath = current == "." ? dir : (current + "/" + dir);
-                string diskPath = System.IO.Path.Combine(diskCurrent, dir);
+                string diskPath = Path.Join(diskCurrent, dir);
                 FileUtil.EnsureFolderExists(diskPath);
                 ExpandCryPkgToDirectory(crypkg, diskPath, pkgPath);
             }

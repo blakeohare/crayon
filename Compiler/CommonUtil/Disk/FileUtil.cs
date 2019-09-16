@@ -8,22 +8,6 @@ namespace CommonUtil.Disk
     {
         private static string DIR_SEP = "" + System.IO.Path.DirectorySeparatorChar;
 
-        private static bool IS_WINDOWS = System.IO.Path.DirectorySeparatorChar == '\\';
-
-        public static bool IsAbsolutePath(string path)
-        {
-            if (IS_WINDOWS)
-            {
-                if (path.Length > 1 && path[1] == ':') return true;
-            }
-            else
-            {
-                if (path.StartsWith("/")) return true;
-                if (path.StartsWith("~")) return true;
-            }
-            return false;
-        }
-
         public static string GetCanonicalExtension(string path)
         {
             string output = System.IO.Path.GetExtension(path);
@@ -140,44 +124,6 @@ namespace CommonUtil.Disk
         {
             path = NormalizePath(path);
             return System.IO.File.Exists(path);
-        }
-
-        public static void CopyFile(string source, string dest)
-        {
-            if (!IS_WINDOWS)
-            {
-                source = source.Replace('\\', '/');
-            }
-
-            try
-            {
-                System.IO.File.Copy(source, dest, true);
-            }
-            catch (System.IO.IOException ioe)
-            {
-                if (ioe.Message.Contains("it is being used by another process"))
-                {
-                    throw new InvalidOperationException("The file '" + dest + "' appears to be in use. Please stop playing your game and try again.");
-                }
-                else
-                {
-                    throw new InvalidOperationException("The file '" + dest + "' could not be copied to the output directory.");
-                }
-            }
-        }
-
-        public static void MoveFile(string source, string dest, bool overwriteOkay)
-        {
-            if (!IS_WINDOWS)
-            {
-                source = source.Remove('\\', '/');
-                dest = dest.Replace('\\', '/');
-            }
-            if (overwriteOkay && System.IO.File.Exists(dest))
-            {
-                System.IO.File.Delete(dest);
-            }
-            System.IO.File.Move(source, dest);
         }
 
         public static string[] GetAllAbsoluteFilePathsDescendentsOf(string absoluteRoot)
@@ -350,7 +296,7 @@ namespace CommonUtil.Disk
 
         public static string GetPlatformPath(string path)
         {
-            if (IS_WINDOWS)
+            if (Environment.Platform.IsWindows)
             {
                 path = path.Replace('/', '\\');
             }
@@ -363,7 +309,7 @@ namespace CommonUtil.Disk
 
         public static string FinalizeTilde(string path)
         {
-            if (IS_WINDOWS || !path.StartsWith("~"))
+            if (Environment.Platform.IsWindows || !path.StartsWith("~"))
             {
                 return path;
             }
@@ -371,11 +317,6 @@ namespace CommonUtil.Disk
             string homedir = "/Users/" + System.Environment.UserName;
 
             return homedir + path.Substring(1);
-        }
-
-        public static string GetCurrentDirectory()
-        {
-            return System.IO.Directory.GetCurrentDirectory();
         }
 
         public static string GetParentDirectory(string path)
@@ -395,22 +336,17 @@ namespace CommonUtil.Disk
 
         public static string GetAbsolutePathFromRelativeOrAbsolutePath(string path)
         {
-            return GetAbsolutePathFromRelativeOrAbsolutePath(FileUtil.GetCurrentDirectory(), path);
+            return GetAbsolutePathFromRelativeOrAbsolutePath(Path.GetCurrentDirectory(), path);
         }
 
         public static string GetAbsolutePathFromRelativeOrAbsolutePath(string dirForAbsoluteFallback, string path)
         {
-            if (FileUtil.IsAbsolutePath(path)) return path;
+            if (Path.IsAbsolute(path)) return path;
 
             return System.IO.Path.GetFullPath(
                 System.IO.Path.Combine(
                     dirForAbsoluteFallback,
                     path));
-        }
-
-        public static string GetFileNameFromPath(string path)
-        {
-            return System.IO.Path.GetFileName(path);
         }
     }
 }

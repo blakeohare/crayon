@@ -288,7 +288,7 @@ namespace Build
             string launchScreenPath = this.LaunchScreenPath;
             if (launchScreenPath != null)
             {
-                if (!FileUtil.IsAbsolutePath(launchScreenPath))
+                if (!Path.IsAbsolute(launchScreenPath))
                 {
                     launchScreenPath = FileUtil.JoinPath(this.ProjectDirectory, launchScreenPath);
                 }

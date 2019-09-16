@@ -15,7 +15,7 @@ namespace Common
 #if DEBUG
                 if (crayonSourceDirectoryCached == null)
                 {
-                    string currentDirectory = FileUtil.GetCurrentDirectory();
+                    string currentDirectory = Path.GetCurrentDirectory();
                     while (!string.IsNullOrEmpty(currentDirectory))
                     {
                         string librariesPath = FileUtil.JoinPath(currentDirectory, "Libraries");

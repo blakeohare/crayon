@@ -87,11 +87,11 @@ namespace Common
             {
                 if (isMove)
                 {
-                    FileUtil.MoveFile(originalAbsolutePath, path, true);
+                    File.Move(originalAbsolutePath, path, true);
                 }
                 else
                 {
-                    FileUtil.CopyFile(originalAbsolutePath, path);
+                    File.Copy(originalAbsolutePath, path);
                 }
             }
         }

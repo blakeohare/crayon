@@ -13,7 +13,7 @@ namespace Crayon
             Dictionary<string, FileOutput> project = generator.Validate().Export();
 
             string directory = FileUtil.JoinPath(
-                FileUtil.GetCurrentDirectory(),
+                Path.GetCurrentDirectory(),
                 generator.ProjectID);
             new FileOutputExporter(directory).ExportFiles(project);
 

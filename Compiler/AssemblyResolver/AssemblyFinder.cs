@@ -113,7 +113,7 @@ namespace AssemblyResolver
             Dictionary<string, AssemblyMetadata> uniqueAssemblies = new Dictionary<string, AssemblyMetadata>();
             foreach (string path in verifiedLibraryPaths)
             {
-                string defaultName = FileUtil.GetFileNameFromPath(path);
+                string defaultName = Path.GetFileName(path);
                 AssemblyMetadata metadata = new AssemblyMetadata(path, defaultName);
 
                 // TODO: don't hardcode EN
