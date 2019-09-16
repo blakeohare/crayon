@@ -1,8 +1,6 @@
 ﻿using CommonUtil;
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 namespace LangCSharp
 {
     public static class DllReferenceHelper
@@ -11,8 +9,8 @@ namespace LangCSharp
             Dictionary<string, string> replacements,
             List<DllFile> dlls)
         {
-            StringBuilder strongDllReferences = new StringBuilder();
-            StringBuilder dllsByHint = new StringBuilder();
+            System.Text.StringBuilder strongDllReferences = new System.Text.StringBuilder();
+            System.Text.StringBuilder dllsByHint = new System.Text.StringBuilder();
             foreach (DllFile dll in dlls)
             {
                 if (dll.IsStrongReference)

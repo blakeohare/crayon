@@ -64,5 +64,14 @@
             return sb.ToString();
         }
 
+        public static byte[] ToUtf8Bytes(string value)
+        {
+            return System.Text.Encoding.UTF8.GetBytes(value);
+        }
+
+        public static string FromUtf8Bytes(byte[] bytes, int startIndex, int length)
+        {
+            return System.Text.Encoding.UTF8.GetString(bytes, startIndex, length);
+        }
     }
 }

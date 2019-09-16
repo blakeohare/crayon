@@ -2,7 +2,6 @@
 using CommonUtil.Disk;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AssemblyResolver
 {
@@ -169,7 +168,7 @@ namespace AssemblyResolver
         public void ReserializeFile()
         {
             int now = CommonUtil.DateTime.Time.UnixTimeNow;
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             foreach (RemoteAssemblyState ras in this.RemoteAssemblies)
             {
                 ras.SerializeToRow(sb);

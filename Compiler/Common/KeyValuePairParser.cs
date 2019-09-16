@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Common
 {
@@ -116,7 +115,7 @@ namespace Common
 
             private string ReadTill(char endChar, bool eofOk)
             {
-                StringBuilder sb = new StringBuilder();
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 char c;
                 while (this.index < this.length)
                 {

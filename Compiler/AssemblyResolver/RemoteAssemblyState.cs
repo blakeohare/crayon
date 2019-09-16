@@ -1,7 +1,6 @@
 ﻿using CommonUtil.Disk;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AssemblyResolver
 {
@@ -14,7 +13,7 @@ namespace AssemblyResolver
             this.remoteAssemblyManifest = remoteAssemblyManifest;
         }
 
-        internal void SerializeToRow(StringBuilder sb)
+        internal void SerializeToRow(System.Text.StringBuilder sb)
         {
             sb.Append(this.Id);
             sb.Append(',');

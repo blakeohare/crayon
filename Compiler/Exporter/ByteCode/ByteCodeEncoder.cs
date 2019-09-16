@@ -1,6 +1,5 @@
 ﻿using CommonUtil;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Exporter.ByteCode
 {
@@ -15,7 +14,7 @@ namespace Exporter.ByteCode
         // After that is each encoded row.
         public static string Encode(ByteBuffer buffer)
         {
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append("CRAYON@");
 
             int[][] code = buffer.ToIntList().ToArray();
@@ -38,7 +37,7 @@ namespace Exporter.ByteCode
         // - The first part is an encoded number indicating how many integers there are
         // - This is followed by that many encoded integers
         // - If there was a ~ prefix before the arg, then that means there is a string arg after the integer args.
-        private static void EncodeRow(StringBuilder sb, int[] row, string stringArg)
+        private static void EncodeRow(System.Text.StringBuilder sb, int[] row, string stringArg)
         {
             int argCount = row.Length;
 
@@ -76,7 +75,7 @@ namespace Exporter.ByteCode
         // A character can be followed by a @ followed by an encoded integer
         // indicating how many times to repeat the last character.
         // If a % appears, that indicates the end of the string.
-        private static void EncodeString(StringBuilder sb, string value)
+        private static void EncodeString(System.Text.StringBuilder sb, string value)
         {
             sb.Append(Base64.ToBase64(value));
             sb.Append('%');

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 
 namespace AssemblyResolver
 {
@@ -38,7 +37,7 @@ namespace AssemblyResolver
             string url = parts[0] + ":" + parts[1];
             if (parts.Count > 2)
             {
-                StringBuilder sb = new StringBuilder();
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 sb.Append(parts[2]);
                 for (int i = 3; i < parts.Count; ++i)
                 {

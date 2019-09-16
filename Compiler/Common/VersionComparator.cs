@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 
 namespace Common
 {
@@ -66,7 +65,7 @@ namespace Common
             value = value.Trim().ToLower();
             if (value.Length == 0) return new object[0];
             List<object> pieces = new List<object>();
-            StringBuilder currentString = new StringBuilder();
+            System.Text.StringBuilder currentString = new System.Text.StringBuilder();
             int currentInt = 0;
             char currentType = '?';
             char c;

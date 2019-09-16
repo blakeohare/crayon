@@ -2,7 +2,6 @@
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CApp
 {
@@ -23,7 +22,7 @@ namespace CApp
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            StringBuilder cCode = new StringBuilder();
+            System.Text.StringBuilder cCode = new System.Text.StringBuilder();
 
             cCode.Append("#include <stdio.h>");
             cCode.Append(this.NL);

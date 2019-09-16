@@ -4,7 +4,6 @@ using Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Exporter
 {
@@ -107,7 +106,7 @@ namespace Exporter
         private List<Dictionary<string, string>> GetResourceCopyInstructions()
         {
             List<Dictionary<string, string>> output = new List<Dictionary<string, string>>();
-            StringBuilder totalEmbed = new StringBuilder();
+            System.Text.StringBuilder totalEmbed = new System.Text.StringBuilder();
             string from, to, content, typeFilter;
             foreach (Dictionary<string, string> instruction in this.ParseApplicableInstructions())
             {

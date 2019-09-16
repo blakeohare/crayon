@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AssemblyResolver
 {
@@ -45,7 +44,7 @@ namespace AssemblyResolver
 
             if (cycleCheck.Contains(libraryToUse))
             {
-                StringBuilder message = new StringBuilder();
+                System.Text.StringBuilder message = new System.Text.StringBuilder();
                 message.Append("There is a dependency cycle in your libraries: ");
                 bool first = true;
                 foreach (AssemblyMetadata breadcrumb in breadcrumbs)
@@ -131,7 +130,7 @@ namespace AssemblyResolver
                 depsById[lib.ID] = deps;
             }
 
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append("{\n  \"rootDeps\": [");
             for (int i = 0; i < rootDeps.Length; ++i)
             {

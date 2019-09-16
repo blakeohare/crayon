@@ -1,6 +1,5 @@
 ﻿using Parser.Resolver;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Parser.ParseTree
 {
@@ -24,7 +23,7 @@ namespace Parser.ParseTree
         {
             string rawValue = stringToken.Value;
             rawValue = rawValue.Substring(1, rawValue.Length - 2);
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             char c;
             for (int i = 0; i < rawValue.Length; ++i)
             {

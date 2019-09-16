@@ -4,7 +4,6 @@ using Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace JavaScriptApp
 {
@@ -94,7 +93,7 @@ namespace JavaScriptApp
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
 
-            StringBuilder resourcesJs = new StringBuilder();
+            System.Text.StringBuilder resourcesJs = new System.Text.StringBuilder();
 
             foreach (FileOutput textResource in resourceDatabase.TextResources)
             {

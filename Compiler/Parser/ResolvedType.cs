@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Parser.ParseTree;
 
 namespace Parser
@@ -144,7 +143,7 @@ namespace Parser
         private static readonly Dictionary<string, ResolvedType> funcTypes = new Dictionary<string, ResolvedType>();
         public static ResolvedType GetFunctionType(ResolvedType returnType, IList<ResolvedType> args, int optionalCount)
         {
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append('f');
             sb.Append(optionalCount);
             sb.Append(',');

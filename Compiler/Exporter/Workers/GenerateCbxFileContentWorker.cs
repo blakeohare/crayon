@@ -1,5 +1,6 @@
 ﻿using Build;
 using Common;
+using CommonUtil;
 using Parser;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Exporter.Workers
             cbxOutput.AddRange(GetBigEndian4Byte(VersionInfo.VersionMinor));
             cbxOutput.AddRange(GetBigEndian4Byte(VersionInfo.VersionBuild));
 
-            byte[] code = StringToBytes(byteCode);
+            byte[] code = StringUtil.ToUtf8Bytes(byteCode);
             cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
             cbxOutput.AddRange(code);
@@ -28,19 +29,19 @@ namespace Exporter.Workers
                 libraries.Add(scopeForLibrary.Metadata.Version);
             }
             string libsData = string.Join(",", libraries);
-            byte[] libsDataBytes = StringToBytes(libsData);
+            byte[] libsDataBytes = StringUtil.ToUtf8Bytes(libsData);
             cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
             cbxOutput.AddRange(libsDataBytes);
 
-            byte[] resourceManifest = StringToBytes(resDb.ResourceManifestFile.TextContent);
+            byte[] resourceManifest = StringUtil.ToUtf8Bytes(resDb.ResourceManifestFile.TextContent);
             cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
             cbxOutput.AddRange(resourceManifest);
 
             if (resDb.ImageSheetManifestFile != null)
             {
-                byte[] imageSheetManifest = StringToBytes(resDb.ImageSheetManifestFile.TextContent);
+                byte[] imageSheetManifest = StringUtil.ToUtf8Bytes(resDb.ImageSheetManifestFile.TextContent);
                 cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
                 cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
                 cbxOutput.AddRange(imageSheetManifest);
@@ -58,11 +59,6 @@ namespace Exporter.Workers
                 (byte) ((value >> 8) & 255),
                 (byte) (value & 255)
             };
-        }
-
-        private static byte[] StringToBytes(string value)
-        {
-            return System.Text.Encoding.UTF8.GetBytes(value);
         }
     }
 }

@@ -2,7 +2,6 @@
 using CommonUtil.Collections;
 using CommonUtil.Disk;
 using CommonUtil.Http;
-using System.Text;
 
 namespace AssemblyResolver
 {
@@ -77,7 +76,7 @@ namespace AssemblyResolver
         private string CreateNewDirectoryForLibrary(string manifestDir, string libraryName, string version)
         {
             int numSuffix = 0;
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append(libraryName);
             sb.Append('_');
             foreach (char c in version.ToCharArray())

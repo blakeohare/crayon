@@ -1,4 +1,5 @@
-﻿using CommonUtil.Disk;
+﻿using CommonUtil;
+using CommonUtil.Disk;
 using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
@@ -112,7 +113,7 @@ namespace Common
             {
                 using (new PerformanceSection("ExportTextFileWithBytes"))
                 {
-                    byte[] bytes = System.Text.Encoding.UTF8.GetBytes(content);
+                    byte[] bytes = StringUtil.ToUtf8Bytes(content);
                     this.ExportBinaryFile(path, bytes);
                 }
             }

@@ -2,7 +2,6 @@
 using Platform;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PhpServer
 {
@@ -16,7 +15,7 @@ namespace PhpServer
 
         private string ConvertStringToVariableSetterFile(string value, string variableName)
         {
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append("<?php\n");
             sb.Append("\t$");
             sb.Append(variableName);
