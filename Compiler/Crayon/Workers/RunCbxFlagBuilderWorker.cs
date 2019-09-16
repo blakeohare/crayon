@@ -10,7 +10,7 @@ namespace Crayon
         public string DoWorkImpl(ExportCommand command, string finalCbxPath)
         {
             string cbxFile = FileUtil.GetPlatformPath(finalCbxPath);
-            int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
+            int processId = CommonUtil.Process.ProcessUtil.GetCurrentProcessId();
 
             List<string> flagGroups = new List<string>();
             flagGroups.Add("\"" + cbxFile + "\"");
