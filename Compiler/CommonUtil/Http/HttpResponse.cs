@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AssemblyResolver
+namespace CommonUtil.Http
 {
-    internal class HttpResponse
+    public class HttpResponse
     {
         internal enum ConnectionStatus
         {
@@ -68,16 +68,7 @@ namespace AssemblyResolver
         public bool GetHeaderAsBoolean(string name)
         {
             string value = this.GetHeader(name);
-            if (value == null) return false;
-            switch (value.Trim())
-            {
-                case "1":
-                case "true":
-                case "yes":
-                    return true;
-                default:
-                    return false;
-            }
+            return CommonUtil.Core.BoolUtil.Parse(value);
         }
 
         public string[] GetHeaderAsList(string name)

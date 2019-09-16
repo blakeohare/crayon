@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AssemblyResolver
+namespace CommonUtil.Http
 {
-    internal class HttpRequestSender
+    public class HttpRequest
     {
         private string method;
         private string url;
@@ -11,24 +11,24 @@ namespace AssemblyResolver
         private string contentType;
         private Dictionary<string, string> requestHeaders = new Dictionary<string, string>();
 
-        public HttpRequestSender(string method, string url)
+        public HttpRequest(string method, string url)
         {
             this.method = method;
             this.url = url;
         }
 
-        public HttpRequestSender SetContentBinary(byte[] value, string contentType)
+        public HttpRequest SetContentBinary(byte[] value, string contentType)
         {
             this.content = value;
             this.contentType = contentType;
             return this;
         }
 
-        public HttpRequestSender SetContentUtf8(string value, string contentType) { return this.SetContentBinary(System.Text.Encoding.UTF8.GetBytes(value), contentType); }
-        public HttpRequestSender SetContentJson(string value) { return this.SetContentUtf8(value, "application/json"); }
-        public HttpRequestSender SetContentBinaryOctetStream(byte[] value) { return this.SetContentBinary(value, "application/octet-stream"); }
+        public HttpRequest SetContentUtf8(string value, string contentType) { return this.SetContentBinary(System.Text.Encoding.UTF8.GetBytes(value), contentType); }
+        public HttpRequest SetContentJson(string value) { return this.SetContentUtf8(value, "application/json"); }
+        public HttpRequest SetContentBinaryOctetStream(byte[] value) { return this.SetContentBinary(value, "application/octet-stream"); }
 
-        public HttpRequestSender SetHeader(string name, string value)
+        public HttpRequest SetHeader(string name, string value)
         {
             this.requestHeaders[name] = (value ?? "").Trim();
             return this;
@@ -39,7 +39,6 @@ namespace AssemblyResolver
         public HttpResponse Send()
         {
             System.Net.HttpWebRequest req = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(this.url);
-            req.UserAgent = Common.VersionInfo.UserAgent;
 
             if (this.content != null)
             {
@@ -56,9 +55,21 @@ namespace AssemblyResolver
             }
             req.Method = this.method;
 
+            string userAgent = null;
             foreach (string headerName in this.requestHeaders.Keys)
             {
-                req.Headers.Add(headerName + ": " + this.requestHeaders[headerName]);
+                if (headerName.ToLower() == "user-agent")
+                {
+                    userAgent = this.requestHeaders[headerName];
+                }
+                else
+                {
+                    req.Headers.Add(headerName + ": " + this.requestHeaders[headerName]);
+                }
+            }
+            if (userAgent != null)
+            {
+                req.UserAgent = userAgent;
             }
 
             System.Net.HttpWebResponse response = null;

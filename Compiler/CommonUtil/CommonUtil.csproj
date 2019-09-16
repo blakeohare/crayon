@@ -44,6 +44,7 @@
     <Compile Include="Core\*.cs" />
     <Compile Include="Disk\*.cs" />
     <Compile Include="Environment\*.cs" />
+    <Compile Include="Http\*.cs" />
     <Compile Include="Images\*.cs" />
     <Compile Include="Json\*.cs" />
     <Compile Include="Random\*.cs" />

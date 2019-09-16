@@ -1,6 +1,7 @@
 ﻿using Common;
 using CommonUtil.Collections;
 using CommonUtil.Disk;
+using CommonUtil.Http;
 using System.Text;
 
 namespace AssemblyResolver
@@ -23,8 +24,9 @@ namespace AssemblyResolver
             RemoteAssemblyUrl structuredUrl = RemoteAssemblyUrl.FromUrl(urlAndVersion);
             if (!structuredUrl.IsValid) return new Pair<FetchAssemblyStatus, RemoteAssemblyState>(FetchAssemblyStatus.INVALID_URL, null);
 
-            HttpRequestSender requestSender = new HttpRequestSender("GET", structuredUrl.Url)
-                .SetHeader("CrayonLib-Component-Type", "source");
+            HttpRequest requestSender = new HttpRequest("GET", structuredUrl.Url)
+                .SetHeader("CrayonLib-Component-Type", "source")
+                .SetHeader("User-Agent", Common.VersionInfo.UserAgent);
 
             if (!structuredUrl.IsLatestStableVersionRequested)
             {
