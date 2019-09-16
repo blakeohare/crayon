@@ -1,4 +1,5 @@
-﻿using Localization;
+﻿using CommonUtil.Collections;
+using Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,20 +150,20 @@ namespace Parser
 
             if (this.IsForEachLoopParenthesisContents(tokens))
             {
-                System.Tuple<AType, Token> iteratorVariable = this.ParseForEachLoopIteratorVariable(tokens, owner);
-                AType iteratorVariableType = iteratorVariable.Item1;
-                Token iteratorToken = iteratorVariable.Item2;
+                Pair<AType, Token> iteratorVariable = this.ParseForEachLoopIteratorVariable(tokens, owner);
+                AType iteratorVariableType = iteratorVariable.First;
+                Token iteratorToken = iteratorVariable.Second;
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
-                return new ForEachLoop(forToken, iteratorVariableType, iteratorVariable.Item2, iterationExpression, body, owner);
+                return new ForEachLoop(forToken, iteratorVariableType, iteratorVariable.Second, iterationExpression, body, owner);
             }
             else
             {
-                System.Tuple<IList<Executable>, Expression, IList<Executable>> parts = this.ParseForLoopComponents(tokens, owner);
+                ForLoopComponents parts = this.ParseForLoopComponents(tokens, owner);
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
-                return new ForLoop(forToken, parts.Item1, parts.Item2, parts.Item3, body, owner);
+                return new ForLoop(forToken, parts.Init, parts.Condition, parts.Step, body, owner);
             }
         }
 
@@ -181,11 +182,18 @@ namespace Parser
             return new ForEachLoop(foreachToken, iteratorVariableType, iteratorVariable, listExpr, body, owner);
         }
 
-        protected abstract System.Tuple<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner);
+        protected abstract Pair<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner);
 
         protected abstract bool IsForEachLoopParenthesisContents(TokenStream tokens);
 
-        protected System.Tuple<IList<Executable>, Expression, IList<Executable>> ParseForLoopComponents(TokenStream tokens, Node owner)
+        protected class ForLoopComponents
+        {
+            public IList<Executable> Init { get; set; }
+            public Expression Condition { get; set; }
+            public IList<Executable> Step { get; set; }
+        }
+
+        protected ForLoopComponents ParseForLoopComponents(TokenStream tokens, Node owner)
         {
             List<Executable> init = new List<Executable>();
             while (!tokens.PopIfPresent(";"))
@@ -206,7 +214,7 @@ namespace Parser
                 step.Add(this.Parse(tokens, true, false, owner));
             }
 
-            return new System.Tuple<IList<Executable>, Expression, IList<Executable>>(init, condition, step);
+            return new ForLoopComponents() { Init = init, Condition = condition, Step = step };
         }
 
         private Executable ParseWhile(TokenStream tokens, Node owner)

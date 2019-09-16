@@ -1,4 +1,5 @@
-﻿using Parser.ParseTree;
+﻿using CommonUtil.Collections;
+using Parser.ParseTree;
 using System;
 
 namespace Parser.Acrylic
@@ -69,13 +70,13 @@ namespace Parser.Acrylic
             }
         }
 
-        protected override Tuple<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner)
+        protected override Pair<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner)
         {
             AType type = this.parser.TypeParser.Parse(tokens);
             tokens.EnsureNotEof();
             Token variable = tokens.PopIfWord();
             if (variable == null) throw new ParserException(tokens.Peek(), "Expected variable here.");
-            return new Tuple<AType, Token>(type, variable);
+            return new Pair<AType, Token>(type, variable);
         }
     }
 }
