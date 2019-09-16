@@ -1,9 +1,9 @@
-﻿namespace Common
+﻿namespace CommonUtil.Text
 {
     // Semi-efficiently auto-detect the text encoding from some bytes and convert to a string.
-    public static class MysteryTextDecoder
+    public static class UniversalTextDecoder
     {
-        public static string DecodeArbitraryBytesAsAppropriatelyAsPossible(byte[] bytes)
+        public static string Decode(byte[] bytes)
         {
             // Empty files are empty strings.
             if (bytes.Length == 0) return "";

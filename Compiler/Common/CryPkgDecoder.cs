@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonUtil.Text;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -90,7 +91,7 @@ namespace Common
         public string ReadFileString(string path)
         {
             byte[] bytes = this.ReadFileBytes(path);
-            return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
+            return UniversalTextDecoder.Decode(bytes);
         }
 
         public string[] ListDirectory(string path, bool includeFiles, bool includeDirectories)

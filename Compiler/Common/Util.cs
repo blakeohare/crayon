@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonUtil.Text;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Common
@@ -139,7 +140,7 @@ namespace Common
             {
                 return null;
             }
-            return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
+            return UniversalTextDecoder.Decode(bytes);
         }
 
         public static string TrimBomIfPresent(string text)

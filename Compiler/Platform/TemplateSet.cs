@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonUtil.Text;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Platform
@@ -19,7 +20,7 @@ namespace Platform
             {
                 throw new System.InvalidOperationException(path + " was not available in the template set. Files: " + string.Join(", ", this.data.Keys));
             }
-            return Common.MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(byteData);
+            return UniversalTextDecoder.Decode(byteData);
         }
 
         public byte[] GetBytes(string path)

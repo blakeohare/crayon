@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonUtil.Text;
+using System;
 using System.Collections.Generic;
 
 namespace Common
@@ -40,7 +41,7 @@ namespace Common
         {
             path = NormalizePath(path);
             byte[] bytes = System.IO.File.ReadAllBytes(path);
-            return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
+            return UniversalTextDecoder.Decode(bytes);
         }
 
         public static void WriteFileBytes(string path, byte[] content)

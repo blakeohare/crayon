@@ -55,7 +55,6 @@
     <Compile Include="IdGenerator.cs" />
     <Compile Include="KeyValuePairParser.cs" />
     <Compile Include="Multimap.cs" />
-    <Compile Include="MysteryTextDecoder.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="OrientationParser.cs" />
     <Compile Include="Pair.cs" />
