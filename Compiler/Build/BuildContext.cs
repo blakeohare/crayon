@@ -121,7 +121,7 @@ namespace Build
             ImageSheet[] imageSheets = MergeImageSheets(desiredTarget.ImageSheets, buildInput.ImageSheets);
             // TODO: maybe set this default value to true, although this does nothing as of now.
             bool minified = NullableBoolean.ToBoolean(desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw, false);
-            bool exportDebugByteCode = Util.StringToBool(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
+            bool exportDebugByteCode = CommonUtil.Core.BoolUtil.Parse(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
             string guidSeed = desiredTarget.GuidSeed ?? buildInput.GuidSeed ?? "";
             // TODO: make this a string array.
             string[] iconFilePaths = CombineAndFlattenStringArrays(desiredTarget.IconFilePaths, buildInput.IconFilePaths);

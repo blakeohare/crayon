@@ -159,7 +159,7 @@ namespace Parser.ParseTree
             }
             else
             {
-                isZero = Util.FloatEqualsNoEpislon(((FloatConstant)expr).Value, 0);
+                isZero = CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(((FloatConstant)expr).Value, 0);
             }
             if (isZero)
             {
@@ -377,8 +377,8 @@ namespace Parser.ParseTree
                     {
                         double right = GetFloat(opChain.Right);
                         int left = GetInt(opChain.Left);
-                        if (Util.FloatEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
-                        if (!Util.FloatEqualsNoEpislon(right % 1, 0) && left < 0)
+                        if (CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
                         {
                             throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
                         }
@@ -419,8 +419,8 @@ namespace Parser.ParseTree
                     {
                         double right = GetFloat(opChain.Right);
                         double left = GetFloat(opChain.Left);
-                        if (Util.FloatEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
-                        if (!Util.FloatEqualsNoEpislon(right % 1, 0) && left < 0)
+                        if (CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!CommonUtil.Core.FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
                         {
                             throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
                         }

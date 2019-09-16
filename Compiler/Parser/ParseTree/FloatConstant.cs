@@ -24,7 +24,7 @@ namespace Parser.ParseTree
         public static double ParseValue(Token firstToken, string fullValue)
         {
             double value;
-            if (!Util.ParseDouble(fullValue, out value))
+            if (!CommonUtil.Core.FloatUtil.TryParse(fullValue, out value))
             {
                 throw new ParserException(firstToken, "Invalid float literal.");
             }
