@@ -52,7 +52,7 @@ namespace AssemblyResolver
                 return new RemoteAssemblyState[0];
             }
 
-            int now = Util.UnixTime;
+            int now = CommonUtil.DateTime.Time.UnixTimeNow;
 
             List<RemoteAssemblyState> remoteAssemblies = new List<RemoteAssemblyState>();
             List<string> invalidLines = new List<string>();
@@ -168,7 +168,7 @@ namespace AssemblyResolver
 
         public void ReserializeFile()
         {
-            int now = Util.UnixTime;
+            int now = CommonUtil.DateTime.Time.UnixTimeNow;
             StringBuilder sb = new StringBuilder();
             foreach (RemoteAssemblyState ras in this.RemoteAssemblies)
             {

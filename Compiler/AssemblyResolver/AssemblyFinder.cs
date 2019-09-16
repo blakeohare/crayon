@@ -165,7 +165,7 @@ namespace AssemblyResolver
                 }
             }
 
-            int now = Util.UnixTime;
+            int now = CommonUtil.DateTime.Time.UnixTimeNow;
             int ageToDefinitelySync = 7 * 24 * 3600;
             int expiration = now - ageToDefinitelySync;
             bool refreshNeeded = anyLibrariesWereMissing || librariesThatMightNeedRefresh.Where(lib => lib.LastLatestCheck < expiration).FirstOrDefault() != null;

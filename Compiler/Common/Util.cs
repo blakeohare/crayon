@@ -319,16 +319,5 @@ namespace Common
             return a == b;
 #pragma warning restore RECS0018
         }
-
-        private static System.TimeSpan UnixEpochAsTimespan
-        {
-            get
-            {
-                return System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc));
-            }
-        }
-
-        public static double UnixTimeDouble { get { return Util.UnixEpochAsTimespan.TotalMilliseconds / 1000.0; } }
-        public static int UnixTime { get { return (int)Util.UnixEpochAsTimespan.TotalSeconds; } }
     }
 }

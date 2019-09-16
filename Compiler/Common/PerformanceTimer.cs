@@ -46,7 +46,7 @@ namespace Common
 
                 this.Name = name;
                 this.SubRecords = new List<PerfRecord>();
-                this.startMilliseconds = DateTime.Now.Ticks / 10000.0;
+                this.startMilliseconds = CommonUtil.DateTime.Time.UnixTimeNowMillis;
             }
 
             public void Close(bool isAggregated)
@@ -55,7 +55,7 @@ namespace Common
 
                 if (this != shouldBeThis) throw new Exception(); // invalid state
 
-                this.Milliseconds = DateTime.Now.Ticks / 10000.0 - this.startMilliseconds;
+                this.Milliseconds = CommonUtil.DateTime.Time.UnixTimeNowMillis - this.startMilliseconds;
 
                 // not interested in sub sections. Just want to see what all the direct children of identical names add up to.
                 if (isAggregated)

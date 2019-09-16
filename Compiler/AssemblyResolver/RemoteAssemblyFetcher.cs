@@ -49,7 +49,7 @@ namespace AssemblyResolver
             // TODO: crypkgDecoder.IsValid
 
             this.ExpandCryPkgToDirectory(crypkgDecoder, System.IO.Path.Combine(manifest.Directory, directoryName, libraryName));
-            int now = Util.UnixTime;
+            int now = CommonUtil.DateTime.Time.UnixTimeNow;
             RemoteAssemblyState ras = new RemoteAssemblyState(manifest)
             {
                 HasCni = hasNativeInterface,

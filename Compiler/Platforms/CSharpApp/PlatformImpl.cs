@@ -102,7 +102,7 @@ namespace CSharpApp
                 { "ASSEMBLY_GUID", runtimeAssemblyGuid },
                 { "PROJECT_TITLE", "Crayon Runtime" },
                 { "COPYRIGHT", "©" },
-                { "CURRENT_YEAR", DateTime.Now.Year.ToString() },
+                { "CURRENT_YEAR", CommonUtil.DateTime.Time.GetCurrentYear() + "" },
                 { "DLL_REFERENCES", "" },
                 { "CSHARP_APP_ICON", "<ApplicationIcon>icon.ico</ApplicationIcon>" },
                 { "EMBEDDED_RESOURCES", "<EmbeddedResource Include=\"icon.ico\" />" },
