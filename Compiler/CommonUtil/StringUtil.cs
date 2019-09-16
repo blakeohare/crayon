@@ -7,9 +7,24 @@
             return string.Join("\n", lines);
         }
 
+        private static readonly string[] SEP = new string[1];
+
+        public static string[] SplitOnce(string value, string separator)
+        {
+            SEP[0] = separator;
+            return value.Split(SEP, 2, System.StringSplitOptions.None);
+        }
+
         public static string[] Split(string value, string separator)
         {
-            return value.Split(new string[] { separator }, System.StringSplitOptions.None);
+            SEP[0] = separator;
+            return value.Split(SEP, System.StringSplitOptions.None);
+        }
+
+        public static string[] SplitRemoveEmpty(string value, string separator)
+        {
+            SEP[0] = separator;
+            return value.Split(SEP, System.StringSplitOptions.RemoveEmptyEntries);
         }
 
         public static string Multiply(string str, int count)

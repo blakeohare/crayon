@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonUtil;
+using System;
 
 namespace Common
 {
@@ -22,7 +23,7 @@ namespace Common
             }
             else
             {
-                foreach (string orientation in rawValue.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                foreach (string orientation in StringUtil.SplitRemoveEmpty(rawValue, ","))
                 {
                     switch (orientation.Trim())
                     {

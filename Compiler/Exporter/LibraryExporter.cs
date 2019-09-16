@@ -1,5 +1,6 @@
 ﻿using AssemblyResolver;
 using Common;
+using CommonUtil;
 using CommonUtil.Disk;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace Exporter
                     string fline = line.Trim();
                     if (fline.Length > 0 && fline[0] != '#')
                     {
-                        string[] parts = fline.Split(new char[] { ':' }, 2);
+                        string[] parts = StringUtil.SplitOnce(fline, ":");
                         string key = parts[0].Trim();
                         string value = parts[1].Trim();
                         if (value == "false" || value == "true")

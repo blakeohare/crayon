@@ -1,4 +1,5 @@
-﻿using CommonUtil.Resources;
+﻿using CommonUtil;
+using CommonUtil.Resources;
 using System.Collections.Generic;
 
 namespace Localization
@@ -15,7 +16,7 @@ namespace Localization
                 string trimmedLine = line.Trim();
                 if (trimmedLine.Length > 0)
                 {
-                    string[] parts = line.Split(new char[] { ':' }, 2);
+                    string[] parts = StringUtil.SplitOnce(line, ":");
                     string key = parts[0].Trim();
                     string value = parts[1].Trim();
                     lookup[key] = value;

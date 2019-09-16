@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil;
 using CommonUtil.Collections;
 using CommonUtil.Disk;
 using Localization;
@@ -77,7 +78,7 @@ namespace AssemblyResolver
                 }
             }
 
-            string[] paths = placesWhereLibraryDirectoriesCanExist.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] paths = StringUtil.SplitRemoveEmpty(placesWhereLibraryDirectoriesCanExist, ";");
             foreach (string path in paths)
             {
                 // TODO: figure out why this says nullable yet is being used directly.
@@ -138,7 +139,7 @@ namespace AssemblyResolver
             List<RemoteAssemblyState> usedAssemblies = new List<RemoteAssemblyState>();
             foreach (string info in urlsAndVersionInfo)
             {
-                string[] parts = info.Split(new char[] { ',' }, 2);
+                string[] parts = StringUtil.SplitOnce(info, ",");
                 string url = parts[0];
                 string version = null;
                 if (parts.Length == 2)
