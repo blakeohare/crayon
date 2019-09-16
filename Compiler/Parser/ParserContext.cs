@@ -415,7 +415,7 @@ namespace Parser
                         first = false;
                         output.Add(", ");
                     }
-                    output.Add(Util.ConvertStringValueToCode(skey));
+                    output.Add(StringTokenUtil.ConvertStringValueToCode(skey));
                     output.Add(": ");
                     output.Add("" + valuesToInts[skey]);
                 }
