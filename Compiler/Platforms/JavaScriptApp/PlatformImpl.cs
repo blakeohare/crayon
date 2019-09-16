@@ -109,7 +109,7 @@ namespace JavaScriptApp
                 resourcesJs.Append("C$common$addBinaryRes(");
                 resourcesJs.Append(Util.ConvertStringValueToCode(fontResource.CanonicalFileName));
                 resourcesJs.Append(", '");
-                resourcesJs.Append(Util.ConvertByteArrayToBase64(fontResource.GetFinalBinaryContent()));
+                resourcesJs.Append(CommonUtil.Core.Base64.ToBase64(fontResource.GetFinalBinaryContent()));
                 resourcesJs.Append("');\n");
             }
 

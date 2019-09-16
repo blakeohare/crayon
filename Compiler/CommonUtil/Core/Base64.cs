@@ -1,7 +1,12 @@
-﻿namespace Common
+﻿namespace CommonUtil.Core
 {
-    public static class Utf8Base64
+    public static class Base64
     {
+        public static string ToBase64(byte[] bytes)
+        {
+            return System.Convert.ToBase64String(bytes, System.Base64FormattingOptions.None);
+        }
+
         public static string ToBase64(string value)
         {
             byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(value);

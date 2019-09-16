@@ -77,7 +77,7 @@ namespace Exporter.ByteCode
         // If a % appears, that indicates the end of the string.
         private static void EncodeString(StringBuilder sb, string value)
         {
-            sb.Append(Common.Utf8Base64.ToBase64(value));
+            sb.Append(CommonUtil.Core.Base64.ToBase64(value));
             sb.Append('%');
         }
 

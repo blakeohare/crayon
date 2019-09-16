@@ -211,7 +211,7 @@ namespace CSharpApp
 
         private static string GetFrameworkReferencesCsProjCode(ICollection<string> dotNetReferences)
         {
-            return Util.JoinLines(
+            return CommonUtil.Core.StringUtil.JoinLines(
                 dotNetReferences
                     .OrderBy(v => v.ToLower())
                     .Select(dotNetLib => "    <Reference Include=\"" + dotNetLib + "\" />")

@@ -6,11 +6,6 @@ namespace Common
 {
     public static class Util
     {
-        public static string[] StringSplit(string value, string separator)
-        {
-            return value.Split(new string[] { separator }, System.StringSplitOptions.None);
-        }
-
         public static bool StringToBool(string value)
         {
             if (value == null) return false;
@@ -110,24 +105,6 @@ namespace Common
             return string.Join("", output);
         }
 
-        public static string ConvertByteArrayToBase64(byte[] bytes)
-        {
-            return System.Convert.ToBase64String(bytes, System.Base64FormattingOptions.None);
-        }
-
-        public static string ConvertStringToAlphanumerics(string value)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            foreach (char c in value)
-            {
-                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
-                {
-                    sb.Append(c);
-                }
-            }
-            return sb.ToString();
-        }
-
         public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
         {
             return ReadAssemblyFileText(assembly, path, false);
@@ -141,13 +118,6 @@ namespace Common
                 return null;
             }
             return UniversalTextDecoder.Decode(bytes);
-        }
-
-        public static string TrimBomIfPresent(string text)
-        {
-            return (text.Length >= 3 && text[0] == 239 && text[1] == 187 && text[2] == 191)
-                ? text.Substring(3)
-                : text;
         }
 
         private static readonly byte[] BUFFER = new byte[1000];
@@ -288,28 +258,6 @@ namespace Common
             // Parsing text data should use local info, but this is for parsing code.
             // As this is not supposed to be localized yet, only allow US decimals.
             return double.TryParse(value, DOUBLE_FLAG, EN_US, out output);
-        }
-
-        public static string MultiplyString(string str, int count)
-        {
-            switch (count)
-            {
-                case 0: return "";
-                case 1: return str;
-                case 2: return str + str;
-                default:
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    while (count-- > 0)
-                    {
-                        sb.Append(str);
-                    }
-                    return sb.ToString();
-            }
-        }
-
-        public static string JoinLines(params string[] lines)
-        {
-            return string.Join("\n", lines);
         }
 
         // A check for 100% absolute floating-point equality is sometimes needed.

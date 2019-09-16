@@ -4,7 +4,7 @@ namespace Crayon
 {
     internal class UsageDisplayWorker
     {
-        private static readonly string USAGE = Util.JoinLines(
+        private static readonly string USAGE = CommonUtil.Core.StringUtil.JoinLines(
             "Crayon version " + VersionInfo.VersionString,
             "",
             "To export:",

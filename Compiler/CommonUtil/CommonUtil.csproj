@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\*.cs" />
+    <Compile Include="Core\*.cs" />
     <Compile Include="Disk\*.cs" />
     <Compile Include="Environment\*.cs" />
     <Compile Include="Images\*.cs" />

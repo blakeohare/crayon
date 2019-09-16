@@ -19,14 +19,14 @@ namespace LangCSharp
                 {
                     if (dll.SpecificVersion) throw new NotImplementedException();
 
-                    strongDllReferences.Append(Util.JoinLines(
+                    strongDllReferences.Append(CommonUtil.Core.StringUtil.JoinLines(
                         "",
                         "    <Reference Include=\"" + dll.Name + ", Version=" + dll.Version + ", Culture=" + dll.Culture + ", PublicKeyToken=" + dll.PublicKeyToken + ", processorArchitecture=" + dll.ProcessorArchitecture + "\">",
                         "      <SpecificVersion>False</SpecificVersion>",
                         "      <HintPath>.\\" + dll.HintPath + "</HintPath>",
                         "    </Reference>"));
                 }
-                dllsByHint.Append(Util.JoinLines(
+                dllsByHint.Append(CommonUtil.Core.StringUtil.JoinLines(
                     "",
                     "    <None Include=\"" + dll.HintPath + "\">",
                     "      <CopyToOutputDirectory>Always</CopyToOutputDirectory>",

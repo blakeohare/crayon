@@ -42,7 +42,7 @@ namespace Exporter
 
             if (text.Contains("%%%"))
             {
-                string[] parts = Common.Util.StringSplit(text, "%%%");
+                string[] parts = CommonUtil.Core.StringUtil.Split(text, "%%%");
                 bool lastWasReplacement = false;
 
                 List<string> replaced = new List<string>() { parts[0] };

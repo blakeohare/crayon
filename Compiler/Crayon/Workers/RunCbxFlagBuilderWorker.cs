@@ -22,7 +22,7 @@ namespace Crayon
             int userCmdLineArgCount = command.DirectRunArgs.Length;
             if (userCmdLineArgCount > 0)
             {
-                flagGroups.Add("runtimeargs:" + userCmdLineArgCount + ":" + string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s))));
+                flagGroups.Add("runtimeargs:" + userCmdLineArgCount + ":" + string.Join(",", command.DirectRunArgs.Select(s => CommonUtil.Core.Base64.ToBase64(s))));
             }
             else
             {

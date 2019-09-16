@@ -17,7 +17,7 @@ namespace Exporter
         {
             this.originalProjectId = projectId.Trim();
             this.projectLocale = Localization.Locale.Get(localeId);
-            this.projectId = Util.ConvertStringToAlphanumerics(this.originalProjectId);
+            this.projectId = CommonUtil.Core.StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
         }
 
         public DefaultProjectGenerator Validate()
