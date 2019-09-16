@@ -175,7 +175,7 @@ namespace JavaScriptApp
             Options options,
             ResourceDatabase resDb)
         {
-            return Util.MergeDictionaries(
+            return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>()
                 {

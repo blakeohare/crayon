@@ -67,8 +67,6 @@ namespace Common
             return UniversalTextDecoder.Decode(bytes);
         }
 
-        private static readonly byte[] BUFFER = new byte[1000];
-
         public static byte[] GetIconFileBytesFromImageFile(string filePath)
         {
             // TODO: scaling
@@ -89,6 +87,8 @@ namespace Common
 
         private static Dictionary<System.Reflection.Assembly, Dictionary<string, string>> caseInsensitiveLookup =
             new Dictionary<System.Reflection.Assembly, Dictionary<string, string>>();
+
+        private static readonly byte[] BUFFER = new byte[1000];
 
         public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path, bool failSilently)
         {
@@ -157,37 +157,6 @@ namespace Common
             }
 
             return output.ToArray();
-        }
-
-        public static void MergeDictionaryInto<K, V>(Dictionary<K, V> newDict, Dictionary<K, V> mergeIntoThis)
-        {
-            foreach (KeyValuePair<K, V> kvp in newDict)
-            {
-                mergeIntoThis[kvp.Key] = kvp.Value;
-            }
-        }
-
-        public static Dictionary<K, V> MergeDictionaries<K, V>(params Dictionary<K, V>[] dictionaries)
-        {
-            if (dictionaries.Length == 0) return new Dictionary<K, V>();
-            if (dictionaries.Length == 1) return new Dictionary<K, V>(dictionaries[0]);
-            if (dictionaries.Length == 2)
-            {
-                // Super common.
-                if (dictionaries[0].Count == 0) return new Dictionary<K, V>(dictionaries[1]);
-                if (dictionaries[1].Count == 0) return new Dictionary<K, V>(dictionaries[0]);
-            }
-
-            Dictionary<K, V> output = new Dictionary<K, V>(dictionaries[0]);
-            for (int i = 0; i < dictionaries.Length; ++i)
-            {
-                Dictionary<K, V> dict = dictionaries[i];
-                foreach (K k in dict.Keys)
-                {
-                    output[k] = dict[k];
-                }
-            }
-            return output;
         }
     }
 }

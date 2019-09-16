@@ -57,7 +57,7 @@ namespace Exporter
             foreach (string platformId in platformChain)
             {
                 Dictionary<string, object> mergeFlagsWith = this.LoadFlagsFromFile(platformId);
-                flags = Util.MergeDictionaries(flags, mergeFlagsWith);
+                flags = CommonUtil.Collections.DictionaryUtil.MergeDictionaries(flags, mergeFlagsWith);
             }
             return flags;
         }
