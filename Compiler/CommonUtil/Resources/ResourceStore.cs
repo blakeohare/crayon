@@ -2,18 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace CommonUtil.Resources
 {
-    public static class Util
+    public class ResourceStore
     {
-        public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
+        internal System.Reflection.Assembly Assembly { get; private set; }
+
+        public ResourceStore(object platformSpecificSourceDescriptor)
         {
-            return ReadAssemblyFileText(assembly, path, false);
+            if (platformSpecificSourceDescriptor is System.Type)
+            {
+                this.Assembly = ((System.Type)platformSpecificSourceDescriptor).Assembly;
+            }
+            else
+            {
+                this.Assembly = (System.Reflection.Assembly)platformSpecificSourceDescriptor;
+            }
         }
 
-        public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path, bool failSilently)
+        public string ReadAssemblyFileText(string path)
         {
-            byte[] bytes = Util.ReadAssemblyFileBytes(assembly, path, failSilently);
+            return ReadAssemblyFileText(path, false);
+        }
+
+        public string ReadAssemblyFileText(string path, bool failSilently)
+        {
+            byte[] bytes = ReadAssemblyFileBytes(path, failSilently);
             if (bytes == null)
             {
                 return null;
@@ -21,18 +35,22 @@ namespace Common
             return UniversalTextDecoder.Decode(bytes);
         }
 
-        public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path)
+        public byte[] ReadAssemblyFileBytes(string path)
         {
-            return ReadAssemblyFileBytes(assembly, path, false);
+            return ReadAssemblyFileBytes(path, false);
         }
 
+        // ResourceStores are created willy-nilly for duplicate physical stores (for C# this is the System.Reflection.Assembly).
+        // It's better to just cache this statically even though it seems like it would make sense by looking at the
+        // code that this could be per-instance.
         private static Dictionary<System.Reflection.Assembly, Dictionary<string, string>> caseInsensitiveLookup =
             new Dictionary<System.Reflection.Assembly, Dictionary<string, string>>();
 
         private static readonly byte[] BUFFER = new byte[1000];
 
-        public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path, bool failSilently)
+        public byte[] ReadAssemblyFileBytes(string path, bool failSilently)
         {
+            System.Reflection.Assembly assembly = this.Assembly;
             string canonicalizedPath = path.Replace('/', '.');
 #if WINDOWS
             // a rather odd difference...

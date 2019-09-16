@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CommonUtil.Resources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common;
 
 namespace Localization
 {
@@ -47,7 +47,7 @@ namespace Localization
                     }
                 }
             }
-            string keywordsRaw = Util.ReadAssemblyFileText(typeof(Locale).Assembly, "Languages/" + name.ToLower() + "/keywords.txt", true);
+            string keywordsRaw = new ResourceStore(typeof(Locale)).ReadAssemblyFileText("Languages/" + name.ToLower() + "/keywords.txt", true);
             if (keywordsRaw == null)
             {
                 invalid = true;

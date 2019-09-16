@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
 
@@ -79,7 +80,7 @@ namespace Platform
 
         public byte[] LoadBinaryResource(string resourcePath)
         {
-            byte[] bytes = Util.ReadAssemblyFileBytes(this.GetType().Assembly, resourcePath);
+            byte[] bytes = new ResourceStore(this.GetType()).ReadAssemblyFileBytes(resourcePath);
             if (bytes == null)
             {
                 AbstractPlatform parent = this.ParentPlatform;
@@ -103,7 +104,7 @@ namespace Platform
 
         public string LoadTextResource(string resourcePath, Dictionary<string, string> replacements)
         {
-            string content = Util.ReadAssemblyFileText(this.GetType().Assembly, resourcePath, true);
+            string content = new ResourceStore(this.GetType()).ReadAssemblyFileText(resourcePath, true);
             if (content == null)
             {
                 AbstractPlatform parent = this.ParentPlatform;

@@ -1,4 +1,5 @@
 ﻿using CommonUtil.Images;
+using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace Common
         {
             if (this.bitmaps.Count == 0)
             {
-                byte[] bytes = Util.ReadAssemblyFileBytes(typeof(Util).Assembly, "icons/crayon_logo.png");
+                byte[] bytes = new ResourceStore(typeof(IconSetGenerator)).ReadAssemblyFileBytes("icons/crayon_logo.png");
                 Bitmap defaultIcon = new Bitmap(bytes);
                 this.ownedBitmapReferences.Add(defaultIcon);
                 this.AddInputImage(defaultIcon);

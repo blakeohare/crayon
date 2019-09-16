@@ -47,6 +47,7 @@
     <Compile Include="Images\*.cs" />
     <Compile Include="Json\*.cs" />
     <Compile Include="Random\*.cs" />
+    <Compile Include="Resources\*.cs" />
     <Compile Include="Text\*.cs" />
     <Compile Include="Time\*.cs" />
   </ItemGroup>

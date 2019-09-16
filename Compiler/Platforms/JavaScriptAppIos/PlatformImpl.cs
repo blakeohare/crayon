@@ -1,6 +1,7 @@
 ﻿using Common;
 using CommonUtil.Disk;
 using CommonUtil.Images;
+using CommonUtil.Resources;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -62,9 +63,9 @@ namespace JavaScriptAppIos
             }
             else
             {
-                byte[] bytes = Util.ReadAssemblyFileBytes(
-                    typeof(JavaScriptAppIos.PlatformImpl).Assembly,
-                    "SwiftResources/" + (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png"));
+                string resourcePath = "SwiftResources/" + (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png");
+                byte[] bytes = new ResourceStore(typeof(JavaScriptAppIos.PlatformImpl)).ReadAssemblyFileBytes(resourcePath);
+
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,

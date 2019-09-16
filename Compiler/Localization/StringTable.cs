@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Common;
+﻿using CommonUtil.Resources;
+using System.Collections.Generic;
 
 namespace Localization
 {
@@ -8,7 +8,7 @@ namespace Localization
         private Dictionary<string, string> lookup = new Dictionary<string, string>();
         public StringTable(string locale)
         {
-            string stringTable = Util.ReadAssemblyFileText(typeof(StringTable).Assembly, "Languages/" + locale + "/strings.txt");
+            string stringTable = new ResourceStore(typeof(StringTable)).ReadAssemblyFileText("Languages/" + locale + "/strings.txt");
 
             foreach (string line in stringTable.Split('\n'))
             {

@@ -1,5 +1,6 @@
 ﻿using Common;
 using CommonUtil.Images;
+using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
 
@@ -62,7 +63,7 @@ namespace Exporter
                 })
             {
                 string[] parts = file.Split('|');
-                string content = Util.ReadAssemblyFileText(typeof(DefaultProjectGenerator).Assembly, parts[0]);
+                string content = new ResourceStore(typeof(DefaultProjectGenerator)).ReadAssemblyFileText(parts[0]);
                 content = this.ReplaceStrings(content);
                 string outputPath = this.ReplaceStrings(parts[1]);
                 output[outputPath] = new FileOutput()
@@ -71,7 +72,8 @@ namespace Exporter
                     TextContent = content,
                 };
             }
-            Util.ReadAssemblyFileText(thisAsm, "DefaultProject/BuildFile.txt");
+            // TODO: why is this here? Isn't this dead code?
+            new ResourceStore(thisAsm).ReadAssemblyFileText("DefaultProject/BuildFile.txt");
             return output;
         }
 
