@@ -35,7 +35,7 @@ namespace CommonUtil.Random
         }
 
         private static readonly System.Random random = new System.Random(
-            (int)(System.Math.Floor(DateTime.Time.UnixTimeFloat  * 100000) % 2000000000));
+            (int)(System.Math.Floor(CommonUtil.DateTime.Time.UnixTimeFloat  * 100000) % 2000000000));
 
         public static string GetRandomSeed()
         {
