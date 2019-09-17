@@ -101,7 +101,7 @@ namespace JavaScriptAppAndroid
             replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION));
 
             // This logic is duplicated in LangJava's PlatformImpl
-            replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLower();
+            replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLowerInvariant();
             if (replacements["JAVA_PACKAGE"].StartsWith("org.crayonlang.interpreter"))
             {
                 throw new InvalidOperationException("Cannot use org.crayonlang.interpreter as the project's package.");

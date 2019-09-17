@@ -187,7 +187,7 @@ namespace Common
                 }
                 else
                 {
-                    bool isPng = imageFile.OriginalPath.ToLower().EndsWith(".png");
+                    bool isPng = imageFile.OriginalPath.ToLowerInvariant().EndsWith(".png");
                     imageFile.CanonicalFileName = "i" + (i++) + (isPng ? ".png" : ".jpg");
                     manifest.Add("IMG," + imageFile.OriginalPath + "," + imageFile.CanonicalFileName);
                     imageSheetManifestFileAdditions.Add("A," + imageFile.CanonicalFileName + "," + imageFile.Bitmap.Width + "," + imageFile.Bitmap.Height + "," + imageFile.OriginalPath);

@@ -91,7 +91,7 @@ namespace AssemblyResolver
                 LibraryDepTreeFlattenerRecursive(flattened, dep);
             }
             List<AssemblyMetadata> output = new List<AssemblyMetadata>();
-            foreach (string flattenedKey in flattened.Keys.OrderBy(n => n.ToLower()))
+            foreach (string flattenedKey in flattened.Keys.OrderBy(n => n.ToLowerInvariant()))
             {
                 output.Add(flattened[flattenedKey]);
             }
@@ -117,7 +117,7 @@ namespace AssemblyResolver
         public static string GetDependencyTreeJson(AssemblyMetadata[] libraries)
         {
             Dictionary<string, string[]> depsById = new Dictionary<string, string[]>();
-            string[] rootDeps = libraries.Select(am => am.ID).OrderBy(n => n.ToLower()).ToArray();
+            string[] rootDeps = libraries.Select(am => am.ID).OrderBy(n => n.ToLowerInvariant()).ToArray();
 
             Dictionary<string, AssemblyMetadata> allLibraries = new Dictionary<string, AssemblyMetadata>();
 
@@ -125,7 +125,7 @@ namespace AssemblyResolver
             {
                 string[] deps = new HashSet<string>(lib.DirectDependencies
                     .Select(assembly => assembly.ID))
-                    .OrderBy(name => name.ToLower()).ToArray();
+                    .OrderBy(name => name.ToLowerInvariant()).ToArray();
 
                 depsById[lib.ID] = deps;
             }
@@ -140,7 +140,7 @@ namespace AssemblyResolver
                 sb.Append('"');
             }
             sb.Append("],\n  \"allLibScopes\": [\n");
-            string[] ids = depsById.Keys.OrderBy(v => v.ToLower()).ToArray();
+            string[] ids = depsById.Keys.OrderBy(v => v.ToLowerInvariant()).ToArray();
             for (int i = 0; i < ids.Length; ++i)
             {
                 sb.Append("    { \"name\": \"");

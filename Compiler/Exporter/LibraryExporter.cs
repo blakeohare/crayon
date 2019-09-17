@@ -100,7 +100,7 @@ namespace Exporter
             {
                 foreach (string file in FileUtil.DirectoryListFileNames(fullPath))
                 {
-                    if (!IGNORABLE_FILES.Contains(file.ToLower()))
+                    if (!IGNORABLE_FILES.Contains(file.ToLowerInvariant()))
                     {
                         output.Add(file);
                     }

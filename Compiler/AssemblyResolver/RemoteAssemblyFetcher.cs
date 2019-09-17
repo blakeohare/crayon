@@ -116,7 +116,7 @@ namespace AssemblyResolver
                 if (response.IsJson)
                 {
                     string errorReason = response.ContentJson.GetAsString("reason");
-                    switch (errorReason.Trim().ToUpper().Split(' ')[0])
+                    switch (errorReason.Trim().ToUpperInvariant().Split(' ')[0])
                     {
                         case "VERSION_NOT_FOUND": return new Pair<FetchAssemblyStatus, RemoteAssemblyState>(FetchAssemblyStatus.VERSION_NOT_FOUND, null);
                         case "LIBRARY_NOT_FOUND": return new Pair<FetchAssemblyStatus, RemoteAssemblyState>(FetchAssemblyStatus.LIBRARY_NOT_FOUND, null);

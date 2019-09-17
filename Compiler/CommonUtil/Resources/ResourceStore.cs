@@ -56,7 +56,7 @@ namespace CommonUtil.Resources
             // a rather odd difference...
             canonicalizedPath = canonicalizedPath.Replace('-', '_');
 #endif
-            string assemblyName = assembly.GetName().Name.ToLower();
+            string assemblyName = assembly.GetName().Name.ToLowerInvariant();
 
             Dictionary<string, string> nameLookup;
             if (!caseInsensitiveLookup.TryGetValue(assembly, out nameLookup))
@@ -65,7 +65,7 @@ namespace CommonUtil.Resources
                 caseInsensitiveLookup[assembly] = nameLookup;
                 foreach (string resource in assembly.GetManifestResourceNames())
                 {
-                    string lookupName = resource.ToLower();
+                    string lookupName = resource.ToLowerInvariant();
                     if (resource.Contains('_'))
                     {
                         // this is silly, but VS gets confused easily, even when marked as embedded resources.
@@ -85,7 +85,7 @@ namespace CommonUtil.Resources
             }
 
             string fullPath = assembly.GetName().Name + "." + canonicalizedPath;
-            if (!nameLookup.ContainsKey(fullPath.ToLower()))
+            if (!nameLookup.ContainsKey(fullPath.ToLowerInvariant()))
             {
                 if (failSilently)
                 {
@@ -95,7 +95,7 @@ namespace CommonUtil.Resources
                 throw new System.Exception(path + " not marked as an embedded resource.");
             }
 
-            System.IO.Stream stream = assembly.GetManifestResourceStream(nameLookup[fullPath.ToLower()]);
+            System.IO.Stream stream = assembly.GetManifestResourceStream(nameLookup[fullPath.ToLowerInvariant()]);
             List<byte> output = new List<byte>();
             int bytesRead = 1;
             while (bytesRead > 0)

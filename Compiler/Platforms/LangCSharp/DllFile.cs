@@ -17,7 +17,7 @@
                 this.Culture = exportEntity.Values["culture"];
                 this.PublicKeyToken = exportEntity.Values["token"];
                 this.ProcessorArchitecture = exportEntity.Values["architecture"];
-                this.SpecificVersion = exportEntity.Values["specificversion"].ToLower() == "true";
+                this.SpecificVersion = CommonUtil.BoolUtil.Parse(exportEntity.Values["specificversion"]);
             }
         }
 

@@ -70,7 +70,7 @@ namespace CrayonRuntime
                 }
             }
 
-            if (!cbxPath.ToLower().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
+            if (!cbxPath.ToLowerInvariant().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
             if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
 
             if (parentProcessId > 0)

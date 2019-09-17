@@ -62,7 +62,7 @@ namespace Common
                 return output;
             }
 
-            value = value.Trim().ToLower();
+            value = value.Trim().ToLowerInvariant();
             if (value.Length == 0) return new object[0];
             List<object> pieces = new List<object>();
             System.Text.StringBuilder currentString = new System.Text.StringBuilder();

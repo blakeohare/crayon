@@ -124,7 +124,7 @@ namespace CommonUtil.Images
 
         public void Save(string path)
         {
-            if (path.ToLower().EndsWith(".ico"))
+            if (path.ToLowerInvariant().EndsWith(".ico"))
             {
                 IconGenerator ico = new IconGenerator();
                 ico.AddImage(this);

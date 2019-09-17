@@ -122,7 +122,7 @@ namespace Parser
             // Parse the assembly.
             parser.PushScope(compilationScope);
             Dictionary<string, string> sourceCode = assemblyMetadata.GetSourceCode();
-            foreach (string file in sourceCode.Keys.OrderBy(s => s.ToLower()))
+            foreach (string file in sourceCode.Keys.OrderBy(s => s.ToLowerInvariant()))
             {
                 string fakeName = "[" + file + "]";
                 string code = sourceCode[file];

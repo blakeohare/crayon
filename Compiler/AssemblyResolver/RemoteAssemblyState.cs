@@ -36,7 +36,7 @@ namespace AssemblyResolver
             if (this.platformsSupportedAndCurrentSyncState.Count > 0)
             {
                 sb.Append(string.Join("|", this.platformsSupportedAndCurrentSyncState.Keys
-                    .OrderBy(s => s.ToLower())
+                    .OrderBy(s => s.ToLowerInvariant())
                     .Select(s => (this.platformsSupportedAndCurrentSyncState[s] ? "*" : "") + s)));
             }
             sb.Append(',');

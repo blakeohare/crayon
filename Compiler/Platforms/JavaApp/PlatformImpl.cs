@@ -51,7 +51,7 @@ namespace JavaApp
             {
                 TemplateSet libraryTemplates = templateReader.GetLibraryTemplates(library);
 
-                string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
+                string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLowerInvariant();
 
                 foreach (string templatePath in libraryTemplates.GetPaths("gen/").Concat(libraryTemplates.GetPaths("source/")))
                 {
@@ -129,7 +129,7 @@ namespace JavaApp
             }
 
             IEnumerable<FileOutput> javaFiles = output.Keys
-                .Where(filename => filename.ToLower().EndsWith(".java"))
+                .Where(filename => filename.ToLowerInvariant().EndsWith(".java"))
                 .Select(filename => output[filename]);
             foreach (FileOutput file in javaFiles)
             {

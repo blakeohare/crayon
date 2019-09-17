@@ -58,7 +58,7 @@ namespace CommonUtil.Http
             string userAgent = null;
             foreach (string headerName in this.requestHeaders.Keys)
             {
-                if (headerName.ToLower() == "user-agent")
+                if (headerName.ToLowerInvariant() == "user-agent")
                 {
                     userAgent = this.requestHeaders[headerName];
                 }

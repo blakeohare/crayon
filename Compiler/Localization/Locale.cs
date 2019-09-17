@@ -17,10 +17,10 @@ namespace Localization
         public static Locale Get(string id)
         {
             Locale output;
-            if (!locales.TryGetValue(id.ToLower(), out output))
+            if (!locales.TryGetValue(id.ToLowerInvariant(), out output))
             {
-                output = new Locale(id.ToLower());
-                locales[id.ToLower()] = output;
+                output = new Locale(id.ToLowerInvariant());
+                locales[id.ToLowerInvariant()] = output;
             }
             return output;
         }
@@ -47,7 +47,7 @@ namespace Localization
                     }
                 }
             }
-            string keywordsRaw = new ResourceStore(typeof(Locale)).ReadAssemblyFileText("Languages/" + name.ToLower() + "/keywords.txt", true);
+            string keywordsRaw = new ResourceStore(typeof(Locale)).ReadAssemblyFileText("Languages/" + name.ToLowerInvariant() + "/keywords.txt", true);
             if (keywordsRaw == null)
             {
                 invalid = true;

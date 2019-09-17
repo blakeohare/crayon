@@ -79,7 +79,7 @@ namespace PythonApp
                         libraryLines.Add("");
                     }
 
-                    output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()
+                    output["code/lib_" + libraryName.ToLowerInvariant() + ".py"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
                         TextContent = string.Join(this.NL, libraryLines),

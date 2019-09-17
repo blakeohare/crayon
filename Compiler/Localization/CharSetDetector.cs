@@ -35,7 +35,7 @@ namespace Localization
             // TODO: Find the correct way to identify these characters programmatically.
             "āēīūčģķļņšžўõáíóúýáéíóúýöáâãàçéêíóôõúâêîôûŵŷäëïöüẅÿàèìòùẁỳáéíóúẃý";
         private static readonly HashSet<char> DIACRITICS = new HashSet<char>(
-            (DIACRITIC_CHARS + DIACRITIC_CHARS.ToUpper()).ToCharArray());
+            (DIACRITIC_CHARS + DIACRITIC_CHARS.ToUpperInvariant()).ToCharArray());
 
         private static CharType GetTypeImpl(char c)
         {

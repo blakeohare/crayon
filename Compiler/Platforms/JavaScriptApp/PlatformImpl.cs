@@ -64,9 +64,9 @@ namespace JavaScriptApp
                 TemplateSet libTemplates = templateReader.GetLibraryTemplates(library);
 
                 List<string> libraryLines = new List<string>();
-                libraryLines.Add(libTemplates.GetText("gen/lib_" + libraryName.ToLower() + ".js"));
+                libraryLines.Add(libTemplates.GetText("gen/lib_" + libraryName.ToLowerInvariant() + ".js"));
                 libraryLines.Add("");
-                libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLower() + "');");
+                libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLowerInvariant() + "');");
                 libraryLines.Add("");
 
                 // add helper functions after the scrape.
@@ -77,7 +77,7 @@ namespace JavaScriptApp
                     libraryLines.Add("");
                 }
 
-                output["libs/lib_" + libraryName.ToLower() + ".js"] = new FileOutput()
+                output["libs/lib_" + libraryName.ToLowerInvariant() + ".js"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = string.Join(this.NL, libraryLines),

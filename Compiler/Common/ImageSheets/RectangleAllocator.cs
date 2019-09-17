@@ -15,7 +15,7 @@ namespace Common.ImageSheets
 
             foreach (Image image in images)
             {
-                string path = image.OriginalPath.ToLower();
+                string path = image.OriginalPath.ToLowerInvariant();
                 if (path.EndsWith(".jpg") || path.EndsWith(".jpeg"))
                 {
                     solitaryChunks.Add(BuildChunkWithSingleImage(image, true));

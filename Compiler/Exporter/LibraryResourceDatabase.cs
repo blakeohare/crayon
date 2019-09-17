@@ -68,7 +68,7 @@ namespace Exporter
                     if (line.Length == 0 || line[0] == '#') continue; // blank or comment
                     string[] parts = line.Split(COLON_CHAR, 2);
 
-                    string command = parts[0].ToUpper().Trim();
+                    string command = parts[0].ToUpperInvariant().Trim();
 
                     Dictionary<string, string> values = KeyValuePairParser.Parse(parts[1]);
                     if (values == null)
@@ -123,11 +123,11 @@ namespace Exporter
                             typeFilter = instruction["type"];
                             if (!typeFilter.StartsWith("."))
                             {
-                                typeFilter = "." + typeFilter.ToLower();
+                                typeFilter = "." + typeFilter.ToLowerInvariant();
                             }
                         }
                         foreach (string file in this.library.ListDirectory("native/" + from)
-                            .Where(path => typeFilter == null || path.ToLower().EndsWith(typeFilter)))
+                            .Where(path => typeFilter == null || path.ToLowerInvariant().EndsWith(typeFilter)))
                         {
                             content = this.library.Metadata.ReadFile(false, "native/" + from + "/" + file, false);
                             output.Add(new Dictionary<string, string>() {

@@ -123,7 +123,7 @@ namespace Crayon
             // Current idea is to have -export Foo.build instead of just Foo.build
             // However, this will make all currently written documentation and tutorials
             // incorrect, at least for 2.1.0
-            if (args.Length > 0 && args[0].ToLower().EndsWith(".build") && !output.ContainsKey(BUILD_TARGET))
+            if (args.Length > 0 && args[0].ToLowerInvariant().EndsWith(".build") && !output.ContainsKey(BUILD_TARGET))
             {
                 if (args.Length == 1 || (args[1] != "-target" && args[1] != "-CR:target"))
                 {
@@ -188,7 +188,7 @@ namespace Crayon
                         throw new InvalidOperationException("Unknown command line argument: " + arg);
                     }
                 }
-                else if (!output.ContainsKey(BUILD_FILE) && arg.ToLower().EndsWith(".build"))
+                else if (!output.ContainsKey(BUILD_FILE) && arg.ToLowerInvariant().EndsWith(".build"))
                 {
                     output[BUILD_FILE] = arg;
                     ++i;

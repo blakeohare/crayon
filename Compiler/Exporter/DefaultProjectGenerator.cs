@@ -44,7 +44,7 @@ namespace Exporter
             {
                 { "PROJECT_ID", this.projectId },
                 { "TITLE", this.originalProjectId },
-                { "COMPILER_LOCALE", this.projectLocale.ID.ToLower() }
+                { "COMPILER_LOCALE", this.projectLocale.ID.ToLowerInvariant() }
             };
 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
@@ -58,7 +58,7 @@ namespace Exporter
             foreach (string file in new string[]
                 {
                     "DefaultProject/BuildFile.txt|%%%PROJECT_ID%%%.build",
-                    "DefaultProject/main" + this.projectLocale.ID.ToUpper() + ".txt|source/main.cry",
+                    "DefaultProject/main" + this.projectLocale.ID.ToUpperInvariant() + ".txt|source/main.cry",
                     "DefaultProject/dotGitIgnore.txt|output/.gitignore",
                 })
             {

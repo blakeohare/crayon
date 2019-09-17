@@ -36,7 +36,7 @@ namespace LangJava
             // This is repeated in the JavaScriptAppAndroid platform.
             Dictionary<string, string> replacements = new Dictionary<string, string>();
             replacements["PROJECT_ID"] = options.GetString(ExportOptionKey.PROJECT_ID);
-            replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLower();
+            replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLowerInvariant();
             replacements["PROJECT_TITLE"] = options.GetStringOrNull(ExportOptionKey.PROJECT_TITLE) ?? options.GetString(ExportOptionKey.PROJECT_ID);
 
             if (replacements["JAVA_PACKAGE"].StartsWith("org.crayonlang.interpreter"))

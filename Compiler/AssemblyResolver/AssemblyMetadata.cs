@@ -81,7 +81,7 @@ namespace AssemblyResolver
             get
             {
                 return this.directDependencies.Keys
-                    .OrderBy(k => k.ToLower())
+                    .OrderBy(k => k.ToLowerInvariant())
                     .Select(k => this.directDependencies[k])
                     .ToArray();
             }

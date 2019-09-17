@@ -25,8 +25,8 @@ namespace Common.ImageSheets
             {
                 Sheet sheet = new Sheet() { ID = sheetId };
                 sheet.Chunks.AddRange(RectangleAllocator.Allocate(files[sheetId]
-                    .OrderBy(f => f.OriginalPath.ToLower())
-                    .Select<FileOutput, Image>(f => new Image(f))));
+                    .OrderBy(f => f.OriginalPath.ToLowerInvariant())
+                    .Select(f => new Image(f))));
                 sheets.Add(sheet);
             }
 

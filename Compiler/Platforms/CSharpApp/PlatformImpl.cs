@@ -213,7 +213,7 @@ namespace CSharpApp
         {
             return StringUtil.JoinLines(
                 dotNetReferences
-                    .OrderBy(v => v.ToLower())
+                    .OrderBy(v => v.ToLowerInvariant())
                     .Select(dotNetLib => "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
         }
@@ -363,12 +363,12 @@ namespace CSharpApp
             replacements["LIBRARY_PROJECT_CONFIG"] = "";
             if (libraryProjectNameToGuid.Count > 0)
             {
-                string[] projects = libraryProjectNameToGuid.Keys.OrderBy(s => s.ToLower()).ToArray();
+                string[] projects = libraryProjectNameToGuid.Keys.OrderBy(s => s.ToLowerInvariant()).ToArray();
                 List<string> inclusions = new List<string>();
                 List<string> configs = new List<string>();
                 foreach (string projectName in projects)
                 {
-                    string guid = libraryProjectNameToGuid[projectName].ToUpper();
+                    string guid = libraryProjectNameToGuid[projectName].ToUpperInvariant();
                     inclusions.Add(
                         "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"" +
                         projectName +

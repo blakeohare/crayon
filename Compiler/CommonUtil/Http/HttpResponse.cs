@@ -30,7 +30,7 @@ namespace CommonUtil.Http
             this.ContentType = contentType;
             this.Content = content;
             this.IsJson = false;
-            switch (this.ContentType.ToLower().Trim())
+            switch (this.ContentType.ToLowerInvariant().Trim())
             {
                 case "application/json":
                     this.IsJson = true;
@@ -52,7 +52,7 @@ namespace CommonUtil.Http
 
         private static string CanonicalizeHeader(string value)
         {
-            return value.Trim().ToUpper().Replace('-', '_');
+            return value.Trim().ToUpperInvariant().Replace('-', '_');
         }
 
         public string GetHeader(string name)

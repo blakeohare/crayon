@@ -123,7 +123,7 @@ namespace AssemblyResolver
             }
 
             return uniqueAssemblies.Values
-                .OrderBy(metadata => metadata.ID.ToLower())
+                .OrderBy(metadata => metadata.ID.ToLowerInvariant())
                 .ToArray();
         }
 

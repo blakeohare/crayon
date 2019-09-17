@@ -6,7 +6,7 @@
         {
             if (value == null) return false;
 
-            switch (value.ToLower())
+            switch (value.ToLowerInvariant())
             {
                 case "true":
                 case "t":
