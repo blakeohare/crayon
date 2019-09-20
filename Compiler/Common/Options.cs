@@ -49,7 +49,7 @@ namespace Common
         {
             return GetString(key, "");
         }
-
+        
         public string GetString(ExportOptionKey key)
         {
             return this.options[key].ToString();

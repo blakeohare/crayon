@@ -4,6 +4,7 @@
     "source": "source",
     "output": "output/%TARGET_NAME%",
     "java-package": "org.crayonlang.demos.calculator",
+    "icons": ["assets/icon.png"],
     "ios-bundle-prefix": "org.crayonlang.demos",
 
     "version": "2.1.1",
@@ -22,6 +23,10 @@
         {
             "name": "java",
             "platform": "java-app"
+        },
+        {
+			"name": "android",
+			"platform": "javascript-app-android"
         }
     ]
 }

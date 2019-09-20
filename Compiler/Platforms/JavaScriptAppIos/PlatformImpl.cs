@@ -79,9 +79,12 @@ namespace JavaScriptAppIos
             IconSetGenerator icons = new IconSetGenerator();
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
-                string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
-                Bitmap icon = new Bitmap(iconPath);
-                icons.AddInputImage(icon);
+                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
+                foreach (string iconPath in iconPaths)
+                {
+                    Bitmap icon = new Bitmap(iconPath);
+                    icons.AddInputImage(icon);
+                }
             }
 
             Dictionary<int, Bitmap> iconImagesBySize = icons
