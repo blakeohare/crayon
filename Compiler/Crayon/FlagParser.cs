@@ -18,6 +18,7 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
+        private static readonly string VERSION = "version";
 
         private static readonly string RESOURCE_ERRORS_SHOW_RELATIVE_DIR = "resourceErrorsShowRelativeDir";
 
@@ -53,6 +54,7 @@ namespace Crayon
             SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
             RESOURCE_ERRORS_SHOW_RELATIVE_DIR,
+            VERSION,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -77,6 +79,13 @@ namespace Crayon
 
         public static ExportCommand Parse(string[] args)
         {
+            // just short circuit this one since this will only appear without a target project.
+            // Otherwise it'll force a CR: prefix
+            if (args.Length == 1 && (args[0] == "-v" || args[0] == "--version" || args[0] == "-version"))
+            {
+                return new ExportCommand() { ShowVersion = true };
+            }
+
             Dictionary<string, string> output = new Dictionary<string, string>();
             int i;
 
@@ -230,6 +239,7 @@ namespace Crayon
             if (args.ContainsKey(VM_DIR)) command.VmExportDirectory = args[VM_DIR].Trim();
             if (args.ContainsKey(VM)) command.VmPlatform = args[VM].Trim();
             if (args.ContainsKey(CBX)) command.CbxExportPath = args[CBX].Trim();
+            if (args.ContainsKey(VERSION)) command.ShowVersion = true;
 
             ParseAdditionalArgs(command, args);
 

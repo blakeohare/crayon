@@ -10,6 +10,7 @@ namespace Crayon
         EXPORT_CBX,
         RUN_CBX,
         SHOW_USAGE,
+        SHOW_VERSION,
         ERROR_CHECK_ONLY,
         TRANSPILE_CSHARP_TO_ACRYLIC,
     }
@@ -30,6 +31,7 @@ namespace Crayon
 
         public static ExecutionType IdentifyUseCase(ExportCommand command)
         {
+            if (command.ShowVersion) return ExecutionType.SHOW_VERSION;
             if (command.IsCSharpToAcrylicTranspiler) return ExecutionType.TRANSPILE_CSHARP_TO_ACRYLIC;
             if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
             if (command.IsEmpty) return ExecutionType.SHOW_USAGE;

@@ -35,6 +35,10 @@ namespace Crayon.Pipeline
                     new UsageDisplayWorker().DoWorkImpl();
                     break;
 
+                case ExecutionType.SHOW_VERSION:
+                    new VersionDisplayWorker().DoWorkImpl();
+                    break;
+
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
                     new GenerateDefaultProjectWorker().DoWorkImpl(command);
                     break;

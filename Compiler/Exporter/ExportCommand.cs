@@ -11,6 +11,7 @@
         public bool ShowPerformanceMarkers { get; set; }
         public bool IsEmpty { get; set; }
         public string CbxExportPath { get; set; }
+        public bool ShowVersion { get; set; }
         public bool ShowLibraryDepTree { get; set; }
         public bool IsDirectCbxRun { get; set; }
         public bool IsErrorCheckOnly { get; set; }
