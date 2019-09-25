@@ -58,7 +58,15 @@ namespace Parser.ParseTree
             List<VariableId> argVarIds = new List<VariableId>();
             for (int i = 0; i < this.Args.Length; ++i)
             {
-                argVarIds.Add(this.VariableScope.RegisterVariable(this.ArgTypes[i], this.Args[i].Value));
+                if (this.Args[i].Value == "xxxx")
+                {
+
+                }
+                VariableId varId = this.VariableScope.RegisterVariableForcedReDeclaration(
+                    this.ArgTypes[i],
+                    this.Args[i].Value,
+                    this.Args[i]);
+                argVarIds.Add(varId);
             }
             this.ArgVarIds = argVarIds.ToArray();
 

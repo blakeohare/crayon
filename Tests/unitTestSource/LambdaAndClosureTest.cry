@@ -42,16 +42,24 @@ class LambdaAndClosureTest : Test {
         assertThat(fn5(600)).isEqualTo(605);
     }
 
-    // TODO(https://github.com/blakeohare/crayon/issues/263)
-    // Fix this. This is currently not supported.
-    /*
     function testArgCollision() {
         x = 42;
         fn = x => 2 * x;
         assertThat(fn(5)).isEqualTo(10);
         assertThat(x).isEqualTo(42);
+
+        // This one looks a little weird, but the fact that 'a'
+        // is declared in a branch that is not in a direct parent
+        // scope is important.
+        foo = () => 5; // prevents compile-time optimization
+        if (foo() > 1) {
+            a = 7;
+        }
+        b = 11;
+        fn = (a, b) => 2 * a * b;
+        assertThat(fn(3, 5)).isEqualTo(30);
+        assertThat(a).isEqualTo(7);
     }
-    */
 
     function closureNoInteractionsTestHelper(startingValue) {
 

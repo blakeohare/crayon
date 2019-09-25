@@ -55,11 +55,23 @@ namespace Parser
         // The following fields are only used in the root scope.
         // flattenedIds is a lookup of all ID's of children branches. Unlike idsByVar, this cannot be used
         // to see if a variable is declared as it is possible that a variable is declared in another branch.
-        private Dictionary<string, VariableId> flattenedIds = null;
+        private HashSet<string> usedVariableNames = null;
         // The order that variables are encountered.
         private List<VariableId> rootScopeOrder;
 
-        public int Size { get { return this.flattenedIds.Count; } }
+        // This is for when you declare a variable in, say, an if statement and also in its else statement
+        // and also use the variable afterwards...
+        // if (condition) {
+        //   x = 1;
+        // } else {
+        //   x = 2;
+        // }
+        // print(x);
+        // Previous definitions must be looked up, even though that scope was popped.
+        // This dictionary gets re-instantiated in every closure scope.
+        private Dictionary<string, VariableId> variableToUseIfNotFoundInDirectParent = null;
+
+        public int Size { get { return this.rootScopeOrder.Count; } }
 
         private VariableScope() { }
 
@@ -74,7 +86,8 @@ namespace Parser
             {
                 requireExplicitDeclarations = requireExplicitDeclarations,
                 rootScopeOrder = new List<VariableId>(),
-                flattenedIds = new Dictionary<string, VariableId>(),
+                usedVariableNames = new HashSet<string>(),
+                variableToUseIfNotFoundInDirectParent = new Dictionary<string, VariableId>(),
             };
             scope.rootScope = scope;
             scope.closureRootScope = scope;
@@ -89,6 +102,7 @@ namespace Parser
                 parentScope = parent,
                 rootScope = parent.rootScope,
                 closureRootScope = parent.closureRootScope,
+                variableToUseIfNotFoundInDirectParent = parent.variableToUseIfNotFoundInDirectParent,
             };
         }
 
@@ -146,6 +160,20 @@ namespace Parser
             return this.RegisterVariable(type, "." + this.rootScope.syntheticIdAlloc++);
         }
 
+        public VariableId RegisterVariableForcedReDeclaration(AType type, string name, Token throwToken)
+        {
+            if (this.idsByVar.ContainsKey(name))
+            {
+                throw new ParserException(throwToken, "This variable has already been used in this scope.");
+            }
+            VariableId varId = new VariableId(type, name);
+            this.idsByVar[name] = varId;
+            this.rootScope.usedVariableNames.Add(name);
+            this.variableToUseIfNotFoundInDirectParent[name] = varId;
+            this.rootScope.rootScopeOrder.Add(varId);
+            return varId;
+        }
+
         public VariableId RegisterVariable(AType type, string name)
         {
             return this.RegisterVariable(type, name, true);
@@ -169,42 +197,60 @@ namespace Parser
             VariableId varId;
 
             // Check if variable is already declared in this or a parent scope already.
-            if (rootScope.flattenedIds.ContainsKey(name))
+            if (rootScope.usedVariableNames.Contains(name))
             {
                 // The above if statement is a quick check to see if variable used before, anywhere,
                 // even if in a parallel branch. This will prevent many unnecessary walks up the parent chain.
 
                 // Variable is already known by this scope. Nothing to do.
-                if (!this.idsByVar.TryGetValue(name, out varId))
+                if (this.idsByVar.TryGetValue(name, out varId))
                 {
-                    // Check to see if this variable was used by this or any parent scope.
-                    VariableScope walker = this.parentScope;
-                    while (walker != null)
-                    {
-                        if (walker.idsByVar.TryGetValue(name, out varId))
-                        {
-                            // cache this value in the current scope to make the lookup faster in the future
-                            this.idsByVar[name] = varId;
-                            return varId;
-                        }
-                        walker = walker.parentScope;
-                    }
-
-                    // If you got to this point, that means the variable was used somewhere, but not in the direct
-                    // scope parent chain. Grab the same VariableId instance and copy it to this scope.
-                    varId = this.rootScope.flattenedIds[name];
-                    this.idsByVar[name] = varId;
+                    return varId;
                 }
+
+                if (this.variableToUseIfNotFoundInDirectParent.TryGetValue(name, out varId))
+                {
+                    return varId;
+                }
+
+                // Check to see if this variable was used by this or any parent scope.
+                VariableScope walker = this.parentScope;
+                while (walker != null)
+                {
+                    if (walker.idsByVar.TryGetValue(name, out varId))
+                    {
+                        // cache this value in the current scope to make the lookup faster in the future
+                        this.idsByVar[name] = varId;
+                        return varId;
+                    }
+                    walker = walker.parentScope;
+                }
+
+                // Do it again but using the fuzzy fallback
+                walker = this;
+                while (walker != null)
+                {
+                    if (walker.variableToUseIfNotFoundInDirectParent.ContainsKey(name))
+                    {
+                        varId = walker.variableToUseIfNotFoundInDirectParent[name];
+                        this.idsByVar[name] = varId;
+                        return varId;
+                    }
+                }
+
+                // This should not happen.
+#if DEBUG
+                throw new System.InvalidOperationException("Couldn't find variable declaration: " + name);
+#endif
+
             }
-            else
-            {
-                // Variable has never been used anywhere. Create a new one and put it in the root bookkeeping.
-                varId = new VariableId(type, name);
-                this.idsByVar[name] = varId;
-                this.rootScope.flattenedIds[name] = varId;
-                this.rootScope.rootScopeOrder.Add(varId);
-                return varId;
-            }
+
+            // Variable has never been used anywhere. Create a new one and put it in the root bookkeeping.
+            varId = new VariableId(type, name);
+            this.variableToUseIfNotFoundInDirectParent.Add(name, varId);
+            this.idsByVar[name] = varId;
+            this.rootScope.usedVariableNames.Add(name);
+            this.rootScope.rootScopeOrder.Add(varId);
             return varId;
         }
 
@@ -216,6 +262,11 @@ namespace Parser
 
             // Most common case. Nothing to do if you find it here.
             if (this.idsByVar.TryGetValue(name, out varId))
+            {
+                return varId;
+            }
+
+            if (this.variableToUseIfNotFoundInDirectParent.TryGetValue(name, out varId))
             {
                 return varId;
             }
