@@ -25,8 +25,8 @@
             "platform": "java-app"
         },
         {
-			"name": "android",
-			"platform": "javascript-app-android"
+            "name": "android",
+            "platform": "javascript-app-android"
         }
     ]
 }
