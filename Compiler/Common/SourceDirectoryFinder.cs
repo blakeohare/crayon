@@ -28,10 +28,8 @@ namespace Common
                         currentDirectory = FileUtil.GetParentDirectory(currentDirectory);
                     }
                 }
-                return crayonSourceDirectoryCached;
-#else
-                return null;
 #endif
+                return crayonSourceDirectoryCached;
             }
         }
     }
