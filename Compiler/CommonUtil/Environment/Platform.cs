@@ -2,6 +2,7 @@
 {
     public static class Platform
     {
-        public static bool IsWindows { get; } = System.IO.Path.DirectorySeparatorChar == '\\';
+        private static bool isWindows = System.IO.Path.DirectorySeparatorChar == '\\';
+        public static bool IsWindows { get { return isWindows; } }
     }
 }
