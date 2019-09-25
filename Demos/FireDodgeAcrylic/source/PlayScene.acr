@@ -10,7 +10,7 @@ enum GameMode {
 public class PlayScene : AbstractScene {
 
     private Sprite player;
-    private Fire[] fires = new List<Sprite>();
+    private Fire[] fires = new List<Fire>();
 
     private int gameCounter = 0;
 

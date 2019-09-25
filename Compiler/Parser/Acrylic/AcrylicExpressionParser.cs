@@ -21,20 +21,26 @@ namespace Parser.Acrylic
             AType className = this.ParseTypeForInstantiation(tokens);
             Expression arrayAllocationSize = null;
             List<Expression> arrayMembers = null;
-            if (tokens.IsNext("["))
+            bool isArray = tokens.IsNext("[") || // the type is anything but there's an array size declaration next
+                className.RootType == "["; // the type is an array itself. There's probably inline elements defined.
+
+            if (isArray)
             {
-                Token bracketToken = tokens.PopExpected("[");
-                if (!tokens.IsNext("]"))
+                if (tokens.IsNext("["))
                 {
-                    arrayAllocationSize = this.Parse(tokens, owner);
-                }
-                tokens.PopExpected("]");
-                className = new AType(new Token[] { bracketToken }, new AType[] { className });
-                while (tokens.IsNext("["))
-                {
-                    bracketToken = tokens.PopExpected("[");
-                    className = new AType(new Token[] { bracketToken }, new AType[] { className });
+                    Token bracketToken = tokens.PopExpected("[");
+                    if (!tokens.IsNext("]"))
+                    {
+                        arrayAllocationSize = this.Parse(tokens, owner);
+                    }
                     tokens.PopExpected("]");
+                    className = new AType(new Token[] { bracketToken }, new AType[] { className });
+                    while (tokens.IsNext("["))
+                    {
+                        bracketToken = tokens.PopExpected("[");
+                        className = new AType(new Token[] { bracketToken }, new AType[] { className });
+                        tokens.PopExpected("]");
+                    }
                 }
 
                 if (arrayAllocationSize == null)
@@ -42,7 +48,7 @@ namespace Parser.Acrylic
                     arrayMembers = new List<Expression>();
                     tokens.PopExpected("{");
                     bool nextAllowed = true;
-                    while (tokens.PopIfPresent("}"))
+                    while (!tokens.PopIfPresent("}"))
                     {
                         if (!nextAllowed) tokens.PopExpected("}"); // throws
                         arrayMembers.Add(this.Parse(tokens, owner));
