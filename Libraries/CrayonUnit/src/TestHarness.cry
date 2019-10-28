@@ -22,7 +22,7 @@ namespace CrayonUnit {
         static field _activeHarness = null;
 
         constructor() {
-            this._classes = Core.Reflection.getClasses(CrayonUnit.Test.class);
+            this._classes = Core.Reflection.getClasses(CrayonUnit.Test.class).filter(c => c != CrayonUnit.Test.class);
         }
 
         function makePassingTestsSilent() {
