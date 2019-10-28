@@ -31,8 +31,30 @@ namespace CrayonUnit {
             return this.isEqualTo(false);
         }
 
-        function isNull() {
-            return this.isEqualTo(null);
+        function isGreaterThan(n) { return this._doNumCompare(n, '>'); }
+        function isLessThan(n) { return this._doNumCompare(n, '<'); }
+        function isGreaterThanOrEqualTo(n) { return this._doNumCompare(n, '>='); }
+        function isLessThanOrEqualTo(n) { return this._doNumCompare(n, '<='); }
+
+        function _doNumCompare(value, op) {
+            if (!Core.isNumber(this.actual)) throw new UnitTestFailedException("Cannot perform " + op + " comparison on a non-numeric value.");
+            if (!Core.isNumber(value)) throw new UnitTestFailedException("Expected a number.");
+            v = false;
+            switch (op) {
+                case '>': v = this.actual > value; break;
+                case '<': v = this.actual < value; break;
+                case '>=': v = this.actual >= value; break;
+                case '<=': v = this.actual <= value; break;
+            }
+            if (!v) throw new UnitTestFailedException(["Comparison failed. Expected", this.actual, op, value, 'to be true.'].join(' '));
+        }
+
+        function isNull() { return this.isEqualTo(null); }
+        function isNotNull() { return this.isNotEqualTo(null); }
+        function isNonEmptyString() {
+            if (Core.typeof(this.actual) != Core.Type.STRING || this.actual == '') {
+                throw new UnitTestFailedException(["Expected", this.actual, "to be a non-empty string"].join(' '));
+            }
         }
 
         function hasLength(length) {
