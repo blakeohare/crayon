@@ -124,6 +124,15 @@ def update_docsIndexMd(version, path):
   lines[0] = line
   write_file(path, '\n'.join(lines))
 
+def update_releasePy(version, path):
+  lines = read_file(path).split('\n')
+  for i in range(len(lines)):
+    line = lines[i]
+    if line.startswith('VERSION = '):
+      lines[i] = "VERSION = '" + version + "'"
+      break
+  write_file(path, '\n'.join(lines))
+
 def main(args):
   version = parse_version(args)
   if version == None:
@@ -163,6 +172,10 @@ def main(args):
   docsIndexMd = next(filter(lambda x:x[1] == 'Docs/index.md', all_files))
   print("Updating: " + docsIndexMd[1])
   update_docsIndexMd(version_string, docsIndexMd[0])
+
+  releaseScript = next(filter(lambda x:x[1] == 'Release/release.py', all_files))
+  print("Updating: " + releaseScript[1])
+  update_releasePy(version_string, releaseScript[0])
 
   print("")
   print("*" * 40)
