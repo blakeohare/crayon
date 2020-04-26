@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Common.ImageSheets
+namespace Build.ImageSheets
 {
     public class ImageSheetBuilder
     {
@@ -12,12 +12,12 @@ namespace Common.ImageSheets
             this.PrefixMatcher = new PrefixMatcher();
         }
 
-        public Sheet[] Generate(ResourceDatabase resDB)
+        public Sheet[] Generate(Build.ResourceDatabase resDB)
         {
             // PrefixMatcher has already been configured by the build file at this point.
             // This is done in the AbstractPlatform just before invoking this method.
 
-            Dictionary<string, List<FileOutput>> files = this.PrefixMatcher.MatchAndRemoveFiles(resDB);
+            Dictionary<string, List<Common.FileOutput>> files = this.PrefixMatcher.MatchAndRemoveFiles(resDB);
 
             List<Sheet> sheets = new List<Sheet>();
 

@@ -32,7 +32,7 @@ namespace JavaScriptApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
@@ -173,7 +173,7 @@ namespace JavaScriptApp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            ResourceDatabase resDb)
+            Build.ResourceDatabase resDb)
         {
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),

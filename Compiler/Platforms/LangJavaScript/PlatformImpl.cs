@@ -25,7 +25,7 @@ namespace LangJavaScript
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             throw new NotImplementedException();
@@ -33,7 +33,7 @@ namespace LangJavaScript
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            ResourceDatabase resDb)
+            Build.ResourceDatabase resDb)
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }

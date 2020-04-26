@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Common;
+using System.Collections.Generic;
 
-namespace Common
+namespace Build
 {
     /*
      * Database of non-code files to be copied.

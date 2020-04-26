@@ -26,7 +26,7 @@ namespace JavaApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
@@ -154,7 +154,7 @@ namespace JavaApp
             return string.Join(nl, lines);
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, Build.ResourceDatabase resDb)
         {
             return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
         }

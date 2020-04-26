@@ -1,4 +1,4 @@
-﻿namespace Common.ImageSheets
+﻿namespace Build.ImageSheets
 {
     public class Tile
     {
@@ -12,6 +12,6 @@
 
         // JPEGs and standalone PNG's don't need to be serialized out to an in-memory bitmap and then re-encoded.
         public bool IsDirectCopy { get; set; }
-        public FileOutput OriginalFile { get; set; }
+        public Common.FileOutput OriginalFile { get; set; }
     }
 }

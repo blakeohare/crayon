@@ -21,7 +21,7 @@ namespace JavaScriptAppIos
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
@@ -150,7 +150,7 @@ namespace JavaScriptAppIos
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            ResourceDatabase resDb)
+            Build.ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
             replacements["ORGANIZATION_NAME"] = "Organization Name";

@@ -24,7 +24,7 @@ namespace AcrylicConversion
             throw new NotImplementedException();
         }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options)
+        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, Build.ResourceDatabase resourceDatabase, Options options)
         {
             throw new NotImplementedException();
         }
@@ -34,7 +34,7 @@ namespace AcrylicConversion
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, Build.ResourceDatabase resDb)
         {
             throw new NotImplementedException();
         }

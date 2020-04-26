@@ -30,7 +30,7 @@ namespace LangPython
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
@@ -38,7 +38,7 @@ namespace LangPython
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            ResourceDatabase resDb)
+            Build.ResourceDatabase resDb)
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }

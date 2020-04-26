@@ -18,7 +18,7 @@ namespace CApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
@@ -71,7 +71,9 @@ namespace CApp
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            Build.ResourceDatabase resDb)
         {
             return new Dictionary<string, string>();
         }

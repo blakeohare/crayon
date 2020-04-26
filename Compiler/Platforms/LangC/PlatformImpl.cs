@@ -30,13 +30,13 @@ namespace LangC
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, Build.ResourceDatabase resDb)
         {
             throw new NotImplementedException();
         }

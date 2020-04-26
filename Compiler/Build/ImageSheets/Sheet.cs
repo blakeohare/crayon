@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Common.ImageSheets
+namespace Build.ImageSheets
 {
     public class Sheet
     {

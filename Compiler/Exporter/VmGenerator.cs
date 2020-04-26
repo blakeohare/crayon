@@ -37,7 +37,7 @@ namespace Exporter
             Dictionary<string, FileOutput> output,
             Platform.AbstractPlatform platform,
             ExportBundle nullableExportBundle,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             ICollection<AssemblyMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)

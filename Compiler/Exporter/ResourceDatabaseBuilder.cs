@@ -34,7 +34,7 @@ namespace Exporter
 
                 using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
                 {
-                    Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
+                    Build.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Build.ImageSheets.ImageSheetBuilder();
                     if (buildContext.TopLevelAssembly.ImageSheetIds != null)
                     {
                         foreach (string imageSheetId in buildContext.TopLevelAssembly.ImageSheetIds)
@@ -47,7 +47,7 @@ namespace Exporter
                             }
                         }
                     }
-                    Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+                    Build.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
 
                     resourceDatabase.AddImageSheets(imageSheets);
                 }

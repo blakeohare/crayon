@@ -21,7 +21,7 @@ namespace JavaScriptAppAndroid
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
@@ -94,7 +94,7 @@ namespace JavaScriptAppAndroid
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            ResourceDatabase resDb)
+            Build.ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
 

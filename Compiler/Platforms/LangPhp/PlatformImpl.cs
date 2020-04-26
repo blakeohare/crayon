@@ -12,7 +12,7 @@ namespace LangPhp
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options)
+        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, Build.ResourceDatabase resourceDatabase, Options options)
         {
             throw new System.NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace LangPhp
             throw new System.NotImplementedException();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, Build.ResourceDatabase resDb)
         {
             return new Dictionary<string, string>();
         }

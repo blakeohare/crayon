@@ -26,7 +26,9 @@ namespace CSharpApp
             };
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            Build.ResourceDatabase resDb)
         {
             List<string> embeddedResources = new List<string>()
             {
@@ -221,7 +223,7 @@ namespace CSharpApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);

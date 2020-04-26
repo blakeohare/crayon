@@ -1,4 +1,6 @@
-﻿namespace Common.ImageSheets
+﻿using Common;
+
+namespace Build.ImageSheets
 {
     public class Image
     {

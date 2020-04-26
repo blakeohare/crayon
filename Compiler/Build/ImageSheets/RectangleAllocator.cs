@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Common.ImageSheets
+namespace Build.ImageSheets
 {
     public static class RectangleAllocator
     {

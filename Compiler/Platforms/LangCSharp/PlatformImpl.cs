@@ -30,7 +30,7 @@ namespace LangCSharp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
+            Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
@@ -38,7 +38,7 @@ namespace LangCSharp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            ResourceDatabase resDb)
+            Build.ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
             replacements["PROJECT_GUID"] = "project guid goes here.";

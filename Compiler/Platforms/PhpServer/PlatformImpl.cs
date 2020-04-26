@@ -38,7 +38,7 @@ namespace PhpServer
             return sb.ToString();
         }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options)
+        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, Build.ResourceDatabase resourceDatabase, Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             TemplateReader templates = new TemplateReader(new PkgAwareFileUtil(), this);
@@ -91,12 +91,16 @@ namespace PhpServer
             output["crayon_gen/libs.php"] = FileOutput.OfString(string.Join("\n", libsIncluder));
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<LibraryForExport> everyLibrary)
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
+            IList<LibraryForExport> everyLibrary)
         {
             throw new System.NotImplementedException();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            Build.ResourceDatabase resDb)
         {
             return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
         }

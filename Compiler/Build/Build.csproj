@@ -39,9 +39,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="*.cs" />
-    <Compile Include="BuildParseNodes\*.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ImageSheets\*.cs" />
+    <Compile Include="BuildParseNodes\*.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj">

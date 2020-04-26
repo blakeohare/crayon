@@ -43,6 +43,10 @@
     <EmbeddedResource Include="Resources\*.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Build\Build.csproj">
+      <Project>{5bee19d9-117d-4c0e-bf60-45da72c9d355}</Project>
+      <Name>Build</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj">
       <Project>{8e422564-56ee-407c-aef7-b85f895ed320}</Project>
       <Name>CommonUtil</Name>

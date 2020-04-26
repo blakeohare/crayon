@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Common;
+using System.Collections.Generic;
 
-namespace Common.ImageSheets
+namespace Build.ImageSheets
 {
     public class PrefixMatcher
     {
@@ -35,7 +36,7 @@ namespace Common.ImageSheets
             return null;
         }
 
-        public Dictionary<string, List<FileOutput>> MatchAndRemoveFiles(ResourceDatabase resDB)
+        public Dictionary<string, List<FileOutput>> MatchAndRemoveFiles(Build.ResourceDatabase resDB)
         {
             Dictionary<string, List<FileOutput>> output = new Dictionary<string, List<FileOutput>>();
 
