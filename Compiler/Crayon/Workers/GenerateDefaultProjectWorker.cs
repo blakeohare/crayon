@@ -29,27 +29,26 @@ namespace Crayon
         private class DefaultProjectGeneratorImpl
         {
             private string originalProjectId;
-            private string projectId;
             private Localization.Locale projectLocale;
 
-            public string ProjectID { get { return this.projectId; } }
+            public string ProjectID { get; private set; }
 
             public DefaultProjectGeneratorImpl(string projectId, string localeId)
             {
                 this.originalProjectId = projectId.Trim();
                 this.projectLocale = Localization.Locale.Get(localeId);
-                this.projectId = StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
+                this.ProjectID = StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
             }
 
             public DefaultProjectGeneratorImpl Validate()
             {
-                if (this.projectId.Length == 0) throw new InvalidOperationException("Project name did not have any alphanumeric characters.");
-                if (this.projectId[0] >= '0' && this.projectId[0] <= '9') throw new InvalidOperationException("Project name cannot begin with a number.");
-                if (this.projectId != this.originalProjectId)
+                if (this.ProjectID.Length == 0) throw new InvalidOperationException("Project name did not have any alphanumeric characters.");
+                if (this.ProjectID[0] >= '0' && this.ProjectID[0] <= '9') throw new InvalidOperationException("Project name cannot begin with a number.");
+                if (this.ProjectID != this.originalProjectId)
                 {
                     ConsoleWriter.Print(
                         ConsoleMessageType.BUILD_WARNING,
-                        "Warning: '" + this.originalProjectId + "' contains non-alphanumeric characters and was canonicalized into '" + this.projectId + "'");
+                        "Warning: '" + this.originalProjectId + "' contains non-alphanumeric characters and was canonicalized into '" + this.ProjectID + "'");
                 }
 
                 return this;
@@ -61,7 +60,7 @@ namespace Crayon
             {
                 this.replacements = new Dictionary<string, string>()
                 {
-                    { "PROJECT_ID", this.projectId },
+                    { "PROJECT_ID", this.ProjectID },
                     { "TITLE", this.originalProjectId },
                     { "COMPILER_LOCALE", this.projectLocale.ID.ToLowerInvariant() }
                 };
@@ -98,7 +97,7 @@ namespace Crayon
 
             private string ReplaceStrings(string text)
             {
-                return Constants.DoReplacements(false, text, this.replacements);
+                return ConstantReplacer.DoReplacements(false, text, this.replacements);
             }
         }
     }
