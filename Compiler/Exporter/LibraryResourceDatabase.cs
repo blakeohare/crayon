@@ -51,7 +51,7 @@ namespace Exporter
 
         public bool HasNativeCode
         {
-            get { return this.library.Metadata.Manifest.Get("cni") != null; }
+            get { return this.library.Metadata.HasNativeCode; }
         }
 
         private List<Dictionary<string, string>> ParseApplicableInstructions()

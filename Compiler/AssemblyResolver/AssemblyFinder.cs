@@ -115,7 +115,7 @@ namespace AssemblyResolver
             foreach (string path in verifiedLibraryPaths)
             {
                 string defaultName = Path.GetFileName(path);
-                AssemblyMetadata metadata = new AssemblyMetadata(path, defaultName);
+                AssemblyMetadata metadata = AssemblyMetadataFactory.CreateLibrary(path, defaultName);
 
                 // TODO: don't hardcode EN
                 string uniqueKey = "en:" + metadata.ID;
@@ -192,7 +192,7 @@ namespace AssemblyResolver
 
             foreach (RemoteAssemblyState ras in usedAssemblies)
             {
-                assemblies.Add(ras.Id, new AssemblyMetadata(ras.AbsolutePathToLibrary, ras.Id));
+                assemblies.Add(ras.Id, AssemblyMetadataFactory.CreateLibrary(ras.AbsolutePathToLibrary, ras.Id));
             }
 
             return assemblies.Values.ToArray();

@@ -29,7 +29,7 @@ namespace Parser
         {
             this.BuildContext = buildContext;
             this.IsCSharpCompat = buildContext.IsCSharpCompatibilityMode;
-            this.PushScope(new CompilationScope(buildContext, new AssemblyMetadata(buildContext.CompilerLocale)));
+            this.PushScope(new CompilationScope(buildContext, AssemblyMetadataFactory.CreateUserDefined(buildContext.CompilerLocale)));
             this.ScopeManager = new ScopeManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();

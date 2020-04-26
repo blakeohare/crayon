@@ -149,7 +149,7 @@ namespace AssemblyResolver
 
         public AssemblyMetadata CreateNewAssemblyMetadataInstance()
         {
-            return new AssemblyMetadata(this.LocalDirectory, this.Id);
+            return AssemblyMetadataFactory.CreateLibrary(this.LocalDirectory, this.Id);
         }
     }
 }

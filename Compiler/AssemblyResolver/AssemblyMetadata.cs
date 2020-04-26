@@ -1,6 +1,5 @@
 ﻿using Common;
 using CommonUtil.Disk;
-using CommonUtil.Json;
 using Localization;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,67 +13,26 @@ namespace AssemblyResolver
             return "AssemblyMetadata: " + this.ID + " (" + this.Version + ")";
         }
 
-        public string Directory { get; private set; }
-        public string ID { get; private set; }
-        public string Version { get { return "v1"; } } // TODO: versions
-        public JsonLookup Manifest { get; private set; }
-        public Locale InternalLocale { get; private set; }
-        public string CanonicalKey { get; private set; }
-        public HashSet<Locale> SupportedLocales { get; private set; }
-        public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
-        public HashSet<string> OnlyImportableFrom { get; private set; }
-        public bool IsUserDefined { get; private set; }
-
-        // For user defined scopes
-        public AssemblyMetadata(Locale locale)
-        {
-            this.ID = ".";
-            this.InternalLocale = locale;
-            this.CanonicalKey = ".";
-            this.SupportedLocales = new HashSet<Locale>() { locale };
-            this.OnlyImportableFrom = new HashSet<string>();
-            this.IsUserDefined = true;
-            this.CniFunctions = new Dictionary<string, int>();
-        }
-
-        public AssemblyMetadata(string directory, string id)
-        {
-            this.Directory = directory;
-            this.ID = id;
-            this.IsUserDefined = false;
-
-            string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
-            try
-            {
-                this.Manifest = new JsonLookup(new JsonParser(manifestText)
-                    .AddOption(JsonOption.ALLOW_TRAILING_COMMA)
-                    .AddOption(JsonOption.ALLOW_COMMENTS)
-                    .ParseAsDictionary());
-            }
-            catch (JsonParser.JsonParserException jpe)
-            {
-                throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + id + "'.", jpe);
-            }
-
-            this.InternalLocale = Locale.Get(this.Manifest.GetAsString("localization.default", "en"));
-            this.CanonicalKey = this.InternalLocale.ID + ":" + this.ID;
-            this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsDictionary("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
-            this.SupportedLocales.Add(this.InternalLocale);
-            this.OnlyImportableFrom = new HashSet<string>(this.Manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
-            this.CniFunctions = new Dictionary<string, int>();
-            foreach (IDictionary<string, object> cniEntry in this.Manifest.GetAsList("cni").OfType<IDictionary<string, object>>())
-            {
-                if (cniEntry.ContainsKey("name") && cniEntry.ContainsKey("argc"))
-                {
-                    string name = cniEntry["name"].ToString();
-                    int argc = (int)cniEntry["argc"];
-                    this.CniFunctions[name] = argc;
-                }
-            }
-            this.CniStartupFunction = this.Manifest.GetAsString("cni-startup");
-        }
-
+        public string Directory { get; set; }
+        public string ID { get; set; }
+        public Locale InternalLocale { get; set; }
+        public string CanonicalKey { get; set; }
+        public HashSet<Locale> SupportedLocales { get; set; }
+        public HashSet<string> OnlyImportableFrom { get; set; }
+        public bool IsUserDefined { get; set; }
+        public Dictionary<string, int> CniFunctions { get; set; }
+        public string CniStartupFunction { get; set; }
+        public Dictionary<string, string> NameByLocale { get; set; }
         private Dictionary<string, AssemblyMetadata> directDependencies = new Dictionary<string, AssemblyMetadata>();
+
+        public string Version { get { return "v1"; } } // TODO: versions
+        public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
+        public bool HasNativeCode { get { return this.CniFunctions.Count > 0; } }
+
+        public AssemblyMetadata()
+        {
+            this.NameByLocale = new Dictionary<string, string>();
+        }
 
         public AssemblyMetadata[] DirectDependencies
         {
@@ -96,18 +54,9 @@ namespace AssemblyResolver
             this.directDependencies[assembly.ID] = assembly;
         }
 
-        public Dictionary<string, int> CniFunctions { get; private set; }
-
-        public string CniStartupFunction { get; private set; }
-
-        private Dictionary<string, string> nameByLocale = new Dictionary<string, string>();
         public string GetName(Locale locale)
         {
-            if (!nameByLocale.ContainsKey(locale.ID))
-            {
-                nameByLocale[locale.ID] = this.Manifest.GetAsString("localization.names." + locale.ID, this.ID);
-            }
-            return nameByLocale[locale.ID];
+            return this.NameByLocale.ContainsKey(locale.ID) ? this.NameByLocale[locale.ID] : this.ID;
         }
 
         public bool IsAllowedImport(AssemblyMetadata fromAssembly)
@@ -143,30 +92,6 @@ namespace AssemblyResolver
         private Dictionary<string, string> structFiles = null;
 
         private PkgAwareFileUtil fileUtil = new PkgAwareFileUtil();
-
-        public Dictionary<string, string> GetStructFilesCode()
-        {
-            if (this.structFiles == null)
-            {
-                this.structFiles = new Dictionary<string, string>();
-                string structFilesDir = FileUtil.JoinPath(this.Directory, "structs");
-                if (fileUtil.DirectoryExists(structFilesDir))
-                {
-                    foreach (string name in fileUtil.ListFiles(structFilesDir))
-                    {
-                        this.structFiles[name] = this.ReadFile(false, FileUtil.JoinPath("structs", name), false);
-                    }
-                }
-            }
-            return this.structFiles;
-        }
-
-        public string GetPastelCodeDirectory()
-        {
-            return FileUtil.JoinPath(this.Directory, "pastel", "src");
-        }
-
-        public bool HasNativeCode { get { return this.CniFunctions.Count > 0; } }
 
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {
