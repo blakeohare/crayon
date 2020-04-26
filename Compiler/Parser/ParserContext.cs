@@ -20,7 +20,6 @@ namespace Parser
 
         public FunctionDefinition MainFunction { get; set; }
         public FunctionDefinition CoreLibInvokeFunction { get; set; }
-        public bool IsCSharpCompat { get; private set; }
 
         // TODO: make this configurable.
         public bool IncludeDebugSymbols { get { return true; } }
@@ -28,7 +27,6 @@ namespace Parser
         public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;
-            this.IsCSharpCompat = buildContext.IsCSharpCompatibilityMode;
             this.PushScope(new CompilationScope(buildContext, AssemblyMetadataFactory.CreateUserDefined(buildContext.CompilerLocale)));
             this.ScopeManager = new ScopeManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
@@ -356,9 +354,7 @@ namespace Parser
             namespaceImportsBuilder.Add(implicitCoreImport.Name);
             fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, fileScope));
 
-            while (tokens.HasMore &&
-                (tokens.IsNext(this.Keywords.IMPORT) ||
-                (this.IsCSharpCompat && tokens.IsNext("using"))))
+            while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
                 ImportStatement importStatement = this.TopLevelParser.ParseImport(tokens, fileScope);
                 if (importStatement == null) throw new Exception();

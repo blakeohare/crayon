@@ -49,7 +49,6 @@ namespace Build.BuildParseNodes
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
-            item.IsCSharpCompatMode = json.GetAsBoolean("csharp-compat-mode");
             item.IconFilePaths = (json.GetAsList("icons") ?? new object[0]).OfType<string>().ToArray();
             item.HasLegacyIcon = json.GetAsString("icon") != null;
             item.DelegateMainTo = json.GetAsString("delegate-main-to");

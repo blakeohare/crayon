@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    // TODO(acrylic-convert): Rename to ListOrArrayDefinition
     public class ListDefinition : Expression
     {
         public Expression[] Items { get; private set; }

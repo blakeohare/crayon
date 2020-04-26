@@ -20,9 +20,7 @@ namespace Parser
 
         internal virtual ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
         {
-            Token importToken = this.parser.IsCSharpCompat
-                ? tokens.PopExpected(parser.Keywords.IMPORT, "using")
-                : tokens.PopExpected(parser.Keywords.IMPORT);
+            Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
 
             List<string> importPathBuilder = new List<string>();
             while (!tokens.PopIfPresent(";"))

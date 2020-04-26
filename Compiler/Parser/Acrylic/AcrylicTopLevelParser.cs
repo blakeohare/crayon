@@ -69,12 +69,8 @@ namespace Parser.Acrylic
                         methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, modifiers, annotations));
                         break;
                     case "{":
-                        if (!this.parser.IsCSharpCompat)
-                        {
-                            // TODO(acrylic-convert): properties should be implemented in Acrylic, just not yet.
-                            tokens.PopExpected("}"); // intentionally induce error
-                        }
-                        propertiesOut.Add(this.ParseProperty(tokens, classDef, fileScope, modifiers, annotations));
+                        // TODO(acrylic): properties should be implemented in Acrylic, just not yet.
+                        tokens.PopExpected("}"); // intentionally induce error
                         break;
                     default:
                         tokens.PopExpected("}"); // intentionally induce error

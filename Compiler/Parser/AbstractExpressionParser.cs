@@ -423,36 +423,6 @@ namespace Parser
                     string className = this.parser.PopClassNameWithFirstTokenAlreadyPopped(tokens, classToken);
                     root = new IsComparison(root, isToken, classToken, className, owner);
                 }
-                else if (isPreviousADot && this.parser.IsCSharpCompat && tokens.IsNext("<"))
-                {
-                    TokenStream.StreamState s = tokens.RecordState();
-                    Token openBracket = tokens.Pop();
-                    AType funcType = this.parser.TypeParser.TryParse(tokens);
-
-                    List<AType> types = new List<AType>() { funcType };
-                    if (funcType != null)
-                    {
-                        while (tokens.PopIfPresent(","))
-                        {
-                            types.Add(this.parser.TypeParser.Parse(tokens));
-                        }
-                    }
-
-                    if (funcType == null)
-                    {
-                        anySuffixes = false;
-                        tokens.RestoreState(s);
-                    }
-                    else if (!tokens.PopIfPresent(">") || !tokens.IsNext("("))
-                    {
-                        anySuffixes = false;
-                        tokens.RestoreState(s);
-                    }
-                    else
-                    {
-                        // TODO(acrylic-conversion): do something with this types list.
-                    }
-                }
                 else
                 {
                     anySuffixes = false;

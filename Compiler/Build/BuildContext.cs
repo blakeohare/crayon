@@ -38,7 +38,6 @@ namespace Build
         public NullableInteger WindowHeight { get; set; }
         public Locale CompilerLocale { get; set; }
         public string[] IconFilePaths { get; set; }
-        public bool IsCSharpCompatibilityMode { get; set; }
         public string DelegateMainTo { get; set; }
 
         private static Target FindTarget(string targetName, IList<Target> targets)
@@ -136,7 +135,6 @@ namespace Build
             string description = desiredTarget.Description ?? buildInput.Description ?? "";
             Size windowSize = Size.Merge(desiredTarget.WindowSize, buildInput.WindowSize) ?? new Size();
             string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
-            bool isCSharpCompatMode = desiredTarget.IsCSharpCompatMode || buildInput.IsCSharpCompatMode; // TODO(acrylic-convert): should have unset state with ??
             string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
             string delegateMainTo = desiredTarget.DelegateMainTo ?? buildInput.DelegateMainTo;
 
@@ -203,7 +201,6 @@ namespace Build
                 WindowWidth = windowSize.Width,
                 WindowHeight = windowSize.Height,
                 CompilerLocale = Locale.Get(compilerLocale),
-                IsCSharpCompatibilityMode = isCSharpCompatMode,
                 DelegateMainTo = delegateMainTo,
             };
 

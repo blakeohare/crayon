@@ -67,8 +67,6 @@ namespace Parser
                 if (value == this.parser.Keywords.BREAK) return this.ParseBreak(tokens, owner);
                 if (value == this.parser.Keywords.CONTINUE) return this.ParseContinue(tokens, owner);
                 if (value == this.parser.Keywords.THROW) return this.ParseThrow(tokens, owner);
-
-                if (this.parser.IsCSharpCompat && value == "foreach") return this.ParseForEachCSharp(tokens, owner);
             }
 
             Assignment assignmentExec = this.MaybeParseTypedVariableDeclaration(tokens, owner);
@@ -165,21 +163,6 @@ namespace Parser
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
                 return new ForLoop(forToken, parts.Init, parts.Condition, parts.Step, body, owner);
             }
-        }
-
-        private ForEachLoop ParseForEachCSharp(TokenStream tokens, Node owner)
-        {
-            if (!this.parser.IsCSharpCompat) throw new System.InvalidOperationException();
-
-            Token foreachToken = tokens.PopExpected("foreach");
-            tokens.PopExpected("(");
-            AType iteratorVariableType = this.parser.TypeParser.Parse(tokens);
-            Token iteratorVariable = tokens.PopWord();
-            tokens.PopExpected("in");
-            Expression listExpr = this.parser.ExpressionParser.Parse(tokens, owner);
-            tokens.PopExpected(")");
-            IList<Executable> body = this.ParseBlock(tokens, false, owner);
-            return new ForEachLoop(foreachToken, iteratorVariableType, iteratorVariable, listExpr, body, owner);
         }
 
         protected abstract Pair<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner);

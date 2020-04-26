@@ -38,7 +38,6 @@ namespace Build.BuildParseNodes
         public string JavaPackage { get; set; }
         public Size WindowSize { get; set; }
         public string CompilerLocale { get; set; }
-        public bool IsCSharpCompatMode { get; set; }
 
         public bool ExportDebugByteCode
         {
