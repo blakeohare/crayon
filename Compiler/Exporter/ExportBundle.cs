@@ -1,7 +1,7 @@
 ﻿using Build;
 using Common;
-using Exporter.ByteCode;
 using Parser;
+using Parser.ByteCode;
 using System.Collections.Generic;
 
 namespace Exporter
