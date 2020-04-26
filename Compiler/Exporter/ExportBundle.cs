@@ -26,42 +26,34 @@ namespace Exporter
         public string Version { get; set; }
         public string Description { get; set; }
 
-        public static ExportBundle Compile(BuildContext buildContext)
+        public static ExportBundle Compile(CompilationBundle compilation, BuildContext buildContext)
         {
-            using (new PerformanceSection("ExportBundle.Compile"))
+            string jsFilePrefix = buildContext.JsFilePrefix;
+            jsFilePrefix = (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
+                ? ""
+                : ("/" + buildContext.JsFilePrefix.Trim('/') + "/");
+
+
+            return new ExportBundle()
             {
-                ParserContext parserContext = new ParserContext(buildContext);
-                Parser.ParseTree.TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
-
-                ByteCodeCompiler bcc = new ByteCodeCompiler();
-                ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);
-
-                string jsFilePrefix = buildContext.JsFilePrefix;
-                jsFilePrefix = (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
-                    ? ""
-                    : ("/" + buildContext.JsFilePrefix.Trim('/') + "/");
-
-                return new ExportBundle()
-                {
-                    ByteCode = ByteCodeEncoder.Encode(buffer),
-                    UserCodeScope = parserContext.RootScope,
-                    LibraryScopesUsed = parserContext.ScopeManager.ImportedAssemblyScopes.ToArray(),
-                    ProjectID = buildContext.ProjectID,
-                    Version = buildContext.TopLevelAssembly.Version,
-                    Description = buildContext.TopLevelAssembly.Description,
-                    GuidSeed = buildContext.GuidSeed,
-                    ProjectTitle = buildContext.ProjectTitle,
-                    JsFilePrefix = jsFilePrefix,
-                    JsFullPage = buildContext.JsFullPage,
-                    IosBundlePrefix = buildContext.IosBundlePrefix,
-                    JavaPackage = buildContext.JavaPackage,
-                    IconPaths = buildContext.IconFilePaths,
-                    LaunchScreenPath = buildContext.LaunchScreenPath,
-                    WindowWidth = buildContext.WindowWidth,
-                    WindowHeight = buildContext.WindowHeight,
-                    Orientations = buildContext.Orientation,
-                };
-            }
+                ByteCode = compilation.ByteCode,
+                UserCodeScope = compilation.RootScope,
+                LibraryScopesUsed = compilation.AllScopes,
+                ProjectID = buildContext.ProjectID,
+                Version = buildContext.TopLevelAssembly.Version,
+                Description = buildContext.TopLevelAssembly.Description,
+                GuidSeed = buildContext.GuidSeed,
+                ProjectTitle = buildContext.ProjectTitle,
+                JsFilePrefix = jsFilePrefix,
+                JsFullPage = buildContext.JsFullPage,
+                IosBundlePrefix = buildContext.IosBundlePrefix,
+                JavaPackage = buildContext.JavaPackage,
+                IconPaths = buildContext.IconFilePaths,
+                LaunchScreenPath = buildContext.LaunchScreenPath,
+                WindowWidth = buildContext.WindowWidth,
+                WindowHeight = buildContext.WindowHeight,
+                Orientations = buildContext.Orientation,
+            };
         }
     }
 }

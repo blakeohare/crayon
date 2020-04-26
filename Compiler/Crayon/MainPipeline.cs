@@ -45,10 +45,11 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                    ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
+                    Parser.CompilationBundle compilation = Parser.CompilationBundle.Compile(buildContext);
+                    ExportBundle exportBundle = Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(compilation, command, buildContext);
                     if (command.ShowDependencyTree)
                     {
-                        new ShowAssemblyDepsWorker().DoWorkImpl(result.UserCodeScope);
+                        new ShowAssemblyDepsWorker().DoWorkImpl(exportBundle.UserCodeScope);
                     }
                     break;
 
@@ -145,15 +146,12 @@ namespace Crayon.Pipeline
         {
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
 
+            Parser.CompilationBundle compilation = Parser.CompilationBundle.Compile(buildContext);
             if (isDryRunErrorCheck)
             {
-                Exporter.Pipeline.PerformErrorCheckPipeline.Run(command, buildContext);
                 return null;
             }
-            else
-            {
-                return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(command, buildContext);
-            }
+            return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(compilation, command, buildContext);
         }
 
         private static void RenderErrorInfoAsJson(ExportCommand command, Exception exception)

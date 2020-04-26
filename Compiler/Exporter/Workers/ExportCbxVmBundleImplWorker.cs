@@ -8,20 +8,19 @@ using System.Linq;
 
 namespace Exporter.Workers
 {
-    public class ExportCbxVmBundleImplWorker
+    public static class ExportCbxVmBundleImplWorker
     {
-        public ExportBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
+        public static ExportBundle ExportVmBundle(Parser.CompilationBundle compilation, ExportCommand command, BuildContext buildContext)
         {
             // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();
             Platform.AbstractPlatform platform = command.PlatformProvider.GetPlatform(platformId);
             if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
-            // TODO: Worker: Compile
-            ExportBundle compilationResult = ExportBundle.Compile(buildContext);
-            AssemblyMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Metadata).ToArray();
+            ExportBundle exportBundle = ExportBundle.Compile(compilation, buildContext);
+            AssemblyMetadata[] libraries = exportBundle.LibraryScopesUsed.Select(scope => scope.Metadata).ToArray();
 
-            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, compilationResult.ByteCode);
+            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, exportBundle.ByteCode);
 
             string outputDirectory = command.HasOutputDirectoryOverride
                 ? command.OutputDirectoryOverride
@@ -38,7 +37,7 @@ namespace Exporter.Workers
             vmGenerator.GenerateVmSourceCodeForPlatform(
                 result,
                 platform,
-                compilationResult,
+                exportBundle,
                 resourceDatabase,
                 libraries,
                 outputDirectory,
@@ -47,7 +46,7 @@ namespace Exporter.Workers
             exporter.ExportFiles(result);
 
             // TODO: this needs to be the result of an earlier step after this is split into workers.
-            return compilationResult;
+            return exportBundle;
         }
     }
 }
