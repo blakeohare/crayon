@@ -89,8 +89,6 @@ namespace AssemblyResolver
             return output;
         }
 
-        private Dictionary<string, string> structFiles = null;
-
         private PkgAwareFileUtil fileUtil = new PkgAwareFileUtil();
 
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
@@ -117,31 +115,6 @@ namespace AssemblyResolver
             }
 
             throw new System.InvalidOperationException("Missing resource in library '" + this.ID + "': '" + pathRelativeToLibraryRoot + "'");
-        }
-
-        // This ONLY gets the translations that are specific only for this platform and does not do any inheritance chain walking.
-        public Dictionary<string, string> GetMethodTranslations(string platformName)
-        {
-            string methodTranslations = this.ReadFile(false, FileUtil.JoinPath("pastel", "extensions", platformName + ".txt"), true);
-            Dictionary<string, string> translationsLookup = new Dictionary<string, string>();
-            if (methodTranslations != null)
-            {
-                foreach (string line in methodTranslations.Split('\n'))
-                {
-                    string[] parts = line.Trim().Split(':');
-                    if (parts.Length > 1)
-                    {
-                        string key = parts[0];
-                        string value = parts[1];
-                        for (int i = 2; i < parts.Length; ++i)
-                        {
-                            value += ":" + parts[i];
-                        }
-                        translationsLookup[key.Trim()] = value.Trim();
-                    }
-                }
-            }
-            return translationsLookup;
         }
     }
 }
