@@ -46,7 +46,7 @@ namespace Crayon.Pipeline
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
                     ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
-                    if (command.ShowLibraryDepTree)
+                    if (command.ShowDependencyTree)
                     {
                         new ShowAssemblyDepsWorker().DoWorkImpl(result.UserCodeScope);
                     }

@@ -7,7 +7,7 @@ namespace Crayon
     public class FlagParser
     {
         private static readonly string READABLE_BYTE_CODE = "readablebytecode";
-        private static readonly string LIBRARY_DEP_TREE = "showLibDepTree";
+        private static readonly string SHOW_DEP_TREE = "showDepTree";
         private static readonly string SHOW_PERFORMANCE_MARKERS = "showperf";
         private static readonly string BUILD_TARGET = "target";
         private static readonly string BUILD_FILE = "buildfile";
@@ -48,7 +48,7 @@ namespace Crayon
             DEBUGGER,
             ERROR_CHECK_ONLY,
             JSON_OUTPUT,
-            LIBRARY_DEP_TREE,
+            SHOW_DEP_TREE,
             READABLE_BYTE_CODE,
             SHOW_LIB_STACK,
             SHOW_PERFORMANCE_MARKERS,
@@ -249,7 +249,7 @@ namespace Crayon
         private static void ParseAdditionalArgs(ExportCommand command, Dictionary<string, string> args)
         {
             command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
-            command.ShowLibraryDepTree = args.ContainsKey(LIBRARY_DEP_TREE);
+            command.ShowDependencyTree = args.ContainsKey(SHOW_DEP_TREE);
             command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
             command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
             command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
