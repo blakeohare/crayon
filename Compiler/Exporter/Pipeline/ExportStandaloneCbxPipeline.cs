@@ -13,7 +13,7 @@ namespace Exporter.Pipeline
             string outputDirectory = new GetOutputDirectoryWorker().DoWorkImpl(buildContext);
             ExportBundle compilationResult = ExportBundle.Compile(buildContext);
             ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext, null);
-            string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
+            string byteCode = compilationResult.ByteCode;
             byte[] cbxFileBytes = new GenerateCbxFileContentWorker().GenerateCbxBinaryData(buildContext, resDb, compilationResult, byteCode);
             Dictionary<string, FileOutput> fileOutputContext = new Dictionary<string, FileOutput>();
             new PopulateFileOutputContextForCbxWorker().GenerateFileOutput(fileOutputContext, buildContext, resDb, cbxFileBytes);

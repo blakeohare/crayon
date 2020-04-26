@@ -8,7 +8,7 @@ namespace Exporter
 {
     public class ExportBundle
     {
-        public ByteBuffer ByteCode { get; set; }
+        public string ByteCode { get; set; }
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
         public ICollection<CompilationScope> LibraryScopesUsed { get; set; }
@@ -43,7 +43,7 @@ namespace Exporter
 
                 return new ExportBundle()
                 {
-                    ByteCode = buffer,
+                    ByteCode = ByteCodeEncoder.Encode(buffer),
                     UserCodeScope = parserContext.RootScope,
                     LibraryScopesUsed = parserContext.ScopeManager.ImportedAssemblyScopes.ToArray(),
                     ProjectID = buildContext.ProjectID,

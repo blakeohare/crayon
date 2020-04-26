@@ -1,5 +1,4 @@
 ﻿using Build;
-using Exporter.ByteCode;
 
 namespace Exporter.Pipeline
 {
@@ -7,8 +6,7 @@ namespace Exporter.Pipeline
     {
         public static void Run(ExportCommand command, BuildContext buildContext)
         {
-            ExportBundle compilationResult = ExportBundle.Compile(buildContext);
-            ByteCodeEncoder.Encode(compilationResult.ByteCode);
+            ExportBundle.Compile(buildContext);
         }
     }
 }

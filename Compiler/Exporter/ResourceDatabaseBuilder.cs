@@ -17,7 +17,7 @@ namespace Exporter
 
         public static ResourceDatabase PrepareResources(
             BuildContext buildContext,
-            ByteBuffer nullableByteCode) // CBX files will not have this in the resources
+            string nullableByteCode) // CBX files will not have this in the resources
         {
             using (new PerformanceSection("Program.PrepareResources"))
             {
@@ -28,7 +28,7 @@ namespace Exporter
                     resourceDatabase.ByteCodeFile = new FileOutput()
                     {
                         Type = FileOutputType.Text,
-                        TextContent = ByteCodeEncoder.Encode(nullableByteCode),
+                        TextContent = nullableByteCode,
                     };
                 }
 
