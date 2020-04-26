@@ -3,6 +3,7 @@ using Common;
 using Exporter;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Crayon.Pipeline
 {
@@ -46,11 +47,15 @@ namespace Crayon.Pipeline
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
                     Parser.CompilationBundle compilation = Parser.CompilationBundle.Compile(buildContext);
-                    ExportBundle exportBundle = Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(compilation, command, buildContext);
                     if (command.ShowDependencyTree)
                     {
-                        new ShowAssemblyDepsWorker().DoWorkImpl(exportBundle.UserCodeScope);
+                        new ShowAssemblyDepsWorker().DoWorkImpl(compilation.RootScope);
                     }
+                    ExportBundle exportBundle = Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(
+                        compilation.ByteCode,
+                        compilation.AllScopes.Select(s => s.Metadata).ToArray(),
+                        command,
+                        buildContext);
                     break;
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
@@ -151,7 +156,7 @@ namespace Crayon.Pipeline
             {
                 return null;
             }
-            return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(compilation, command, buildContext);
+            return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(compilation.ByteCode, compilation.AllScopes.Select(s => s.Metadata).ToArray(), command, buildContext);
         }
 
         private static void RenderErrorInfoAsJson(ExportCommand command, Exception exception)

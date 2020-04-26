@@ -1,7 +1,6 @@
 ﻿using Build;
 using Common;
 using CommonUtil;
-using Parser;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,10 +22,10 @@ namespace Exporter.Workers
             cbxOutput.AddRange(code);
 
             List<string> libraries = new List<string>();
-            foreach (CompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Metadata.HasNativeCode))
+            foreach (AssemblyResolver.AssemblyMetadata libMetadata in compilationResult.LibraryAssemblies.Where(asm => asm.HasNativeCode))
             {
-                libraries.Add(scopeForLibrary.Metadata.ID);
-                libraries.Add(scopeForLibrary.Metadata.Version);
+                libraries.Add(libMetadata.ID);
+                libraries.Add(libMetadata.Version);
             }
             string libsData = string.Join(",", libraries);
             byte[] libsDataBytes = StringUtil.ToUtf8Bytes(libsData);

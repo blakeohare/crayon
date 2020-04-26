@@ -10,15 +10,15 @@ namespace Exporter.Workers
 {
     public static class ExportCbxVmBundleImplWorker
     {
-        public static ExportBundle ExportVmBundle(Parser.CompilationBundle compilation, ExportCommand command, BuildContext buildContext)
+        public static ExportBundle ExportVmBundle(string byteCode, IList<AssemblyMetadata> assemblies, ExportCommand command, BuildContext buildContext)
         {
             // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();
             Platform.AbstractPlatform platform = command.PlatformProvider.GetPlatform(platformId);
             if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
-            ExportBundle exportBundle = ExportBundle.Compile(compilation, buildContext);
-            AssemblyMetadata[] libraries = exportBundle.LibraryScopesUsed.Select(scope => scope.Metadata).ToArray();
+            ExportBundle exportBundle = ExportBundle.Compile(byteCode, assemblies, buildContext);
+            AssemblyMetadata[] libraries = exportBundle.LibraryAssemblies.ToArray();
 
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, exportBundle.ByteCode);
 

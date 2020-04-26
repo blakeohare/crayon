@@ -1,8 +1,8 @@
 ﻿using Build;
 using Common;
-using Parser;
-using Parser.ByteCode;
+using AssemblyResolver;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exporter
 {
@@ -11,8 +11,7 @@ namespace Exporter
         public string ByteCode { get; set; }
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
-        public ICollection<CompilationScope> LibraryScopesUsed { get; set; }
-        public CompilationScope UserCodeScope { get; set; }
+        public IList<AssemblyResolver.AssemblyMetadata> LibraryAssemblies { get; set; }
         public string[] IconPaths { get; set; }
         public string LaunchScreenPath { get; set; }
         public string ProjectTitle { get; set; }
@@ -26,7 +25,7 @@ namespace Exporter
         public string Version { get; set; }
         public string Description { get; set; }
 
-        public static ExportBundle Compile(CompilationBundle compilation, BuildContext buildContext)
+        public static ExportBundle Compile(string byteCode, IList<AssemblyMetadata> libraryAssemblies, BuildContext buildContext)
         {
             string jsFilePrefix = buildContext.JsFilePrefix;
             jsFilePrefix = (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
@@ -36,9 +35,8 @@ namespace Exporter
 
             return new ExportBundle()
             {
-                ByteCode = compilation.ByteCode,
-                UserCodeScope = compilation.RootScope,
-                LibraryScopesUsed = compilation.AllScopes,
+                ByteCode = byteCode,
+                LibraryAssemblies = libraryAssemblies.ToArray(),
                 ProjectID = buildContext.ProjectID,
                 Version = buildContext.TopLevelAssembly.Version,
                 Description = buildContext.TopLevelAssembly.Description,

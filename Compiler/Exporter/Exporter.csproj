@@ -62,10 +62,6 @@
       <Project>{d64b5413-739c-4bbd-b70b-264cfae4b720}</Project>
       <Name>Localization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Parser\Parser.csproj">
-      <Project>{70941077-b058-4a91-ac11-38e22930f01f}</Project>
-      <Name>Parser</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
