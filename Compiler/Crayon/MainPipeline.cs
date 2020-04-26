@@ -40,7 +40,7 @@ namespace Crayon.Pipeline
                     break;
 
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
-                    new GenerateDefaultProjectWorker().DoWorkImpl(command);
+                    new DefaultProjectGenerator().DoWorkImpl(command.DefaultProjectId, command.DefaultProjectLocale);
                     break;
 
                 case ExecutionType.EXPORT_VM_BUNDLE:

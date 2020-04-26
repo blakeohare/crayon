@@ -44,9 +44,6 @@
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DefaultProject\*.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AssemblyResolver\AssemblyResolver.csproj">
       <Project>{d32d3f5e-09f8-4edc-8930-a12c25a10bc7}</Project>
       <Name>AssemblyResolver</Name>
