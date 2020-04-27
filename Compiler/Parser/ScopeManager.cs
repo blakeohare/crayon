@@ -1,5 +1,4 @@
 ﻿using AssemblyResolver;
-using Build;
 using Localization;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +16,9 @@ namespace Parser
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> assembliesAlreadyImportedIndexByKey = new Dictionary<string, int>();
 
-        public ScopeManager(BuildContext buildContext)
+        public ScopeManager(CompileRequest compileRequest)
         {
-            this.assemblyFinder = new AssemblyFinder(buildContext.LocalDeps, buildContext.RemoteDeps, buildContext.ProjectDirectory);
+            this.assemblyFinder = new AssemblyFinder(compileRequest.LocalDeps, compileRequest.RemoteDeps, compileRequest.ProjectDirectory);
             this.ImportedAssemblyScopes = new List<CompilationScope>();
         }
 

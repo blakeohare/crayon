@@ -1,5 +1,4 @@
-﻿using Build;
-using Common;
+﻿using Common;
 using Parser.ByteCode;
 using Parser.ParseTree;
 
@@ -7,14 +6,14 @@ namespace Parser
 {
     public static class Compiler
     {
-        public static CompilationBundle Compile(BuildContext buildContext, bool isRelease)
+        public static CompilationBundle Compile(CompileRequest compileRequest, bool isRelease)
         {
             CompilationBundle result;
             if (isRelease)
             {
                 try
                 {
-                    result = CompileImpl(buildContext);
+                    result = CompileImpl(compileRequest);
                 }
                 catch (MultiParserException multiException)
                 {
@@ -33,16 +32,16 @@ namespace Parser
             }
             else
             {
-                result = CompileImpl(buildContext);
+                result = CompileImpl(compileRequest);
             }
             return result;
         }
 
-        private static CompilationBundle CompileImpl(BuildContext buildContext)
+        private static CompilationBundle CompileImpl(CompileRequest compileRequest)
         {
             using (new PerformanceSection("ExportBundle.Compile"))
             {
-                ParserContext parserContext = new ParserContext(buildContext);
+                ParserContext parserContext = new ParserContext(compileRequest);
                 TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
 
                 ByteCodeCompiler bcc = new ByteCodeCompiler();

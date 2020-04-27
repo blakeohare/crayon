@@ -28,18 +28,18 @@ namespace Parser
         // TODO: make this configurable.
         public bool IncludeDebugSymbols { get { return true; } }
 
-        public ParserContext(BuildContext buildContext)
+        public ParserContext(CompileRequest compileRequest)
         {
-            this.ProjectId = buildContext.ProjectID;
-            this.TopLevelAssembly = buildContext.TopLevelAssembly;
-            this.DelegateMainTo = buildContext.DelegateMainTo;
-            Locale rootLocale = buildContext.CompilerLocale;
+            this.ProjectId = compileRequest.ProjectId;
+            this.TopLevelAssembly = compileRequest.TopLevelAssembly;
+            this.DelegateMainTo = compileRequest.DelegateMainTo;
+            Locale rootLocale = compileRequest.CompilerLocale;
 
-            AssemblyMetadata userDefinedAssembly = AssemblyMetadataFactory.CreateUserDefined(buildContext.CompilerLocale);
+            AssemblyMetadata userDefinedAssembly = AssemblyMetadataFactory.CreateUserDefined(compileRequest.CompilerLocale);
             CompilationScope userDefinedScope = new CompilationScope(this.TopLevelAssembly, userDefinedAssembly, rootLocale, this.TopLevelAssembly.ProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
-            this.ScopeManager = new ScopeManager(buildContext);
+            this.ScopeManager = new ScopeManager(compileRequest);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.LiteralLookup = new LiteralLookup();

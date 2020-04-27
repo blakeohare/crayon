@@ -53,7 +53,7 @@ namespace Crayon.Pipeline
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
 
-                    Parser.CompilationBundle compilation = Parser.Compiler.Compile(buildContext, isRelease);
+                    Parser.CompilationBundle compilation = Parser.Compiler.Compile(new Parser.CompileRequest() { BuildContext = buildContext }, isRelease);
 
                     if (compilation.HasErrors)
                     {
@@ -174,7 +174,7 @@ namespace Crayon.Pipeline
         {
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
 
-            Parser.CompilationBundle compilation = Parser.Compiler.Compile(buildContext, isRelease);
+            Parser.CompilationBundle compilation = Parser.Compiler.Compile(new Parser.CompileRequest() { BuildContext = buildContext }, isRelease);
             if (isDryRunErrorCheck)
             {
                 return new ExportResponse() { Errors = compilation.Errors };
