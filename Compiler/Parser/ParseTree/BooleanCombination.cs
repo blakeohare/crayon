@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class BooleanCombination : Expression
+    internal class BooleanCombination : Expression
     {
         public Expression[] Expressions { get; private set; }
         public Token[] Ops { get; private set; }

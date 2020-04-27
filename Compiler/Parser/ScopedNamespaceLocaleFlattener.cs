@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class ScopedNamespaceLocaleFlattener
+    internal class ScopedNamespaceLocaleFlattener
     {
         private NamespaceTreeNode root = new NamespaceTreeNode("*", null, -1);
 
@@ -55,7 +55,7 @@ namespace Parser
             }
         }
 
-        public void AddNamespace(Namespace ns)
+        internal void AddNamespace(Namespace ns)
         {
             Queue<string> segments = new Queue<string>();
             segments.Enqueue("*");

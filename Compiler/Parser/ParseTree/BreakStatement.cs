@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class BreakStatement : Executable
+    internal class BreakStatement : Executable
     {
         public BreakStatement(Token breakToken, Node owner)
             : base(breakToken, owner)

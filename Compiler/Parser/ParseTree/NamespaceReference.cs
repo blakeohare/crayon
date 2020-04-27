@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class NamespaceReferenceTemplate
+    internal class NamespaceReferenceTemplate
     {
         public string Name { get; set; }
 
@@ -45,7 +45,7 @@ namespace Parser.ParseTree
 
     // This serves as an ephemeral instance of an Expression that relays the NamespaceReferenceTemplate to
     // the next parent node of the name resolver. It should never reach the byte code serialization phase.
-    public class NamespaceReference : Expression
+    internal class NamespaceReference : Expression
     {
         public NamespaceReferenceTemplate Template { get; private set; }
         public Namespace OriginalNamespace { get; private set; }

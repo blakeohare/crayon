@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class EnumDefinition : TopLevelEntity
+    internal class EnumDefinition : TopLevelEntity
     {
         public string Name { get; private set; }
         public Token NameToken { get; private set; }

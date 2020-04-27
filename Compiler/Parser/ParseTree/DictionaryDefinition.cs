@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class DictionaryDefinition : Expression
+    internal class DictionaryDefinition : Expression
     {
         public AType KeyType { get; private set; }
         public AType ValueType { get; private set; }

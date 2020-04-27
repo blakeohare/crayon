@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class TokenStream
+    internal class TokenStream
     {
         public class StreamState
         {
@@ -13,13 +13,13 @@ namespace Parser
         private readonly FileScope file;
         private readonly InnerTokenStream innerStream;
 
-        public TokenStream(FileScope file)
+        internal TokenStream(FileScope file)
         {
             this.file = file;
             this.innerStream = new InnerTokenStream(Tokenizer.Tokenize(file));
         }
 
-        public StreamState RecordState()
+        internal StreamState RecordState()
         {
             return new StreamState() { Value = this.innerStream.Index };
         }

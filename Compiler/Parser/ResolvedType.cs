@@ -4,7 +4,7 @@ using Parser.ParseTree;
 
 namespace Parser
 {
-    public enum ResolvedTypeCategory
+    internal enum ResolvedTypeCategory
     {
         ANY,
         VOID,
@@ -23,7 +23,7 @@ namespace Parser
         FUNCTION_POINTER,
     }
 
-    public class ResolvedType
+    internal class ResolvedType
     {
         public override string ToString()
         {

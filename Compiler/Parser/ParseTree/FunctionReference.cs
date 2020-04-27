@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class FunctionReference : Expression
+    internal class FunctionReference : Expression
     {
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 

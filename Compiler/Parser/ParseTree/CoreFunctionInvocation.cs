@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class CoreFunctionInvocation : Expression
+    internal class CoreFunctionInvocation : Expression
     {
         public Expression[] Args { get; set; }
         public int FunctionId { get; set; }

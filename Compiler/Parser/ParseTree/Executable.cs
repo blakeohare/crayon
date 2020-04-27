@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public abstract class Executable : Node
+    internal abstract class Executable : Node
     {
         public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
 

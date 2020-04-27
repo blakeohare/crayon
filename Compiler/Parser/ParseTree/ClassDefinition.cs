@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ClassDefinition : TopLevelEntity
+    internal class ClassDefinition : TopLevelEntity
     {
         private static int classIdAlloc = 1;
 
@@ -64,7 +64,7 @@ namespace Parser.ParseTree
             return name;
         }
 
-        public void ResolveVariableOrigins(ParserContext parser)
+        internal void ResolveVariableOrigins(ParserContext parser)
         {
             foreach (FieldDefinition fd in this.Fields)
             {

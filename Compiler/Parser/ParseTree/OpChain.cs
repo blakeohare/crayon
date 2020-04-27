@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class OpChain : Expression
+    internal class OpChain : Expression
     {
         public Expression Left { get; private set; }
         public Expression Right { get; private set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class LiteralLookup
+    internal class LiteralLookup
     {
         private readonly List<Types> literalTypes;
         private readonly List<object> literalValues;

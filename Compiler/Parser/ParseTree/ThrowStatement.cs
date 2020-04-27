@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ThrowStatement : Executable
+    internal class ThrowStatement : Executable
     {
         public override bool IsTerminator { get { return true; } }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class Ternary : Expression
+    internal class Ternary : Expression
     {
         public Expression Condition { get; private set; }
         public Expression TrueValue { get; private set; }

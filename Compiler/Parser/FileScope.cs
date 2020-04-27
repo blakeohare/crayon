@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class FileScope
+    internal class FileScope
     {
         public string Name { get; private set; }
         public int ID { get; private set; }

@@ -9,7 +9,7 @@ namespace Parser.ByteCode
 {
     public class ByteCodeCompiler
     {
-        public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelEntity> lines)
+        internal ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelEntity> lines)
         {
             // This has to go first since it allocates the CNI function ID's
             ByteBuffer buildCniTable = this.BuildCniTable(parser);
@@ -261,7 +261,7 @@ namespace Parser.ByteCode
             return output;
         }
 
-        public void CompileTopLevelEntities(ParserContext parser, ByteBuffer buffer, IList<TopLevelEntity> entities)
+        internal void CompileTopLevelEntities(ParserContext parser, ByteBuffer buffer, IList<TopLevelEntity> entities)
         {
             foreach (TopLevelEntity entity in entities)
             {
@@ -269,14 +269,14 @@ namespace Parser.ByteCode
             }
         }
 
-        public void CompileTopLevelEntity(ParserContext parser, ByteBuffer buffer, TopLevelEntity entity)
+        internal void CompileTopLevelEntity(ParserContext parser, ByteBuffer buffer, TopLevelEntity entity)
         {
             if (entity is FunctionDefinition) FunctionDefinitionEncoder.Compile(this, parser, buffer, (FunctionDefinition)entity, false);
             else if (entity is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)entity);
             else throw new NotImplementedException("Invalid target for byte code compilation");
         }
 
-        public void Compile(ParserContext parser, ByteBuffer buffer, IList<Executable> executables)
+        internal void Compile(ParserContext parser, ByteBuffer buffer, IList<Executable> executables)
         {
             foreach (Executable ex in executables)
             {
@@ -284,7 +284,7 @@ namespace Parser.ByteCode
             }
         }
 
-        public void Compile(ParserContext parser, ByteBuffer buffer, Executable line)
+        internal void Compile(ParserContext parser, ByteBuffer buffer, Executable line)
         {
             if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
             else if (line is Assignment) AssignmentEncoder.Compile(this, parser, buffer, (Assignment)line);
@@ -316,7 +316,7 @@ namespace Parser.ByteCode
                 if (classDefinition.StaticConstructor == null)
                 {
                     classDefinition.StaticConstructor = new ConstructorDefinition(null, ModifierCollection.CreateStaticModifier(classDefinition.FirstToken), new AnnotationCollection(parser), classDefinition);
-                    classDefinition.StaticConstructor.ResolvePublic(parser);
+                    classDefinition.StaticConstructor.Resolve(parser);
                 }
 
                 List<Executable> staticFieldInitializers = new List<Executable>();
@@ -567,7 +567,7 @@ namespace Parser.ByteCode
         private const int EXPR_STREAM_OTHER = 1;
         private const int EXPR_STREAM_LITERAL = 2;
 
-        public void CompileExpressionList(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
+        internal void CompileExpressionList(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
         {
             if (expressions.Count == 0) return;
             if (expressions.Count == 1)

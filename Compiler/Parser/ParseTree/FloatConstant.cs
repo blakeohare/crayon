@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class FloatConstant : Expression, IConstantValue
+    internal class FloatConstant : Expression, IConstantValue
     {
         public override bool IsInlineCandidate { get { return true; } }
 

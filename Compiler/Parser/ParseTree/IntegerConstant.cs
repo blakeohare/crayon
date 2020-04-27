@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class IntegerConstant : Expression, IConstantValue
+    internal class IntegerConstant : Expression, IConstantValue
     {
         public override bool IsInlineCandidate { get { return true; } }
 

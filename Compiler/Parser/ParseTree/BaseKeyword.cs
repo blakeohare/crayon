@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class BaseKeyword : Expression
+    internal class BaseKeyword : Expression
     {
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 

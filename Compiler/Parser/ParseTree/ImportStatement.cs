@@ -1,6 +1,6 @@
 ﻿namespace Parser.ParseTree
 {
-    public class ImportStatement : Node
+    internal class ImportStatement : Node
     {
         public string ImportPath { get; set; }
 

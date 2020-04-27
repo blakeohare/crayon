@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    public enum ConstantResolutionState
+    internal enum ConstantResolutionState
     {
         NOT_RESOLVED,
         RESOLVING,

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class PropertyDefinition : TopLevelEntity, ICodeContainer
+    internal class PropertyDefinition : TopLevelEntity, ICodeContainer
     {
         public PropertyMember Getter { get; set; }
         public PropertyMember Setter { get; set; }

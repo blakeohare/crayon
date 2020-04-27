@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ByteCode
 {
-    public class ByteBuffer
+    internal class ByteBuffer
     {
         private class ByteRow
         {

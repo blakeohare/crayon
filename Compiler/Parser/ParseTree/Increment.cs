@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class Increment : Expression
+    internal class Increment : Expression
     {
         public bool IsIncrement { get; private set; }
         public bool IsPrefix { get; private set; }

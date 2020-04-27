@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class DotField : Expression
+    internal class DotField : Expression
     {
         public override bool CanAssignTo { get { return true; } }
 

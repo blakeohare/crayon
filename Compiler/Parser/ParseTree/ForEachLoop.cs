@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ForEachLoop : Executable
+    internal class ForEachLoop : Executable
     {
         public Token IterationVariable { get; private set; }
         public VariableId IterationVariableId { get; private set; }

@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace Parser
 {
-    public class AnnotationCollection
+    internal class AnnotationCollection
     {
         private Multimap<string, Annotation> annotations = new Multimap<string, Annotation>();
         private ParserContext parser;
 
-        public AnnotationCollection(ParserContext parser)
+        internal AnnotationCollection(ParserContext parser)
         {
             this.parser = parser;
         }

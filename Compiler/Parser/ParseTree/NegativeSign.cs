@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class NegativeSign : Expression
+    internal class NegativeSign : Expression
     {
         public Expression Root { get; private set; }
 

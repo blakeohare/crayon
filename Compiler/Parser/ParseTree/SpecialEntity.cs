@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public abstract class SpecialEntity : Expression
+    internal abstract class SpecialEntity : Expression
     {
         public SpecialEntity(Token firstToken, Node owner) : base(firstToken, owner)
         { }

@@ -12,7 +12,7 @@ namespace Parser
         REGISTER_AND_ALLOC = 0x3,
     }
 
-    public class VariableId
+    internal class VariableId
     {
         public VariableId(AType type, string name)
         {

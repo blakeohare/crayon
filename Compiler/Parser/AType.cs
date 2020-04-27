@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class AType
+    internal class AType
     {
         public Token FirstToken { get; set; }
         public Token[] RootTypeTokens { get; set; }

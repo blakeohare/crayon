@@ -241,21 +241,21 @@ namespace Crayon.Pipeline
             for (int i = 0; i < exceptions.Count; ++i)
             {
                 if (i > 0) sb.Append(',');
-                Parser.FileScope fileInfo = null;
+                string fileName = null;
                 Parser.Token tokenInfo = null;
                 string message = exceptions[i].Message;
                 Parser.ParserException parserException = exceptions[i] as Parser.ParserException;
                 if (parserException != null)
                 {
-                    fileInfo = parserException.File;
+                    fileName = parserException.FileName;
                     tokenInfo = parserException.TokenInfo;
                     message = parserException.OriginalMessage;
                 }
                 sb.Append("\n  {");
-                if (fileInfo != null)
+                if (fileName != null)
                 {
                     sb.Append("\n    \"file\": \"");
-                    sb.Append(fileInfo.Name.Replace("\\", "\\\\"));
+                    sb.Append(fileName.Replace("\\", "\\\\"));
                     sb.Append("\",");
                 }
                 if (tokenInfo != null)

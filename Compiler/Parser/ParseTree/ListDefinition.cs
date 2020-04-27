@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ListDefinition : Expression
+    internal class ListDefinition : Expression
     {
         public Expression[] Items { get; private set; }
         public AType ListType { get; private set; }

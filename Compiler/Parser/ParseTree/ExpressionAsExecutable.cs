@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ExpressionAsExecutable : Executable
+    internal class ExpressionAsExecutable : Executable
     {
         public Expression Expression { get; private set; }
 

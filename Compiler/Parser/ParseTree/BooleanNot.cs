@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class BooleanNot : Expression
+    internal class BooleanNot : Expression
     {
         public Expression Root { get; private set; }
 

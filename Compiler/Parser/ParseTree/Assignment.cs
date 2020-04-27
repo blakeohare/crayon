@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class Assignment : Executable
+    internal class Assignment : Executable
     {
         private enum AssignmentType
         {

@@ -7,8 +7,8 @@
         public int Col { get; private set; }
         public int FileID { get { return this.File.ID; } }
         public string FileName { get { return this.File.Name; } }
-        public TokenType Type { get; private set; }
-        public FileScope File { get; private set; }
+        internal TokenType Type { get; private set; }
+        internal FileScope File { get; private set; }
 
         internal int AggregateTokenCount { get; set; }
 

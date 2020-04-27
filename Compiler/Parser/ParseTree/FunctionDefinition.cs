@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class FunctionDefinition : TopLevelEntity, ICodeContainer
+    internal class FunctionDefinition : TopLevelEntity, ICodeContainer
     {
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }

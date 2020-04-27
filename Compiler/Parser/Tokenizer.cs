@@ -2,7 +2,7 @@
 
 namespace Parser
 {
-    public static class Tokenizer
+    internal static class Tokenizer
     {
         private static readonly HashSet<char> WHITESPACE = new HashSet<char>() { ' ', '\r', '\n', '\t' };
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ConstReference : Expression
+    internal class ConstReference : Expression
     {
         public ConstDefinition ConstStatement { get; private set; }
 

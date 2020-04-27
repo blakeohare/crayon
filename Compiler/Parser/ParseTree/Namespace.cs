@@ -8,7 +8,7 @@ namespace Parser.ParseTree
 {
     // Despite being an "Executable", this isn't an executable thing.
     // It will get optimized away at resolution time.
-    public class Namespace : TopLevelEntity
+    internal class Namespace : TopLevelEntity
     {
         public TopLevelEntity[] Code { get; set; }
         public string DefaultName { get; set; }

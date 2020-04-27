@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class NullCoalescer : Expression
+    internal class NullCoalescer : Expression
     {
         public Expression PrimaryExpression { get; set; }
         public Expression SecondaryExpression { get; set; }

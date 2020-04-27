@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class Instantiate : Expression
+    internal class Instantiate : Expression
     {
         public Token NameToken { get; private set; }
         public string Name { get; private set; }

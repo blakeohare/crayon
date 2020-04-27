@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class CniFunctionInvocation : Expression
+    internal class CniFunctionInvocation : Expression
     {
         public Expression[] Args { get; private set; }
         public string Name { get; private set; }

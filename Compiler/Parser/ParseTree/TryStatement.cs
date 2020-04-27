@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class TryStatement : Executable
+    internal class TryStatement : Executable
     {
         public Token TryToken { get; set; }
         public Token FinallyToken { get; set; }

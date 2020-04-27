@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public abstract class Node
+    internal abstract class Node
     {
         private int autoGenIdCounter = 0;
 

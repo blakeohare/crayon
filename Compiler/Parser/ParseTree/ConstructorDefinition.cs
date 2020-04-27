@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ConstructorDefinition : TopLevelEntity, ICodeContainer
+    internal class ConstructorDefinition : TopLevelEntity, ICodeContainer
     {
         private static readonly Token[] NO_TOKENS = new Token[0];
         private static readonly AType[] NO_TYPES = new AType[0];
@@ -94,12 +94,7 @@ namespace Parser.ParseTree
             // This shouldn't be called.
             throw new System.Exception();
         }
-
-        public void ResolvePublic(ParserContext parser)
-        {
-            this.Resolve(parser);
-        }
-
+        
         internal override void Resolve(ParserContext parser)
         {
             parser.ValueStackDepth = 0;

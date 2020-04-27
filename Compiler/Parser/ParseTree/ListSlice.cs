@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ListSlice : Expression
+    internal class ListSlice : Expression
     {
         public Token BracketToken { get; set; }
         public Expression[] Items { get; set; } // these can be null

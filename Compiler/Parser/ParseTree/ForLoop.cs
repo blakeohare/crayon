@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ForLoop : Executable
+    internal class ForLoop : Executable
     {
         public Executable[] Init { get; private set; }
         public Expression Condition { get; private set; }

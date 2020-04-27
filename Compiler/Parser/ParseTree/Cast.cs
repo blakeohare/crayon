@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class Cast : Expression
+    internal class Cast : Expression
     {
         public AType Type { get; private set; }
         public Expression Expression { get; private set; }

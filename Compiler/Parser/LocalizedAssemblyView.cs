@@ -9,7 +9,7 @@ namespace Parser
         public Locale Locale { get; private set; }
         public CompilationScope Scope { get; private set; }
 
-        public Dictionary<string, TopLevelEntity> FullyQualifiedEntityLookup { get; private set; }
+        internal Dictionary<string, TopLevelEntity> FullyQualifiedEntityLookup { get; private set; }
 
         public LocalizedAssemblyView(Locale locale, CompilationScope scope)
         {

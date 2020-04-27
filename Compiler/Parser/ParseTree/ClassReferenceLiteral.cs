@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ClassReferenceLiteral : Expression
+    internal class ClassReferenceLiteral : Expression
     {
         public ClassDefinition ClassDefinition { get; set; }
 

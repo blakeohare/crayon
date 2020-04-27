@@ -2,7 +2,7 @@
 
 namespace Parser.ParseTree
 {
-    public interface ICodeContainer
+    internal interface ICodeContainer
     {
         List<Lambda> Lambdas { get; }
         HashSet<string> ArgumentNameLookup { get; }

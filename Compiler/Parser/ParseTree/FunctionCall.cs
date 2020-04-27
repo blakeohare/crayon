@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class FunctionCall : Expression
+    internal class FunctionCall : Expression
     {
         public Expression Root { get; private set; }
         public Token ParenToken { get; private set; }

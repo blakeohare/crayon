@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class SwitchStatement : Executable
+    internal class SwitchStatement : Executable
     {
         private Chunk[] chunks;
 

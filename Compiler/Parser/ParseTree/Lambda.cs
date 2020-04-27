@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class Lambda : Expression, ICodeContainer
+    internal class Lambda : Expression, ICodeContainer
     {
         public Token[] Args { get; private set; }
         public AType[] ArgTypes { get; private set; }

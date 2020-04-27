@@ -2,7 +2,7 @@
 
 namespace Parser
 {
-    public enum AccessModifierType
+    internal enum AccessModifierType
     {
         PUBLIC,
         PRIVATE,
@@ -11,7 +11,7 @@ namespace Parser
         INTERNAL_PROTECTED,
     }
 
-    public class ModifierCollection
+    internal class ModifierCollection
     {
         public static readonly ModifierCollection EMPTY = new ModifierCollection(new Token[0]);
 

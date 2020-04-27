@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class FieldDefinition : TopLevelEntity, ICodeContainer
+    internal class FieldDefinition : TopLevelEntity, ICodeContainer
     {
         public Token NameToken { get; set; }
         public Expression DefaultValue { get; set; }

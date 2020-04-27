@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public abstract class Expression : Node
+    internal abstract class Expression : Node
     {
         protected static Expression[] NO_DESCENDANTS = new Expression[0];
 

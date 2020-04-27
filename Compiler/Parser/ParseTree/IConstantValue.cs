@@ -1,6 +1,6 @@
 ﻿namespace Parser.ParseTree
 {
-    public interface IConstantValue
+    internal interface IConstantValue
     {
         Expression CloneValue(Token token, Node owner);
     }

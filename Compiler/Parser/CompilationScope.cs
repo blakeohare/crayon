@@ -11,7 +11,7 @@ namespace Parser
     public class CompilationScope
     {
         public string ScopeKey { get; private set; }
-        public Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
+        internal Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
         public AssemblyMetadata Metadata { get; private set; }
         public int ScopeNumId { get; private set; }
 
@@ -88,12 +88,12 @@ namespace Parser
             }
         }
 
-        public List<TopLevelEntity> GetExecutables_HACK()
+        internal List<TopLevelEntity> GetExecutables_HACK()
         {
             return this.executables;
         }
 
-        public void AddExecutable(TopLevelEntity executable)
+        internal void AddExecutable(TopLevelEntity executable)
         {
             if (executable is Namespace)
             {
@@ -113,7 +113,7 @@ namespace Parser
         // The localized view is an external view of a library, whereas this
         // is the actual compilation of the internal localization data.
         private Dictionary<string, string> getNamespaceNameForLocaleCache = new Dictionary<string, string>();
-        public string GetNamespaceNameForLocale(Locale locale, Namespace ns)
+        internal string GetNamespaceNameForLocale(Locale locale, Namespace ns)
         {
             string fullyQualifiedDefaultName = ns.FullyQualifiedDefaultName;
             string key = locale.ID + ":" + fullyQualifiedDefaultName;
@@ -130,12 +130,12 @@ namespace Parser
             return this.getNamespaceNameForLocaleCache[key];
         }
 
-        public Dictionary<string, NamespaceReferenceTemplate> GetFlattenedNamespaceLookup(Locale locale)
+        internal Dictionary<string, NamespaceReferenceTemplate> GetFlattenedNamespaceLookup(Locale locale)
         {
             return this.namespaceFlattener.GetLookup(locale);
         }
 
-        public TopLevelEntity[] GetTopLevelConstructs()
+        internal TopLevelEntity[] GetTopLevelConstructs()
         {
             return this.executables.ToArray();
         }
@@ -151,7 +151,7 @@ namespace Parser
             this.CniFunctionsByName.Add(name, func);
         }
 
-        public void AddDependency(Token throwToken, LocalizedAssemblyView view)
+        internal void AddDependency(Token throwToken, LocalizedAssemblyView view)
         {
             if (this.dependenciesAndViews.ContainsKey(view.Scope))
             {
@@ -175,7 +175,7 @@ namespace Parser
             }
         }
 
-        public void FlattenFullyQualifiedLookupsIntoGlobalLookup(Dictionary<string, TopLevelEntity> output, Locale verifiedCallingLocale)
+        internal void FlattenFullyQualifiedLookupsIntoGlobalLookup(Dictionary<string, TopLevelEntity> output, Locale verifiedCallingLocale)
         {
             // Add namespaces to the lookup but then remove them. I'd like for the collision detection to run here for namespaces.
             HashSet<string> keysToRemove = new HashSet<string>();
@@ -200,7 +200,7 @@ namespace Parser
             }
         }
 
-        public ClassDefinition[] GetAllClassDefinitions()
+        internal ClassDefinition[] GetAllClassDefinitions()
         {
             return this.executables
                 .OfType<ClassDefinition>()

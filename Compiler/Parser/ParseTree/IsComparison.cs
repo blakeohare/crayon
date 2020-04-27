@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class IsComparison : Expression
+    internal class IsComparison : Expression
     {
         public Expression Expression { get; set; }
         public Token IsToken { get; set; }

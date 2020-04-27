@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class PrimitiveMethodReference : Expression
+    internal class PrimitiveMethodReference : Expression
     {
         public Expression Root { get; private set; }
         public Token DotToken { get; private set; }

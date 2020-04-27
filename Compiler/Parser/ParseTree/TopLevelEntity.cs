@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public abstract class TopLevelEntity : Node
+    internal abstract class TopLevelEntity : Node
     {
         public ModifierCollection Modifiers { get; private set; }
 
-        public TopLevelEntity(Token firstToken, Node owner, FileScope fileScope, ModifierCollection modifiers)
+        internal TopLevelEntity(Token firstToken, Node owner, FileScope fileScope, ModifierCollection modifiers)
             : base(firstToken, owner)
         {
             this.fileScopeOverride = fileScope;

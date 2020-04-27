@@ -4,7 +4,7 @@ namespace Parser.ParseTree
 {
     // Represents a property setter or getter.
     // I have the urge to rename this class to PropertyEtter
-    public class PropertyMember : Node, ICodeContainer
+    internal class PropertyMember : Node, ICodeContainer
     {
         public bool IsGetter { get { return this.FirstToken.Value == "get"; } }
         public bool IsSetter { get { return !this.IsGetter; } }

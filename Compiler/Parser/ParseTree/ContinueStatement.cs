@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ContinueStatement : Executable
+    internal class ContinueStatement : Executable
     {
         public ContinueStatement(Token continueToken, Node owner)
             : base(continueToken, owner)

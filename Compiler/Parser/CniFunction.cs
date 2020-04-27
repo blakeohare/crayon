@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    public class CniFunction
+    internal class CniFunction
     {
         public CompilationScope CompilationUnit { get; private set; }
         public string Name { get; private set; }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ConstDefinition : TopLevelEntity
+    internal class ConstDefinition : TopLevelEntity
     {
         public AType Type { get; set; }
         public ResolvedType ResolvedType { get; private set; }

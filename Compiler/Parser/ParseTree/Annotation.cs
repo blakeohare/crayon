@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class Annotation : Node
+    internal class Annotation : Node
     {
         public Token TypeToken { get; private set; }
         public string Type { get; private set; }
@@ -21,7 +21,7 @@ namespace Parser.ParseTree
             this.Args = args.ToArray();
         }
 
-        public string GetSingleArgAsString(ParserContext parser)
+        internal string GetSingleArgAsString(ParserContext parser)
         {
             if (this.Args.Length != 1) throw new ParserException(this.TypeToken, "This annotation requires exactly 1 arg.");
             StringConstant stringConstant = this.Args[0].Resolve(parser) as StringConstant;

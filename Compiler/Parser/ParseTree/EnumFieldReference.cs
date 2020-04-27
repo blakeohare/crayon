@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class EnumFieldReference : Expression
+    internal class EnumFieldReference : Expression
     {
         public EnumDefinition EnumDefinition { get; private set; }
         public string Field { get; private set; }

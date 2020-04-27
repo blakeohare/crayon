@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class BracketIndex : Expression
+    internal class BracketIndex : Expression
     {
         public override bool CanAssignTo { get { return true; } }
 

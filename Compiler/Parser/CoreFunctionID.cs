@@ -2,7 +2,7 @@
 
 namespace Parser
 {
-    public enum CoreFunctionID
+    internal enum CoreFunctionID
     {
         PARSE_INT = 1,
         PARSE_FLOAT = 2,
@@ -47,7 +47,7 @@ namespace Parser
         ADD_SHUTDOWN_HANDLER = 41,
     }
 
-    public static class CoreFunctionIDHelper
+    internal static class CoreFunctionIDHelper
     {
         public static int GetId(string value)
         {

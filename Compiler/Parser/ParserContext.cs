@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class ParserContext
+    internal class ParserContext
     {
         private Stack<CompilationScope> scopeStack = new Stack<CompilationScope>();
 

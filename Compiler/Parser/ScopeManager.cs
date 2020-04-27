@@ -33,7 +33,7 @@ namespace Parser
             return this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(locale + ":" + name) != null;
         }
 
-        public LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
+        internal LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
         {
             string anyValidCoreLibId = "en:Core";
             AssemblyMetadata coreLib = this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(anyValidCoreLibId);
@@ -41,7 +41,7 @@ namespace Parser
             return this.GetOrImportAssembly(parser, null, name);
         }
 
-        public LocalizedAssemblyView GetOrImportAssembly(ParserContext parser, Token throwToken, string fullImportNameWithDots)
+        internal LocalizedAssemblyView GetOrImportAssembly(ParserContext parser, Token throwToken, string fullImportNameWithDots)
         {
             LocalizedAssemblyView asmView = this.GetOrImportAssemblyImpl(parser, throwToken, fullImportNameWithDots);
             if (asmView != null && asmView.Scope != parser.CurrentScope)

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class IfStatement : Executable
+    internal class IfStatement : Executable
     {
         public Expression Condition { get; private set; }
         public Executable[] TrueCode { get; private set; }
