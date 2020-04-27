@@ -31,7 +31,7 @@ namespace Exporter.Pipeline
                 platform,
                 assemblyMetadataList,
                 vmTargetDirectory);
-            new EmitFilesToDiskWorker().DoWorkImpl(fileOutputContext, vmTargetDirectory);
+            ExportUtil.EmitFilesToDisk(fileOutputContext, vmTargetDirectory);
         }
     }
 }

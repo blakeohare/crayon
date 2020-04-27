@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Exporter.Workers
 {
-    public class EmitFilesToDiskWorker
+    internal static class ExportUtil
     {
-        public void DoWorkImpl(
+        internal static void EmitFilesToDisk(
             Dictionary<string, FileOutput> fileOutputDescriptor,
             string fullyQualifiedOutputFolder)
         {

@@ -232,5 +232,33 @@ namespace Build
                 TextContent = string.Join("\n", manifest),
             };
         }
+
+        public void PopulateFileOutputContextForCbx(Dictionary<string, FileOutput> output)
+        {
+            foreach (FileOutput txtResource in this.TextResources)
+            {
+                output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
+            }
+            foreach (FileOutput sndResource in this.AudioResources)
+            {
+                output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
+            }
+            foreach (FileOutput fontResource in this.FontResources)
+            {
+                output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
+            }
+            foreach (FileOutput binResource in this.BinaryResources)
+            {
+                output["res/bin/" + binResource.CanonicalFileName] = binResource;
+            }
+            foreach (FileOutput imgResource in this.ImageResources)
+            {
+                output["res/img/" + imgResource.CanonicalFileName] = imgResource;
+            }
+            foreach (string key in this.ImageSheetFiles.Keys)
+            {
+                output["res/img/" + key] = this.ImageSheetFiles[key];
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Build;
 using Common;
+using CommonUtil.Disk;
 using Exporter;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace Crayon.Pipeline
                         : buildContext.OutputFolder;
                     IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopes.Select(s => s.Metadata).ToArray();
                     ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-                    ExportRequest exportBundle = ExportRequest.BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
+                    ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
                     Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(
                         buildContext.Platform.ToLowerInvariant(),
                         buildContext.ProjectDirectory,
@@ -160,6 +161,39 @@ namespace Crayon.Pipeline
             }
         }
 
+        private static string SanitizeJsFilePrefix(string jsFilePrefix)
+        {
+            return (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
+                ? ""
+                : ("/" + jsFilePrefix.Trim('/') + "/");
+        }
+
+        private static ExportRequest BuildExportRequest(
+            string byteCode,
+            IList<AssemblyResolver.AssemblyMetadata> libraryAssemblies,
+            BuildContext buildContext)
+        {
+            return new ExportRequest()
+            {
+                ByteCode = byteCode,
+                LibraryAssemblies = libraryAssemblies.ToArray(),
+                ProjectID = buildContext.ProjectID,
+                Version = buildContext.TopLevelAssembly.Version,
+                Description = buildContext.TopLevelAssembly.Description,
+                GuidSeed = buildContext.GuidSeed,
+                ProjectTitle = buildContext.ProjectTitle,
+                JsFilePrefix = SanitizeJsFilePrefix(buildContext.JsFilePrefix),
+                JsFullPage = buildContext.JsFullPage,
+                IosBundlePrefix = buildContext.IosBundlePrefix,
+                JavaPackage = buildContext.JavaPackage,
+                IconPaths = buildContext.IconFilePaths,
+                LaunchScreenPath = buildContext.LaunchScreenPath,
+                WindowWidth = buildContext.WindowWidth,
+                WindowHeight = buildContext.WindowHeight,
+                Orientations = buildContext.Orientation,
+            };
+        }
+
         private static string DoExportStandaloneCbxFileAndGetPath(Command command, bool isDryRunErrorCheck)
         {
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
@@ -169,10 +203,22 @@ namespace Crayon.Pipeline
             {
                 return null;
             }
+
+            Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
+            ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext);
+            resDb.PopulateFileOutputContextForCbx(outputFiles);
+
+            string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
+            outputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
+
             return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(
+                buildContext.ProjectID,
+                outputFiles,
+                outputFolder,
                 compilation.ByteCode,
                 compilation.AllScopes.Select(s => s.Metadata).ToArray(),
-                buildContext);
+                resDb.ResourceManifestFile.TextContent,
+                resDb.ImageSheetManifestFile == null ? null : resDb.ImageSheetManifestFile.TextContent);
         }
 
         private static void RenderErrorInfoAsJson(Command command, Exception exception)

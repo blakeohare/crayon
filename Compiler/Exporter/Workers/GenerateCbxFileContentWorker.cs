@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace Exporter.Workers
 {
-    public class GenerateCbxFileContentWorker
+    public static class GenerateCbxFileContentWorker
     {
-        public byte[] GenerateCbxBinaryData(ResourceDatabase resDb, IList<AssemblyMetadata> assemblies, string byteCode)
+        public static byte[] GenerateCbxBinaryData(string resourceManifestText, string imageSheetManifestText, IList<AssemblyMetadata> assemblies, string byteCode)
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
@@ -34,14 +34,14 @@ namespace Exporter.Workers
             cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
             cbxOutput.AddRange(libsDataBytes);
 
-            byte[] resourceManifest = StringUtil.ToUtf8Bytes(resDb.ResourceManifestFile.TextContent);
+            byte[] resourceManifest = StringUtil.ToUtf8Bytes(resourceManifestText);
             cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
             cbxOutput.AddRange(resourceManifest);
 
-            if (resDb.ImageSheetManifestFile != null)
+            if (imageSheetManifestText != null)
             {
-                byte[] imageSheetManifest = StringUtil.ToUtf8Bytes(resDb.ImageSheetManifestFile.TextContent);
+                byte[] imageSheetManifest = StringUtil.ToUtf8Bytes(imageSheetManifestText);
                 cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
                 cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
                 cbxOutput.AddRange(imageSheetManifest);
