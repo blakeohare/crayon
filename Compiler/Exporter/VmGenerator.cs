@@ -35,6 +35,7 @@ namespace Exporter
 
         public void GenerateVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             Platform.AbstractPlatform platform,
             ExportBundle nullableExportBundle,
             Build.ResourceDatabase resourceDatabase,
@@ -76,6 +77,7 @@ namespace Exporter
 
                     platform.ExportProject(
                         output,
+                        byteCode,
                         libraries,
                         resourceDatabase,
                         options);

@@ -1,11 +1,10 @@
-﻿using Build;
-using Common;
+﻿using Common;
 using CommonUtil.Disk;
 using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
 
-namespace Exporter
+namespace Build
 {
     public static class ResourceDatabaseBuilder
     {
@@ -21,15 +20,7 @@ namespace Exporter
             using (new PerformanceSection("Program.PrepareResources"))
             {
                 // This really needs to go in a separate helper file.
-                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
-                if (nullableByteCode != null)
-                {
-                    resourceDatabase.ByteCodeFile = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = nullableByteCode,
-                    };
-                }
+                ResourceDatabase resourceDatabase = CreateResourceDatabase(buildContext);
 
                 using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
                 {

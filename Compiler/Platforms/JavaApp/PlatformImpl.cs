@@ -25,6 +25,7 @@ namespace JavaApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
@@ -101,7 +102,7 @@ namespace JavaApp
             this.CopyResourceAsText(output, "build.xml", "Resources/Build.xml", replacements);
 
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
-            output["resources/bytecode.txt"] = resourceDatabase.ByteCodeFile;
+            output["resources/bytecode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
             if (resourceDatabase.ImageSheetManifestFile != null)
             {
                 output["resources/imagesheetmanifest.txt"] = resourceDatabase.ImageSheetManifestFile;

@@ -163,6 +163,7 @@ namespace Platform
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options);

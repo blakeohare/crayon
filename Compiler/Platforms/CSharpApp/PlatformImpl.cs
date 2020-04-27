@@ -222,6 +222,7 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
@@ -249,7 +250,7 @@ namespace CSharpApp
 
             this.ExportInterpreter(templateReader, baseDir, output);
 
-            output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
+            output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
             if (resourceDatabase.ImageSheetManifestFile != null)
             {

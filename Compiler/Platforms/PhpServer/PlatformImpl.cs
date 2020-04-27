@@ -38,16 +38,21 @@ namespace PhpServer
             return sb.ToString();
         }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, Build.ResourceDatabase resourceDatabase, Options options)
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
+            string byteCode,
+            IList<LibraryForExport> libraries,
+            Build.ResourceDatabase resourceDatabase,
+            Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             TemplateReader templates = new TemplateReader(new PkgAwareFileUtil(), this);
             TemplateSet vmTemplates = templates.GetVmTemplates();
             string functions = vmTemplates.GetText("functions.php");
             string structs = vmTemplates.GetText("structs.php");
-            string byteCode = ConvertStringToVariableSetterFile(resourceDatabase.ByteCodeFile.TextContent, "_CRAYON_BYTE_CODE");
+            string byteCodeFile = ConvertStringToVariableSetterFile(byteCode, "_CRAYON_BYTE_CODE");
             string resourceManifest = ConvertStringToVariableSetterFile(resourceDatabase.ResourceManifestFile.TextContent, "_CRAYON_RESOURCE_MANIFEST");
-            output["crayon_gen/bytecode.php"] = FileOutput.OfString(byteCode);
+            output["crayon_gen/bytecode.php"] = FileOutput.OfString(byteCodeFile);
             output["crayon_gen/resource_manifest.php"] = FileOutput.OfString(resourceManifest);
             output["crayon_gen/functions.php"] = FileOutput.OfString(functions);
             output["crayon_gen/structs.php"] = FileOutput.OfString(structs);

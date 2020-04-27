@@ -12,7 +12,12 @@ namespace LangPhp
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, Build.ResourceDatabase resourceDatabase, Options options)
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
+            string byteCode,
+            IList<LibraryForExport> libraries,
+            Build.ResourceDatabase resourceDatabase,
+            Options options)
         {
             throw new System.NotImplementedException();
         }

@@ -20,6 +20,7 @@ namespace JavaScriptAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
@@ -47,6 +48,7 @@ namespace JavaScriptAppAndroid
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
+                byteCode,
                 libraries,
                 resourceDatabase,
                 options);

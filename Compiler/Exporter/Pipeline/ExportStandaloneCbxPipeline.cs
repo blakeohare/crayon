@@ -7,7 +7,11 @@ namespace Exporter.Pipeline
 {
     public static class ExportStandaloneCbxPipeline
     {
-        public static string Run(string byteCode, IList<AssemblyResolver.AssemblyMetadata> assemblies, ExportCommand command, BuildContext buildContext)
+        public static string Run(
+            string byteCode,
+            IList<AssemblyResolver.AssemblyMetadata> assemblies,
+            ExportCommand command,
+            BuildContext buildContext)
         {
             string outputDirectory = new GetOutputDirectoryWorker().DoWorkImpl(buildContext);
             ExportBundle exportBundle = ExportBundle.Compile(byteCode, assemblies, buildContext);

@@ -29,6 +29,7 @@ namespace PythonApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
@@ -99,7 +100,7 @@ namespace PythonApp
                 TextContent = "",
             };
 
-            output["res/bytecode.txt"] = resourceDatabase.ByteCodeFile;
+            output["res/bytecode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
             output["res/resource_manifest.txt"] = resourceDatabase.ResourceManifestFile;
             if (resourceDatabase.ImageSheetManifestFile != null)
             {

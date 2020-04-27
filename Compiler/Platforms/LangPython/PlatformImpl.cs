@@ -29,6 +29,7 @@ namespace LangPython
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)

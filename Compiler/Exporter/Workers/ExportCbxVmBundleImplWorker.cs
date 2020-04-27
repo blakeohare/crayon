@@ -10,7 +10,11 @@ namespace Exporter.Workers
 {
     public static class ExportCbxVmBundleImplWorker
     {
-        public static ExportBundle ExportVmBundle(string byteCode, IList<AssemblyMetadata> assemblies, ExportCommand command, BuildContext buildContext)
+        public static ExportBundle ExportVmBundle(
+            string byteCode,
+            IList<AssemblyMetadata> assemblies,
+            ExportCommand command,
+            BuildContext buildContext)
         {
             // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();
@@ -36,6 +40,7 @@ namespace Exporter.Workers
             Dictionary<string, FileOutput> result = new Dictionary<string, FileOutput>();
             vmGenerator.GenerateVmSourceCodeForPlatform(
                 result,
+                byteCode,
                 platform,
                 exportBundle,
                 resourceDatabase,

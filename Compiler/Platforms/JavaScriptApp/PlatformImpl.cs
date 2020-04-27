@@ -31,6 +31,7 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            string byteCode,
             IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
@@ -139,7 +140,7 @@ namespace JavaScriptApp
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(resourceDatabase.ByteCodeFile.TextContent) + ";",
+                TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(byteCode) + ";",
             };
 
             foreach (string imageResourceFile in resourceDatabase.ImageSheetFiles.Keys)

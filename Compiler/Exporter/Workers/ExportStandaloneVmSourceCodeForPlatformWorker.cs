@@ -23,6 +23,7 @@ namespace Exporter.Workers
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
                 fileOutput,
+                "",
                 platform,
                 null,
                 null,

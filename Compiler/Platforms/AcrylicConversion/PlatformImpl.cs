@@ -24,7 +24,12 @@ namespace AcrylicConversion
             throw new NotImplementedException();
         }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, IList<LibraryForExport> libraries, Build.ResourceDatabase resourceDatabase, Options options)
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
+            string byteCode,
+            IList<LibraryForExport> libraries,
+            Build.ResourceDatabase resourceDatabase,
+            Options options)
         {
             throw new NotImplementedException();
         }

@@ -45,7 +45,7 @@ namespace Build
             { "xcf", FileCategory.IGNORE_IMAGE_ASSET },
         };
 
-        public FileOutput ByteCodeFile { get; set; }
+        //public FileOutput ByteCodeFile { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
         public FileOutput ImageSheetManifestFile { get; set; }
 
