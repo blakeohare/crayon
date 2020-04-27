@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class CompilationScope
+    internal class CompilationScope
     {
         public string ScopeKey { get; private set; }
         internal Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }

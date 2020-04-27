@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class LocalizedAssemblyView
+    internal class LocalizedAssemblyView
     {
         public Locale Locale { get; private set; }
         public CompilationScope Scope { get; private set; }

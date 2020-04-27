@@ -6,14 +6,14 @@ using System.Linq;
 
 namespace Parser
 {
-    public class ScopeManager
+    internal class ScopeManager
     {
         private readonly AssemblyFinder assemblyFinder;
 
         private Dictionary<string, CompilationScope> importedAssembliesById = new Dictionary<string, CompilationScope>();
         private Dictionary<Locale, Dictionary<string, LocalizedAssemblyView>> importedAssembliesByLocalizedName = new Dictionary<Locale, Dictionary<string, LocalizedAssemblyView>>();
 
-        public List<CompilationScope> ImportedAssemblyScopes { get; private set; }
+        internal List<CompilationScope> ImportedAssemblyScopes { get; private set; }
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> assembliesAlreadyImportedIndexByKey = new Dictionary<string, int>();
 

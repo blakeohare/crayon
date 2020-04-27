@@ -65,12 +65,13 @@ namespace Crayon.Pipeline
 
                     if (command.ShowDependencyTree)
                     {
-                        new ShowAssemblyDepsWorker().DoWorkImpl(compilation.RootScope);
+                        string depTree = AssemblyResolver.AssemblyDependencyResolver.GetDependencyTreeJson(compilation.RootScopeDependencyMetadata).Trim();
+                        ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, depTree);
                     }
                     string outputDirectory = command.HasOutputDirectoryOverride
                         ? command.OutputDirectoryOverride
                         : buildContext.OutputFolder;
-                    IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopes.Select(s => s.Metadata).ToArray();
+                    IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopesMetadata;
                     ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
                     ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
                     ExportResponse response = CbxVmBundleExporter.Run(
@@ -191,7 +192,7 @@ namespace Crayon.Pipeline
                 outputFiles,
                 outputFolder,
                 compilation.ByteCode,
-                compilation.AllScopes.Select(s => s.Metadata).ToArray(),
+                compilation.AllScopesMetadata,
                 resDb.ResourceManifestFile.TextContent,
                 resDb.ImageSheetManifestFile == null ? null : resDb.ImageSheetManifestFile.TextContent);
             return new ExportResponse()
