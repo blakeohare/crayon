@@ -51,15 +51,28 @@ namespace Crayon.Pipeline
                     {
                         new ShowAssemblyDepsWorker().DoWorkImpl(compilation.RootScope);
                     }
-                    ExportBundle exportBundle = Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(
+                    string outputDirectory = command.HasOutputDirectoryOverride
+                        ? command.OutputDirectoryOverride
+                        : buildContext.OutputFolder;
+                    IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopes.Select(s => s.Metadata).ToArray();
+                    ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+                    ExportRequest exportBundle = ExportRequest.BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
+                    Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(
+                        buildContext.Platform.ToLowerInvariant(),
+                        buildContext.ProjectDirectory,
+                        outputDirectory,
                         compilation.ByteCode,
-                        compilation.AllScopes.Select(s => s.Metadata).ToArray(),
-                        command,
-                        buildContext);
+                        resourceDatabase,
+                        assemblies,
+                        exportBundle,
+                        command.PlatformProvider);
                     break;
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
-                    Exporter.Pipeline.ExportStandaloneVmPipeline.Run(command);
+                    Exporter.Pipeline.ExportStandaloneVmPipeline.Run(
+                        command.VmPlatform,
+                        command.PlatformProvider,
+                        command.VmExportDirectory);
                     break;
 
                 case ExecutionType.ERROR_CHECK_ONLY:
@@ -156,7 +169,10 @@ namespace Crayon.Pipeline
             {
                 return null;
             }
-            return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(compilation.ByteCode, compilation.AllScopes.Select(s => s.Metadata).ToArray(), command, buildContext);
+            return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(
+                compilation.ByteCode,
+                compilation.AllScopes.Select(s => s.Metadata).ToArray(),
+                buildContext);
         }
 
         private static void RenderErrorInfoAsJson(ExportCommand command, Exception exception)

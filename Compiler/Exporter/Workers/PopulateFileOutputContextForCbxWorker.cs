@@ -8,11 +8,11 @@ namespace Exporter.Workers
     {
         public void GenerateFileOutput(
             Dictionary<string, FileOutput> output,
-            BuildContext buildContext,
+            string projectId,
             ResourceDatabase resDb,
             byte[] cbxData)
         {
-            output[buildContext.ProjectID + ".cbx"] = new FileOutput()
+            output[projectId + ".cbx"] = new FileOutput()
             {
                 Type = FileOutputType.Binary,
                 BinaryContent = cbxData,

@@ -7,9 +7,9 @@ namespace Exporter.Workers
     {
         public string DoWorkImpl(
             string fullyQualifiedOutputFolder,
-            BuildContext buildContext)
+            string projectId)
         {
-            string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
+            string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, projectId + ".cbx");
             cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
             return cbxPath;
         }

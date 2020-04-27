@@ -10,28 +10,22 @@ namespace Exporter.Workers
 {
     public static class ExportCbxVmBundleImplWorker
     {
-        public static ExportBundle ExportVmBundle(
+        public static void ExportVmBundle(
+            string platformId,
+            string projectDirectory,
+            string outputDirectory,
             string byteCode,
+            ResourceDatabase resourceDatabase,
             IList<AssemblyMetadata> assemblies,
-            ExportCommand command,
-            BuildContext buildContext)
+            ExportRequest exportRequest,
+            Platform.IPlatformProvider platformProvider)
         {
-            // TODO: Worker: platform = GetPlatform(buildContext, command)
-            string platformId = buildContext.Platform.ToLowerInvariant();
-            Platform.AbstractPlatform platform = command.PlatformProvider.GetPlatform(platformId);
+            Platform.AbstractPlatform platform = platformProvider.GetPlatform(platformId);
             if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
-            ExportBundle exportBundle = ExportBundle.Compile(byteCode, assemblies, buildContext);
-            AssemblyMetadata[] libraries = exportBundle.LibraryAssemblies.ToArray();
-
-            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, exportBundle.ByteCode);
-
-            string outputDirectory = command.HasOutputDirectoryOverride
-                ? command.OutputDirectoryOverride
-                : buildContext.OutputFolder;
             if (!Path.IsAbsolute(outputDirectory))
             {
-                outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);
+                outputDirectory = FileUtil.JoinPath(projectDirectory, outputDirectory);
             }
             outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
             FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
@@ -42,16 +36,13 @@ namespace Exporter.Workers
                 result,
                 byteCode,
                 platform,
-                exportBundle,
+                exportRequest,
                 resourceDatabase,
-                libraries,
+                assemblies,
                 outputDirectory,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
             exporter.ExportFiles(result);
-
-            // TODO: this needs to be the result of an earlier step after this is split into workers.
-            return exportBundle;
         }
     }
 }

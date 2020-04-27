@@ -10,17 +10,16 @@ namespace Exporter.Pipeline
         public static string Run(
             string byteCode,
             IList<AssemblyResolver.AssemblyMetadata> assemblies,
-            ExportCommand command,
             BuildContext buildContext)
         {
+            string projectId = buildContext.ProjectID;
             string outputDirectory = new GetOutputDirectoryWorker().DoWorkImpl(buildContext);
-            ExportBundle exportBundle = ExportBundle.Compile(byteCode, assemblies, buildContext);
-            ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext, null);
-            byte[] cbxFileBytes = new GenerateCbxFileContentWorker().GenerateCbxBinaryData(buildContext, resDb, exportBundle, byteCode);
+            ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext);
+            byte[] cbxFileBytes = new GenerateCbxFileContentWorker().GenerateCbxBinaryData(resDb, assemblies, byteCode);
             Dictionary<string, FileOutput> fileOutputContext = new Dictionary<string, FileOutput>();
-            new PopulateFileOutputContextForCbxWorker().GenerateFileOutput(fileOutputContext, buildContext, resDb, cbxFileBytes);
+            new PopulateFileOutputContextForCbxWorker().GenerateFileOutput(fileOutputContext, projectId, resDb, cbxFileBytes);
             new EmitFilesToDiskWorker().DoWorkImpl(fileOutputContext, outputDirectory);
-            string absoluteCbxFilePath = new GetCbxFileLocation().DoWorkImpl(outputDirectory, buildContext);
+            string absoluteCbxFilePath = new GetCbxFileLocation().DoWorkImpl(outputDirectory, projectId);
             return absoluteCbxFilePath;
         }
     }

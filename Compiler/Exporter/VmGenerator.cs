@@ -37,7 +37,7 @@ namespace Exporter
             Dictionary<string, FileOutput> output,
             string byteCode,
             Platform.AbstractPlatform platform,
-            ExportBundle nullableExportBundle,
+            ExportRequest nullableExportBundle,
             Build.ResourceDatabase resourceDatabase,
             ICollection<AssemblyMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,

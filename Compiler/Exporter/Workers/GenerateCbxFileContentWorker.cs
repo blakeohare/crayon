@@ -1,4 +1,5 @@
-﻿using Build;
+﻿using AssemblyResolver;
+using Build;
 using Common;
 using CommonUtil;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Exporter.Workers
 {
     public class GenerateCbxFileContentWorker
     {
-        public byte[] GenerateCbxBinaryData(BuildContext buildContext, ResourceDatabase resDb, ExportBundle compilationResult, string byteCode)
+        public byte[] GenerateCbxBinaryData(ResourceDatabase resDb, IList<AssemblyMetadata> assemblies, string byteCode)
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
@@ -22,7 +23,7 @@ namespace Exporter.Workers
             cbxOutput.AddRange(code);
 
             List<string> libraries = new List<string>();
-            foreach (AssemblyResolver.AssemblyMetadata libMetadata in compilationResult.LibraryAssemblies.Where(asm => asm.HasNativeCode))
+            foreach (AssemblyMetadata libMetadata in assemblies)
             {
                 libraries.Add(libMetadata.ID);
                 libraries.Add(libMetadata.Version);

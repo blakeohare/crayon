@@ -13,9 +13,7 @@ namespace Build
             "thumbs.db",
         });
 
-        public static ResourceDatabase PrepareResources(
-            BuildContext buildContext,
-            string nullableByteCode) // CBX files will not have this in the resources
+        public static ResourceDatabase PrepareResources(BuildContext buildContext)
         {
             using (new PerformanceSection("Program.PrepareResources"))
             {

@@ -18,8 +18,7 @@ namespace Exporter.Workers
             Dictionary<string, FileOutput> fileOutput,
             Platform.AbstractPlatform platform,
             AssemblyMetadata[] allLibraries,
-            string vmTargetDir,
-            ExportCommand command)
+            string vmTargetDir)
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
                 fileOutput,

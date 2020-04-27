@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Exporter
 {
-    public class ExportBundle
+    public class ExportRequest
     {
         public string ByteCode { get; set; }
         public string ProjectID { get; set; }
@@ -25,15 +25,16 @@ namespace Exporter
         public string Version { get; set; }
         public string Description { get; set; }
 
-        public static ExportBundle Compile(string byteCode, IList<AssemblyMetadata> libraryAssemblies, BuildContext buildContext)
+        private static string SanitizeJsFilePrefix(string jsFilePrefix)
         {
-            string jsFilePrefix = buildContext.JsFilePrefix;
-            jsFilePrefix = (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
+            return (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
                 ? ""
-                : ("/" + buildContext.JsFilePrefix.Trim('/') + "/");
+                : ("/" + jsFilePrefix.Trim('/') + "/");
+        }
 
-
-            return new ExportBundle()
+        public static ExportRequest BuildExportRequest(string byteCode, IList<AssemblyMetadata> libraryAssemblies, BuildContext buildContext)
+        {
+            return new ExportRequest()
             {
                 ByteCode = byteCode,
                 LibraryAssemblies = libraryAssemblies.ToArray(),
@@ -42,7 +43,7 @@ namespace Exporter
                 Description = buildContext.TopLevelAssembly.Description,
                 GuidSeed = buildContext.GuidSeed,
                 ProjectTitle = buildContext.ProjectTitle,
-                JsFilePrefix = jsFilePrefix,
+                JsFilePrefix = SanitizeJsFilePrefix(buildContext.JsFilePrefix),
                 JsFullPage = buildContext.JsFullPage,
                 IosBundlePrefix = buildContext.IosBundlePrefix,
                 JavaPackage = buildContext.JavaPackage,
