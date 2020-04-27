@@ -32,7 +32,7 @@ namespace Parser.Resolver
 
         private static void FindMainFunction(ParserContext parserContext)
         {
-            string delegateMainTo = parserContext.BuildContext.DelegateMainTo;
+            string delegateMainTo = parserContext.DelegateMainTo;
 
             CompilationScope scope = parserContext.RootScope;
 

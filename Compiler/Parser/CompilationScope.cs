@@ -14,12 +14,14 @@ namespace Parser
         internal Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
         public AssemblyMetadata Metadata { get; private set; }
         public int ScopeNumId { get; private set; }
+        public Locale Locale { get; private set; }
+        public ProgrammingLanguage ProgrammingLanguage { get; private set; }
 
         public bool IsCrayon {  get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
         public bool IsAcrylic {  get { return this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC; } }
         public bool IsStaticallyTyped {  get { return this.IsAcrylic; } }
 
-        private BuildContext buildContext;
+        private AssemblyContext topLevelAssembly;
         private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 
         private List<TopLevelEntity> executables = new List<TopLevelEntity>();
@@ -28,10 +30,16 @@ namespace Parser
 
         private static int numIdAlloc = 1;
 
-        public CompilationScope(BuildContext buildContext, AssemblyMetadata metadata)
+        public CompilationScope(
+            AssemblyContext topLevelAssembly,
+            AssemblyMetadata metadata,
+            Locale locale,
+            ProgrammingLanguage programmingLanguage)
         {
+            this.Locale = locale;
+            this.ProgrammingLanguage = programmingLanguage;
             this.ScopeNumId = numIdAlloc++;
-            this.buildContext = buildContext;
+            this.topLevelAssembly = topLevelAssembly;
             this.CniFunctionsByName = new Dictionary<string, CniFunction>();
             this.Metadata = metadata;
             this.ScopeKey = this.Metadata.CanonicalKey;
@@ -39,52 +47,6 @@ namespace Parser
             foreach (string cniFuncName in metadata.CniFunctions.Keys)
             {
                 this.RegisterCniFunction(cniFuncName, metadata.CniFunctions[cniFuncName]);
-            }
-        }
-
-        private ProgrammingLanguage? programmingLanguage = null;
-
-        public ProgrammingLanguage ProgrammingLanguage
-        {
-            get
-            {
-                if (this.programmingLanguage == null)
-                {
-                    this.programmingLanguage = this.GetProgrammingLanguage();
-                }
-                return this.programmingLanguage.Value;
-            }
-        }
-
-        public ProgrammingLanguage GetProgrammingLanguage()
-        {
-            if (this.Metadata.IsUserDefined)
-            {
-                return this.buildContext.TopLevelAssembly.ProgrammingLanguage;
-            }
-
-            Dictionary<string, string> embeddedCode = this.Metadata.GetSourceCode();
-            string filename = embeddedCode.Keys.Where(name => name.Contains('.')).FirstOrDefault();
-            if (filename != null)
-            {
-                filename = filename.ToLowerInvariant();
-                if (filename.EndsWith(".acr"))
-                {
-                    return ProgrammingLanguage.ACRYLIC;
-                }
-            }
-            return ProgrammingLanguage.CRAYON;
-        }
-
-        public Locale Locale
-        {
-            get
-            {
-                if (this.Metadata != null)
-                {
-                    return this.Metadata.InternalLocale;
-                }
-                return this.buildContext.CompilerLocale;
             }
         }
 

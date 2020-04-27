@@ -12,6 +12,10 @@ namespace Parser
 {
     internal class ParserContext
     {
+        public string ProjectId { get; private set; }
+        public AssemblyContext TopLevelAssembly { get; private set; } // still in the Build project
+        public string DelegateMainTo { get; private set; }
+
         private Stack<CompilationScope> scopeStack = new Stack<CompilationScope>();
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
@@ -26,8 +30,15 @@ namespace Parser
 
         public ParserContext(BuildContext buildContext)
         {
-            this.BuildContext = buildContext;
-            this.PushScope(new CompilationScope(buildContext, AssemblyMetadataFactory.CreateUserDefined(buildContext.CompilerLocale)));
+            this.ProjectId = buildContext.ProjectID;
+            this.TopLevelAssembly = buildContext.TopLevelAssembly;
+            this.DelegateMainTo = buildContext.DelegateMainTo;
+            Locale rootLocale = buildContext.CompilerLocale;
+
+            AssemblyMetadata userDefinedAssembly = AssemblyMetadataFactory.CreateUserDefined(buildContext.CompilerLocale);
+            CompilationScope userDefinedScope = new CompilationScope(this.TopLevelAssembly, userDefinedAssembly, rootLocale, this.TopLevelAssembly.ProgrammingLanguage);
+
+            this.PushScope(userDefinedScope);
             this.ScopeManager = new ScopeManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
@@ -187,8 +198,6 @@ namespace Parser
 
         public bool MainFunctionHasArg { get; set; }
 
-        public BuildContext BuildContext { get; private set; }
-
         public List<string> NamespacePrefixLookupForCurrentFile { get; private set; }
 
         public HashSet<FunctionDefinition> InlinableLibraryFunctions { get; set; }
@@ -300,7 +309,7 @@ namespace Parser
 
         public TopLevelEntity[] ParseAllTheThings()
         {
-            Dictionary<string, string> files = this.BuildContext.TopLevelAssembly.GetCodeFiles();
+            Dictionary<string, string> files = this.TopLevelAssembly.GetCodeFiles();
 
             // When a syntax error is encountered, add it to this list (RELEASE builds only).
             // Only allow one syntax error per file. Libraries are considered stable and will

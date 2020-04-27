@@ -38,7 +38,7 @@ namespace Parser.ByteCode
             // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
             header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
 
-            header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID, parser.GetLocaleCount());
+            header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.ProjectId, parser.GetLocaleCount());
 
             // FINALIZE_INITIALIZATION sets the total number of locales and so this needs that information which is
             // why it's listed afterwards. TODO: please fix.

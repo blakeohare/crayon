@@ -107,10 +107,17 @@ namespace Parser
                 return output;
             }
 
+            Dictionary<string, string> sourceCode = assemblyMetadata.GetSourceCode();
+
+            string arbitraryFilename = sourceCode.Keys.Where(t => t.Contains('.')).Select(t => t.ToLowerInvariant()).FirstOrDefault();
+            Common.ProgrammingLanguage programmingLanguage = arbitraryFilename != null && arbitraryFilename.EndsWith(".acr")
+                ? Common.ProgrammingLanguage.ACRYLIC
+                : Common.ProgrammingLanguage.CRAYON;
+
             // If the assembly exists but hasn't been imported before, instantiate it and
             // add it to all the lookups. This needs to happen before parsing the embedded
             // code to prevent infinite recursion.
-            CompilationScope compilationScope = new CompilationScope(parser.BuildContext, assemblyMetadata);
+            CompilationScope compilationScope = new CompilationScope(parser.TopLevelAssembly, assemblyMetadata, assemblyMetadata.InternalLocale, programmingLanguage);
             this.assembliesAlreadyImportedIndexByKey[assemblyMetadata.CanonicalKey] = this.ImportedAssemblyScopes.Count;
             this.ImportedAssemblyScopes.Add(compilationScope);
             this.importedAssembliesById[assemblyMetadata.ID] = compilationScope;
@@ -119,7 +126,6 @@ namespace Parser
 
             // Parse the assembly.
             parser.PushScope(compilationScope);
-            Dictionary<string, string> sourceCode = assemblyMetadata.GetSourceCode();
             foreach (string file in sourceCode.Keys.OrderBy(s => s.ToLowerInvariant()))
             {
                 string fakeName = "[" + file + "]";

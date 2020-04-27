@@ -46,9 +46,9 @@ namespace Parser.ParseTree
                     {
                         string index = ((StringConstant)this.Index).Value;
 
-                        if (parser.BuildContext.TopLevelAssembly.BuildVariableLookup.ContainsKey(index))
+                        if (parser.TopLevelAssembly.BuildVariableLookup.ContainsKey(index))
                         {
-                            BuildVarCanonicalized buildVar = parser.BuildContext.TopLevelAssembly.BuildVariableLookup[index];
+                            BuildVarCanonicalized buildVar = parser.TopLevelAssembly.BuildVariableLookup[index];
                             switch (buildVar.Type)
                             {
                                 case VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.Owner);
