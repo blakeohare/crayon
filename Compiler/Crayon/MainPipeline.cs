@@ -58,7 +58,7 @@ namespace Crayon.Pipeline
                     IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopes.Select(s => s.Metadata).ToArray();
                     ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
                     ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
-                    Exporter.Workers.ExportCbxVmBundleImplWorker.ExportVmBundle(
+                    Exporter.CbxVmBundleExporter.Run(
                         buildContext.Platform.ToLowerInvariant(),
                         buildContext.ProjectDirectory,
                         outputDirectory,
@@ -70,7 +70,7 @@ namespace Crayon.Pipeline
                     break;
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
-                    Exporter.Pipeline.ExportStandaloneVmPipeline.Run(
+                    Exporter.StandaloneVmExporter.Run(
                         command.VmPlatform,
                         command.PlatformProvider,
                         command.VmExportDirectory);
@@ -211,7 +211,7 @@ namespace Crayon.Pipeline
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
             outputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
 
-            return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(
+            return StandaloneCbxExporter.Run(
                 buildContext.ProjectID,
                 outputFiles,
                 outputFolder,

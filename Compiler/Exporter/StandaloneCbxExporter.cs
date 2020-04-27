@@ -1,15 +1,54 @@
 ﻿using AssemblyResolver;
-using Build;
 using Common;
 using CommonUtil;
+using CommonUtil.Disk;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Exporter.Workers
+namespace Exporter
 {
-    public static class GenerateCbxFileContentWorker
+    public static class StandaloneCbxExporter
     {
-        public static byte[] GenerateCbxBinaryData(string resourceManifestText, string imageSheetManifestText, IList<AssemblyMetadata> assemblies, string byteCode)
+        public static string Run(
+            string projectId,
+            Dictionary<string, FileOutput> fileOutputContext,
+            string outputDirectory,
+            string byteCode,
+            IList<AssemblyMetadata> assemblies,
+            string resourceManifest,
+            string imageSheetManifest)
+        {
+            byte[] cbxFileBytes = GenerateCbxBinaryData(
+                resourceManifest,
+                imageSheetManifest,
+                assemblies,
+                byteCode);
+
+            fileOutputContext[projectId + ".cbx"] = new FileOutput()
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = cbxFileBytes,
+            };
+
+            ExportUtil.EmitFilesToDisk(fileOutputContext, outputDirectory);
+            string absoluteCbxFilePath = GetCbxFileLocation(outputDirectory, projectId);
+            return absoluteCbxFilePath;
+        }
+
+        private static string GetCbxFileLocation(
+            string fullyQualifiedOutputFolder,
+            string projectId)
+        {
+            string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, projectId + ".cbx");
+            cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
+            return cbxPath;
+        }
+
+        private static byte[] GenerateCbxBinaryData(
+            string resourceManifestText,
+            string imageSheetManifestText,
+            IList<AssemblyMetadata> assemblies,
+            string byteCode)
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));

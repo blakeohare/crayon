@@ -4,13 +4,12 @@ using Common;
 using CommonUtil.Disk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Exporter.Workers
+namespace Exporter
 {
-    public static class ExportCbxVmBundleImplWorker
+    public static class CbxVmBundleExporter
     {
-        public static void ExportVmBundle(
+        public static void Run(
             string platformId,
             string projectDirectory,
             string outputDirectory,

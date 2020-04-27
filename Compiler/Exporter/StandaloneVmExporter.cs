@@ -1,14 +1,13 @@
 ﻿using AssemblyResolver;
 using Common;
 using CommonUtil.Disk;
-using Exporter.Workers;
 using Platform;
 using System;
 using System.Collections.Generic;
 
-namespace Exporter.Pipeline
+namespace Exporter
 {
-    public static class ExportStandaloneVmPipeline
+    public static class StandaloneVmExporter
     {
         public static void Run(
             string platformId,
@@ -26,12 +25,29 @@ namespace Exporter.Pipeline
             AbstractPlatform platform = platformProvider.GetPlatform(platformId);
             AssemblyMetadata[] assemblyMetadataList = new AssemblyFinder().AssemblyFlatList;
             Dictionary<string, FileOutput> fileOutputContext = new Dictionary<string, FileOutput>();
-            new ExportStandaloneVmSourceCodeForPlatformWorker().DoWorkImpl(
+            ExportStandaloneVmSourceCodeForPlatform(
                 fileOutputContext,
                 platform,
                 assemblyMetadataList,
                 vmTargetDirectory);
             ExportUtil.EmitFilesToDisk(fileOutputContext, vmTargetDirectory);
+        }
+
+        private static void ExportStandaloneVmSourceCodeForPlatform(
+            Dictionary<string, FileOutput> fileOutput,
+            AbstractPlatform platform,
+            AssemblyMetadata[] allLibraries,
+            string vmTargetDir)
+        {
+            new VmGenerator().GenerateVmSourceCodeForPlatform(
+                fileOutput,
+                "",
+                platform,
+                null,
+                null,
+                allLibraries,
+                vmTargetDir,
+                VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
         }
     }
 }

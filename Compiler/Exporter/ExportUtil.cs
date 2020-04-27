@@ -2,7 +2,7 @@
 using CommonUtil.Disk;
 using System.Collections.Generic;
 
-namespace Exporter.Workers
+namespace Exporter
 {
     internal static class ExportUtil
     {
