@@ -86,13 +86,13 @@ namespace Crayon.Pipeline
                         }
                         catch (Exception e)
                         {
-                            RenderErrorInfoAsJson(command, e);
+                            RenderErrorInfoAsJson(e);
                         }
                     }
                     else
                     {
                         DoExportStandaloneCbxFileAndGetPath(command, true);
-                        RenderErrorInfoAsJson(command, null); // renders the JSON object with the right schema, but empty.
+                        RenderErrorInfoAsJson(null); // renders the JSON object with the right schema, but empty.
                     }
                     NotifyStatusChange("COMPILE-END");
                     break;
@@ -107,7 +107,7 @@ namespace Crayon.Pipeline
                         }
                         catch (Exception e)
                         {
-                            RenderErrorInfoAsJson(command, e);
+                            RenderErrorInfoAsJson(e);
                         }
                     }
                     else
@@ -129,7 +129,7 @@ namespace Crayon.Pipeline
                         }
                         catch (Exception e)
                         {
-                            RenderErrorInfoAsJson(command, e);
+                            RenderErrorInfoAsJson(e);
                             NotifyStatusChange("COMPILE-END");
                             NotifyStatusChange("RUN-ABORTED");
                             return;
@@ -221,7 +221,7 @@ namespace Crayon.Pipeline
                 resDb.ImageSheetManifestFile == null ? null : resDb.ImageSheetManifestFile.TextContent);
         }
 
-        private static void RenderErrorInfoAsJson(Command command, Exception exception)
+        private static void RenderErrorInfoAsJson(Exception exception)
         {
             List<Exception> exceptions = new List<Exception>();
             if (exception != null)
