@@ -77,13 +77,13 @@ namespace Crayon
             { "genDefaultProjectJP", GEN_DEFAULT_PROJ_JP },
         };
 
-        public static ExportCommand Parse(string[] args)
+        internal static Command Parse(string[] args)
         {
             // just short circuit this one since this will only appear without a target project.
             // Otherwise it'll force a CR: prefix
             if (args.Length == 1 && (args[0] == "-v" || args[0] == "--version" || args[0] == "-version"))
             {
-                return new ExportCommand() { ShowVersion = true };
+                return new Command() { ShowVersion = true };
             }
 
             Dictionary<string, string> output = new Dictionary<string, string>();
@@ -138,7 +138,7 @@ namespace Crayon
                 {
                     string[] directRunArgs = new string[args.Length - 1];
                     Array.Copy(args, 1, directRunArgs, 0, directRunArgs.Length);
-                    ExportCommand runCommand = new ExportCommand()
+                    Command runCommand = new Command()
                     {
                         IsDirectCbxRun = true,
                         DirectRunArgs = directRunArgs,
@@ -212,9 +212,9 @@ namespace Crayon
             return GenerateExportCommand(output);
         }
 
-        private static ExportCommand GenerateExportCommand(Dictionary<string, string> args)
+        private static Command GenerateExportCommand(Dictionary<string, string> args)
         {
-            ExportCommand command = new ExportCommand();
+            Command command = new Command();
 
             if (args.Count == 0) command.IsEmpty = true;
 
@@ -246,7 +246,7 @@ namespace Crayon
             return command;
         }
 
-        private static void ParseAdditionalArgs(ExportCommand command, Dictionary<string, string> args)
+        private static void ParseAdditionalArgs(Command command, Dictionary<string, string> args)
         {
             command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
             command.ShowDependencyTree = args.ContainsKey(SHOW_DEP_TREE);

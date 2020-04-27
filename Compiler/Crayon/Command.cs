@@ -1,6 +1,6 @@
 ﻿namespace Crayon
 {
-    public class ExportCommand
+    internal class Command
     {
         public string DefaultProjectId { get; set; }
         public string DefaultProjectLocale { get; set; }

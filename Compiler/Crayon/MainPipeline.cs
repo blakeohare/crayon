@@ -21,7 +21,7 @@ namespace Crayon.Pipeline
 
         public static void Run()
         {
-            ExportCommand command = new TopLevelCheckWorker().DoWorkImpl();
+            Command command = new TopLevelCheckWorker().DoWorkImpl();
 
             if (command.UseOutputPrefixes)
             {
@@ -160,7 +160,7 @@ namespace Crayon.Pipeline
             }
         }
 
-        private static string DoExportStandaloneCbxFileAndGetPath(ExportCommand command, bool isDryRunErrorCheck)
+        private static string DoExportStandaloneCbxFileAndGetPath(Command command, bool isDryRunErrorCheck)
         {
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
 
@@ -175,7 +175,7 @@ namespace Crayon.Pipeline
                 buildContext);
         }
 
-        private static void RenderErrorInfoAsJson(ExportCommand command, Exception exception)
+        private static void RenderErrorInfoAsJson(Command command, Exception exception)
         {
             List<Exception> exceptions = new List<Exception>();
             if (exception != null)
@@ -230,7 +230,7 @@ namespace Crayon.Pipeline
             WriteCompileInformation(output);
         }
 
-        private static void ShowPerformanceMetrics(ExportCommand command)
+        private static void ShowPerformanceMetrics(Command command)
         {
 #if DEBUG
             ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());

@@ -17,11 +17,11 @@ namespace Crayon
 
     internal class TopLevelCheckWorker
     {
-        public ExportCommand DoWorkImpl()
+        public Command DoWorkImpl()
         {
             string[] commandLineArgs = Program.GetCommandLineArgs();
 
-            ExportCommand command = FlagParser.Parse(commandLineArgs);
+            Command command = FlagParser.Parse(commandLineArgs);
 
             // TODO: I don't like this here.
             command.PlatformProvider = new PlatformProvider();
@@ -29,7 +29,7 @@ namespace Crayon
             return command;
         }
 
-        public static ExecutionType IdentifyUseCase(ExportCommand command)
+        public static ExecutionType IdentifyUseCase(Command command)
         {
             if (command.ShowVersion) return ExecutionType.SHOW_VERSION;
             if (command.IsCSharpToAcrylicTranspiler) return ExecutionType.TRANSPILE_CSHARP_TO_ACRYLIC;

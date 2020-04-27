@@ -8,7 +8,7 @@ namespace Crayon
 {
     class GetBuildContextWorker
     {
-        public BuildContext DoWorkImpl(ExportCommand command)
+        public BuildContext DoWorkImpl(Command command)
         {
             string buildFile = command.BuildFilePath;
             string target = command.BuildTarget;

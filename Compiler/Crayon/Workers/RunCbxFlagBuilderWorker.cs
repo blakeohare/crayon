@@ -8,7 +8,7 @@ namespace Crayon
 {
     class RunCbxFlagBuilderWorker
     {
-        public string DoWorkImpl(ExportCommand command, string finalCbxPath)
+        public string DoWorkImpl(Command command, string finalCbxPath)
         {
             string cbxFile = FileUtil.GetPlatformPath(finalCbxPath);
             int processId = CommonUtil.Process.ProcessUtil.GetCurrentProcessId();
