@@ -25,7 +25,7 @@ namespace Parser.Resolver
 
             scope.FlattenFullyQualifiedLookupsIntoGlobalLookup(scopeLookup, scope.Locale);
             Dictionary<string, NamespaceReferenceTemplate> scopeNamespaceLookup = scope.GetFlattenedNamespaceLookup(scope.Locale);
-            TopLevelEntity[] toResolve = scope.GetTopLevelConstructs();
+            TopLevelEntity[] toResolve = scope.GetTopLevelEntities();
 
             ResolveNames(parser, toResolve, scopeLookup, depsLookup, scopeNamespaceLookup, depsNamespaceLookup);
         }

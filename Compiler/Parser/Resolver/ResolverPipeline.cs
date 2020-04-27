@@ -15,7 +15,7 @@ namespace Parser.Resolver
             Dictionary<string, CompilationScope> compilationScopeLookup = new Dictionary<string, CompilationScope>();
             foreach (CompilationScope scope in compilationScopesRaw.OrderBy(scope => scope.ScopeKey))
             {
-                originalCode.AddRange(scope.GetExecutables_HACK());
+                originalCode.AddRange(scope.GetTopLevelEntities());
                 compilationScopeLookup[scope.Metadata.ID] = scope;
             }
             TopLevelEntity[] code = originalCode.ToArray();
@@ -47,7 +47,7 @@ namespace Parser.Resolver
                 {
                     using (new PerformanceSection("Resolve types for: " + scope.ScopeKey))
                     {
-                        TopLevelEntity[] topLevelEntities = scope.GetTopLevelConstructs();
+                        TopLevelEntity[] topLevelEntities = scope.GetTopLevelEntities();
                         ConstDefinition[] consts = topLevelEntities.OfType<ConstDefinition>().ToArray();
                         EnumDefinition[] enums = topLevelEntities.OfType<EnumDefinition>().ToArray();
                         ClassDefinition[] classes = topLevelEntities.OfType<ClassDefinition>().ToArray();
@@ -107,7 +107,7 @@ namespace Parser.Resolver
             List<TopLevelEntity> newCode = new List<TopLevelEntity>();
             foreach (CompilationScope scope in compilationScopes)
             {
-                TopLevelEntity[] everything = scope.GetTopLevelConstructs();
+                TopLevelEntity[] everything = scope.GetTopLevelEntities();
                 TopLevelEntity[] constsAndEnums = new TopLevelEntity[0]
                     .Concat(everything.OfType<ConstDefinition>())
                     .Concat(everything.OfType<EnumDefinition>())

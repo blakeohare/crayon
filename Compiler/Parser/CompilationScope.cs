@@ -24,7 +24,7 @@ namespace Parser
         private AssemblyContext topLevelAssembly;
         private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 
-        private List<TopLevelEntity> executables = new List<TopLevelEntity>();
+        private List<TopLevelEntity> entities = new List<TopLevelEntity>();
 
         private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
 
@@ -50,16 +50,11 @@ namespace Parser
             }
         }
 
-        internal List<TopLevelEntity> GetExecutables_HACK()
+        internal void AddExecutable(TopLevelEntity entity)
         {
-            return this.executables;
-        }
-
-        internal void AddExecutable(TopLevelEntity executable)
-        {
-            if (executable is Namespace)
+            if (entity is Namespace)
             {
-                Namespace ns = (Namespace)executable;
+                Namespace ns = (Namespace)entity;
                 this.namespaceFlattener.AddNamespace(ns);
                 foreach (TopLevelEntity tlc in ns.Code)
                 {
@@ -68,7 +63,7 @@ namespace Parser
             }
             else
             {
-                this.executables.Add(executable);
+                this.entities.Add(entity);
             }
         }
 
@@ -97,9 +92,9 @@ namespace Parser
             return this.namespaceFlattener.GetLookup(locale);
         }
 
-        internal TopLevelEntity[] GetTopLevelConstructs()
+        internal TopLevelEntity[] GetTopLevelEntities()
         {
-            return this.executables.ToArray();
+            return this.entities.ToArray();
         }
 
         public void RegisterCniFunction(string name, int args)
@@ -142,7 +137,7 @@ namespace Parser
             // Add namespaces to the lookup but then remove them. I'd like for the collision detection to run here for namespaces.
             HashSet<string> keysToRemove = new HashSet<string>();
 
-            foreach (TopLevelEntity entity in this.GetTopLevelConstructs())
+            foreach (TopLevelEntity entity in this.GetTopLevelEntities())
             {
                 string name = entity.GetFullyQualifiedLocalizedName(verifiedCallingLocale);
                 if (output.ContainsKey(name))
@@ -164,7 +159,7 @@ namespace Parser
 
         internal ClassDefinition[] GetAllClassDefinitions()
         {
-            return this.executables
+            return this.entities
                 .OfType<ClassDefinition>()
                 .OrderBy(cd => cd.NameToken.Value)
                 .ToArray();

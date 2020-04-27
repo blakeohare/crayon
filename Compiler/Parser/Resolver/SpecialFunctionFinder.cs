@@ -14,7 +14,7 @@ namespace Parser.Resolver
 
         private static FunctionDefinition[] FindFunctionImpl(ParserContext parser, CompilationScope scope, string name)
         {
-            return scope.GetTopLevelConstructs()
+            return scope.GetTopLevelEntities()
                 .OfType<FunctionDefinition>()
                 .Where(fd => fd.NameToken.Value == name)
                 .ToArray();
