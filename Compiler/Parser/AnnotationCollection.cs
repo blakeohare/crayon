@@ -1,5 +1,4 @@
 ﻿using Common;
-using CommonUtil.Collections;
 using Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ namespace Parser
 {
     internal class AnnotationCollection
     {
-        private Multimap<string, Annotation> annotations = new Multimap<string, Annotation>();
+        private Dictionary<string, List<Annotation>> annotations = new Dictionary<string, List<Annotation>>();
         private ParserContext parser;
 
         internal AnnotationCollection(ParserContext parser)
@@ -19,7 +18,9 @@ namespace Parser
 
         public void Add(Annotation annotation)
         {
-            this.annotations.Add(annotation.Type, annotation);
+            string type = annotation.Type;
+            if (!annotations.ContainsKey(type)) annotations[type] = new List<Annotation>();
+            annotations[type].Add(annotation);
         }
 
         public void Validate()

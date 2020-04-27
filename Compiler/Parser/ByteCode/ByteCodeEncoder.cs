@@ -1,5 +1,4 @@
-﻿using CommonUtil;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Parser.ByteCode
 {
@@ -77,7 +76,9 @@ namespace Parser.ByteCode
         // If a % appears, that indicates the end of the string.
         private static void EncodeString(System.Text.StringBuilder sb, string value)
         {
-            sb.Append(Base64.ToBase64(value));
+            byte[] utf8Bytes = System.Text.Encoding.UTF8.GetBytes(value);
+            string encodedValue = System.Convert.ToBase64String(utf8Bytes);
+            sb.Append(encodedValue);
             sb.Append('%');
         }
 

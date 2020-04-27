@@ -1,6 +1,4 @@
-﻿using CommonUtil.Collections;
-using Parser.ParseTree;
-using System;
+﻿using Parser.ParseTree;
 
 namespace Parser.Crayon
 {
@@ -22,12 +20,12 @@ namespace Parser.Crayon
             }
         }
 
-        protected override Pair<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner)
+        protected override TypeTokenPair ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner)
         {
             tokens.EnsureNotEof();
             Token variable = tokens.PopIfWord();
             if (variable == null) throw new ParserException(tokens.Peek(), "Expected variable here.");
-            return new Pair<AType, Token>(AType.Any(variable), variable);
+            return new TypeTokenPair(AType.Any(variable), variable);
         }
     }
 }

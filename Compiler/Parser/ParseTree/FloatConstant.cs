@@ -1,5 +1,4 @@
-﻿using CommonUtil;
-using Parser.Resolver;
+﻿using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -21,14 +20,48 @@ namespace Parser.ParseTree
             this.Value = value;
         }
 
+        // Parses the value with strict format rules (optional int, dot, optional int)
+        // Using the built-in float parser is subject to locale rules.
         public static double ParseValue(Token firstToken, string fullValue)
         {
-            double value;
-            if (!FloatUtil.TryParse(fullValue, out value))
+            string[] parts = fullValue.Split('.');
+            bool isValid = true;
+            if (parts.Length == 1) parts = new string[] { parts[0], "0" };
+            else if (parts.Length != 2) isValid = false;
+            else if (parts[0].Length == 0)
             {
-                throw new ParserException(firstToken, "Invalid float literal.");
+                parts[0] = "0";
             }
-            return value;
+
+            long intPortion = 0;
+            long decPortion = 0;
+            long denominator = 1;
+            if (isValid)
+            {
+                string left = parts[0];
+                string right = parts[1];
+
+                for (int i = 0; i < left.Length; ++i)
+                {
+                    char c = left[i];
+                    int d = c - '0';
+                    if (d < 0 || d > 9) isValid = false;
+                    intPortion = intPortion * 10 + (c - '0');
+                }
+
+                for (int i = 0; i < right.Length; ++i)
+                {
+                    char c = right[i];
+                    int d = c - '0';
+                    if (d < 0 || d > 9) isValid = false;
+                    decPortion = decPortion * 10 + (c - '0');
+                    denominator *= 10;
+                }
+            }
+
+            if (!isValid) throw new ParserException(firstToken, "Invalid float literal.");
+
+            return intPortion + (1.0 * decPortion / denominator);
         }
 
         internal override Expression Resolve(ParserContext parser)

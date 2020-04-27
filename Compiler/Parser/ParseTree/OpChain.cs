@@ -1,5 +1,4 @@
-﻿using CommonUtil;
-using Parser.Resolver;
+﻿using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,7 +158,7 @@ namespace Parser.ParseTree
             }
             else
             {
-                isZero = FloatUtil.FloatAbsoluteEqualsNoEpislon(((FloatConstant)expr).Value, 0);
+                isZero = FloatIsAbsoluteZero(((FloatConstant)expr).Value);
             }
             if (isZero)
             {
@@ -377,8 +376,8 @@ namespace Parser.ParseTree
                     {
                         double right = GetFloat(opChain.Right);
                         int left = GetInt(opChain.Left);
-                        if (FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
-                        if (!FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
+                        if (FloatIsAbsoluteZero(right)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!FloatIsAbsoluteZero(right % 1) && left < 0)
                         {
                             throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
                         }
@@ -419,8 +418,8 @@ namespace Parser.ParseTree
                     {
                         double right = GetFloat(opChain.Right);
                         double left = GetFloat(opChain.Left);
-                        if (FloatUtil.FloatAbsoluteEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
-                        if (!FloatUtil.FloatAbsoluteEqualsNoEpislon(right % 1, 0) && left < 0)
+                        if (FloatIsAbsoluteZero(right)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!FloatIsAbsoluteZero(right % 1) && left < 0)
                         {
                             throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
                         }
@@ -523,6 +522,13 @@ namespace Parser.ParseTree
 
             public bool CanDoConstantOperationAtRuntime { get { return this.PerformOperation != null; } }
             public Func<OpChain, Expression> PerformOperation { get; set; }
+        }
+
+        private static bool FloatIsAbsoluteZero(double value)
+        {
+            // Warning-free workaround
+            string omgHax = value + "";
+            return omgHax == "0" || omgHax == "0.0";
         }
     }
 }

@@ -33,30 +33,5 @@ namespace CommonUtil
             }
             return output;
         }
-
-        // A check for 100% absolute floating-point equality is sometimes needed.
-        public static bool FloatAbsoluteEqualsNoEpislon(double a, double b)
-        {
-#pragma warning disable RECS0018
-            return a == b;
-#pragma warning restore RECS0018
-        }
-
-        private static readonly System.IFormatProvider EN_US =
-            System.Globalization.CultureInfo.GetCultureInfo("en-us");
-        private static readonly System.Globalization.NumberStyles DOUBLE_FLAG =
-            (System.Globalization.NumberStyles)(
-            (int)System.Globalization.NumberStyles.AllowDecimalPoint |
-            (int)System.Globalization.NumberStyles.AllowLeadingSign |
-            (int)System.Globalization.NumberStyles.AllowLeadingWhite |
-            (int)System.Globalization.NumberStyles.AllowTrailingWhite |
-            (int)System.Globalization.NumberStyles.Float |
-            (int)System.Globalization.NumberStyles.Integer);
-        public static bool TryParse(string value, out double output)
-        {
-            // Parsing text data should use local info, but this is for parsing code.
-            // As this is not supposed to be localized yet, only allow US decimals.
-            return double.TryParse(value, DOUBLE_FLAG, EN_US, out output);
-        }
     }
 }

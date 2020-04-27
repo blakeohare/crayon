@@ -1,5 +1,4 @@
-﻿using CommonUtil.Collections;
-using Localization;
+﻿using Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,14 +147,14 @@ namespace Parser
 
             if (this.IsForEachLoopParenthesisContents(tokens))
             {
-                Pair<AType, Token> iteratorVariable = this.ParseForEachLoopIteratorVariable(tokens, owner);
-                AType iteratorVariableType = iteratorVariable.First;
-                Token iteratorToken = iteratorVariable.Second;
+                TypeTokenPair iteratorVariable = this.ParseForEachLoopIteratorVariable(tokens, owner);
+                AType iteratorVariableType = iteratorVariable.Type;
+                Token iteratorToken = iteratorVariable.Token;
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
-                return new ForEachLoop(forToken, iteratorVariableType, iteratorVariable.Second, iterationExpression, body, owner);
+                return new ForEachLoop(forToken, iteratorVariableType, iteratorVariable.Token, iterationExpression, body, owner);
             }
             else
             {
@@ -165,7 +164,7 @@ namespace Parser
             }
         }
 
-        protected abstract Pair<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner);
+        protected abstract TypeTokenPair ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner);
 
         protected abstract bool IsForEachLoopParenthesisContents(TokenStream tokens);
 

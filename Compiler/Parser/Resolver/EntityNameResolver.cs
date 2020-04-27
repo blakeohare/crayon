@@ -18,9 +18,11 @@ namespace Parser.Resolver
             foreach (LocalizedAssemblyView depLocView in scope.Dependencies)
             {
                 depLocView.Scope.FlattenFullyQualifiedLookupsIntoGlobalLookup(depsLookup, depLocView.Locale);
-                CommonUtil.Collections.DictionaryUtil.MergeDictionaryInto(
-                    depLocView.Scope.GetFlattenedNamespaceLookup(depLocView.Locale),
-                    depsNamespaceLookup);
+                Dictionary<string, NamespaceReferenceTemplate> newNamespaces = depLocView.Scope.GetFlattenedNamespaceLookup(depLocView.Locale);
+                foreach (string key in newNamespaces.Keys)
+                {
+                    depsNamespaceLookup[key] = newNamespaces[key];
+                }
             }
 
             scope.FlattenFullyQualifiedLookupsIntoGlobalLookup(scopeLookup, scope.Locale);
