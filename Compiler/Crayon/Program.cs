@@ -6,52 +6,35 @@ namespace Crayon
 {
     internal class Program
     {
+
+#if DEBUG
+        private const bool IS_RELEASE = false;
+#else
+        private const bool IS_RELEASE = true;
+#endif
+
         static void Main(string[] args)
         {
+            string[] commandLineArgs = Program.GetEffectiveArgs(args);
+
+            Command command = FlagParser.Parse(commandLineArgs);
+
             using (new PerformanceSection("Crayon"))
             {
-                commandLineArgs = args;
-#if DEBUG
-                // First chance exceptions should crash in debug builds.
-                ExecuteProgramUnchecked();
-#else
-                try
-                {
-                    ExecuteProgramUnchecked();
-                }
-                catch (System.InvalidOperationException e)
-                {
-                    ConsoleWriter.Print(ConsoleMessageType.GENERAL_COMPILATION_ERROR, e.Message);
-                }
-                catch (Parser.MultiParserException e)
-                {
-                    ConsoleWriter.Print(ConsoleMessageType.PARSER_ERROR, e.Message);
-                }
-                catch (Parser.ParserException e)
-                {
-                    ConsoleWriter.Print(ConsoleMessageType.PARSER_ERROR, e.Message);
-                }
-#endif
-
-#if DEBUG
-                // Crash if there were any graphics contexts that weren't cleaned up.
-                // This is okay on Windows, but on OSX this is a problem, so ensure that a
-                // regressions are quickly noticed.
-                Bitmap.Graphics.EnsureCleanedUp();
-#endif
+                Pipeline.MainPipeline.Run(command, IS_RELEASE);
             }
-        }
 
-        private static string[] commandLineArgs;
+#if DEBUG
+            if (command.ShowPerformanceMarkers)
+            {
+                ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
+            }
 
-        public static string[] GetCommandLineArgs()
-        {
-            return GetEffectiveArgs(commandLineArgs);
-        }
-
-        private static void ExecuteProgramUnchecked()
-        {
-            Pipeline.MainPipeline.Run();
+            // Crash if there were any graphics contexts that weren't cleaned up.
+            // This is okay on Windows, but on OSX this is a problem, so ensure that a
+            // regressions are quickly noticed.
+            Bitmap.Graphics.EnsureCleanedUp();
+#endif
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)

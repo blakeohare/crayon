@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    public class Token
+    internal class Token
     {
         public string Value { get; private set; }
         public int Line { get; private set; }

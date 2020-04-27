@@ -10,19 +10,24 @@ namespace Crayon.Pipeline
 {
     internal static class MainPipeline
     {
-        private static void NotifyStatusChange(string status)
+        public static void Run(Command command, bool isRelease)
         {
-            ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
+            Result result = RunImpl(command, isRelease);
+
+            if (command.IsJsonOutput)
+            {
+                RenderErrorInfoAsJson(result.Errors ?? new Error[0]);
+            }
+            else if (result.HasErrors)
+            {
+                ErrorPrinter.ShowErrors(result.Errors);
+            }
         }
 
-        private static void WriteCompileInformation(string value)
+        public static Result RunImpl(Command command, bool isRelease)
         {
-            ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, value);
-        }
-
-        public static void Run()
-        {
-            Command command = new TopLevelCheckWorker().DoWorkImpl();
+            // TODO: the platform provider does not belong on the command.
+            command.PlatformProvider = new PlatformProvider();
 
             if (command.UseOutputPrefixes)
             {
@@ -35,19 +40,29 @@ namespace Crayon.Pipeline
             {
                 case ExecutionType.SHOW_USAGE:
                     new UsageDisplayWorker().DoWorkImpl();
-                    break;
+                    return new Result();
 
                 case ExecutionType.SHOW_VERSION:
                     new VersionDisplayWorker().DoWorkImpl();
-                    break;
+                    return new Result();
 
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
                     new DefaultProjectGenerator().DoWorkImpl(command.DefaultProjectId, command.DefaultProjectLocale);
-                    break;
+                    return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                    Parser.CompilationBundle compilation = Parser.CompilationBundle.Compile(buildContext);
+
+                    Parser.CompilationBundle compilation = Parser.Compiler.Compile(buildContext, isRelease);
+
+                    if (compilation.HasErrors)
+                    {
+                        return new Result()
+                        {
+                            Errors = compilation.Errors,
+                        };
+                    }
+
                     if (command.ShowDependencyTree)
                     {
                         new ShowAssemblyDepsWorker().DoWorkImpl(compilation.RootScope);
@@ -58,106 +73,58 @@ namespace Crayon.Pipeline
                     IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopes.Select(s => s.Metadata).ToArray();
                     ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
                     ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
-                    Exporter.CbxVmBundleExporter.Run(
-                        buildContext.Platform.ToLowerInvariant(),
-                        buildContext.ProjectDirectory,
-                        outputDirectory,
-                        compilation.ByteCode,
-                        resourceDatabase,
-                        assemblies,
-                        exportBundle,
-                        command.PlatformProvider);
-                    break;
+                    ExportResponse response = CbxVmBundleExporter.Run(
+                            buildContext.Platform.ToLowerInvariant(),
+                            buildContext.ProjectDirectory,
+                            outputDirectory,
+                            compilation.ByteCode,
+                            resourceDatabase,
+                            assemblies,
+                            exportBundle,
+                            command.PlatformProvider,
+                            isRelease);
+                    return new Result() { Errors = response.Errors };
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
-                    Exporter.StandaloneVmExporter.Run(
+                    ExportResponse standaloneVmExportResponse = StandaloneVmExporter.Run(
                         command.VmPlatform,
                         command.PlatformProvider,
-                        command.VmExportDirectory);
-                    break;
+                        command.VmExportDirectory,
+                        isRelease);
+                    return new Result() { Errors = standaloneVmExportResponse.Errors };
+
 
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
-                    if (command.IsJsonOutput)
-                    {
-                        try
-                        {
-                            DoExportStandaloneCbxFileAndGetPath(command, true);
-                        }
-                        catch (Exception e)
-                        {
-                            RenderErrorInfoAsJson(e);
-                        }
-                    }
-                    else
-                    {
-                        DoExportStandaloneCbxFileAndGetPath(command, true);
-                        RenderErrorInfoAsJson(null); // renders the JSON object with the right schema, but empty.
-                    }
+                    ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, isRelease);
                     NotifyStatusChange("COMPILE-END");
-                    break;
+                    return new Result() { Errors = errorCheckOnlyResponse.Errors };
 
                 case ExecutionType.EXPORT_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    if (command.IsJsonOutput)
-                    {
-                        try
-                        {
-                            DoExportStandaloneCbxFileAndGetPath(command, false);
-                        }
-                        catch (Exception e)
-                        {
-                            RenderErrorInfoAsJson(e);
-                        }
-                    }
-                    else
-                    {
-                        DoExportStandaloneCbxFileAndGetPath(command, false);
-                    }
+                    ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease);
                     NotifyStatusChange("COMPILE-END");
-                    break;
+                    return new Result() { Errors = cbxOnlyResponse.Errors };
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    string cbxFileLocation = null;
-                    if (command.IsJsonOutput)
+                    ExportResponse exportResult = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease);
+                    NotifyStatusChange("COMPILE-END");
+                    if (exportResult.HasErrors)
                     {
-                        try
-                        {
-                            cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
-                            NotifyStatusChange("COMPILE-END");
-                        }
-                        catch (Exception e)
-                        {
-                            RenderErrorInfoAsJson(e);
-                            NotifyStatusChange("COMPILE-END");
-                            NotifyStatusChange("RUN-ABORTED");
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
-                        NotifyStatusChange("COMPILE-END");
+                        NotifyStatusChange("RUN-ABORTED");
+                        return new Result() { Errors = exportResult.Errors };
                     }
 
-                    string cmdLineFlags = new RunCbxFlagBuilderWorker().DoWorkImpl(command, cbxFileLocation);
-
-                    if (command.ShowPerformanceMarkers)
-                    {
-                        ShowPerformanceMetrics(command);
-                    }
+                    string cmdLineFlags = new RunCbxFlagBuilderWorker().DoWorkImpl(command, exportResult.CbxOutputPath);
 
                     NotifyStatusChange("RUN-START");
-
                     new RunCbxWorker().DoWorkImpl(cmdLineFlags);
                     NotifyStatusChange("RUN-END");
-                    return;
-            }
 
-            if (command.ShowPerformanceMarkers)
-            {
-                ShowPerformanceMetrics(command);
+                    return new Result();
+
+                default: throw new Exception(); // this shouldn't happen.
             }
         }
 
@@ -166,6 +133,11 @@ namespace Crayon.Pipeline
             return (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
                 ? ""
                 : ("/" + jsFilePrefix.Trim('/') + "/");
+        }
+
+        private static void NotifyStatusChange(string status)
+        {
+            ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
         }
 
         private static ExportRequest BuildExportRequest(
@@ -194,14 +166,17 @@ namespace Crayon.Pipeline
             };
         }
 
-        private static string DoExportStandaloneCbxFileAndGetPath(Command command, bool isDryRunErrorCheck)
+        private static ExportResponse DoExportStandaloneCbxFileAndGetPath(
+            Command command,
+            bool isDryRunErrorCheck,
+            bool isRelease)
         {
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
 
-            Parser.CompilationBundle compilation = Parser.CompilationBundle.Compile(buildContext);
+            Parser.CompilationBundle compilation = Parser.Compiler.Compile(buildContext, isRelease);
             if (isDryRunErrorCheck)
             {
-                return null;
+                return new ExportResponse() { Errors = compilation.Errors };
             }
 
             Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
@@ -211,7 +186,7 @@ namespace Crayon.Pipeline
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
             outputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
 
-            return StandaloneCbxExporter.Run(
+            string cbxLocation = StandaloneCbxExporter.Run(
                 buildContext.ProjectID,
                 outputFiles,
                 outputFolder,
@@ -219,56 +194,40 @@ namespace Crayon.Pipeline
                 compilation.AllScopes.Select(s => s.Metadata).ToArray(),
                 resDb.ResourceManifestFile.TextContent,
                 resDb.ImageSheetManifestFile == null ? null : resDb.ImageSheetManifestFile.TextContent);
+            return new ExportResponse()
+            {
+                CbxOutputPath = cbxLocation,
+            };
         }
 
-        private static void RenderErrorInfoAsJson(Exception exception)
+        private static void RenderErrorInfoAsJson(Error[] errors)
         {
-            List<Exception> exceptions = new List<Exception>();
-            if (exception != null)
-            {
-                if (exception is Parser.MultiParserException)
-                {
-                    exceptions.AddRange(((Parser.MultiParserException)exception).ParseExceptions);
-                }
-                else
-                {
-                    exceptions.Add(exception);
-                }
-            }
-
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append("{ \"errors\": [");
-            for (int i = 0; i < exceptions.Count; ++i)
+            for (int i = 0; i < errors.Length; ++i)
             {
+                Error error = errors[i];
                 if (i > 0) sb.Append(',');
-                string fileName = null;
-                Parser.Token tokenInfo = null;
-                string message = exceptions[i].Message;
-                Parser.ParserException parserException = exceptions[i] as Parser.ParserException;
-                if (parserException != null)
-                {
-                    fileName = parserException.FileName;
-                    tokenInfo = parserException.TokenInfo;
-                    message = parserException.OriginalMessage;
-                }
+
                 sb.Append("\n  {");
-                if (fileName != null)
+                if (error.FileName != null)
                 {
                     sb.Append("\n    \"file\": \"");
-                    sb.Append(fileName.Replace("\\", "\\\\"));
+                    sb.Append(error.FileName.Replace("\\", "\\\\"));
                     sb.Append("\",");
                 }
-                if (tokenInfo != null)
+
+                if (error.HasLineInfo)
                 {
                     sb.Append("\n    \"col\": ");
-                    sb.Append(tokenInfo.Col + 1);
+                    sb.Append(error.Column + 1);
                     sb.Append(",");
                     sb.Append("\n    \"line\": ");
-                    sb.Append(tokenInfo.Line + 1);
+                    sb.Append(error.Line + 1);
                     sb.Append(",");
                 }
                 sb.Append("\n    \"message\": \"");
-                sb.Append(message.Replace("\\", "\\\\").Replace("\"", "\\\""));
+                sb.Append(error.Message.Replace("\\", "\\\\").Replace("\"", "\\\""));
                 sb.Append("\"\n  }");
             }
             sb.Append(" ] }");
@@ -276,11 +235,9 @@ namespace Crayon.Pipeline
             WriteCompileInformation(output);
         }
 
-        private static void ShowPerformanceMetrics(Command command)
+        private static void WriteCompileInformation(string value)
         {
-#if DEBUG
-            ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
-#endif
+            ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, value);
         }
     }
 }

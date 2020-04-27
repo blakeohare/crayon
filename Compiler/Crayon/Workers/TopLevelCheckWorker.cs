@@ -17,17 +17,6 @@ namespace Crayon
 
     internal class TopLevelCheckWorker
     {
-        public Command DoWorkImpl()
-        {
-            string[] commandLineArgs = Program.GetCommandLineArgs();
-
-            Command command = FlagParser.Parse(commandLineArgs);
-
-            // TODO: I don't like this here.
-            command.PlatformProvider = new PlatformProvider();
-
-            return command;
-        }
 
         public static ExecutionType IdentifyUseCase(Command command)
         {

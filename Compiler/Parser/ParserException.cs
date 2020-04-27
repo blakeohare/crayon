@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class MultiParserException : Exception
+    internal class MultiParserException : Exception
     {
         public ParserException[] ParseExceptions { get; private set; }
 
@@ -13,9 +13,14 @@ namespace Parser
         {
             this.ParseExceptions = exceptions.ToArray();
         }
+
+        internal Common.Error[] ToCompilerErrors()
+        {
+            return this.ParseExceptions.Select(err => err.ToCompilerError()).ToArray();
+        }
     }
 
-    public class ParserException : Exception
+    internal class ParserException : Exception
     {
         public string OriginalMessage { get; private set; }
 
@@ -86,6 +91,19 @@ namespace Parser
         internal static ParserException ThrowException(Localization.Locale locale, Localization.ErrorMessages errorType, Token token, params string[] args)
         {
             throw new ParserException(token, locale.Strings.Get(errorType.ToString(), args));
+        }
+
+        internal Common.Error ToCompilerError()
+        {
+            Common.Error error = new Common.Error();
+            if (this.TokenInfo != null)
+            {
+                error.Column = this.TokenInfo.Col;
+                error.Line = this.TokenInfo.Line;
+            }
+            error.FileName = this.FileName;
+            error.Message = this.OriginalMessage;
+            return error;
         }
     }
 }

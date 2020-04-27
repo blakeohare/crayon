@@ -2,7 +2,7 @@
 {
     // These are also defined in Interpreter/source/Constants.pst
     // Please make sure they stay synchronized.
-    public enum Types
+    internal enum Types
     {
         NULL = 1,
         BOOLEAN = 2,

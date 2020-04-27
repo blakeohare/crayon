@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    public enum TokenType
+    internal enum TokenType
     {
         PUNCTUATION,
         KEYWORD,

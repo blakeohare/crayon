@@ -94,7 +94,7 @@ namespace Parser.ParseTree
             // This shouldn't be called.
             throw new System.Exception();
         }
-        
+
         internal override void Resolve(ParserContext parser)
         {
             parser.ValueStackDepth = 0;
