@@ -70,14 +70,6 @@
       <Project>{70941077-b058-4a91-ac11-38e22930f01f}</Project>
       <Name>Parser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\AcrylicConversion\AcrylicConversion.csproj">
-      <Project>{abf78d3b-fcbc-4d07-95d7-102bd8a93dba}</Project>
-      <Name>AcrylicConversion</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\CApp\CApp.csproj">
-      <Project>{7f8c6292-5e35-4fd2-91c4-98123fd4e7e3}</Project>
-      <Name>CApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj">
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>CSharpApp</Name>
@@ -97,10 +89,6 @@
     <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
       <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
       <Name>JavaScriptAppIos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangC\LangC.csproj">
-      <Project>{85cc1b47-a0c5-48b0-ba51-b3599acd1392}</Project>
-      <Name>LangC</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj">
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
