@@ -26,9 +26,6 @@ namespace Crayon.Pipeline
 
         public static Result RunImpl(Command command, bool isRelease)
         {
-            // TODO: the platform provider does not belong on the command.
-            command.PlatformProvider = new PlatformProvider();
-
             if (command.UseOutputPrefixes)
             {
                 ConsoleWriter.EnablePrefixes();
@@ -82,14 +79,14 @@ namespace Crayon.Pipeline
                             resourceDatabase,
                             assemblies,
                             exportBundle,
-                            command.PlatformProvider,
+                            new PlatformProvider(),
                             isRelease);
                     return new Result() { Errors = response.Errors };
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
                     ExportResponse standaloneVmExportResponse = StandaloneVmExporter.Run(
                         command.VmPlatform,
-                        command.PlatformProvider,
+                        new PlatformProvider(),
                         command.VmExportDirectory,
                         isRelease);
                     return new Result() { Errors = standaloneVmExportResponse.Errors };

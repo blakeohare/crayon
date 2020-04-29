@@ -21,7 +21,6 @@
         public string OutputDirectoryOverride { get; set; }
         public string[] DirectRunArgs { get; set; }
         public bool DirectRunShowLibStack { get; set; }
-        public Platform.IPlatformProvider PlatformProvider { get; set; }
         public bool IsCSharpToAcrylicTranspiler { get; private set; }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    class PlatformProvider : IPlatformProvider
+    internal class PlatformProvider : IPlatformProvider
     {
         private Dictionary<string, AbstractPlatform> platforms;
         public AbstractPlatform GetPlatform(string name)
