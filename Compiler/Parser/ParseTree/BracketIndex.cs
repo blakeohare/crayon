@@ -1,5 +1,4 @@
-﻿using Build;
-using Parser.Resolver;
+﻿using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -44,19 +43,17 @@ namespace Parser.ParseTree
                 {
                     if (this.Index is StringConstant)
                     {
-                        string index = ((StringConstant)this.Index).Value;
+                        string varName = ((StringConstant)this.Index).Value;
 
-                        if (parser.TopLevelAssembly.BuildVariableLookup.ContainsKey(index))
+                        if (parser.CompileRequest.HasCompileTimeValue(varName))
                         {
-                            BuildVarCanonicalized buildVar = parser.TopLevelAssembly.BuildVariableLookup[index];
-                            switch (buildVar.Type)
+                            switch ((Types) parser.CompileRequest.GetCompileTimeValueType(varName))
                             {
-                                case VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.Owner);
-                                case VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.Owner);
-                                case VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.Owner);
-                                case VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.Owner);
-                                default:
-                                    throw new System.Exception("This should not happen."); // invalid types filtered during build context construction.
+                                case Types.BOOLEAN: return new BooleanConstant(this.FirstToken, parser.CompileRequest.GetCompileTimeBool(varName), this.Owner);
+                                case Types.INTEGER: return new IntegerConstant(this.FirstToken, parser.CompileRequest.GetCompileTimeInt(varName), this.Owner);
+                                case Types.FLOAT: return new FloatConstant(this.FirstToken, parser.CompileRequest.GetCompileTimeFloat(varName), this.Owner);
+                                case Types.STRING: return new StringConstant(this.FirstToken, parser.CompileRequest.GetCompileTimeString(varName), this.Owner);
+                                default: throw new System.Exception(); // this should not happen.
                             }
                         }
                         else

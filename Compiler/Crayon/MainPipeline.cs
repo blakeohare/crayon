@@ -24,6 +24,25 @@ namespace Crayon.Pipeline
             }
         }
 
+        private static Parser.CompileRequest CreateCompileRequest(BuildContext buildContext)
+        {
+            Parser.CompileRequest compileRequest = new Parser.CompileRequest() { BuildContext = buildContext };
+
+            foreach (string key in buildContext.TopLevelAssembly.BuildVariableLookup.Keys)
+            {
+                BuildVarCanonicalized buildVar = buildContext.TopLevelAssembly.BuildVariableLookup[key];
+                switch (buildVar.Type)
+                {
+                    case VarType.BOOLEAN: compileRequest.AddCompileTimeBoolean(key, buildVar.BoolValue); break;
+                    case VarType.FLOAT: compileRequest.AddCompileTimeFloat(key, buildVar.FloatValue); break;
+                    case VarType.INT: compileRequest.AddCompileTimeInteger(key, buildVar.IntValue); break;
+                    case VarType.STRING: compileRequest.AddCompileTimeString(key, buildVar.StringValue); break;
+                    default: throw new Exception(); // this should not happen.
+                }
+            }
+            return compileRequest;
+        }
+
         public static Result RunImpl(Command command, bool isRelease)
         {
             if (command.UseOutputPrefixes)
@@ -49,8 +68,7 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-
-                    Parser.CompilationBundle compilation = Parser.Compiler.Compile(new Parser.CompileRequest() { BuildContext = buildContext }, isRelease);
+                    Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
 
                     if (compilation.HasErrors)
                     {
@@ -171,7 +189,7 @@ namespace Crayon.Pipeline
         {
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
 
-            Parser.CompilationBundle compilation = Parser.Compiler.Compile(new Parser.CompileRequest() { BuildContext = buildContext }, isRelease);
+            Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
             if (isDryRunErrorCheck)
             {
                 return new ExportResponse() { Errors = compilation.Errors };

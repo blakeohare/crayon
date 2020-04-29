@@ -15,6 +15,7 @@ namespace Parser
         public string ProjectId { get; private set; }
         public AssemblyContext TopLevelAssembly { get; private set; } // still in the Build project
         public string DelegateMainTo { get; private set; }
+        public CompileRequest CompileRequest { get; private set; }
 
         private Stack<CompilationScope> scopeStack = new Stack<CompilationScope>();
 
@@ -30,6 +31,7 @@ namespace Parser
 
         public ParserContext(CompileRequest compileRequest)
         {
+            this.CompileRequest = compileRequest;
             this.ProjectId = compileRequest.ProjectId;
             this.TopLevelAssembly = compileRequest.TopLevelAssembly;
             this.DelegateMainTo = compileRequest.DelegateMainTo;
