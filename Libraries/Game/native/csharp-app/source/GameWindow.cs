@@ -390,18 +390,6 @@ namespace Interpreter.Libraries.Game
             this.SwapBuffers();
         }
 
-        internal int GetGamepadCount()
-        {
-            return 0;
-            //return this.Joysticks.Count;
-        }
-
-        internal object GetGamepadRawDevice(int index)
-        {
-            return null;
-            //return this.Joysticks[index];
-        }
-
         internal void GamepadEnableDevice(OpenTK.Input.JoystickDevice device)
         {
             // automatically enabled on OpenTK.

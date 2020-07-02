@@ -29,16 +29,16 @@ namespace Interpreter.Libraries.Game
             }
 
             private GamePadState state;
-            private ButtonTypes[] buttonNames;
-            private AxisTypes[] axisNames;
+            private readonly ButtonTypes[] buttonNames;
+            private readonly AxisTypes[] axisNames;
+            private readonly int index;
 
             public CrayonGamepad(int index)
             {
-                this.state = GamePad.GetState(index);
+                this.index = index;
                 GamePadCapabilities cpbl = GamePad.GetCapabilities(index);
                 this.Name = GamePad.GetName(index);
                 List<ButtonTypes> buttons = new List<ButtonTypes>();
-                GamePadButtons btns = this.state.Buttons;
                 if (cpbl.HasAButton) buttons.Add(ButtonTypes.A);
                 if (cpbl.HasBButton) buttons.Add(ButtonTypes.B);
                 if (cpbl.HasXButton) buttons.Add(ButtonTypes.X);
@@ -63,12 +63,17 @@ namespace Interpreter.Libraries.Game
                 this.AxisCount = this.axisNames.Length;
             }
 
+            public void RefreshState()
+            {
+                this.state = GamePad.GetState(this.index);
+            }
+
             public string Name { get; private set; }
 
             public int DPadCount { get; private set; }
             public int[] GetDPad(int dpadIndex)
             {
-                if (this.DPadCount != 0) throw new System.IndexOutOfRangeException();
+                if (dpadIndex >= this.DPadCount) throw new System.IndexOutOfRangeException();
                 GamePadDPad dpad = this.state.DPad;
                 return new int[] {
                     dpad.Left == ButtonState.Pressed ? -1 : (dpad.Right == ButtonState.Pressed ? 1 : 0),
@@ -118,19 +123,23 @@ namespace Interpreter.Libraries.Game
             }
         }
 
-        private static bool isInitialized = false;
         private static CrayonGamepad[] gamepads = null;
 
         private static void InitializeJoysticks()
         {
-            if (!isInitialized)
+            if (gamepads == null)
             {
-                int count = GameWindow.Instance.GetGamepadCount();
-                GamepadTranslationHelper.gamepads = new CrayonGamepad[count];
-                for (int i = 0; i < count; ++i)
+                List<CrayonGamepad> gamepads = new List<CrayonGamepad>();
+                for (int i = 0; i < 256; ++i)
                 {
-                    GamepadTranslationHelper.gamepads[i] = new CrayonGamepad(i);
+                    GamePadCapabilities gpc = GamePad.GetCapabilities(i);
+                    if (!gpc.IsMapped)
+                    {
+                        break;
+                    }
+                    gamepads.Add(new CrayonGamepad(i));
                 }
+                GamepadTranslationHelper.gamepads = gamepads.ToArray();
             }
         }
 
@@ -141,12 +150,10 @@ namespace Interpreter.Libraries.Game
 
         public static void Poll()
         {
-            // TODO: is this necessary anymore?
-            /*
-#pragma warning disable 612,618
-            GameWindow.Instance.InputDriver.Poll();
-#pragma warning restore 612,618
-            //*/
+            foreach (CrayonGamepad cgp in gamepads)
+            {
+                cgp.RefreshState();
+            }
         }
 
         public static int GetCurrentDeviceCount()
