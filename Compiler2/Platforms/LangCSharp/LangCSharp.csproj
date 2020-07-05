@@ -5,21 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\LibraryRegistry_cs.txt" />
-    <None Remove="Resources\Library_cs.txt" />
-    <None Remove="Resources\ResourceReader_cs.txt" />
-    <None Remove="Resources\TranslationHelper_cs.txt" />
-    <None Remove="Resources\UniversalBitmap_cs.txt" />
-    <None Remove="Resources\UniversalFont_cs.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\LibraryRegistry_cs.txt" />
-    <EmbeddedResource Include="Resources\Library_cs.txt" />
-    <EmbeddedResource Include="Resources\ResourceReader_cs.txt" />
-    <EmbeddedResource Include="Resources\TranslationHelper_cs.txt" />
-    <EmbeddedResource Include="Resources\UniversalBitmap_cs.txt" />
-    <EmbeddedResource Include="Resources\UniversalFont_cs.txt" />
+    <EmbeddedResource Include="Resources\*.txt" />
   </ItemGroup>
 
   <ItemGroup>

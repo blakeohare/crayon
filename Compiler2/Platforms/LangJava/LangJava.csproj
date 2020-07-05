@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\*.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.csproj" />
   </ItemGroup>

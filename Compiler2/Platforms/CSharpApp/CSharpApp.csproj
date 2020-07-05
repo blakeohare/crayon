@@ -5,45 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ResourcesLib\AssemblyInfo_cs.txt" />
-    <None Remove="ResourcesLib\ProjectFile_csproj.txt" />
-    <None Remove="ResourcesLib\Solution_sln.txt" />
-    <None Remove="ResourcesVm\CbxDecoder_cs.txt" />
-    <None Remove="ResourcesVm\Debugger_cs.txt" />
-    <None Remove="ResourcesVm\icon.ico" />
-    <None Remove="ResourcesVm\LibraryRegistry_cs.txt" />
-    <None Remove="ResourcesVm\Program_cs.txt" />
-    <None Remove="ResourcesVm\ProjectFile_csproj.txt" />
-    <None Remove="ResourcesVm\ResourceReader_cs.txt" />
-    <None Remove="Resources\AssemblyInfo_cs.txt" />
-    <None Remove="Resources\DummyDebugger_cs.txt" />
-    <None Remove="Resources\PlatformTranslationHelper_cs.txt" />
-    <None Remove="Resources\Program_cs.txt" />
-    <None Remove="Resources\ProjectFile_csproj.txt" />
-    <None Remove="Resources\ResourceReader_cs.txt" />
-    <None Remove="Resources\SolutionFileOsx_sln.txt" />
-    <None Remove="Resources\SolutionFile_sln.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="ResourcesLib\AssemblyInfo_cs.txt" />
-    <EmbeddedResource Include="ResourcesLib\ProjectFile_csproj.txt" />
-    <EmbeddedResource Include="ResourcesLib\Solution_sln.txt" />
-    <EmbeddedResource Include="ResourcesVm\CbxDecoder_cs.txt" />
-    <EmbeddedResource Include="ResourcesVm\Debugger_cs.txt" />
-    <EmbeddedResource Include="ResourcesVm\icon.ico" />
-    <EmbeddedResource Include="ResourcesVm\LibraryRegistry_cs.txt" />
-    <EmbeddedResource Include="ResourcesVm\Program_cs.txt" />
-    <EmbeddedResource Include="ResourcesVm\ProjectFile_csproj.txt" />
-    <EmbeddedResource Include="ResourcesVm\ResourceReader_cs.txt" />
-    <EmbeddedResource Include="Resources\AssemblyInfo_cs.txt" />
-    <EmbeddedResource Include="Resources\DummyDebugger_cs.txt" />
-    <EmbeddedResource Include="Resources\PlatformTranslationHelper_cs.txt" />
-    <EmbeddedResource Include="Resources\Program_cs.txt" />
-    <EmbeddedResource Include="Resources\ProjectFile_csproj.txt" />
-    <EmbeddedResource Include="Resources\ResourceReader_cs.txt" />
-    <EmbeddedResource Include="Resources\SolutionFileOsx_sln.txt" />
-    <EmbeddedResource Include="Resources\SolutionFile_sln.txt" />
+    <EmbeddedResource Include="ResourcesLib\*.txt" />
+    <EmbeddedResource Include="ResourcesVm\*.txt" />
+    <EmbeddedResource Include="Resources\*.txt" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,19 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DefaultProject\BuildFile.txt" />
-    <None Remove="DefaultProject\dotGitIgnore.txt" />
-    <None Remove="DefaultProject\mainEN.txt" />
-    <None Remove="DefaultProject\mainES.txt" />
-    <None Remove="DefaultProject\mainJP.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="DefaultProject\BuildFile.txt" />
-    <EmbeddedResource Include="DefaultProject\dotGitIgnore.txt" />
-    <EmbeddedResource Include="DefaultProject\mainEN.txt" />
-    <EmbeddedResource Include="DefaultProject\mainES.txt" />
-    <EmbeddedResource Include="DefaultProject\mainJP.txt" />
+    <EmbeddedResource Include="DefaultProject\*.txt" />
   </ItemGroup>
 
   <ItemGroup>

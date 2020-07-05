@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="SwiftResources\*.txt" />
+    <EmbeddedResource Include="SwiftResources\*.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.csproj" />
     <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj" />

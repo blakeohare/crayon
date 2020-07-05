@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="JsAndroidResources\**\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\**\*.png" />
+    <EmbeddedResource Include="JsAndroidResources\**\*.jar" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.csproj" />
     <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj" />
