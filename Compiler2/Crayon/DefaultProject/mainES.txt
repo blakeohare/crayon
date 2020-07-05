@@ -1,3 +1,0 @@
-﻿funcion primero(args) {
-	publicar("¡Hola, Mundo!");
-}

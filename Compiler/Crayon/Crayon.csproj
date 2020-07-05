@@ -1,151 +1,33 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6A25BB31-4280-470F-959E-25D6D5A173AD}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Crayon</RootNamespace>
-    <AssemblyName>crayon</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <GlobalConstants>TRACE</GlobalConstants>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <InheritedConstants>DEBUG;$(GlobalConstants)</InheritedConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <InheritedConstants>RELEASE;$(GlobalConstants)</InheritedConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="DefaultProject\*.txt" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Workers\*.cs" />
-    <Compile Include="*.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="LICENSE.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Build\Build.csproj" />
+    <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Exporter\Exporter.csproj" />
+    <ProjectReference Include="..\Parser\Parser.csproj" />
+    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj" />
+    <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj" />
+    <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj" />
+    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj" />
+    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj" />
+    <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj" />
+    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj" />
+    <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj" />
+    <ProjectReference Include="..\Platforms\LangPhp\LangPhp.csproj" />
+    <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj" />
+    <ProjectReference Include="..\Platforms\PhpServer\PhpServer.csproj" />
+    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj" />
+    <ProjectReference Include="..\Platform\Platform.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AssemblyResolver\AssemblyResolver.csproj">
-      <Project>{d32d3f5e-09f8-4edc-8930-a12c25a10bc7}</Project>
-      <Name>AssemblyResolver</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Build\Build.csproj">
-      <Project>{5bee19d9-117d-4c0e-bf60-45da72c9d355}</Project>
-      <Name>Build</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CommonUtil\CommonUtil.csproj">
-      <Project>{8e422564-56ee-407c-aef7-b85f895ed320}</Project>
-      <Name>CommonUtil</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Exporter\Exporter.csproj">
-      <Project>{f6484452-d2c1-4187-b3ea-abf70d311978}</Project>
-      <Name>Exporter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Localization\Localization.csproj">
-      <Project>{d64b5413-739c-4bbd-b70b-264cfae4b720}</Project>
-      <Name>Localization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Parser\Parser.csproj">
-      <Project>{70941077-b058-4a91-ac11-38e22930f01f}</Project>
-      <Name>Parser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj">
-      <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
-      <Name>CSharpApp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
-      <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
-      <Name>JavaApp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj">
-      <Project>{e495cac5-84b5-481b-a997-f370fe1b40a2}</Project>
-      <Name>JavaScriptAppAndroid</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj">
-      <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
-      <Name>JavaScriptApp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
-      <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
-      <Name>JavaScriptAppIos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj">
-      <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
-      <Name>LangCSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj">
-      <Project>{3f62b368-b14f-4c77-98ab-c94b19b07eaf}</Project>
-      <Name>LangJava</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
-      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
-      <Name>LangJavaScript</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangPhp\LangPhp.csproj">
-      <Project>{52ed3304-00b4-46e5-9dc5-7aaac81b752f}</Project>
-      <Name>LangPhp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
-      <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
-      <Name>LangPython</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\PhpServer\PhpServer.csproj">
-      <Project>{42c8d2eb-df8a-4967-91df-8608ac2d8d8a}</Project>
-      <Name>PhpServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platform\Platform.csproj">
-      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
-      <Name>Platform</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
-      <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
-      <Name>PythonApp</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' " />
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" Condition=" '$(SolutionFileName)' == 'CrayonOSX.sln' " />
-  <Choose>
-    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
-      <PropertyGroup>
-        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
-        <FileAlignment>512</FileAlignment>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProductVersion>8.0.30703</ProductVersion>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <Prefer32Bit>false</Prefer32Bit>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
-        <UseMSBuildEngine>false</UseMSBuildEngine>
-        <ExternalConsole>true</ExternalConsole>
-      </PropertyGroup>
-      <ItemGroup>
-        <Reference Include="Mono.Cairo" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
+
 </Project>
