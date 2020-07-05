@@ -1,0 +1,69 @@
+﻿TranslationHelper_globals = {}
+
+def TranslationHelper_setProgramData(value):
+  TranslationHelper_globals['pd'] = value
+
+def TranslationHelper_getProgramData():
+  return TranslationHelper_globals['pd']
+
+def TranslationHelper_setLibraries(libraries):
+  LibraryRegistry(libraries)
+
+_NUM_CHARS = {}
+for c in '0123456789':
+  _NUM_CHARS[c] = True
+
+_TranslationHelper_fnFinders = []
+
+def TranslationHelper_getFunction(name):
+  for fnFinderFn in _TranslationHelper_fnFinders:
+    output = fnFinderFn(name)
+    if output != None:
+      return output
+  return None
+
+def TranslationHelper_registerFunctionFinder(fnFinderFn):
+  _TranslationHelper_fnFinders.append(fnFinderFn)
+
+def TH_startVm(vm):
+  TH_handleInterpreterResult(startVm(vm))
+
+def TH_runInterpreter(execId):
+  vm = TranslationHelper_getProgramData()
+  return TH_handleInterpreterResult(runInterpreter(vm, execId))
+
+def TH_runInterpreterWithFunctionPointer(fpValue, args):
+  vm = TranslationHelper_getProgramData()
+  return TH_handleInterpreterResult(runInterpreterWithFunctionPointer(vm, fpValue, args))
+
+def TH_LoadAssembly(name, version, startupFunc):
+  if len(startupFunc) > 0:
+    fn = TranslationHelper_getFunction(startupFunc)
+    if fn != None:
+      fn(TranslationHelper_getProgramData(), [])
+
+def TH_handleInterpreterResult(result):
+  vm = TranslationHelper_getProgramData()
+  status = getVmResultStatus(result)
+  while status == 5 or status == 6: # REINVOKE || LOAD_ASSEMBLY
+    if status == 6: # LOAD_ASSEMBLY
+      parts = getVmResultAssemblyInfo(result).split(',')
+      name, version, startupfunc = parts
+      TH_LoadAssembly(name, version, startupfunc)
+    else:
+      time.sleep(getVmReinvokeDelay(result))
+
+    result = runInterpreter(vm, getVmResultExecId(result))
+    status = getVmResultStatus(result)
+  if status == 1: # FINISHED
+    if isVmResultRootExecContext(result):
+      sys.exit(0)
+    return result
+
+  if status == 2: return result # SUSPEND
+  if status == 3: # FATAL
+    if isVmResultRootExecContext(result): 
+      sys.exit(1)
+    return result
+
+  raise Exception() # invalid status

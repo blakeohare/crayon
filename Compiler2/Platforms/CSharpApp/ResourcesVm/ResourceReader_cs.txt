@@ -1,0 +1,78 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Interpreter
+{
+    public static class ResourceReader
+    {
+        public static string CbxDirectory { get; set; }
+        public static string ImageSheetManifest { get; set; }
+        public static string TextResourcePath { get; set; }
+
+        public static string ReadMetadata(string path, bool returnEmptyOnFail)
+        {
+            string output = ReadTextFile("res/" + path);
+            if (output != null) return output;
+            if (returnEmptyOnFail) return "";
+            throw new System.InvalidOperationException("'" + path + "' not found in metadata.");
+        }
+
+        public static string ReadTextResource(string path)
+        {
+            return ReadTextFile("res/txt/" + path);
+        }
+
+        public static UniversalBitmap ReadIconResource(string path)
+        {
+            return ReadImage("res/ico/" + path);
+        }
+
+        public static UniversalBitmap ReadImageResource(string path)
+        {
+            return ReadImage("res/img/" + path);
+        }
+
+        public static byte[] ReadFontResource(string path)
+        {
+            List<byte> bytes = ReadBytes("res/ttf/" + path);
+            return bytes == null ? null : bytes.ToArray();
+        }
+
+        public static byte[] ReadSoundResource(string path)
+        {
+            List<byte> bytes = ReadBytes("res/snd/" + path);
+            return bytes == null ? null : bytes.ToArray();
+        }
+
+        private static string ReadTextFile(string path)
+        {
+            IList<byte> bytes = ReadBytes(path);
+            if (bytes == null) return null;
+            bool hasBom = bytes.Count >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191;
+            StringBuilder output = new StringBuilder(bytes.Count);
+            output.Append(bytes.Skip<byte>(hasBom ? 3 : 0).Select<byte, char>(b => (char)b).ToArray<char>());
+            return output.ToString();
+        }
+
+        public static UniversalBitmap ReadImage(string path)
+        {
+            IList<byte> data = ReadBytes(path);
+            if (data == null)
+            {
+                return null;
+            }
+            return new UniversalBitmap(data.ToArray());
+        }
+
+        private static List<byte> ReadBytes(string path)
+        {
+            string fullPath = System.IO.Path.Combine(ResourceReader.CbxDirectory, path);
+            if (System.IO.File.Exists(fullPath))
+            {
+                return new List<byte>(System.IO.File.ReadAllBytes(fullPath));
+            }
+            return null;
+        }
+    }
+}

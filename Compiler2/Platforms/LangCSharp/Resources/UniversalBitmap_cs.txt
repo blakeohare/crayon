@@ -1,0 +1,412 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+
+namespace Interpreter
+{
+    public class UniversalBitmap
+    {
+
+#if WINDOWS
+        private System.Drawing.Bitmap internalBitmap;
+#elif OSX
+        private readonly Cairo.ImageSurface internalBitmap;
+#endif
+
+        private DrawingSession activeDrawingSession = null;
+        private BitLockSession activeBitLockSession = null;
+
+        public int GlTextureId { get; set; }
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public bool IsCairo
+        {
+            get
+            {
+#if WINDOWS
+                return false;
+#elif OSX
+                return true;
+#endif
+            }
+        }
+
+        private static readonly HashSet<UniversalBitmap> allBitmaps = new HashSet<UniversalBitmap>();
+
+        private void RegisterThis()
+        {
+            allBitmaps.Add(this);
+        }
+
+        public static void EnsureAllFreed()
+        {
+            if (allBitmaps.Count > 0)
+            {
+                foreach (UniversalBitmap bmp in allBitmaps.ToArray())
+                {
+                    bmp.Free();
+                }
+            }
+        }
+
+        public void Free()
+        {
+            this.internalBitmap.Dispose();
+            allBitmaps.Remove(this);
+        }
+
+        public UniversalBitmap(byte[] bytes)
+        {
+            RegisterThis();
+#if WINDOWS
+            this.internalBitmap = (System.Drawing.Bitmap)System.Drawing.Image.FromStream(new System.IO.MemoryStream(bytes));
+            this.Width = this.internalBitmap.Width;
+            this.Height = this.internalBitmap.Height;
+
+            if (this.internalBitmap.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+            {
+                System.Drawing.Bitmap newBmp = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                newBmp.SetResolution(this.internalBitmap.HorizontalResolution, this.internalBitmap.VerticalResolution);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBmp);
+                g.DrawImage(this.internalBitmap, new System.Drawing.PointF(0, 0));
+                g.Flush();
+                this.internalBitmap = newBmp;
+            }
+#elif OSX
+            this.internalBitmap = GetCairoImageFromBytes(bytes);
+            this.Width = this.internalBitmap.Width;
+            this.Height = this.internalBitmap.Height;
+            if (this.internalBitmap.Format != Cairo.Format.ARGB32)
+            {
+                UniversalBitmap newBmp = new UniversalBitmap(this.Width, this.Height);
+                newBmp.GetActiveDrawingSession().Draw(this, 0, 0, 0, 0, this.Width, this.Height).Flush();
+                this.internalBitmap.Dispose();
+                this.internalBitmap = newBmp.internalBitmap;
+            }
+#endif
+        }
+
+#if WINDOWS
+        private static readonly UniversalBitmap DUMMY_BITMAP = new UniversalBitmap(1, 1);
+#endif
+
+#if OSX
+        private static Cairo.ImageSurface GetCairoImageFromBytes(byte[] bytes)
+        {
+            // TODO: be more ashamed of this than the current level of shame.
+            // Since the only raw image file format decoder I can find in the Cairo library
+            // is in the API that takes in a file as a string filepath, this seems to be the
+            // only answer. The byte array constructor for ImageSurface is based on decoded
+            // image data, not raw PNG or JPEG data.
+            string tmpFile = System.IO.Path.GetTempFileName();
+            System.IO.File.WriteAllBytes(tmpFile, bytes);
+            Cairo.ImageSurface image = new Cairo.ImageSurface(tmpFile);
+            System.IO.File.Delete(tmpFile);
+            return image;
+        }
+#endif
+
+        public UniversalBitmap(int width, int height)
+        {
+            RegisterThis();
+
+            this.Width = width;
+            this.Height = height;
+#if WINDOWS
+            this.internalBitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+#elif OSX
+            this.internalBitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, width, height);
+#endif
+        }
+
+        public UniversalBitmap(UniversalFont font, char c)
+        {
+            RegisterThis();
+
+            string text = "" + c;
+#if WINDOWS
+            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
+            System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
+            System.Drawing.SizeF size = graphics.MeasureString(text, font.NativeFont);
+            session.Flush();
+            this.Width = (int)System.Math.Ceiling(size.Width);
+            this.Height = (int)System.Math.Ceiling(size.Height);
+            this.internalBitmap = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            session = this.GetActiveDrawingSession();
+            graphics = (System.Drawing.Graphics)session.NativeSession;
+            graphics.DrawString(text, font.NativeFont, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
+            session.Flush();
+
+            this.TextAntiAliasingCorrection();
+#elif OSX
+            // TODO: italic/bold
+            double size = font.Size;
+
+            UniversalBitmap dummyBitmap = new UniversalBitmap(10, 10);
+            DrawingSession session = dummyBitmap.GetActiveDrawingSession();
+            Cairo.Context ctx = (Cairo.Context)session.NativeSession;
+            ctx.SetContextFontFace(font.CairoFontFace);
+            ctx.SetFontSize(size);
+            Cairo.TextExtents te = ctx.TextExtents(text);
+            session.Flush();
+
+            this.Width = (int)((te.XAdvance) + .5);
+            this.Height = (int)(font.Size * 2 + .5);
+            this.internalBitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, this.Width, this.Height);
+
+            session = this.GetActiveDrawingSession();
+            ctx = (Cairo.Context)session.NativeSession;
+            ctx.SetContextFontFace(font.CairoFontFace);
+            ctx.SetFontSize(size);
+            ctx.SetSourceRGBA(1, 1, 1, 1);
+            ctx.MoveTo(0, this.Height * 2 / 3);
+            ctx.ShowText(text);
+            session.Flush();
+#endif
+        }
+
+#if WINDOWS
+        private void TextAntiAliasingCorrection()
+        {
+            // Drawing text leaves an anti-alias aura around the characters which is 100% opaque using a black background. This results in
+            // an ugly black border around letters that are drawn against non-black backgrounds.
+            // Because this is supposed to be RGB(255, 255, 255) with varying values of alpha, go through and set the alpha channel to the
+            // value in the red channel, and set all non-alpha channels to 255.
+
+            BitLockSession bitlock = this.GetActiveBitLockSession();
+            byte[] pixels = bitlock.GetPixels();
+            int length = pixels.Length;
+            for (int i = 0; i < length; i += 4)
+            {
+                pixels[i | 3] = pixels[i | 1];
+                pixels[i] = 255;
+                pixels[i | 1] = 255;
+                pixels[i | 2] = 255;
+            }
+
+            bitlock.WritePixels(pixels);
+            bitlock.Free();
+        }
+#endif
+
+        public DrawingSession GetActiveDrawingSession()
+        {
+            if (this.activeDrawingSession == null) this.activeDrawingSession = new DrawingSession(this);
+            return this.activeDrawingSession;
+        }
+
+        public BitLockSession GetActiveBitLockSession()
+        {
+            if (this.activeBitLockSession == null) this.activeBitLockSession = new BitLockSession(this);
+            return this.activeBitLockSession;
+        }
+
+        public static bool IconSupported
+        {
+            get
+            {
+#if WINDOWS
+                return true;
+#elif OSX
+                return false;
+#endif
+            }
+        }
+
+        public System.Drawing.Icon GenerateIcon()
+        {
+#if WINDOWS
+            return System.Drawing.Icon.FromHandle(this.internalBitmap.GetHicon());
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
+        }
+
+        public byte[] GetBytesAsPng()
+        {
+            return this.GetBytesImpl("png");
+        }
+
+        public byte[] GetBytesAsJpeg()
+        {
+            return this.GetBytesImpl("jpeg");
+        }
+
+        private byte[] GetBytesImpl(string formatStr)
+        {
+#if WINDOWS
+            System.Drawing.Imaging.ImageFormat format;
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            switch (formatStr)
+            {
+                case "png": format = System.Drawing.Imaging.ImageFormat.Png; break;
+                case "jpeg": format = System.Drawing.Imaging.ImageFormat.Jpeg; break;
+                default: throw new System.NotImplementedException();
+            }
+            this.internalBitmap.Save(ms, format);
+            return ms.ToArray();
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
+        }
+
+        public static string ToBase64(string prefix, byte[] bytes)
+        {
+            int[] bitPairs = new int[bytes.Length * 4 + 3];
+            int length = bytes.Length;
+            char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".ToCharArray();
+            System.Text.StringBuilder output = new System.Text.StringBuilder();
+            output.Append(prefix);
+            int j = 0;
+            for (int i = 0; i < length; ++i)
+            {
+                bitPairs[j] = (bytes[i] >> 6) & 3;
+                bitPairs[j | 1] = (bytes[i] >> 4) & 3;
+                bitPairs[j | 2] = (bytes[i] >> 2) & 3;
+                bitPairs[j | 3] = bytes[i] & 3;
+                j += 4;
+            }
+            length = bitPairs.Length - 3;
+            int t;
+            for (int i = 0; i < length; i += 3)
+            {
+                t = (bitPairs[i] << 4) | (bitPairs[i + 1] << 2) | (bitPairs[i + 2]);
+                output.Append(alphabet[t]);
+            }
+            return output.ToString();
+        }
+
+        public class BitLockSession
+        {
+            private UniversalBitmap bmp;
+
+#if WINDOWS
+            private System.Drawing.Imaging.BitmapData internalSession;
+#elif OSX
+            private System.IntPtr ptr;
+#endif
+
+            public BitLockSession(UniversalBitmap bmp)
+            {
+                this.bmp = bmp;
+#if WINDOWS
+                this.internalSession = bmp.internalBitmap.LockBits(
+                    new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+#elif OSX
+                this.ptr = bmp.internalBitmap.DataPtr;
+#endif
+            }
+
+            public System.IntPtr GetPtr()
+            {
+#if WINDOWS
+                return this.internalSession.Scan0;
+#elif OSX
+                return this.ptr;
+#endif
+            }
+
+            public byte[] GetPixels()
+            {
+                byte[] pixels = new byte[this.bmp.Width * this.bmp.Height * 4];
+                System.Runtime.InteropServices.Marshal.Copy(this.GetPtr(), pixels, 0, pixels.Length);
+                return pixels;
+            }
+
+            public void WritePixels(byte[] pixels)
+            {
+                System.Runtime.InteropServices.Marshal.Copy(pixels, 0, this.GetPtr(), this.bmp.Width * this.bmp.Height * 4);
+            }
+
+            public void Free()
+            {
+#if WINDOWS
+                this.bmp.internalBitmap.UnlockBits(this.internalSession);
+#elif OSX
+                // nothing to do, really.
+#endif
+            }
+        }
+
+        public class DrawingSession
+        {
+            private static int activeSessions = 0;
+
+            private UniversalBitmap bmp;
+
+#if WINDOWS
+            private System.Drawing.Graphics internalSession;
+#elif OSX
+            private readonly Cairo.Context context;
+#endif
+
+            public object NativeSession
+            {
+                get
+                {
+#if WINDOWS
+                    return this.internalSession;
+#elif OSX
+                    return this.context;
+#endif
+                }
+            }
+
+            public DrawingSession(UniversalBitmap bmp)
+            {
+                activeSessions++;
+
+                this.bmp = bmp;
+#if WINDOWS
+                this.internalSession = System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)bmp.internalBitmap);
+#elif OSX
+                this.context = new Cairo.Context(bmp.internalBitmap);
+#endif
+            }
+
+            public DrawingSession Draw(UniversalBitmap bmp, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
+            {
+#if WINDOWS
+                this.internalSession.DrawImage(
+                    bmp.internalBitmap,
+                    new System.Drawing.Rectangle(targetX, targetY, width, height),
+                    new System.Drawing.Rectangle(sourceX, sourceY, width, height),
+                    System.Drawing.GraphicsUnit.Pixel);
+#elif OSX
+                if (width != bmp.Width || height != bmp.Height)
+                {
+                    throw new System.NotImplementedException();
+                }
+
+                this.context.SetSource(bmp.internalBitmap, targetX, targetY);
+                this.context.Paint();
+#endif
+                return this;
+            }
+
+            public void Flush()
+            {
+                activeSessions--;
+#if WINDOWS
+                this.internalSession.Flush();
+                this.internalSession.Dispose();
+                this.bmp.activeDrawingSession = null;
+#elif OSX
+                this.context.Dispose();
+#endif
+            }
+
+            public static void VerifyCleaned()
+            {
+                if (activeSessions != 0)
+                {
+                    throw new System.Exception("");
+                }
+            }
+        }
+    }
+}

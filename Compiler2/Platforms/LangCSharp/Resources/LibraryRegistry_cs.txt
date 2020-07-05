@@ -1,0 +1,45 @@
+﻿using Interpreter.Structs;
+using System;
+using System.Linq;
+
+namespace Interpreter.Vm
+{
+    public class LibraryRegistry
+    {
+        public LibraryRegistry()
+        {
+            foreach (Type type in typeof(LibraryRegistry).Assembly.GetTypes().Where(t => t.Name == "LibraryWrapper"))
+            {
+                string[] namespaceComponents = type.FullName.Split('.');
+                if (namespaceComponents.Length > 2 && namespaceComponents[1] == "Libraries")
+                {
+                    RegisterLibraryMethodResolver(type);
+                }
+            }
+        }
+
+        public void LoadAssembly(string name, string version, string startupFunction)
+        {
+            // TODO: load a DLL once they are split out separately.
+
+            TranslationHelper.runAssemblyStartupFunction(name, startupFunction);
+        }
+
+        private static void RegisterLibraryMethodResolver(Type libraryType)
+        {
+            TranslationHelper.RegisterFunctionPointerResolver((string funcName) =>
+            {
+                string name = funcName.Split(',')[1];
+
+                // TODO: figure out why GetMethod() is not working directly
+                System.Reflection.MethodInfo methodInfo = libraryType.GetMethods().Where(m => m.Name == name).FirstOrDefault();
+                if (methodInfo == null) return null;
+                Func<Interpreter.Structs.VmContext, Interpreter.Structs.Value[], Interpreter.Structs.Value> output = (Interpreter.Structs.VmContext vm, Interpreter.Structs.Value[] args) =>
+                {
+                    return (Interpreter.Structs.Value)methodInfo.Invoke(null, new object[] { vm, args });
+                };
+                return output;
+            });
+        }
+    }
+}

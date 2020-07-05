@@ -5,4 +5,41 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="DefaultProject\BuildFile.txt" />
+    <None Remove="DefaultProject\dotGitIgnore.txt" />
+    <None Remove="DefaultProject\mainEN.txt" />
+    <None Remove="DefaultProject\mainES.txt" />
+    <None Remove="DefaultProject\mainJP.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DefaultProject\BuildFile.txt" />
+    <EmbeddedResource Include="DefaultProject\dotGitIgnore.txt" />
+    <EmbeddedResource Include="DefaultProject\mainEN.txt" />
+    <EmbeddedResource Include="DefaultProject\mainES.txt" />
+    <EmbeddedResource Include="DefaultProject\mainJP.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Build\Build.csproj" />
+    <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Exporter\Exporter.csproj" />
+    <ProjectReference Include="..\Parser\Parser.csproj" />
+    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj" />
+    <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj" />
+    <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj" />
+    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj" />
+    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj" />
+    <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj" />
+    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj" />
+    <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj" />
+    <ProjectReference Include="..\Platforms\LangPhp\LangPhp.csproj" />
+    <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj" />
+    <ProjectReference Include="..\Platforms\PhpServer\PhpServer.csproj" />
+    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj" />
+    <ProjectReference Include="..\Platform\Platform.csproj" />
+  </ItemGroup>
+
 </Project>

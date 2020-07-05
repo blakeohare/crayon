@@ -1,0 +1,601 @@
+﻿using Interpreter.Vm;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+
+namespace Interpreter
+{
+    public class Breakpoint
+    {
+        public int RequestId { get; set; }
+        public int ID { get; set; }
+        public int Line { get; set; }
+        public string Path { get; set; }
+        public int BreakpointId { get; set; }
+    }
+
+    public class Debugger
+    {
+        private static Debugger instance = null;
+        public static Debugger INSTANCE
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Debugger();
+                }
+                return instance;
+            }
+        }
+
+        private Debugger()
+        {
+            lock (awaitingQueueMutex)
+            {
+                AwaitingSet = new List<Breakpoint>();
+                Breakpoints = new Dictionary<int, Breakpoint>();
+                RejectedBreakpoints = new List<Breakpoint>();
+            }
+        }
+
+        private readonly object isResumeWantedMutex = new object();
+        private bool isResumeWanted = false;
+        public bool IsResumeWanted
+        {
+            get { lock (isResumeWantedMutex) { return this.isResumeWanted; } }
+            set { lock (isResumeWantedMutex) { this.isResumeWanted = value; } }
+        }
+
+        public void StartListening()
+        {
+            debuggerNetworkConnection = new DebuggerConnection();
+            debuggerNetworkConnection.StartListeningAsync();
+        }
+
+        private DebuggerConnection debuggerNetworkConnection;
+
+        public List<Breakpoint> AwaitingSet { get; private set; }
+        public Dictionary<int, Breakpoint> Breakpoints { get; private set; }
+        public List<Breakpoint> RejectedBreakpoints { get; private set; }
+
+        private static object awaitingQueueMutex = new object();
+
+        public void BroadcastMessage(string[] value)
+        {
+            this.debuggerNetworkConnection.BroadcastMessageToAllSessions(value);
+        }
+
+        public void FlushMessageQueue()
+        {
+            foreach (DebuggerMessage debuggerMessage in debuggerNetworkConnection.FlushData())
+            {
+                string[] response = debuggerMessage.Run();
+                if (response != null)
+                {
+                    debuggerNetworkConnection.SendResponseAsync(debuggerMessage.SourceId, response);
+                }
+            }
+
+            lock (awaitingQueueMutex)
+            {
+                if (AwaitingSet.Count > 0)
+                {
+                    foreach (Breakpoint breakpoint in AwaitingSet)
+                    {
+                        int id = CrayonWrapper.debuggerSetBreakpoint(TranslationHelper.ProgramData, breakpoint.Path, breakpoint.Line);
+                        if (id != -1)
+                        {
+                            Breakpoints[id] = breakpoint;
+                        }
+                        else
+                        {
+                            RejectedBreakpoints.Add(breakpoint);
+                        }
+                    }
+                    AwaitingSet.Clear();
+                }
+            }
+        }
+    }
+
+    public class DebuggerConnection
+    {
+        private readonly object sessionMutex = new object();
+        private List<DebuggerSession> activeSessions = new List<DebuggerSession>();
+
+        public void BroadcastMessageToAllSessions(string[] message)
+        {
+            DebuggerSession[] sessions;
+            lock (sessionMutex)
+            {
+                sessions = activeSessions.ToArray();
+            }
+
+            foreach (DebuggerSession session in sessions)
+            {
+                session.SendToClientAsync(message);
+            }
+        }
+
+        public List<DebuggerMessage> FlushData()
+        {
+            List<DebuggerMessage> messages = new List<DebuggerMessage>();
+            lock (sessionMutex)
+            {
+                foreach (DebuggerSession session in activeSessions)
+                {
+                    foreach (string messageData in session.PumpMessageQueue())
+                    {
+                        messages.Add(DebuggerMessage.Parse(session.SessionId, messageData));
+                    }
+                }
+            }
+            return messages;
+        }
+
+        public void StartListeningAsync()
+        {
+            new Thread(new ThreadStart(this.StartListeningImpl)).Start();
+        }
+
+        public void SendResponseAsync(int sessionId, string[] data)
+        {
+            DebuggerSession targetSocket = null;
+            lock (sessionMutex)
+            {
+                foreach (DebuggerSession session in this.activeSessions)
+                {
+                    if (session.IsActive && session.SessionId == sessionId)
+                    {
+                        targetSocket = session;
+                        break;
+                    }
+                }
+            }
+
+            if (targetSocket != null)
+            {
+                targetSocket.SendToClientAsync(data);
+            }
+        }
+
+        private class DebuggerSession
+        {
+            private static int sessionIdAlloc = 1;
+            public int SessionId { get; private set; }
+            private Socket socket;
+
+            private object listenerMutex = new object();
+            private List<string> listenerMessageQueue = new List<string>();
+
+            private object statusMutex = new object();
+            private bool isActive = true;
+            public bool IsActive
+            {
+                get { lock (statusMutex) { return this.isActive; } }
+                set { lock (statusMutex) { this.isActive = value; } }
+            }
+
+            public DebuggerSession(Socket socket)
+            {
+                this.SessionId = sessionIdAlloc++;
+                this.socket = socket;
+
+                new Thread(new ThreadStart(this.HandleMessages)).Start();
+            }
+
+            private void Close()
+            {
+                this.IsActive = false;
+                this.socket.Shutdown(SocketShutdown.Both);
+                this.socket.Close();
+            }
+
+            private readonly object outgoingQueueMutex = new object();
+            private List<string> outgoingQueue = new List<string>();
+            public void SendToClientAsync(string[] messageParts)
+            {
+                string message = string.Join(",", messageParts);
+                lock (outgoingQueueMutex)
+                {
+                    outgoingQueue.Add(message);
+                }
+
+                new Thread(new ThreadStart(this.FlushOutgoingQueue)).Start();
+            }
+
+            private void FlushOutgoingQueue()
+            {
+                while (true)
+                {
+                    string nextMessage = null;
+                    lock (outgoingQueueMutex)
+                    {
+                        if (outgoingQueue.Count == 0) return;
+
+                        nextMessage = outgoingQueue[0];
+                        outgoingQueue.RemoveAt(0);
+                    }
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(nextMessage.ToCharArray());
+                    int length = bytes.Length;
+
+                    List<byte> buffer = new List<byte>()
+                    {
+                        (byte) 'C', (byte) 'D', (byte) 'B', (byte) 'G',
+                        (byte) ((length >> 24) & 255),
+                        (byte) ((length >> 16) & 255),
+                        (byte) ((length >> 8) & 255),
+                        (byte) ((length) & 255),
+                    };
+                    buffer.AddRange(bytes);
+
+                    lock (outgoingQueueMutex)
+                    {
+                        this.socket.Send(buffer.ToArray());
+                    }
+                }
+            }
+
+            private static readonly string[] emptyStringArray = new string[0];
+            public string[] PumpMessageQueue()
+            {
+                string[] newMessages = emptyStringArray;
+                lock (this.listenerMutex)
+                {
+                    if (this.listenerMessageQueue.Count > 0)
+                    {
+                        newMessages = this.listenerMessageQueue.ToArray();
+                        this.listenerMessageQueue.Clear();
+                    }
+                }
+                return newMessages;
+            }
+
+            private static int Get4ByteInt(IList<byte> bytes, int index)
+            {
+                int output = 0;
+                for (int i = 0; i < 4; ++i)
+                {
+                    int b = bytes[index + i];
+                    if (b < 0) b += 256;
+                    output = (output << 8) | b;
+                }
+                return output;
+            }
+
+            public void HandleMessages()
+            {
+                byte[] buffer = new byte[1024];
+                List<byte> byteQueue = new List<byte>();
+                int messageSignature = Get4ByteInt(new byte[] { (byte)'C', (byte)'D', (byte)'B', (byte)'G' }, 0);
+                while (true)
+                {
+                    int bytesRead = 0;
+                    try
+                    {
+                        bytesRead = this.socket.Receive(buffer);
+                    }
+                    catch (SocketException ex)
+                    {
+                        switch (ex.ErrorCode)
+                        {
+                            case 10054: return;
+                            default:
+                                throw new Exception("Code: " + ex.ErrorCode);
+                        }
+                    }
+                    if (bytesRead == buffer.Length)
+                    {
+                        byteQueue.AddRange(buffer);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < bytesRead; ++i)
+                        {
+                            byteQueue.Add(buffer[i]);
+                        }
+                    }
+
+                    if (byteQueue.Count > 4)
+                    {
+                        // be resilient to garbage messages
+                        int offset = 0;
+                        while (offset < byteQueue.Count - 4 && Get4ByteInt(byteQueue, 0) != messageSignature)
+                        {
+                            offset += 1;
+                        }
+                        if (offset != 0)
+                        {
+                            byteQueue.RemoveRange(0, offset);
+                        }
+                    }
+
+                    if (byteQueue.Count > 8 && Get4ByteInt(byteQueue, 0) == messageSignature)
+                    {
+                        int messageLength = Get4ByteInt(byteQueue, 4);
+                        if (byteQueue.Count - 8 >= messageLength)
+                        {
+                            byte[] message = new byte[messageLength];
+                            byteQueue.CopyTo(8, message, 0, messageLength);
+                            byteQueue.RemoveRange(0, 8 + messageLength);
+                            lock (this.listenerMutex)
+                            {
+                                this.listenerMessageQueue.Add(new string(Encoding.UTF8.GetChars(message)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void StartListeningImpl()
+        {
+            IPHostEntry host = Dns.GetHostEntry("localhost");
+            IPAddress ipAddress = host.AddressList[0];
+            // TODO: make the port configurable
+            // 9003 is the first port that is neither officially nor unofficially allocated according to the
+            // Wikipedia page for list of ports and is also "over 9000".
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 9003);
+            bool useCommandLineOutput = TranslationHelper.ProgramData.environment.stdoutPrefix != null;
+
+            try
+            {
+                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                listener.Bind(localEndPoint);
+                listener.Listen(1);
+
+                if (useCommandLineOutput)
+                {
+                    Console.WriteLine("DEBUGGER: READY");
+                }
+
+                Socket handler = listener.Accept();
+                DebuggerSession session = new DebuggerSession(handler);
+                lock (sessionMutex)
+                {
+                    activeSessions.Add(session);
+                }
+
+                if (useCommandLineOutput)
+                {
+                    Console.WriteLine("DEBUGGER: CONNECTED");
+                }
+            }
+            catch (Exception e)
+            {
+                string message = e.ToString();
+                if (useCommandLineOutput)
+                {
+                    message = "DEBUGGER: HARD-CRASH: " + message.Replace("\n", "\\n");
+                }
+
+                Console.WriteLine(message);
+            }
+        }
+    }
+
+    public abstract class DebuggerMessage
+    {
+        public int SourceId { get; private set; }
+
+        protected DebuggerMessage(int sourceId)
+        {
+            this.SourceId = sourceId;
+        }
+
+        public static DebuggerMessage Parse(int sourceId, string message)
+        {
+            string[] parts = message.Split(',');
+            switch (parts[0])
+            {
+                case "SET-BREAKPOINT": return new DebuggerMessageSetBreakpoint(sourceId, parts);
+                case "REMOVE-BREAKPOINT": return new DebuggerMessageRemoveBreakpoint(sourceId, parts);
+                case "GET-LOCALS": return new DebuggerMessageGetLocals(sourceId, parts);
+                case "QUERY-VALUE": return new DebuggerMessageQueryValue(sourceId, parts);
+                case "RESUME": return new DebuggerMessageResume(sourceId, parts);
+                case "SET-NEXT-EXEC-LINE": return new DebuggerMessageSetNextExecLine(sourceId, parts);
+                case "GET-CODE-INFO": return new DebuggerMessageGetCodeInfo(sourceId, parts);
+                case "STEP-OVER": return new DebuggerMessageStepOver(sourceId, parts);
+                default: return new DebuggerMessageNotFound(sourceId, parts);
+            }
+        }
+
+        internal abstract string[] Run();
+        internal Interpreter.Structs.VmContext VM { get { return TranslationHelper.ProgramData; } }
+
+        protected Dictionary<string, string> ParseArgs(string[] items)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (string item in items.Skip(1))
+            {
+                int colon = item.IndexOf(':');
+                string key = item.Substring(0, colon);
+                string value = item.Substring(colon + 1);
+                if (key.EndsWith("_hex"))
+                {
+                    key = key.Substring(0, key.Length - "_hex".Length);
+                    byte[] valueBytes = new byte[value.Length / 2];
+                    for (int i = 0; i < value.Length; i += 2)
+                    {
+                        valueBytes[i >> 1] = Convert.ToByte(value.Substring(i, 2), 16);
+                    }
+                    value = new string(Encoding.UTF8.GetChars(valueBytes));
+                }
+                output[key] = value;
+            }
+            return output;
+        }
+
+        private class DebuggerMessageSetBreakpoint : DebuggerMessage
+        {
+            public int Line { get; private set; }
+            public string Path { get; private set; }
+            public string RequestToken { get; private set; }
+
+            public DebuggerMessageSetBreakpoint(int sourceId, string[] args) : base(sourceId)
+            {
+                Dictionary<string, string> lookup = ParseArgs(args);
+                this.Line = int.Parse(lookup["line"]);
+                this.Path = lookup["path"];
+                this.RequestToken = lookup["req-token"];
+            }
+
+            internal override string[] Run()
+            {
+                int breakpointId = CrayonWrapper.debuggerSetBreakpoint(VM, this.Path, this.Line);
+                return new string[] { this.RequestToken, "" + breakpointId, };
+            }
+        }
+
+        private class DebuggerMessageRemoveBreakpoint : DebuggerMessage
+        {
+            public int BreakpointId { get; private set; }
+            public string RequestToken { get; private set; }
+
+            public DebuggerMessageRemoveBreakpoint(int sourceId, string[] args) : base(sourceId)
+            {
+                Dictionary<string, string> lookup = ParseArgs(args);
+                this.BreakpointId = int.Parse(lookup["id"]);
+                this.RequestToken = lookup["req-token"];
+            }
+
+            internal override string[] Run()
+            {
+                CrayonWrapper.debuggerClearBreakpoint(VM, this.BreakpointId);
+                return new string[] { this.RequestToken, "1" };
+            }
+        }
+
+        private class DebuggerMessageStepOver : DebuggerMessage
+        {
+            public DebuggerMessageStepOver(int sourceId, string[] args) : base(sourceId)
+            {
+                // no arguments
+            }
+
+            internal override string[] Run()
+            {
+                CrayonWrapper.debugSetStepOverBreakpoint(VM);
+                Debugger.INSTANCE.IsResumeWanted = true;
+                return null;
+            }
+        }
+
+        private class DebuggerMessageGetLocals : DebuggerMessage
+        {
+            public DebuggerMessageGetLocals(int sourceId, string[] args) : base(sourceId)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override string[] Run()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageQueryValue : DebuggerMessage
+        {
+            public string[] Values { get; private set; }
+            public string RequestToken { get; private set; }
+            public int StackOffset { get; private set; }
+
+            public DebuggerMessageQueryValue(int sourceId, string[] args) : base(sourceId)
+            {
+                Dictionary<string, string> lookup = ParseArgs(args);
+                this.Values = lookup["path"].Split(',');
+                this.RequestToken = lookup["req-token"];
+                int so;
+                if (!lookup.ContainsKey("stack-offset") || int.TryParse(lookup["stack-offset"], out so))
+                {
+                    so = 0;
+                }
+                this.StackOffset = 0;
+            }
+
+            internal override string[] Run()
+            {
+                Interpreter.Structs.Value v = CrayonWrapper.queryValue(VM, -1, 0, this.Values);
+                string resultType = "none";
+                string resultValue = "";
+                if (v != null)
+                {
+                    switch (v.type)
+                    {
+                        case 1: resultType = "null"; break;
+                        case 2: resultType = "bool"; break;
+                        case 3: resultType = "int"; break;
+                        case 4: resultType = "float"; break;
+                        case 5: resultType = "string"; break;
+                        case 6: resultType = "list"; break;
+                        default:
+                            // TODO: fill this in
+                            resultType = "TYPE:" + v.type;
+                            break;
+                    }
+                    resultValue = CrayonWrapper.valueToString(VM, v);
+                }
+                return new string[] { this.RequestToken, resultType, resultValue };
+            }
+        }
+
+        private class DebuggerMessageResume : DebuggerMessage
+        {
+            public DebuggerMessageResume(int sourceId, string[] args) : base(sourceId)
+            {
+                // no args
+            }
+
+            internal override string[] Run()
+            {
+                Debugger.INSTANCE.IsResumeWanted = true;
+                return null;
+            }
+        }
+
+        private class DebuggerMessageSetNextExecLine : DebuggerMessage
+        {
+            public DebuggerMessageSetNextExecLine(int sourceId, string[] args) : base(sourceId)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override string[] Run()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageGetCodeInfo : DebuggerMessage
+        {
+            public DebuggerMessageGetCodeInfo(int sourceId, string[] args) : base(sourceId)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal override string[] Run()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageNotFound : DebuggerMessage
+        {
+            public DebuggerMessageNotFound(int sourceId, string[] args) : base(sourceId)
+            {
+                throw new InvalidOperationException("Cannot identify debug instruction: " + args[0]);
+            }
+
+            internal override string[] Run()
+            {
+                throw new Exception();
+            }
+        }
+    }
+}

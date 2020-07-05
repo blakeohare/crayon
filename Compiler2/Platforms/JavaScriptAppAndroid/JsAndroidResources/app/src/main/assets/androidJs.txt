@@ -1,0 +1,71 @@
+﻿// android.js
+// overrides to the regular JavaScript project.
+
+C$common$globalOptions['is_android'] = true;
+C$common$globalOptions['fullscreen'] = true;
+C$common$globalOptions['aspect_ratio'] = 1.0;
+
+C$android$receiveMessageDecoder = function(s) {
+    var output = [];
+    var codes = s.split(' ');
+    var length = codes.length;
+    for (var i = 0; i < length; ++i) {
+        output.push(String.fromCharCode(parseInt(codes[i])));
+    }
+    return output.join('');
+};
+
+C$game$enforcedScreenSize = function(w, h) {
+	return [null, null];
+}
+
+C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowSize, gameSize) {
+    var hack = document.getElementById('android_canvas_hack');
+    hack.style.width = windowSize[0] + 'px';
+    hack.style.height = windowSize[1] + 'px';
+    jsCanvas.style.width = '50%';
+    jsCanvas.style.height = '50%';
+    jsCanvas.width = gameSize[0];
+    jsCanvas.height = gameSize[1];
+};
+
+C$game$getScreenDimensionsForFullScreen = function() {
+    var width = document.body.offsetWidth;
+    var height = Math.floor(width * C$common$globalOptions['aspect_ratio'] + .5);
+    return [width, height];
+};
+
+C$game$wrapCanvasHtml = function(canvasHtml) {
+    return '<div id="android_canvas_hack">' + canvasHtml + '</div>';
+};
+
+receiveMessage = function(type, payload, useEncoding) {
+    if (useEncoding) {
+        type = C$android$receiveMessageDecoder(type);
+        payload = C$android$receiveMessageDecoder(payload);
+    }
+    var parts = payload.split(' ');
+    switch (type) {
+        case 'touch-event':
+            if (!!C$game$width) {
+                var eventId = parseInt(parts[0]);
+                var x = Math.floor(C$game$width * parseInt(parts[1]) / 100000);
+                var y = Math.floor(C$game$height * parseInt(parts[2]) / 100000);
+                var pointerId = eventId >= 64 ? parseInt(parts[3]) : 0;
+                C$input$eventRelays.push(buildRelayObj(eventId, x, y, pointerId, 0.0, ''));
+            }
+            break;
+        case 'screen-ratio':
+            C$common$globalOptions['aspect_ratio'] = parseInt(parts[0]) / 10000;
+            break;
+        default:
+            console.log("Unknown message type: " + type);
+            break;
+    }
+};
+
+sendMessage = function(type, msg) {
+    JavaScriptBridge.onSendNativeMessage(type, msg);
+};
+
+sendMessage('ready', '');
