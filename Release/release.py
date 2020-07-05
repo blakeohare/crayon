@@ -167,11 +167,13 @@ def buildRelease(args):
 
 	if isMono:
 		BUILD_CMD = XBUILD
-		SLN_PATH = '../Compiler/CrayonOSX.sln'
+	#	SLN_PATH = '../Compiler/CrayonOSX.sln'
 	else:
 		BUILD_CMD = MSBUILD
-		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
-	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
+	#	SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
+	#cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
+	
+	cmd = ' '.join(['dotnet publish ..\\Compiler -c Release -r', 'osx-x64' if isMono else 'win-x64'])
 	
 	log("Compiling the .sln file with command: " + cmd)
 	print("Running: " + cmd)
@@ -179,7 +181,7 @@ def buildRelease(args):
 
 
 	# Copy the compiler's release bits into the newly created release directory
-	releaseDir = '../Compiler/Crayon/bin/Release'
+	releaseDir = '../Compiler/Crayon/bin/Release/netcoreapp2.1/' + ('osx-x64' if isMono else 'win-x64') + '/publish'
 	log("Copying crayon.exe, readme, and license to output directory")
 	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))
 	shutil.copyfile(canonicalize_sep(releaseDir + '/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
@@ -210,7 +212,9 @@ def buildRelease(args):
 	# Go through the source's bin/Release directory and find all the library DLL's.
 	# Copy those to the output release directory.
 
-	for file in filter(lambda x:x.endswith('.dll'), os.listdir(releaseDir)):
+	files = os.listdir(releaseDir)
+	#for file in filter(lambda x:x.endswith('.dll'), files):
+	for file in files:
 		log("Copy " + file + " to the output directory")
 		shutil.copyfile(releaseDir + '/' + file, copyToDir + '/' + file)
 
