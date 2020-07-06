@@ -5,9 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ResourcesLib\*.txt" />
-    <EmbeddedResource Include="ResourcesVm\*.txt" />
-    <EmbeddedResource Include="Resources\*.txt" />
+    <EmbeddedResource Include="**\*.txt" />
+    <EmbeddedResource Include="**\*.ico" />
   </ItemGroup>
 
   <ItemGroup>
