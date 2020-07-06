@@ -50,7 +50,6 @@ namespace CommonUtil.Images
                 Bitmap resource = new Bitmap(size, size);
                 Bitmap.Graphics g = resource.MakeGraphics();
                 g.Blit(originalImage, x, y);
-                g.Cleanup();
 
                 byte[] pngBytes = resource.SaveBytes(ImageFormat.PNG);
                 pngPayloads.AddRange(pngBytes);
