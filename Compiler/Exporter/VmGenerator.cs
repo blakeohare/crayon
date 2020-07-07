@@ -68,7 +68,8 @@ namespace Exporter
                         .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableExportBundle.JavaPackage)
                         .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableExportBundle.JsFilePrefix)
                         .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
-                        .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations);
+                        .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations)
+                        .SetOption(ExportOptionKey.GUID_SEED, nullableExportBundle.GuidSeed);
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPaths);
                     if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);

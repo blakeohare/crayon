@@ -55,7 +55,7 @@ namespace CommonUtil.Random
                         if (bytes.Count == 0)
                         {
                             byte[] seedBytes = (seed + salt + seedSuffix++).ToCharArray().Select<char, byte>(c => (byte)c).ToArray();
-                            bytes = new Stack<byte>(System.Security.Cryptography.SHA1.Create().ComputeHash(seedBytes));
+                            bytes = new Stack<byte>(System.Security.Cryptography.SHA256.Create().ComputeHash(seedBytes));
                         }
                         format[i] = (format[i] == 'h' ? HEX_LOWER : HEX_UPPER)[bytes.Pop() & 15];
                         break;
