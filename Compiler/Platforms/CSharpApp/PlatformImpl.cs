@@ -76,6 +76,7 @@ namespace CSharpApp
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
+                    { "SOLUTION_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "solution") },
                     { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
                     { "ASSEMBLY_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
                     { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
@@ -116,6 +117,7 @@ namespace CSharpApp
             string dllReferencesOriginal = replacements["DLL_REFERENCES"];
             string dllsCopiedOriginal = replacements["DLLS_COPIED"];
             string embeddedResources = replacements["EMBEDDED_RESOURCES"];
+
             replacements["EMBEDDED_RESOURCES"] = "";
             foreach (LibraryForExport library in everyLibrary.Where(lib => lib.HasNativeCode))
             {
@@ -125,9 +127,11 @@ namespace CSharpApp
                 this.GetLibraryCode(templateReader, libBaseDir, library, dlls, dotNetRefs, output);
 
                 string name = library.Name;
-                string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
+                string guidSeed = library.Name + "|" + library.Version;
+                string projectGuid = IdGenerator.GenerateCSharpGuid(guidSeed, "library-project");
                 replacements["PROJECT_GUID"] = projectGuid;
-                replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
+                replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(guidSeed, "library-assembly");
+                replacements["SOLUTION_GUID"] = IdGenerator.GenerateCSharpGuid(guidSeed, "library-solution");
                 replacements["PROJECT_TITLE"] = library.Name;
                 replacements["LIBRARY_NAME"] = library.Name;
                 replacements["DLL_REFERENCES"] = GetFrameworkReferencesCsProjCode(dotNetRefs);
@@ -150,6 +154,7 @@ namespace CSharpApp
             replacements["EMBEDDED_RESOURCES"] = embeddedResources;
             replacements["PROJECT_GUID"] = runtimeProjectGuid;
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
+            replacements["SOLUTION_GUID"] = IdGenerator.GenerateCSharpGuid("crayon vm", "solution guid");
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
             this.ExportInterpreter(templateReader, baseDir, output);
