@@ -9,7 +9,7 @@ BUILD_FILE = '''
 	"source": "source",
 	"compiler-locale": "en",
 	"output": "output/%TARGET_NAME%",
-	"target": [
+	"targets": [
 		{
 			"name": "csharp",
 			"platform": "csharp-app"
