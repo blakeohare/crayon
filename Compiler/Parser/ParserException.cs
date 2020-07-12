@@ -98,8 +98,8 @@ namespace Parser
             Common.Error error = new Common.Error();
             if (this.TokenInfo != null)
             {
-                error.Column = this.TokenInfo.Col;
-                error.Line = this.TokenInfo.Line;
+                error.Column = this.TokenInfo.Col + 1;
+                error.Line = this.TokenInfo.Line + 1;
             }
             error.FileName = this.FileName;
             error.Message = this.OriginalMessage;

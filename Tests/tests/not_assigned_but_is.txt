@@ -1,1 +1,1 @@
-source/test.cry, Line: 4, Col: 8, Variable is used, but has not been assigned to before this point in code. Even if this is in a loop, ensure that the variable is assigned a value before the loop starts.
+source/test.cry, Line 4, Column 8: Variable is used, but has not been assigned to before this point in code. Even if this is in a loop, ensure that the variable is assigned a value before the loop starts.

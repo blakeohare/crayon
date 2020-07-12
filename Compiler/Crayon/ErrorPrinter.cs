@@ -12,7 +12,7 @@ namespace Crayon
                 string errorString;
                 if (error.Line != 0)
                 {
-                    errorString = error.FileName + " Line " + error.Line + ", Column " + error.Column + ": " + error.Message;
+                    errorString = error.FileName + ", Line " + error.Line + ", Column " + error.Column + ": " + error.Message;
                 }
                 else if (error.FileName != null)
                 {

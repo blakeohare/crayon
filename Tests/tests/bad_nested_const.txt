@@ -1,1 +1,1 @@
-source/test.cry, Line: 1, Col: 24, The expression 'CONSTANT_B' is not defined. Are you missing a const definition?
+source/test.cry, Line 1, Column 24: The expression 'CONSTANT_B' is not defined. Are you missing a const definition?

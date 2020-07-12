@@ -1,1 +1,1 @@
-source/test.cry, Line: 7, Col: 3, Cannot return a value from a constructor.
+source/test.cry, Line 7, Column 3: Cannot return a value from a constructor.

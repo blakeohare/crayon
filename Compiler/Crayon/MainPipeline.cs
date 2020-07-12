@@ -226,7 +226,7 @@ namespace Crayon.Pipeline
             }
 
             Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
-            if (isDryRunErrorCheck)
+            if (isDryRunErrorCheck || compilation.HasErrors)
             {
                 return new ExportResponse() { Errors = compilation.Errors };
             }

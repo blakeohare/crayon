@@ -1,1 +1,1 @@
-source/test.cry, Line: 7, Col: 7, The name 'collidingName' collides with an existing definition.
+source/test.cry, Line 7, Column 7: The name 'collidingName' collides with an existing definition.
