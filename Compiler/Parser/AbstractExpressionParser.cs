@@ -345,12 +345,10 @@ namespace Parser
                 root = ParseEntityWithoutSuffixChain(tokens, owner);
             }
             bool anySuffixes = true;
-            bool isPreviousADot = false;
             while (anySuffixes)
             {
                 if (tokens.IsNext("."))
                 {
-                    isPreviousADot = true;
                     Token dotToken = tokens.Pop();
                     Token fieldToken = tokens.Pop();
                     // HACK alert: "class" is a valid field on a class.
