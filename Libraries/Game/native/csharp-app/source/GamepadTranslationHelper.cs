@@ -127,7 +127,7 @@ namespace Interpreter.Libraries.Game
 
         private static void InitializeJoysticks()
         {
-            if (gamepads == null)
+            if (GamepadTranslationHelper.gamepads == null)
             {
                 List<CrayonGamepad> gamepads = new List<CrayonGamepad>();
                 for (int i = 0; i < 256; ++i)
