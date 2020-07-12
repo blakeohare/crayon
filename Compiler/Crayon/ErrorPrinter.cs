@@ -22,6 +22,7 @@ namespace Crayon
                 {
                     errorString = error.Message;
                 }
+                errorLines.Add(errorString);
             }
 
             string finalErrorString = string.Join("\n\n", errorLines);
