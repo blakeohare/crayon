@@ -67,8 +67,28 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                    Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
+                    Parser.CompilationBundle compilation;
+
+                    if (isRelease)
+                    {
+                        try
+                        {
+                            buildContext = new GetBuildContextWorker().DoWorkImpl(command);
+                            compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
+                        }
+                        catch (InvalidOperationException ioe)
+                        {
+                            return new Result()
+                            {
+                                Errors = new Error[] { new Error() { Message = ioe.Message } },
+                            };
+                        }
+                    }
+                    else
+                    {
+                        buildContext = new GetBuildContextWorker().DoWorkImpl(command);
+                        compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
+                    }
 
                     if (compilation.HasErrors)
                     {
@@ -83,6 +103,7 @@ namespace Crayon.Pipeline
                         string depTree = AssemblyResolver.AssemblyDependencyResolver.GetDependencyTreeJson(compilation.RootScopeDependencyMetadata).Trim();
                         ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, depTree);
                     }
+
                     string outputDirectory = command.HasOutputDirectoryOverride
                         ? command.OutputDirectoryOverride
                         : buildContext.OutputFolder;
@@ -187,7 +208,22 @@ namespace Crayon.Pipeline
             bool isDryRunErrorCheck,
             bool isRelease)
         {
-            BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
+            BuildContext buildContext;
+            if (isRelease)
+            {
+                try
+                {
+                    buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    return new ExportResponse() { Errors = new Error[] { new Error() { Message = ioe.Message } } };
+                }
+            }
+            else
+            {
+                buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
+            }
 
             Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
             if (isDryRunErrorCheck)
