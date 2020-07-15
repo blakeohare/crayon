@@ -1,5 +1,0 @@
-CODE-IMPORT: java.util.ArrayList
-CODE-IMPORT: java.util.HashMap
-CODE-IMPORT: org.crayonlang.interpreter.structs.*
-CODE-IMPORT: org.crayonlang.interpreter.PlatformTranslationHelper
-CODE-IMPORT: org.crayonlang.interpreter.TranslationHelper

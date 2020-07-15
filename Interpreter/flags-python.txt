@@ -1,4 +1,0 @@
-IMPORT: flags-default.txt
-
-FLAG: ARRAY_IS_LIST: true
-FLAG: IS_PYTHON: true

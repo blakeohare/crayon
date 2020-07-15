@@ -1,8 +1,0 @@
-IMPORT: flags-default.txt
-
-FLAG: ARRAY_IS_LIST: true
-FLAG: HAS_INCREMENT: true
-
-# PHP doesn't have a list clear, but because all list references are 
-# wrapped, the array can be re-instantiated as a new one inline.
-FLAG: PLATFORM_SUPPORTS_LIST_CLEAR: true
