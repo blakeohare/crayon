@@ -1,7 +1,7 @@
 {
     "name": "Zip",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.1/zip",
+    "documentation": "http://crayonlang.org/docs/2.9.0/zip",
     "description": "Library for reading and generatinng zip archives.",
 
     "cni": [

@@ -1,4 +1,4 @@
-# Crayon version 2.1.1
+# Crayon version 2.9.0
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -6,7 +6,7 @@ Please go to http://crayonlang.org for documentation, tutorials, demos, and othe
 [![Build Status](https://travis-ci.org/blakeohare/crayon.svg?branch=master)](https://travis-ci.org/blakeohare/crayon)
 
 # Copyright
-Copyright 2019 crayonlang.org, All rights reserved.
+Copyright 2020 crayonlang.org, All rights reserved.
 
 # Licenses
 Crayon is released under the MIT license.
@@ -23,14 +23,10 @@ The official Crayon IRC channel is #crayon on FreeNode.net. Feel free to ask any
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
-# New in 2.1.1
-The following have been added since 2.1.0
+# New in 2.9
+The following have been added since 2.1
 
-* Added a library for encoding and decoding Base64
-* Added a library for accessing environment variables
-* Added a library for launching processes
-* Added a library for reading zip files
-* Bug fixes
+* Removed Python, Java, and PHP support for exporting projects.
 
 # Setting up and Running Crayon
 If you have downloaded Crayon from crayonlang.org/download (recommended) please read the instructions on the site (linked from download

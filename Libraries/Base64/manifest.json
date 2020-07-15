@@ -1,6 +1,6 @@
 {
     "name": "Base64",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.1/base64",
+    "documentation": "http://crayonlang.org/docs/2.9.0/base64",
     "description": "Library to encode and decode base64."
 }

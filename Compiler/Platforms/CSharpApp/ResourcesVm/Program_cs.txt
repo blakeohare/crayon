@@ -9,7 +9,7 @@ namespace CrayonRuntime
     internal class Program
     {
         private static readonly HashSet<string> COMPATIBLE_VERSIONS = new HashSet<string>() {
-            "2.1.1",
+            "2.9.0",
         };
 
         public static void Main(string[] args)

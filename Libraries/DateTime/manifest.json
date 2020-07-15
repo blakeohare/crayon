@@ -1,7 +1,7 @@
 {
     "name": "DateTime",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.1/datetime",
+    "documentation": "http://crayonlang.org/docs/2.9.0/datetime",
     "description": "Library for doing things with the Date and Time.",
 
     "cni": [

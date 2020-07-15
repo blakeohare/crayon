@@ -10,7 +10,7 @@
         "width": 800,
         "height": 600
     },
-    "version": "2.1.1",
+    "version": "2.9.0",
 
     "image-sheets": [
         { "id": "everything", "prefix": "*" }

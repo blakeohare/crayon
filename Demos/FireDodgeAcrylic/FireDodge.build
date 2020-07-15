@@ -7,7 +7,7 @@
     "launch-screen": "assets/launchscreen.png",
     "programming-language": "Acrylic",
 
-    "version": "2.1.1",
+    "version": "2.9.0",
     "guid-seed": "org.crayonlang.demos.firedodge[acrylic],%VERSION%,%TARGET_NAME%",
 
     "image-sheets": [

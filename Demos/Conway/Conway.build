@@ -6,7 +6,7 @@
     "java-package": "org.crayonlang.demos.conway",
     "ios-bundle-prefix": "org.crayonlang.demos",
 
-    "version": "2.1.1",
+    "version": "2.9.0",
     "guid-seed": "org.crayonlang.demos.conway,%VERSION%,%TARGET_NAME%",
 
     "targets": [

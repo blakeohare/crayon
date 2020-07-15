@@ -4,7 +4,7 @@
     "source": "source/",
     "output": "output/%TARGET_NAME%",
 
-    "version": "2.1.1",
+    "version": "2.9.0",
     "guid-seed": "org.crayonlang.demos.basicplatformer,%VERSION%,%TARGET_NAME%",
 
     "image-sheets": [

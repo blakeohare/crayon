@@ -1,7 +1,7 @@
 {
     "name": "Math",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.1/math",
+    "documentation": "http://crayonlang.org/docs/2.9.0/math",
     "description": "Common basic math functions.",
 
     "localization": {
