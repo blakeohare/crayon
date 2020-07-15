@@ -56,17 +56,11 @@ namespace Crayon
             // and a release csproj that does not and then ifdef out the implementation of this function.
             return new System.Reflection.Assembly[] {
                 typeof(CSharpApp.PlatformImpl).Assembly,
-                typeof(JavaApp.PlatformImpl).Assembly,
                 typeof(JavaScriptApp.PlatformImpl).Assembly,
                 typeof(JavaScriptAppAndroid.PlatformImpl).Assembly,
                 typeof(JavaScriptAppIos.PlatformImpl).Assembly,
                 typeof(LangCSharp.PlatformImpl).Assembly,
-                typeof(LangJava.PlatformImpl).Assembly,
                 typeof(LangJavaScript.PlatformImpl).Assembly,
-                typeof(LangPhp.PlatformImpl).Assembly,
-                typeof(LangPython.PlatformImpl).Assembly,
-                typeof(PhpServer.PlatformImpl).Assembly,
-                typeof(PythonApp.PlatformImpl).Assembly,
             };
         }
     }

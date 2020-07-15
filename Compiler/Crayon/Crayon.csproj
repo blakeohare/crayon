@@ -76,10 +76,6 @@
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>CSharpApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
-      <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
-      <Name>JavaApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj">
       <Project>{e495cac5-84b5-481b-a997-f370fe1b40a2}</Project>
       <Name>JavaScriptAppAndroid</Name>
@@ -96,33 +92,13 @@
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
       <Name>LangCSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj">
-      <Project>{3f62b368-b14f-4c77-98ab-c94b19b07eaf}</Project>
-      <Name>LangJava</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
       <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
       <Name>LangJavaScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangPhp\LangPhp.csproj">
-      <Project>{52ed3304-00b4-46e5-9dc5-7aaac81b752f}</Project>
-      <Name>LangPhp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
-      <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
-      <Name>LangPython</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\PhpServer\PhpServer.csproj">
-      <Project>{42c8d2eb-df8a-4967-91df-8608ac2d8d8a}</Project>
-      <Name>PhpServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
-      <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
-      <Name>PythonApp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
