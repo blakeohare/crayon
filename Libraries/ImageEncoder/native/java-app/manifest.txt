@@ -1,2 +1,0 @@
-COPYFILES: from=source, to=%LIBRARY_PATH%/%FILE%
-COPYFILES: from=gen, to=%LIBRARY_PATH%/%FILE%

@@ -1,2 +1,0 @@
-COPY_FILES: from=gen, to=%LIBRARY_PATH%/%FILE%
-COPY_FILES: from=gen/structs, to=%LIBRARY_PATH%/%FILE%
