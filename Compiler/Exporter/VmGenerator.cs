@@ -1,6 +1,7 @@
 ﻿using AssemblyResolver;
 using Common;
 using CommonUtil.Collections;
+using Platform;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,7 +38,23 @@ namespace Exporter
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
 
                 Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExportPastelFree(platform, librariesByID);
+                List<LibraryForExport> libraries = this.GetLibrariesForExportPastelFree(platform, librariesByID);
+
+                HashSet<string> ignoreTheseForNow = new HashSet<string>() {
+                    "Audio",
+                    "Game",
+                    "GameGifCap",
+                    "Gamepad",
+                    "Graphics2D",
+                    "Graphics2DText",
+                    "ImageResources",
+                    "ImageWebResources",
+                    "Nori",
+                    "NoriXml",
+                    "ProcessUtil",
+                    "Web",
+                };
+                libraries = new List<LibraryForExport>(libraries.Where(lib => !ignoreTheseForNow.Contains(lib.Name)));
 
                 platform.ExportStandaloneVm(
                     output,
