@@ -6,24 +6,11 @@ using System.Runtime.InteropServices;
 namespace Interpreter
 {
     /*
-     * WINDOWS:
      * System.Drawing.Graphics.DrawString requires a System.Drawing.Font instance.
      * It doesn't matter where this font came from.
      *
-     * OSX (CAIRO):
-     * If the font is a system-installed font, then only a string of the font name is required.
-     * If the font is from resources, then it can be loaded using FreeType into a Cairo Font Face after being serialized to a file.
-     * This file is in temp.
-     *
-     * It's also important to note that the Cairo-based fonts are not specific to a certain size or style.
-     *
-     * Windows:
      * bytes[] -> load into FontFamily (saved) -> load into a System.Drawing.Font
      * system -> load into a System.Drawing.Font
-     *
-     * Cairo:
-     * bytes[] -> load into a Cairo.FontFace -> that's it. that's the only state. size/style are just basic properties which are used at render-time.
-     * system -> save the name, size, style as properties and that's it.
      *
      * instances are immutable
      * cache key templates:
@@ -42,13 +29,9 @@ namespace Interpreter
         private string FaceKey { get; set; }
         private int BinarySource { get; set; }
         private static int binarySourceCounter = 0;
-#if WINDOWS
         private System.Drawing.Font systemDrawingFont = null;
         public System.Drawing.Font NativeFont { get { return this.systemDrawingFont; } }
         private System.Drawing.FontFamily systemDrawingFontFamily = null;
-#elif OSX
-        private Cairo.FontFace cairoFontFace = null;
-#endif
         private string systemFontName = null;
 
         private static readonly Dictionary<string, UniversalFont> cache = new Dictionary<string, UniversalFont>();
@@ -72,13 +55,8 @@ namespace Interpreter
             };
 
             font.systemFontName = this.systemFontName;
-
-#if WINDOWS
             font.systemDrawingFontFamily = this.systemDrawingFontFamily;
             font.systemDrawingFont = new System.Drawing.Font(this.systemDrawingFontFamily, size, GetStyle(isBold, isItalic));
-#elif OSX
-            font.cairoFontFace = this.cairoFontFace;
-#endif
 
             cache[key] = font;
             return font;
@@ -104,10 +82,8 @@ namespace Interpreter
 
             UniversalFont font = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic, Key = key, FaceKey = faceKey };
             font.systemFontName = name;
-#if WINDOWS
             font.systemDrawingFont = new System.Drawing.Font(name, size * 7 / 5, GetStyle(isBold, isItalic));
             font.systemDrawingFontFamily = font.systemDrawingFont.FontFamily;
-#endif
             faceCache[faceKey] = font;
             cache[key] = font;
             return font;
@@ -124,12 +100,8 @@ namespace Interpreter
             if (faceCache.TryGetValue(faceKey, out sameFaceFont))
             {
                 newFont = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic, Key = key, FaceKey = faceKey };
-#if WINDOWS
                 newFont.systemDrawingFontFamily = sameFaceFont.systemDrawingFontFamily;
                 newFont.systemDrawingFont = new System.Drawing.Font(newFont.systemDrawingFontFamily, size * 7 / 5, GetStyle(isBold, isItalic));
-#elif OSX
-                newFont.cairoFontFace = sameFaceFont.cairoFontFace;
-#endif
             }
             else
             {
@@ -148,7 +120,7 @@ namespace Interpreter
         {
             UniversalFont font = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic };
             font.BinarySource = ++binarySourceCounter;
-#if WINDOWS
+
             System.Drawing.Text.PrivateFontCollection fonts = new System.Drawing.Text.PrivateFontCollection();
             System.Runtime.InteropServices.GCHandle handle = System.Runtime.InteropServices.GCHandle.Alloc(bytes, System.Runtime.InteropServices.GCHandleType.Pinned);
             System.IntPtr pointer = handle.AddrOfPinnedObject();
@@ -162,21 +134,13 @@ namespace Interpreter
             }
             font.systemDrawingFontFamily = fonts.Families.FirstOrDefault();
             font.systemDrawingFont = new System.Drawing.Font(fonts.Families.FirstOrDefault(), size * 7 / 5, GetStyle(isBold, isItalic), System.Drawing.GraphicsUnit.Pixel);
-#elif OSX
-            font.cairoFontFace = FreeTypeFontFace.Create(bytes, 0, 0);
-#endif
+
             string faceKey = "bin:" + font.BinarySource;
             string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
             faceCache[faceKey] = font;
             cache[key] = font;
             return font;
         }
-
-#if OSX
-        public Cairo.FontSlant CairoFontSlant { get { return this.IsItalic ? Cairo.FontSlant.Italic : Cairo.FontSlant.Normal; } }
-        public Cairo.FontWeight CairoFontWeight { get { return this.IsBold ? Cairo.FontWeight.Bold : Cairo.FontWeight.Normal; } }
-        public Cairo.FontFace CairoFontFace { get { return this.cairoFontFace; } }
-#endif
 
         private static readonly Dictionary<string, bool> systemFontCache = new Dictionary<string, bool>();
         public static bool IsSystemFontAvailable(string name)
@@ -190,97 +154,4 @@ namespace Interpreter
             return isAvailable;
         }
     }
-
-
-#if OSX
-    public class TempFile
-    {
-        private static int counter = 0;
-        private static readonly System.Random random = new System.Random();
-
-        public string FileName { get; private set; }
-        public TempFile(byte[] bytes)
-        {
-            string filename = "temp_" + (counter++) + "_" + random.Next(99999999) + ".dat";
-            this.FileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);
-            System.IO.File.WriteAllBytes(this.FileName, bytes);
-        }
-
-        public void Cleanup()
-        {
-            if (System.IO.File.Exists(this.FileName))
-            {
-                System.IO.File.Delete(this.FileName);
-            }
-        }
-    }
-
-    // Credit to
-    // https://coviello.wordpress.com/2009/03/10/loading-font-face-from-file-using-mono-and-cairo
-    public class FreeTypeFontFace : Cairo.FontFace
-    {
-        private static bool initialized = false;
-        private static IntPtr ft_lib;
-        private IntPtr ft_face;
-
-        private FreeTypeFontFace(IntPtr handler, IntPtr ft_face) : base(handler, true)
-        {
-            this.ft_face = ft_face;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            cairo_font_face_destroy(ft_lib);
-            FT_Done_Face(ft_face);
-        }
-
-        public static FreeTypeFontFace Create(byte[] bytes, int faceindex, int loadoptions)
-        {
-            TempFile tempFile = new TempFile(bytes);
-            string filename = tempFile.FileName;
-            return Create(filename, faceindex, loadoptions);
-        }
-
-        public static FreeTypeFontFace Create(string filename, int faceindex, int loadoptions)
-        {
-            if (!initialized)
-                initialize();
-
-            IntPtr ft_face;
-            if (FT_New_Face(ft_lib, filename, faceindex, out ft_face) != 0)
-                throw new Exception("Can't load font face.");
-
-            IntPtr handler = cairo_ft_font_face_create_for_ft_face(ft_face, loadoptions);
-            if (cairo_font_face_status(handler) != 0)
-                throw new Exception("Can't create font face.");
-
-            return new FreeTypeFontFace(handler, ft_face);
-        }
-
-        private static void initialize()
-        {
-            if (FT_Init_FreeType(out ft_lib) != 0)
-                throw new Exception("Can't initialize freetype environment.");
-            initialized = true;
-        }
-
-        [DllImport("libfreetype.6.dylib")]
-        private static extern int FT_Init_FreeType(out IntPtr ft_lib);
-
-        [DllImport("libfreetype.6.dylib")]
-        private static extern int FT_New_Face(IntPtr ft_lib, string filename, int faceindex, out IntPtr ft_face);
-
-        [DllImport("libfreetype.6.dylib")]
-        private static extern int FT_Done_Face(IntPtr ft_face);
-
-        [DllImport("libcairo-2.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr cairo_ft_font_face_create_for_ft_face(IntPtr face, int load_flags);
-
-        [DllImport("libcairo-2.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int cairo_font_face_status(IntPtr cr_face);
-
-        [DllImport("libcairo-2.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int cairo_font_face_destroy(IntPtr cr_face);
-    }
-#endif
 }

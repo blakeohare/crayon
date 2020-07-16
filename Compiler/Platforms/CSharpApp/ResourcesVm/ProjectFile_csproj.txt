@@ -67,19 +67,4 @@
     %%%DLLS_COPIED%%%
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Choose>
-    <When Condition=" '$(SolutionFileName)' == 'CrayonRuntime.sln' ">
-      <PropertyGroup>
-        <DefineConstants>WINDOWS</DefineConstants>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <DefineConstants>OSX</DefineConstants>
-      </PropertyGroup>
-      <ItemGroup>
-        <Reference Include="Mono.Cairo" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
 </Project>

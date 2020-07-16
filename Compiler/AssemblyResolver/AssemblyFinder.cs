@@ -63,10 +63,6 @@ namespace AssemblyResolver
             }
             placesWhereLibraryDirectoriesCanExist += ";" + (CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_PATH") ?? "");
 
-#if OSX
-            placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
-#endif
-
             List<string> unverifiedLibraryDirectories = new List<string>();
 
             if (nullableBuildFileLocalDepsList != null)

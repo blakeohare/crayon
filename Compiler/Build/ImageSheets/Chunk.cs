@@ -70,14 +70,6 @@ namespace Build.ImageSheets
 
                 this.Tiles = new List<Tile>(tiles.Where(t => t != null));
             }
-
-            foreach (Bitmap.Graphics graphicsInstance in graphics)
-            {
-                if (graphicsInstance != null)
-                {
-                    graphicsInstance.Cleanup();
-                }
-            }
         }
     }
 }

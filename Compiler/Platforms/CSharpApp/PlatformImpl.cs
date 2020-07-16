@@ -404,7 +404,6 @@ namespace CSharpApp
             }
 
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.sln", replacements);
-            this.CopyResourceAsText(output, projectId + "OSX.sln", "Resources/SolutionFileOsx.sln", replacements);
             string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.csproj";
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
