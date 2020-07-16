@@ -153,7 +153,7 @@ namespace CSharpApp
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
             this.ExportInterpreter(templateReader, baseDir, output);
-            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
+            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
             TODO.MoveCbxParserIntoTranslatedPastelCode();
@@ -271,8 +271,7 @@ namespace CSharpApp
             string baseDir,
             Dictionary<string, FileOutput> output,
             Dictionary<string, string> replacements,
-            Dictionary<string, string> libraryProjectNameToGuid,
-            bool isStandaloneVm)
+            Dictionary<string, string> libraryProjectNameToGuid)
         {
             string projectId = replacements["PROJECT_ID"];
             replacements["LIBRARY_PROJECT_INCLUSIONS"] = "";
@@ -317,7 +316,7 @@ namespace CSharpApp
             }
 
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.sln", replacements);
-            string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.csproj";
+            string projectFileResource = "ResourcesVm/ProjectFile.csproj";
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
     }
