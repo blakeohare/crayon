@@ -56,19 +56,4 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Choose>
-    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
-      <PropertyGroup>
-        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
-      </PropertyGroup>
-      <ItemGroup>
-        <Reference Include="Mono.Cairo" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
 </Project>
