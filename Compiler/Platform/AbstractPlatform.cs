@@ -24,49 +24,15 @@ namespace Platform
         public abstract string NL { get; }
         protected int TranslationIndentionCount { get; set; }
 
-        private string[] inheritanceChain = null;
-        public IList<string> InheritanceChain
-        {
-            get
-            {
-                if (this.inheritanceChain == null)
-                {
-                    List<string> chainBuilder = new List<string>();
-                    AbstractPlatform walker = this;
-                    while (walker != null)
-                    {
-                        chainBuilder.Add(walker.Name);
-                        walker = walker.ParentPlatform;
-                    }
-                    this.inheritanceChain = chainBuilder.ToArray();
-                }
-                return this.inheritanceChain;
-            }
-        }
-
         private Dictionary<string, object> flattenedCached = null;
-        public Dictionary<string, object> GetFlattenedConstantFlags(bool isStandaloneVm)
+        public Dictionary<string, object> GetFlattenedConstantFlags()
         {
             if (this.flattenedCached == null)
             {
-                this.flattenedCached = this.InheritsFrom != null
-                    ? new Dictionary<string, object>(this.PlatformProvider.GetPlatform(this.InheritsFrom).GetFlattenedConstantFlags(isStandaloneVm))
-                    : new Dictionary<string, object>();
-
-                IDictionary<string, object> thisPlatform = this.GetConstantFlags();
-                foreach (string key in thisPlatform.Keys)
-                {
-                    this.flattenedCached[key] = thisPlatform[key];
-                }
+                this.flattenedCached = new Dictionary<string, object>(this.GetConstantFlags());
             }
 
             Dictionary<string, object> output = new Dictionary<string, object>(this.flattenedCached);
-            if (!isStandaloneVm &&
-                output.ContainsKey("HAS_DEBUGGER") &&
-                (bool)output["HAS_DEBUGGER"])
-            {
-                output["HAS_DEBUGGER"] = false;
-            }
 
             return output;
         }
@@ -82,17 +48,7 @@ namespace Platform
 
         public byte[] LoadBinaryResource(string resourcePath)
         {
-            byte[] bytes = new ResourceStore(this.GetType()).ReadAssemblyFileBytes(resourcePath);
-            if (bytes == null)
-            {
-                AbstractPlatform parent = this.ParentPlatform;
-                if (parent == null)
-                {
-                    return null;
-                }
-                return parent.LoadBinaryResource(resourcePath);
-            }
-            return bytes;
+            return new ResourceStore(this.GetType()).ReadAssemblyFileBytes(resourcePath);
         }
 
         public void CopyResourceAsText(Dictionary<string, FileOutput> output, string outputPath, string resourcePath, Dictionary<string, string> replacements)
@@ -107,16 +63,6 @@ namespace Platform
         public string LoadTextResource(string resourcePath, Dictionary<string, string> replacements)
         {
             string content = new ResourceStore(this.GetType()).ReadAssemblyFileText(resourcePath, true);
-            if (content == null)
-            {
-                AbstractPlatform parent = this.ParentPlatform;
-                if (parent == null)
-                {
-                    throw new Exception("Resource not found: '" + resourcePath + "'");
-                }
-                return parent.LoadTextResource(resourcePath, replacements);
-            }
-
             return this.ApplyReplacements(content, replacements);
         }
 
@@ -142,36 +88,9 @@ namespace Platform
             return text;
         }
 
-        private bool parentPlatformSet = false;
-        private AbstractPlatform parentPlatform = null;
-        public AbstractPlatform ParentPlatform
-        {
-            get
-            {
-                if (!this.parentPlatformSet)
-                {
-                    this.parentPlatformSet = true;
-                    this.parentPlatform = this.PlatformProvider.GetPlatform(this.InheritsFrom);
-                }
-                return this.parentPlatform;
-            }
-        }
-
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             IList<LibraryForExport> everyLibrary);
-
-        public abstract void ExportProject(
-            Dictionary<string, FileOutput> output,
-            string byteCode,
-            IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
-            Options options);
-
-        public virtual void TranspileCode(Dictionary<string, FileOutput> output, object parserContextObj)
-        {
-            throw new NotImplementedException();
-        }
 
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
 

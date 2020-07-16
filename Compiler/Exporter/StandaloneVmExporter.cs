@@ -55,26 +55,19 @@ namespace Exporter
             ExportStandaloneVmSourceCodeForPlatform(
                 fileOutputContext,
                 platform,
-                assemblyMetadataList,
-                vmTargetDirectory);
+                assemblyMetadataList);
             ExportUtil.EmitFilesToDisk(fileOutputContext, vmTargetDirectory);
         }
 
         private static void ExportStandaloneVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> fileOutput,
             AbstractPlatform platform,
-            AssemblyMetadata[] allLibraries,
-            string vmTargetDir)
+            AssemblyMetadata[] allLibraries)
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
                 fileOutput,
-                "",
                 platform,
-                null,
-                null,
-                allLibraries,
-                vmTargetDir,
-                VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
+                allLibraries);
         }
     }
 }

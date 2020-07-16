@@ -19,21 +19,14 @@ namespace Exporter
 
         private LibraryExporter library;
         private Multimap<string, ExportEntity> exportEntities;
+        private string platformName;
 
         public LibraryResourceDatabase(LibraryExporter library, AbstractPlatform platform)
         {
             this.library = library;
             this.exportEntities = null;
-            this.ApplicablePlatformNamesMostGeneralFirst = new List<string>();
-            while (platform != null)
-            {
-                this.ApplicablePlatformNamesMostGeneralFirst.Add(platform.Name);
-                platform = platform.ParentPlatform;
-            }
-            this.ApplicablePlatformNamesMostGeneralFirst.Reverse();
+            this.platformName = platform.Name;
         }
-
-        public List<string> ApplicablePlatformNamesMostGeneralFirst { get; private set; }
 
         public Multimap<string, ExportEntity> ExportEntities
         {
@@ -57,11 +50,9 @@ namespace Exporter
         private List<Dictionary<string, string>> ParseApplicableInstructions()
         {
             List<Dictionary<string, string>> instructions = new List<Dictionary<string, string>>();
-            foreach (string platformName in this.ApplicablePlatformNamesMostGeneralFirst)
+            string resourceManifest = this.library.Metadata.ReadFile(false, "native/" + platformName + "/manifest.txt", true).Trim();
+            if (resourceManifest.Length > 0)
             {
-                string resourceManifest = this.library.Metadata.ReadFile(false, "native/" + platformName + "/manifest.txt", true).Trim();
-                if (resourceManifest.Length == 0) continue;
-
                 foreach (string lineRaw in resourceManifest.Split('\n'))
                 {
                     string line = lineRaw.Trim();

@@ -30,8 +30,8 @@ internal static class Graphics2DTextHelper
         sizeOut[0] = bmp.Width;
         sizeOut[1] = bmp.Height;
 
-        double leftMarginRatio = bmp.IsCairo ? 0.0 : 0.125;
-        double widthRatio = bmp.IsCairo ? 1.0 : 0.55;
+        double leftMarginRatio = 0.125;
+        double widthRatio = 0.55;
         sizeOut[2] = (int)(bmp.Width * leftMarginRatio);
         sizeOut[3] = (int)(bmp.Width * widthRatio);
 

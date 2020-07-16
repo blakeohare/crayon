@@ -5,25 +5,21 @@ namespace Platform
 {
     public class TemplateReader
     {
-        private List<string> platformNamesMostGeneralFirst = new List<string>();
+        private string platformName = null;
         private Common.PkgAwareFileUtil fileUtil;
 
         public TemplateReader(Common.PkgAwareFileUtil fileUtil, AbstractPlatform platform)
         {
+            this.platformName = platform.Name;
             this.fileUtil = fileUtil;
-            AbstractPlatform walker = platform;
-            while (walker != null)
-            {
-                platformNamesMostGeneralFirst.Add(walker.Name);
-                walker = walker.ParentPlatform;
-            }
-            platformNamesMostGeneralFirst.Reverse();
         }
 
         public TemplateSet GetLibraryTemplates(LibraryForExport library)
         {
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
-            foreach (string platformName in this.platformNamesMostGeneralFirst)
+
+            // TODO: this is going to be weird for a while, but will be rewritten anyway so just inject lang-csharp as a valid platform name since everything is csharp-app right now.
+            foreach (string platformName in new string[] { this.platformName, "lang-csharp" })
             {
                 string libTemplateDir = Path.Join(library.Directory, "native", platformName);
                 if (fileUtil.DirectoryExists(libTemplateDir))
@@ -42,16 +38,12 @@ namespace Platform
             if (crayonHome != null)
             {
                 // Search %CRAYON_HOME%/vmsrc directory for the VM files for the given platforms.
-                // Files associated with more specific platforms will overwrite the less specific ones.
-                foreach (string platformName in this.platformNamesMostGeneralFirst)
+                string packagedVmSource = Path.Join(crayonHome, "vmsrc", this.platformName + ".crypkg");
+                if (File.Exists(packagedVmSource))
                 {
-                    string packagedVmSource = Path.Join(crayonHome, "vmsrc", platformName + ".crypkg");
-                    if (File.Exists(packagedVmSource))
-                    {
-                        byte[] pkgBytes = File.ReadBytes(packagedVmSource);
-                        Common.CryPkgDecoder pkgDecoder = new Common.CryPkgDecoder(pkgBytes);
-                        ReadAllFilesCryPkg(pkgDecoder, output, "");
-                    }
+                    byte[] pkgBytes = File.ReadBytes(packagedVmSource);
+                    Common.CryPkgDecoder pkgDecoder = new Common.CryPkgDecoder(pkgBytes);
+                    ReadAllFilesCryPkg(pkgDecoder, output, "");
                 }
             }
 
@@ -64,13 +56,10 @@ namespace Platform
             {
                 output.Clear(); // reset.
 
-                foreach (string platformName in this.platformNamesMostGeneralFirst)
+                string vmTemplateDir = Path.Join(crayonSourceDir, "Interpreter", "gen", this.platformName);
+                if (Directory.Exists(vmTemplateDir))
                 {
-                    string vmTemplateDir = Path.Join(crayonSourceDir, "Interpreter", "gen", platformName);
-                    if (Directory.Exists(vmTemplateDir))
-                    {
-                        ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
-                    }
+                    ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
                 }
             }
 #endif

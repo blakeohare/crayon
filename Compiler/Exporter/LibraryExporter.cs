@@ -51,10 +51,6 @@ namespace Exporter
         {
             Dictionary<string, object> flags = new Dictionary<string, object>();
             List<string> platformChain = new List<string>() { "default" };
-            if (platform != null)
-            {
-                platformChain.AddRange(platform.InheritanceChain.Reverse());
-            }
             foreach (string platformId in platformChain)
             {
                 Dictionary<string, object> mergeFlagsWith = this.LoadFlagsFromFile(platformId);

@@ -133,7 +133,6 @@ def buildRelease(args):
 	
 	platformsForInterpreterGen = [
 		'csharp-app',
-		'javascript-app',
 	]
 
 	if len(args) != 1:

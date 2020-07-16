@@ -170,7 +170,6 @@ namespace CSharpApp
         {
             string libraryName = library.Name;
             TemplateSet libTemplates = templateReader.GetLibraryTemplates(library);
-            List<string> libraryLines = new List<string>();
 
             string libraryDir = baseDir + "Libraries/" + libraryName;
 
@@ -218,92 +217,6 @@ namespace CSharpApp
                     .OrderBy(v => v.ToLowerInvariant())
                     .Select(dotNetLib => "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
-        }
-
-        public override void ExportProject(
-            Dictionary<string, FileOutput> output,
-            string byteCode,
-            IList<LibraryForExport> libraries,
-            Build.ResourceDatabase resourceDatabase,
-            Options options)
-        {
-            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
-
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
-            string baseDir = projectId + "/";
-
-            this.CopyTemplatedFiles(baseDir, output, replacements, false);
-
-            List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-
-            HashSet<string> dotNetRefs = new HashSet<string>();
-
-            foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
-            {
-                this.GetLibraryCode(templateReader, baseDir, library, dlls, dotNetRefs, output);
-            }
-
-            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
-
-            replacements["DLL_REFERENCES"] += GetFrameworkReferencesCsProjCode(dotNetRefs);
-
-            this.ExportInterpreter(templateReader, baseDir, output);
-
-            output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
-            output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-            if (resourceDatabase.ImageSheetManifestFile != null)
-            {
-                output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
-            }
-
-            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
-            }
-
-            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
-            {
-                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
-            }
-
-            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
-            }
-
-            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
-            }
-
-            foreach (FileOutput fontFile in resourceDatabase.FontResources.Where(file => file.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + fontFile.CanonicalFileName] = fontFile;
-            }
-
-            foreach (LangCSharp.DllFile dll in dlls)
-            {
-                output[baseDir + dll.HintPath] = dll.FileOutput;
-            }
-
-            if (options.GetBool(ExportOptionKey.HAS_ICON))
-            {
-                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
-                IconGenerator iconGen = new IconGenerator();
-                foreach (string path in iconPaths)
-                {
-                    iconGen.AddImage(new Bitmap(path.Trim()));
-                }
-
-                output[baseDir + "icon.ico"] = new FileOutput()
-                {
-                    Type = FileOutputType.Binary,
-                    BinaryContent = iconGen.GenerateIconFile(),
-                };
-            }
-
-            this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
         }
 
         private void CopyTemplatedFiles(string baseDir, Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, bool isStandaloneVm)
