@@ -138,7 +138,6 @@ namespace CSharpApp
 
                 this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.sln", replacements);
                 this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.csproj", replacements);
-                this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.cs", replacements);
 
                 foreach (LangCSharp.DllFile dll in dlls)
                 {
@@ -230,8 +229,7 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalBitmap.cs", "Resources/UniversalBitmap.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.cs", replacements);
 
-            // Required project files
-            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.cs", replacements);
+            // Required project file
             this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.cs", replacements);
 
             // CSharpOpenTK specific stuff
@@ -298,7 +296,7 @@ namespace CSharpApp
                     {
                         foreach (string architecture in new string[] {
                             "Any CPU",
-                            "x86",
+                            //"x86",
                         })
                         {
                             foreach (string activeCfg in new string[] {
@@ -317,7 +315,7 @@ namespace CSharpApp
 
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.sln", replacements);
             string projectFileResource = "ResourcesVm/ProjectFile.csproj";
-            this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
+            this.CopyResourceAsText(output, baseDir + "CrayonRuntime.csproj", projectFileResource, replacements);
         }
     }
 }
