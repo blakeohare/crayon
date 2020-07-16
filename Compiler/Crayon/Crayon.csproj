@@ -76,25 +76,9 @@
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>CSharpApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj">
-      <Project>{e495cac5-84b5-481b-a997-f370fe1b40a2}</Project>
-      <Name>JavaScriptAppAndroid</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj">
-      <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
-      <Name>JavaScriptApp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
-      <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
-      <Name>JavaScriptAppIos</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj">
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
       <Name>LangCSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
-      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
-      <Name>LangJavaScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
