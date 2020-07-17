@@ -226,6 +226,7 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", resourceDir + "/LibraryRegistry.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/NativeInterop.cs", resourceDir + "/NativeInterop.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalBitmap.cs", "Resources/UniversalBitmap.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.cs", replacements);
 

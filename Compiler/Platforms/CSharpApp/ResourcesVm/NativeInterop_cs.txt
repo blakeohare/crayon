@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+namespace Interpreter.Vm
+{
+    public static class NativeInterop
+    {
+        private static int binaryId = 0;
+        private static int fpId = 0;
+
+        private static Dictionary<int, NativeBinaryWrapper> binariesById = new Dictionary<int, NativeBinaryWrapper>();
+        private static Delegate[] nativeFunctionPointers = new Delegate[4];
+
+        public static int LoadDll(string name)
+        {
+            int id = ++binaryId;
+            NativeBinaryWrapper binary = new NativeBinaryWrapper(name + ".dll");
+            binariesById[id] = binary;
+            return id;
+        }
+
+        public static int GetFunctionPointer(int binaryId, string functionName)
+        {
+            if (!binariesById.TryGetValue(binaryId, out NativeBinaryWrapper binary))
+            {
+                throw new Exception("Native binary does not exist.");
+            }
+
+            Delegate fp = binary.GetFunctionPointerHandle(functionName);
+            int id = ++fpId;
+            while (nativeFunctionPointers.Length <= id)
+            {
+                int newLength = nativeFunctionPointers.Length * 2;
+                Delegate[] newFps = new Delegate[newLength];
+                Array.Copy(nativeFunctionPointers, newFps, nativeFunctionPointers.Length);
+                nativeFunctionPointers = newFps;
+            }
+            nativeFunctionPointers[id] = fp;
+            return id;
+        }
+
+        internal static int[] InvokeNativeFunction(int fpId, int[] args)
+        {
+            if (fpId >= nativeFunctionPointers.Length) throw new Exception(); // not loaded
+            Delegate fp = nativeFunctionPointers[fpId];
+            if (fp == null) throw new Exception(); // not loaded
+
+            IntPtr result = IntPtr.Zero;
+
+            GCHandle argsHandle = GCHandle.Alloc(args, GCHandleType.Pinned);
+            try
+            {
+                IntPtr argsPtr = argsHandle.AddrOfPinnedObject();
+                result = (IntPtr)fp.DynamicInvoke(args.Length, argsPtr);
+            }
+            finally
+            {
+                if (argsHandle.IsAllocated)
+                {
+                    argsHandle.Free();
+                }
+            }
+
+            if (result == IntPtr.Zero) return null;
+
+            int resultSize = Marshal.ReadInt32(result);
+            int[] arrayResult = new int[resultSize];
+            Marshal.Copy(IntPtr.Add(result, 4), arrayResult, 0, resultSize);
+
+            // TODO: give some sort of signal that it's okay to release the memory. Right now this is leaking.
+
+            return arrayResult;
+        }
+
+        private class NativeBinaryWrapper : IDisposable
+        {
+            private readonly IntPtr libraryHandle;
+            private bool _disposed = false;
+            private HashSet<string> functionPointersLoaded = new HashSet<string>();
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate IntPtr func_int(int argc, IntPtr arcv);
+
+            public NativeBinaryWrapper(string dllFileName)
+            {
+                libraryHandle = NativeLibrary.Load(dllFileName, typeof(NativeLibrary).Assembly, DllImportSearchPath.AssemblyDirectory);
+            }
+
+            ~NativeBinaryWrapper()
+            {
+                this.Dispose(false);
+            }
+
+            public void Dispose()
+            {
+                this.Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!_disposed)
+                {
+                    _disposed = true;
+                    NativeLibrary.Free(libraryHandle);
+                }
+            }
+
+            public Delegate GetFunctionPointerHandle(string functionName)
+            {
+                if (functionPointersLoaded.Contains(functionName))
+                {
+                    throw new InvalidOperationException(); // cannot load a function handle twice.
+                }
+
+                functionPointersLoaded.Add(functionName);
+
+                IntPtr handle;
+                if (!NativeLibrary.TryGetExport(libraryHandle, functionName, out handle))
+                {
+                    throw new Exception("Cannot get " + functionName + " from this binary.");
+                }
+                return Marshal.GetDelegateForFunctionPointer(handle, typeof(func_int));
+            }
+        }
+    }
+}
