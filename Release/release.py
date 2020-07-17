@@ -6,7 +6,6 @@ VM_TEMP_DIR = 'VmTemp'
 VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 
 LIBRARIES = [
-	'Audio',
 	'Base64',
 	'Core',
 	'CrayonUnit',
@@ -19,27 +18,27 @@ LIBRARIES = [
 	'Environment',
 	'FileIO',
 	'FileIOCommon',
-	'Game',
-	'GameGifCap',
-	'Gamepad',
-	'Graphics2D',
-	'Graphics2DText',
+	#'Game',
+	#'GameGifCap',
+	#'Gamepad',
+	#'Graphics2D',
+	#'Graphics2DText',
 	'Http',
 	'ImageEncoder',
-	'ImageResources',
-	'ImageWebResources',
+	#'ImageResources',
+	#'ImageWebResources',
 	'Json',
 	'Math',
 	'Matrices',
-	'Nori',
-	'NoriXml',
-	'ProcessUtil',
+	#'Nori',
+	#'NoriXml',
+	#'ProcessUtil',
 	'Random',
 	'Resources',
 	'SRandom',
 	'TextEncoding',
 	'UserData',
-	'Web',
+	#'Web',
 	'Xml',
 ]
 
@@ -137,15 +136,16 @@ def buildRelease(args):
 
 	if len(args) != 1:
 		log("incorrect usage")
-		print("usage: python release.py windows|mono")
+		print("usage: python release.py windows|mac|linux")
 		return
 
 	os_platform = args[0]
 
-	isMono = os_platform == 'mono'
+	isMac = os_platform == 'mac'
 	isWindows = os_platform == 'windows'
+	isLinux = os_platform == 'linux'
 
-	if not isWindows and not isMono:
+	if not isWindows and not isMac and not isLinux:
 		log("incorrect platform")
 		print ("Invalid platform: " + os_platform)
 		return
@@ -162,12 +162,8 @@ def buildRelease(args):
 
 	# Compile the compiler bits in the source tree to their usual bin directory
 
-	if isMono:
-		BUILD_CMD = XBUILD
-		SLN_PATH = '../Compiler/CrayonOSX.sln'
-	else:
-		BUILD_CMD = MSBUILD
-		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
+	BUILD_CMD = MSBUILD
+	SLN_PATH = '..\\Compiler\\Crayon.sln'
 	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
 	
 	log("Compiling the .sln file with command: " + cmd)
@@ -230,7 +226,7 @@ def buildRelease(args):
 	# Use the newly built compiler to generate the VM source code (in VmTemp)
 	print("Generating VM code...")
 	runtimeCompilationCommand = canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
-	if isMono:
+	if isMac:
 		runtimeCompilationCommand = 'mono ' + runtimeCompilationCommand
 	log("Generating the VM C# project in VmTemp/ with the command: " + runtimeCompilationCommand)
 	print('running:')
@@ -240,9 +236,15 @@ def buildRelease(args):
 
 	# Now compile the generated VM source code	
 	print("Compiling VM for distribution...")
-	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')])
+	
+	#cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMac else '') + '.sln')])
+	platform_flag_value = 'win-x64' if isWindows else ('osx-x64' if isMac else 'linux-x64')
+	cmd = 'dotnet publish VmTemp\\Source\\CrayonRuntime.sln -r ' + platform_flag_value + ' -c Release'
 	log("Compiling the VM in VmTemp using the command: " + cmd)
 	print(runCommand(cmd))
+	
+	print("Gonna stop it here for now, until libraries are re-done.")
+	return
 
 
 	# Copy the built bits from VmTemp to the vm/ directory
@@ -259,9 +261,12 @@ def buildRelease(args):
 		syntaxHighlighter = readFile("notepadplusplus_crayon_syntax.xml")
 		writeFile(copyToDir + '/notepadplusplus_crayon_syntax.xml', syntaxHighlighter, '\n')
 
-	if isMono:
+	if isMac:
 		setupFile = readFile("setup-mono.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
+	
+	if isLinux:
+		raise Exception("Not implemented")
 
 
 	# Copy the Interpreter source to vmsrc
