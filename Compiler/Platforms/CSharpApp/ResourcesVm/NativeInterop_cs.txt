@@ -73,6 +73,19 @@ namespace Interpreter.Vm
             return arrayResult;
         }
 
+        public static void Cleanup()
+        {
+            foreach (NativeBinaryWrapper binary in binariesById.Values)
+            {
+                binary.Dispose();
+            }
+
+            binariesById = new Dictionary<int, NativeBinaryWrapper>();
+            nativeFunctionPointers = new Delegate[4];
+            binaryId = 0;
+            fpId = 0;
+        }
+
         private class NativeBinaryWrapper : IDisposable
         {
             private readonly IntPtr libraryHandle;
