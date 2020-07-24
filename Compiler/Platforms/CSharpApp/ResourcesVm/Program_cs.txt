@@ -29,12 +29,33 @@ namespace CrayonRuntime
             }
         }
 
-        private static void Run(string[] args)
+        private class RunCommand
         {
-            if (args.Length < 2) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
+            // Errors
+            public bool IncorrectNumArgs { get; set; }
+            public bool InvalidParentProcessId { get; set; }
+            public bool CbxPathNotValidFormat { get; set; }
+            public bool CbxPathNonexistent { get; set; }
+
+            public string CbxPath { get; set; }
+            public bool UsePrefixes { get; set; }
+            public bool ShowLibraryStack { get; set; }
+            public int ParentProcessId { get; set; }
+            public string[] RuntimeArgs { get; set; }
+        }
+
+        private static RunCommand GetRunCommand(string[] args)
+        {
+            RunCommand command = new RunCommand();
+            if (args.Length < 2)
+            {
+                command.IncorrectNumArgs = true;
+                return command;
+            }
 
             List<string> argsList = new List<string>(args);
-            string cbxPath = argsList[0];
+            command.CbxPath = argsList[0];
+
             Dictionary<string, string> vmArgs = new Dictionary<string, string>();
             for (int i = 1; i < args.Length; ++i)
             {
@@ -48,41 +69,54 @@ namespace CrayonRuntime
                 vmArgs[key] = value.Trim();
             }
 
-            bool usePrefixes = vmArgs.ContainsKey("showOutputPrefixes") && vmArgs["showOutputPrefixes"] == "yes";
-            bool showLibStack = vmArgs.ContainsKey("showLibStack") && vmArgs["showLibStack"] == "yes";
-            int parentProcessId = 0;
+            command.UsePrefixes = vmArgs.ContainsKey("showOutputPrefixes") && vmArgs["showOutputPrefixes"] == "yes";
+            command.ShowLibraryStack = vmArgs.ContainsKey("showLibStack") && vmArgs["showLibStack"] == "yes";
 
-            if (!vmArgs.ContainsKey("parentProcessId") || !int.TryParse(vmArgs["parentProcessId"], out parentProcessId))
+            int p = 0;
+            if (!vmArgs.ContainsKey("parentProcessId") || !int.TryParse(vmArgs["parentProcessId"], out p))
             {
-                throw new Exception("Invalid or missing parent process ID.");
+                command.InvalidParentProcessId = true;
+                return command;
             }
+            command.ParentProcessId = p;
 
-            string[] runtimeArgs = new string[0];
+            command.RuntimeArgs = new string[0];
             if (vmArgs.ContainsKey("runtimeargs"))
             {
                 string[] runtimeArgData = vmArgs["runtimeargs"].Split(':');
                 if (runtimeArgData[0] != "0")
                 {
-                    runtimeArgs = runtimeArgData[1]
+                    command.RuntimeArgs = runtimeArgData[1]
                         .Split(',')
                         .Select(s => Base64Decode(s))
                         .ToArray();
                 }
             }
 
-            if (!cbxPath.ToLowerInvariant().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
-            if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
+            if (!command.CbxPath.ToLowerInvariant().EndsWith(".cbx")) command.CbxPathNotValidFormat = true;
+            else if (!System.IO.File.Exists(command.CbxPath)) command.CbxPathNonexistent = true;
 
-            if (parentProcessId > 0)
+            return command;
+        }
+
+        private static void Run(string[] args)
+        {
+            RunCommand command = GetRunCommand(args);
+            if (command.IncorrectNumArgs) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
+            if (command.InvalidParentProcessId) throw new Exception("Invalid or missing parent process ID.");
+            if (command.CbxPathNotValidFormat) throw new Exception("File must be a CBX file.");
+            if (command.CbxPathNonexistent) throw new Exception("Given CBX file does not exist.");
+
+            if (command.ParentProcessId > 0)
             {
                 // Start a thread that checks for the parent process. If the parent process disappears, then
                 // the program should terminate.
                 System.Threading.Thread thread = new System.Threading.Thread(ParentChecker);
                 thread.IsBackground = true;
-                thread.Start(parentProcessId);
+                thread.Start(command.ParentProcessId);
             }
 
-            byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
+            byte[] cbxData = System.IO.File.ReadAllBytes(command.CbxPath);
 
             CbxDecoder cbxDecoder = new CbxDecoder(cbxData);
             if (!COMPATIBLE_VERSIONS.Contains(cbxDecoder.CbxVersion))
@@ -93,12 +127,12 @@ namespace CrayonRuntime
 
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ImageSheetManifest = cbxDecoder.ImageSheetManifest;
-            Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
+            Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(command.CbxPath);
             Interpreter.Structs.VmContext vm = CrayonWrapper.createVm(byteCode, cbxDecoder.ResourceManifest);
-            CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
-            vm.environment.stdoutPrefix = usePrefixes ? "STDOUT" : null;
-            vm.environment.stacktracePrefix = usePrefixes ? "STACKTRACE" : null;
-            vm.environment.showLibStack = showLibStack;
+            CrayonWrapper.vmEnvSetCommandLineArgs(vm, command.RuntimeArgs);
+            vm.environment.stdoutPrefix = command.UsePrefixes ? "STDOUT" : null;
+            vm.environment.stacktracePrefix = command.UsePrefixes ? "STACKTRACE" : null;
+            vm.environment.showLibStack = command.ShowLibraryStack;
             Debugger.INSTANCE.StartListening();
             TranslationHelper.ProgramData = vm;
             TranslationHelper.StartInterpreter();
