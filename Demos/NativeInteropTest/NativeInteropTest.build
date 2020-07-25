@@ -1,0 +1,37 @@
+{
+    "id": "NativeInteropTest",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "title": "NativeInteropTest",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
+    "version": "1.0",
+    "ios-bundle-prefix": "com.yourname.NativeInteropTest,%VERSION%",
+    "guid-seed": "com.yourname.NativeInteropTest,v1,%TARGET_NAME%",
+
+    "image-sheets": [
+        { "id": "everything", "prefix": "*" }
+    ],
+
+    "targets": [
+        {
+            "name": "android",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "platform": "javascript-app-ios"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "js-file-prefix": "/website/relative/path/from/domain/root"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}
