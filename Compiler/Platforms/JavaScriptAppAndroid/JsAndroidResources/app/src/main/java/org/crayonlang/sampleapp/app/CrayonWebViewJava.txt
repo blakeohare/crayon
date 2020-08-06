@@ -67,26 +67,29 @@ public class CrayonWebView extends WebView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        switch (e.getAction()) {
+        int action = e.getAction();
+        switch (action) {
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_POINTER_DOWN:
+                boolean isUp = action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP;
                 int pointerCount = e.getPointerCount();
                 StringBuilder msg = new StringBuilder();
                 for (int i = 0; i < pointerCount; ++i) {
+                    if (isUp && i == e.getActionIndex()) continue;
                     int pointerId = e.getPointerId(i);
                     float rawX = e.getX(pointerId) - this.getLeft();
                     float rawY = e.getY(pointerId) - this.getTop();
                     int x = (int) (2 * 100000 * rawX / this.getWidth());
                     int y = (int) (2 * 100000 * rawY / this.getHeight());
-                    if (i > 0) msg.append(' ');
+                    msg.append(' ');
                     msg.append(x);
                     msg.append(' ');
                     msg.append(y);
                 }
-                this.sendMessage("touch-points-status", msg.toString(), false);
+                this.sendMessage("touch-points-status", pointerCount + msg.toString(), false);
                 break;
             default:
                 break;

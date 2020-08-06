@@ -57,14 +57,15 @@ receiveMessage = function(type, payload, useEncoding) {
     var parts = payload.split(' ');
     switch (type) {
         case 'touch-points-status':
-            if (parts.length == 1) {
+            if (parseInt(parts[0]) == 0) {
                 C$game$activeMultiTouchPoints = null;
             } else {
                 C$game$activeMultiTouchPoints = [];
-                for (let i = 0; i < parts.length; i += 2) {
+                for (let i = 1; i < parts.length; i += 2) {
                     let x = Math.floor(C$game$width * parseInt(parts[i]) / 100000);
                     let y = Math.floor(C$game$height * parseInt(parts[i + 1]) / 100000);
-                    C$game$activeMultiTouchPoints.push([x, y]);
+                    C$game$activeMultiTouchPoints.push(x);
+                    C$game$activeMultiTouchPoints.push(y);
                 }
             }
             break;
