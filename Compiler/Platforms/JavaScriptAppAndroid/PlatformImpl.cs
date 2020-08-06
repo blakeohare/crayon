@@ -147,7 +147,7 @@ namespace JavaScriptAppAndroid
             string packagedDir = replacements["JAVA_PACKAGE"].Replace('.', '/');
             output[".gitignore"] = this.LoadTextFile("JsAndroidResources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("JsAndroidResources/buildGradle.txt", replacements);
-            output["android.iml"] = this.LoadTextFile("JsAndroidResources/androidIml.txt", replacements);
+            output[replacements["PROJECT_ID_LOWERCASE"] + ".iml"] = this.LoadTextFile("JsAndroidResources/androidIml.txt", replacements);
             output["gradle.properties"] = this.LoadTextFile("JsAndroidResources/gradleProperties.txt", replacements);
             output["gradlew"] = this.LoadTextFile("JsAndroidResources/gradlew.txt", replacements);
             output["gradlew.bat"] = this.LoadTextFile("JsAndroidResources/gradlewBat.txt", replacements);
