@@ -157,7 +157,6 @@ namespace JavaScriptAppAndroid
             output["gradle/wrapper/gradle-wrapper.jar"] = this.LoadBinaryFile("JsAndroidResources/gradle/wrapper/GradleWrapper.jar");
             output["gradle/wrapper/gradle-wrapper.properties"] = this.LoadTextFile("JsAndroidResources/gradle/wrapper/GradleWrapperProperties.txt", replacements);
 
-            output[".idea/.name"] = this.LoadTextFile("JsAndroidResources/idea/name.txt", replacements);
             output[".idea/compiler.xml"] = this.LoadTextFile("JsAndroidResources/idea/compilerXml.txt", replacements);
             output[".idea/encodings.xml"] = this.LoadTextFile("JsAndroidResources/idea/encodingsXml.txt", replacements);
             output[".idea/gradle.xml"] = this.LoadTextFile("JsAndroidResources/idea/gradleXml.txt", replacements);
