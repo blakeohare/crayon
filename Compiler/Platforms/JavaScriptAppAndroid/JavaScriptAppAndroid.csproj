@@ -73,7 +73,6 @@
     <EmbeddedResource Include="JsAndroidResources\idea\gradleXml.txt" />
     <EmbeddedResource Include="JsAndroidResources\idea\miscXml.txt" />
     <EmbeddedResource Include="JsAndroidResources\idea\modulesXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\name.txt" />
     <EmbeddedResource Include="JsAndroidResources\idea\scopes\scopeSettings.txt" />
     <EmbeddedResource Include="JsAndroidResources\idea\vcsXml.txt" />
     <EmbeddedResource Include="JsAndroidResources\idea\workspaceXml.txt" />

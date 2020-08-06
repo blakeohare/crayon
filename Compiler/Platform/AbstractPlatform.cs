@@ -180,6 +180,7 @@ namespace Platform
             return new Dictionary<string, string>()
             {
                 { "PROJECT_ID", options.GetString(ExportOptionKey.PROJECT_ID) },
+                { "PROJECT_ID_LOWERCASE", options.GetString(ExportOptionKey.PROJECT_ID).ToLowerInvariant() },
                 { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled Project") },
                 { "PROJECT_DESCRIPTION", options.GetStringOrEmpty(ExportOptionKey.DESCRIPTION) },
                 { "PROJECT_VERSION", options.GetStringOrEmpty(ExportOptionKey.VERSION) },

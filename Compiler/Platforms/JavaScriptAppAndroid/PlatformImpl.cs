@@ -147,7 +147,7 @@ namespace JavaScriptAppAndroid
             string packagedDir = replacements["JAVA_PACKAGE"].Replace('.', '/');
             output[".gitignore"] = this.LoadTextFile("JsAndroidResources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("JsAndroidResources/buildGradle.txt", replacements);
-            output["android.iml"] = this.LoadTextFile("JsAndroidResources/androidIml.txt", replacements);
+            output[replacements["PROJECT_ID_LOWERCASE"] + ".iml"] = this.LoadTextFile("JsAndroidResources/androidIml.txt", replacements);
             output["gradle.properties"] = this.LoadTextFile("JsAndroidResources/gradleProperties.txt", replacements);
             output["gradlew"] = this.LoadTextFile("JsAndroidResources/gradlew.txt", replacements);
             output["gradlew.bat"] = this.LoadTextFile("JsAndroidResources/gradlewBat.txt", replacements);
@@ -157,7 +157,6 @@ namespace JavaScriptAppAndroid
             output["gradle/wrapper/gradle-wrapper.jar"] = this.LoadBinaryFile("JsAndroidResources/gradle/wrapper/GradleWrapper.jar");
             output["gradle/wrapper/gradle-wrapper.properties"] = this.LoadTextFile("JsAndroidResources/gradle/wrapper/GradleWrapperProperties.txt", replacements);
 
-            output[".idea/.name"] = this.LoadTextFile("JsAndroidResources/idea/name.txt", replacements);
             output[".idea/compiler.xml"] = this.LoadTextFile("JsAndroidResources/idea/compilerXml.txt", replacements);
             output[".idea/encodings.xml"] = this.LoadTextFile("JsAndroidResources/idea/encodingsXml.txt", replacements);
             output[".idea/gradle.xml"] = this.LoadTextFile("JsAndroidResources/idea/gradleXml.txt", replacements);
