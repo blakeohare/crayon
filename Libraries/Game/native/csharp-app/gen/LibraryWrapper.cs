@@ -482,5 +482,23 @@ namespace Interpreter.Libraries.Game
             }
             return vm.globalNull;
         }
+
+        public static Value lib_game_syncPointers(VmContext vm, Value[] args)
+        {
+            List<double> pts = new List<double>();
+            GameWindow.Instance.SyncPointers(pts);
+            if ((pts.Count == 0))
+            {
+                return vm.globalNull;
+            }
+            List<Value> values = new List<Value>();
+            int i = 0;
+            while ((i < pts.Count))
+            {
+                values.Add(Interpreter.Vm.CrayonWrapper.buildFloat(vm.globals, pts[i]));
+                i += 1;
+            }
+            return Interpreter.Vm.CrayonWrapper.buildList(values);
+        }
     }
 }

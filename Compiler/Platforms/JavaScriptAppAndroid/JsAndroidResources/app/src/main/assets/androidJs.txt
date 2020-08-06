@@ -17,7 +17,7 @@ C$android$receiveMessageDecoder = function(s) {
 
 C$game$enforcedScreenSize = function(w, h) {
 	return [null, null];
-}
+};
 
 C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowSize, gameSize) {
     var hack = document.getElementById('android_canvas_hack');
@@ -39,6 +39,16 @@ C$game$wrapCanvasHtml = function(canvasHtml) {
     return '<div id="android_canvas_hack">' + canvasHtml + '</div>';
 };
 
+C$game$activeMultiTouchPoints = null;
+C$game$syncPointers = (pts) => {
+    let t = C$game$activeMultiTouchPoints;
+    if (t != null) {
+        for (let pt of t) {
+            pts.push(pt);
+        }
+    }
+};
+
 receiveMessage = function(type, payload, useEncoding) {
     if (useEncoding) {
         type = C$android$receiveMessageDecoder(type);
@@ -46,6 +56,19 @@ receiveMessage = function(type, payload, useEncoding) {
     }
     var parts = payload.split(' ');
     switch (type) {
+        case 'touch-points-status':
+            if (parts.length == 1) {
+                C$game$activeMultiTouchPoints = null;
+            } else {
+                C$game$activeMultiTouchPoints = [];
+                for (let i = 0; i < parts.length; i += 2) {
+                    let x = Math.floor(C$game$width * parseInt(parts[i]) / 100000);
+                    let y = Math.floor(C$game$height * parseInt(parts[i + 1]) / 100000);
+                    C$game$activeMultiTouchPoints.push([x, y]);
+                }
+            }
+            break;
+
         case 'touch-event':
             if (!!C$game$width) {
                 var eventId = parseInt(parts[0]);

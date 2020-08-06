@@ -421,3 +421,18 @@ var lib_game_startup = function(vm, args) {
 	}
 	return vm[14];
 };
+
+var lib_game_syncPointers = function(vm, args) {
+	var pts = [];
+	C$game$syncPointers(pts);
+	if ((pts.length == 0)) {
+		return vm[14];
+	}
+	var values = [];
+	var i = 0;
+	while ((i < pts.length)) {
+		values.push(buildFloat(vm[13], pts[i]));
+		i += 1;
+	}
+	return buildList(values);
+};

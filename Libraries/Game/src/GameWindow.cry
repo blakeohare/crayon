@@ -75,6 +75,7 @@ namespace Game {
         static field _frameEndHandlers = [];
 
         field _pointerMode = PointerCanonicalizerMode.CONVERT_TOUCH_TO_MOUSE;
+        field _allPointers = [];
 
         field fps;
 
@@ -352,6 +353,10 @@ namespace Game {
                 }
             }
 
+            this._allPointers.clear();
+            for (pt : $lib_game_syncPointers() ?? []) {
+                this._allPointers.add(pt);
+            }
             return output;
         }
 

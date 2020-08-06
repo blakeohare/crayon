@@ -15,6 +15,7 @@ EXT-TYPE: void _lib_game_set_title(string windowTitle);
 EXT-TYPE: void _lib_game_set_window_mode(int mode, int width, int height);
 EXT-TYPE: List<VM.PlatformRelayObject> _lib_game_get_events_raw_list();
 EXT-TYPE: Dictionary<string, Func<object, Array<object>>> _lib_game_GetCallbackFunctions();
+EXT-TYPE: void _lib_game_syncPointers(List<double> pts);
 
 # --- AUDIO ---
 EXT-TYPE: bool _lib_game_audio_isAudioSupported();

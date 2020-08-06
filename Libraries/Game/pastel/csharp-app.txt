@@ -23,6 +23,7 @@ EXT: _lib_game_set_title: GameWindow.Instance.SetTitle([ARG:1])
 EXT: _lib_game_clockTick: AlwaysTrue()
 EXT: _lib_game_getNativeWindowHandle: GameWindow.Instance
 EXT: _lib_game_set_window_mode: GameWindow.Instance.SetScreenMode([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_game_syncPointers: GameWindow.Instance.SyncPointers([ARG:1])
 EXT: _lib_game_GetCallbackFunctions: GameWindow.GetCallbackFunctions()
 EXT: _lib_game_audio_isAudioSupported: AlwaysTrue()
 EXT: _lib_game_audio_musicIsPlaying: Libraries.Game.AudioHelper.AudioMusicIsPlaying()

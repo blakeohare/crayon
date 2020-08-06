@@ -67,8 +67,29 @@ public class CrayonWebView extends WebView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        if (this.useNaturalMouseEvents) {
-            return super.onTouchEvent(e);
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_POINTER_DOWN:
+                int pointerCount = e.getPointerCount();
+                StringBuilder msg = new StringBuilder();
+                for (int i = 0; i < pointerCount; ++i) {
+                    int pointerId = e.getPointerId(i);
+                    float rawX = e.getX(pointerId) - this.getLeft();
+                    float rawY = e.getY(pointerId) - this.getTop();
+                    int x = (int) (2 * 100000 * rawX / this.getWidth());
+                    int y = (int) (2 * 100000 * rawY / this.getHeight());
+                    if (i > 0) msg.append(' ');
+                    msg.append(x);
+                    msg.append(' ');
+                    msg.append(y);
+                }
+                this.sendMessage("touch-points-status", msg.toString(), false);
+                break;
+            default:
+                break;
         }
         this.handleMouseEvent(e);
         return true;

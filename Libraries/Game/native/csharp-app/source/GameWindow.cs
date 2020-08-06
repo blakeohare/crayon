@@ -235,6 +235,8 @@ namespace Interpreter.Libraries.Game
             this.screenSizeChanged = true;
         }
 
+        private double[] currentPointer = null;
+
         public List<PlatformRelayObject> GetEvents()
         {
             List<PlatformRelayObject> output = new List<PlatformRelayObject>();
@@ -253,12 +255,25 @@ namespace Interpreter.Libraries.Game
                         type = events.Dequeue();
                         if (type == MOUSE_MOVE)
                         {
+                            if (currentPointer != null)
+                            {
+                                currentPointer[0] = x;
+                                currentPointer[1] = y;
+                            }
                             output.Add(new PlatformRelayObject(32, x, y, 0, 0.0, null));
                         }
                         else
                         {
                             isLeft = type == MOUSE_LEFT;
                             isDown = events.Dequeue() == 1;
+                            if (isDown)
+                            {
+                                currentPointer = new double[] { x, y };
+                            }
+                            else
+                            {
+                                currentPointer = null;
+                            }
                             output.Add(new PlatformRelayObject(33 + (isLeft ? 0 : 2) + (isDown ? 0 : 1), x, y, 0, 0.0, null));
                         }
                         // TODO: mouse scroll
@@ -489,6 +504,14 @@ namespace Interpreter.Libraries.Game
             });
 
             return lookup;
+        }
+
+        public void SyncPointers(List<double> pts)
+        {
+            if (this.currentPointer != null)
+            {
+                pts.AddRange(this.currentPointer);
+            }
         }
     }
 }

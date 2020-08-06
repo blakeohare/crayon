@@ -24,6 +24,7 @@
         { "name": "lib_game_setInstance", "argc": 1 },
         { "name": "lib_game_set_title", "argc": 1 },
         { "name": "lib_game_set_window_mode", "argc": 3 },
+        { "name": "lib_game_syncPointers", "argc": 0 },
 
         { "name": "lib_game_audio_getAudioResourcePath", "argc": 1 },
         { "name": "lib_game_audio_is_supported", "argc": 0 },

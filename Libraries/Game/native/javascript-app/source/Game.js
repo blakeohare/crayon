@@ -247,3 +247,5 @@ C$game$getCallbackFunctions = function() {
 	t["set-render-data"] = function(o) { return C$drawing$rendererSetData(o[0], o[1], o[2], o[3]); };
 	return t;
 };
+
+C$game$syncPointers = (pts) => {};

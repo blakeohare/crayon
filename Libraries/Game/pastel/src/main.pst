@@ -9,6 +9,7 @@
 @import("set_title.pst");
 @import("set_window_mode.pst");
 @import("setInstance.pst");
+@import("syncPointers.pst");
 
 @import("AudioLibHelper.pst");
 @import("audio_getAudioResourcePath.pst");

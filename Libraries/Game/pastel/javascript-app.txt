@@ -18,6 +18,7 @@ EXT: _lib_game_set_title: C$game$setTitle([ARG:1])
 EXT: _lib_game_clockTick: C$game$endFrame()
 EXT: _lib_game_getNativeWindowHandle: null
 EXT: _lib_game_set_window_mode: C$common$alwaysFalse()
+EXT: _lib_game_syncPointers: C$game$syncPointers([ARG:1])
 EXT: _lib_game_GetCallbackFunctions: C$game$getCallbackFunctions()
 EXT: _lib_game_audio_isAudioSupported: C$audio$isAudioSupported()
 EXT: _lib_game_audio_musicIsPlaying: C$audio$musicIsPlaying()
