@@ -5,7 +5,7 @@ Please go to http://crayonlang.org for documentation, tutorials, demos, and othe
 
 # **A NOTE ABOUT CRAYON 2.9.x**
 
-Crayon 2.9.x is a series of transitionary versions to Crayon 3. There will be very little 
+Crayon 2.9.x is a series of transitionary versions to Crayon 3. There will be very little
 feature development occurring in 2.9 and should only be used for regression testing. For
 most purposes, Crayon 2.1.1 should be used instead. Most releases in the 2.9.x range will
 occur as a result of stabilization after major refactors/rewrites and will not related to
@@ -17,11 +17,11 @@ version 2.1.2 will be released at some point with those fixes.
   the extra step of compiling your project once it has been exported to a target platform.
 * **Extensible platform export**: currently you can only export to the platforms that are directly
   supported (which, as it stands, is iOS, Android, "web", and vague support for the languages C#,
-  Java, and PHP). My goal is to redo export in a way that is extensible for custom platforms. 
+  Java, and PHP). My goal is to redo export in a way that is extensible for custom platforms.
 * **True Package management**: there will be a real package manager built in to Crayon and a way to
   integrate this with github. The footprint of the basic Crayon compiler and VM download should be
   minimal and libraries will be downloaded on an as-needed basis.
-* **Better support for other platforms by rewriting Crayon in Crayon**: Crayon has mostly worked on 
+* **Better support for other platforms by rewriting Crayon in Crayon**: Crayon has mostly worked on
   all native platforms but due to the deep dependence on .NET standard, running both the compiler
   and the VM on Mac and Linux based platforms were often turbulent. Furthermore, running the
   compiler in the browser has been impossible. Be rewriting the compiler in Crayon itself, this
@@ -33,11 +33,11 @@ version 2.1.2 will be released at some point with those fixes.
   Internet Explorer integration to render web-based UI's in a browser pane. This was an unscalable
   hack and a long term solution for a variety of UI's (for both general UI and games) needs to be
   built.
-  
+
 That said, please pardon my dust! If you're just getting started with Crayon, I strongly recommend
 just downloading version 2.1.1 for the time being. If you're feeling adventurous, please grab down
 the latest from master and give it a whirl!
-  
+
 [![Build Status](https://travis-ci.org/blakeohare/crayon.svg?branch=master)](https://travis-ci.org/blakeohare/crayon)
 
 # Copyright

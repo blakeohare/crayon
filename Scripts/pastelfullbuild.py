@@ -8,15 +8,9 @@ INTERPRE_DIR = r'..\Interpreter' # lol, "interpre-dir"
 
 PLATFORMS = [
   'lang-csharp',
-  'lang-java',
   'lang-javascript',
-  'lang-php',
-  'lang-python',
   'csharp-app',
-  'java-app',
   'javascript-app',
-  'php-server',
-  'python-app',
   'javascript-app-android',
   'javascript-app-ios',
 ]
