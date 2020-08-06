@@ -79,9 +79,8 @@ public class CrayonWebView extends WebView {
                 StringBuilder msg = new StringBuilder();
                 for (int i = 0; i < pointerCount; ++i) {
                     if (isUp && i == e.getActionIndex()) continue;
-                    int pointerId = e.getPointerId(i);
-                    float rawX = e.getX(pointerId) - this.getLeft();
-                    float rawY = e.getY(pointerId) - this.getTop();
+                    float rawX = e.getX(i) - this.getLeft();
+                    float rawY = e.getY(i) - this.getTop();
                     int x = (int) (2 * 100000 * rawX / this.getWidth());
                     int y = (int) (2 * 100000 * rawY / this.getHeight());
                     msg.append(' ');
