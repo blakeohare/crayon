@@ -54,6 +54,7 @@ C$drawing$render = function(ctx, gameWidth, gameHeight) {
 
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, gameWidth, gameHeight);
+    ctx.imageSmoothingEnabled = false;
 
     for (var i = 0; i < C$drawing$eventsLength; i += 16) {
         switch (ev[i]) {
