@@ -64,6 +64,15 @@ namespace JavaScriptAppAndroid
                     file.TextContent = file.TextContent.Replace(
                         "<script type=\"text/javascript\" src=\"",
                         "<script type=\"text/javascript\" src=\"file:///android_asset/");
+
+                    file.TextContent = file.TextContent.Replace(
+                        "<link rel=\"shortcut icon\" href=\"favicon.ico\">",
+                        "");
+                }
+                else if (filePath == "test_server.py")
+                {
+                    // TODO: add an option called INCLUDE_TEST_SERVER for the parent platform so that this doesn't appear in the first place.
+                    continue;
                 }
                 files["app/src/main/assets/" + filePath] = file;
             }
