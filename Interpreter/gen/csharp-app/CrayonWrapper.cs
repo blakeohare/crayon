@@ -5715,7 +5715,7 @@ namespace Interpreter.Vm
                                     {
                                         string1 = getTypeFromId(value.type);
                                     }
-                                    hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
+                                    hasInterrupt = EX_UnknownField(ec, string.Join("", new string[] { string1," does not have a field called '",vm.metadata.identifiers[row[0]],"'." }));
                                 }
                             }
                         }

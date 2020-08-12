@@ -152,7 +152,7 @@ if (output == null) {
                 string1 = getTypeFromId(value.type);
             }
 
-            hasInterrupt = EX_UnknownField(ec, Core.StringConcatAll(string1, " does not have that field."));
+            hasInterrupt = EX_UnknownField(ec, Core.StringConcatAll(string1, " does not have a field called '", vm.metadata.identifiers[row[0]], "'."));
         }
     }
 }

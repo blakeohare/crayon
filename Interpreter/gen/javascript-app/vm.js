@@ -4359,7 +4359,7 @@ var interpretImpl = function(vm, executionContextId) {
 							} else {
 								string1 = getTypeFromId(value[0]);
 							}
-							hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
+							hasInterrupt = EX_UnknownField(ec, [string1, " does not have a field called '", vm[4][0][row[0]], "'."].join(''));
 						}
 					}
 				}
