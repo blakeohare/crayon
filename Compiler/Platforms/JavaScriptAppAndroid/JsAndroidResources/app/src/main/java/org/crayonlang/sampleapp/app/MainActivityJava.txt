@@ -9,17 +9,12 @@ import android.view.Window;
 
 public class MainActivity extends Activity {
 
-    private static boolean mainStarted = false;
     private CrayonWebView cwv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (!mainStarted) {
-            mainStarted = true;
-            this.ensureCrayonViewInitialized();
-        }
+        this.ensureCrayonViewInitialized();
     }
 
     @Override
