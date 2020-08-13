@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Build.BuildParseNodes
 {
+    // TODO: after a few versions have passed, remove all the hyphenated aliases
     internal static class JsonParserForBuild
     {
         internal static BuildRoot Parse(string file)
@@ -16,7 +17,7 @@ namespace Build.BuildParseNodes
             BuildRoot rootOut = new BuildRoot();
             rootOut.ProjectId = root.GetAsString("id");
 
-            rootOut.ProgrammingLanguage = root.GetAsString("programming-language");
+            rootOut.ProgrammingLanguage = root.GetAsString("programmingLanguage") ?? root.GetAsString("programming-language");
             ParseBuildItem(rootOut, root);
             List<Target> targets = new List<Target>();
             foreach (JsonLookup targetRoot in root.GetAsList("targets")
@@ -35,23 +36,25 @@ namespace Build.BuildParseNodes
 
         private static void ParseBuildItem(BuildItem item, JsonLookup json)
         {
-            item.CompilerLocale = json.GetAsString("compiler-locale");
+            item.CompilerLocale = json.GetAsString("compilerLocale") ?? json.GetAsString("compiler-locale");
             item.ProjectTitle = json.GetAsString("title");
-            item.HasLegacyTitle = json.GetAsString("default-title") != null;
+            item.HasLegacyTitle = (json.GetAsString("defaultTitle") ?? json.GetAsString("default-title")) != null;
             item.Description = json.GetAsString("description");
-            item.GuidSeed = json.GetAsString("guid-seed");
-            item.IosBundlePrefix = json.GetAsString("ios-bundle-prefix");
-            item.JavaPackage = json.GetAsString("java-package");
-            item.JsFilePrefix = json.GetAsString("js-file-prefix");
-            item.JsFullPageRaw = json.Get("js-full-page") == null ? null : new NullableBoolean(json.GetAsBoolean("js-full-page"));
-            item.LaunchScreen = json.GetAsString("launch-screen");
-            item.MinifiedRaw = json.Get("js-min") == null ? null : new NullableBoolean(json.GetAsBoolean("js-min"));
+            item.GuidSeed = json.GetAsString("guidSeed") ?? json.GetAsString("guid-seed");
+            item.IosBundlePrefix = json.GetAsString("iosBundlePrefix") ?? json.GetAsString("ios-bundle-prefix");
+            item.JavaPackage = json.GetAsString("javaPackage") ?? json.GetAsString("java-package");
+            item.JsFilePrefix = json.GetAsString("jsFilePrefix") ?? json.GetAsString("js-file-prefix");
+            object jsFullPage = json.Get("jsFullPage") ?? json.Get("js-full-page");
+            item.JsFullPageRaw = jsFullPage == null ? null : new NullableBoolean((bool)jsFullPage);
+            item.LaunchScreen = json.GetAsString("launchScreen") ?? json.GetAsString("launch-screen");
+            object jsMin = json.Get("jsMin") ?? json.Get("js-min");
+            item.MinifiedRaw = jsMin == null ? null : new NullableBoolean((bool)jsMin);
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
             item.IconFilePaths = (json.GetAsList("icons") ?? new object[0]).OfType<string>().ToArray();
             item.HasLegacyIcon = json.GetAsString("icon") != null;
-            item.DelegateMainTo = json.GetAsString("delegate-main-to");
+            item.DelegateMainTo = json.GetAsString("delegateMainTo") ?? json.GetAsString("delegate-main-to");
 
             List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();
@@ -76,7 +79,7 @@ namespace Build.BuildParseNodes
             item.RemoteDeps = remoteDeps.ToArray();
 
             List<ImageSheet> imageSheets = new List<ImageSheet>();
-            object[] imageSheetsRaw = json.GetAsList("image-sheets");
+            object[] imageSheetsRaw = json.Get("imageSheets") != null ? json.GetAsList("imageSheets") : json.GetAsList("image-sheets");
             if (imageSheetsRaw != null)
             {
                 foreach (JsonLookup imageSheetJson in imageSheetsRaw
@@ -91,8 +94,19 @@ namespace Build.BuildParseNodes
             }
             item.ImageSheets = imageSheets.ToArray();
 
-            int windowWidth = json.GetAsInteger("window-size.width", -1);
-            int windowHeight = json.GetAsInteger("window-size.height", -1);
+            int windowWidth = -1;
+            int windowHeight = -1;
+            if (json.Get("windowSize") != null)
+            {
+                windowWidth = json.GetAsInteger("windowSize.width", -1);
+                windowHeight = json.GetAsInteger("windowSize.height", -1);
+            }
+            else
+            {
+                windowWidth = json.GetAsInteger("window-size.width", -1);
+                windowHeight = json.GetAsInteger("window-size.height", -1);
+            }
+
             if (windowWidth != -1 && windowHeight != -1)
             {
                 item.WindowSize = new Size()

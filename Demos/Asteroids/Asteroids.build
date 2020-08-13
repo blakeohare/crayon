@@ -6,22 +6,22 @@
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],
 
-    "window-size": {
+    "windowSize": {
         "width": 800,
         "height": 600
     },
     "version": "2.9.0",
 
-    "image-sheets": [
+    "imageSheets": [
         { "id": "everything", "prefix": "*" }
     ],
-    "guid-seed": "org.crayonlang.demos.asteroids,%VERSION%,%TARGET_NAME%",
+    "guidSeed": "org.crayonlang.demos.asteroids,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {
             "name": "javascript",
             "platform": "javascript-app",
-            "js-file-prefix": "/demos/asteroids"
+            "jsFilePrefix": "/demos/asteroids"
         },
         {
             "name": "csharp",

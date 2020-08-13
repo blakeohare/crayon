@@ -5,7 +5,7 @@
 	"output": "output/%TARGET_NAME%",
 	
 	"version": "2.1.0",
-	"guidseed": "org.crayonlang.tutorials.userdata,%VERSION%,%TARGET_NAME%",
+	"guidSeed": "org.crayonlang.tutorials.userdata,%VERSION%,%TARGET_NAME%",
 	
 	"targets": [
 		{

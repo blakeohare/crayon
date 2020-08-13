@@ -3,11 +3,11 @@
     "title": "Conway's Game of Life",
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],
-    "java-package": "org.crayonlang.demos.conway",
-    "ios-bundle-prefix": "org.crayonlang.demos",
+    "javaPackage": "org.crayonlang.demos.conway",
+    "iosBundlePrefix": "org.crayonlang.demos",
 
     "version": "2.9.0",
-    "guid-seed": "org.crayonlang.demos.conway,%VERSION%,%TARGET_NAME%",
+    "guidSeed": "org.crayonlang.demos.conway,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {
@@ -28,19 +28,19 @@
             "name": "es-demo",
             "source": "source-es",
             "platform": "csharp-app",
-            "compiler-locale": "es"
+            "compilerLocale": "es"
         },
         {
             "name": "es-demo-java",
             "source": "source-es",
             "platform": "java-app",
-            "compiler-locale": "es"
+            "compilerLocale": "es"
         },
         {
             "name": "jp-demo",
             "source": "source-jp",
             "platform": "csharp-app",
-            "compiler-locale": "jp"
+            "compilerLocale": "jp"
         },
         {
             "name": "java",

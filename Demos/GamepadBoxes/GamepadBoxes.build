@@ -5,13 +5,13 @@
     "output": "output/%TARGET_NAME%",
 
     "version": "2.9.0",
-    "guid-seed": "org.crayonlang.demos.gamepadboxes,%VERSION%,%TARGET_NAME%",
+    "guidSeed": "org.crayonlang.demos.gamepadboxes,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {
             "name": "javascript",
             "platform": "javascript-app",
-            "js-file-prefix": "demos/gamepadboxes"
+            "jsFilePrefix": "demos/gamepadboxes"
         },
         {
             "name": "csharp",

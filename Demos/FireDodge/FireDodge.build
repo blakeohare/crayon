@@ -4,12 +4,12 @@
     "source": "source/",
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],
-    "launch-screen": "assets/launchscreen.png",
+    "launchScreen": "assets/launchscreen.png",
 
     "version": "2.9.0",
-    "guid-seed": "org.crayonlang.demos.firedodge,%VERSION%,%TARGET_NAME%",
+    "guidSeed": "org.crayonlang.demos.firedodge,%VERSION%,%TARGET_NAME%",
 
-    "image-sheets": [
+    "imageSheets": [
         {
             "id": "everything",
             "prefix": "*"
@@ -20,7 +20,7 @@
         {
             "name": "javascript",
             "platform": "javascript-app",
-            "js-file-prefix": "demos/firedodge/"
+            "jsFilePrefix": "demos/firedodge/"
         },
         {
             "name": "csharp",

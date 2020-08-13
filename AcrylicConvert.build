@@ -4,16 +4,16 @@
 	"source": "Compiler/",
 	"output": "bin/%TARGET_NAME%",
 	
-	"programming-language": "Acrylic",
+	"programmingLanguage": "Acrylic",
 	
 	"version": "0.3.0",
-	"guid-seed": "org.crayonlang.compilerconverter,v0.3.0,%TARGET_NAME%",
+	"guidSeed": "org.crayonlang.compilerconverter,v0.3.0,%TARGET_NAME%",
 	
 	"targets": [
 		{
 			"name": "acrylic",
 			"platform": "acrylic-conversion",
-			"csharp-compat-mode": true
+			"csharpCompatMode": true
 		},
 		{
 			"name": "javascript",

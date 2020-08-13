@@ -8,10 +8,10 @@
         "assets/icon256.png"
     ],
     "version": "1.0",
-    "ios-bundle-prefix": "com.yourname.%%%PROJECT_ID%%%,%VERSION%",
-    "guid-seed": "com.yourname.%%%PROJECT_ID%%%,v1,%TARGET_NAME%",
+    "iosBundlePrefix": "com.yourname.%%%PROJECT_ID%%%,%VERSION%",
+    "guidSeed": "com.yourname.%%%PROJECT_ID%%%,v1,%TARGET_NAME%",
 
-    "image-sheets": [
+    "imageSheets": [
         { "id": "everything", "prefix": "*" }
     ],
 
@@ -27,7 +27,7 @@
         {
             "name": "javascript",
             "platform": "javascript-app",
-            "js-file-prefix": "/website/relative/path/from/domain/root"
+            "jsFilePrefix": "/website/relative/path/from/domain/root"
         },
         {
             "name": "csharp",

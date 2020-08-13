@@ -5,16 +5,16 @@
     "icons": ["assets/icon.png"],
     "title": "Squishy Squid",
 
-    "ios-bundle-prefix": "org.crayonlang.demos",
+    "iosBundlePrefix": "org.crayonlang.demos",
 
     "version": "2.9.0",
-    "guid-seed": "org.crayonlang.demos.squishysquid,%VERSION%,%TARGET_NAME%",
+    "guidSeed": "org.crayonlang.demos.squishysquid,%VERSION%,%TARGET_NAME%",
 
     "vars": [
         { "name": "is_landscape", "value": false }
     ],
 
-    "image-sheets": [
+    "imageSheets": [
         { "id": "everything", "prefix": "*" }
     ],
 
@@ -30,7 +30,7 @@
         {
             "name": "javascript",
             "platform": "javascript-app",
-            "js-file-prefix": "demos/squishysquid"
+            "jsFilePrefix": "demos/squishysquid"
         },
         {
             "name": "sitecsharp",
@@ -42,7 +42,7 @@
         {
             "name": "sitejs",
             "platform": "javascript-app",
-            "js-file-prefix": "frontpage/squishysquid",
+            "jsFilePrefix": "frontpage/squishysquid",
             "vars": [
                 { "name": "is_landscape", "value": true }
             ]
