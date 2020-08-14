@@ -1,0 +1,39 @@
+﻿namespace NativeTunnel {
+
+    static class Tunnel {
+
+        static field _callbacksById = {};
+
+        static function send(type, payload, cb = null) {
+            id = $$$('nativeTunnelSend', type, payload);
+            if (cb != null && id > 0) {
+                Tunnel._callbacksById[id] = cb;
+            }
+            return id;
+        }
+
+        static function flushRecvQueue() {
+            hasMore = true;
+            callbacks = Tunnel._callbacksById;
+            msg = [0] * 3;
+            while (hasMore) {
+                hasResponse = $$$('nativeTunnelRecv', msg);
+                if (hasResponse) {
+                    id = msg[0];
+                    isSuccess = msg[1];
+                    payload = msg[2];
+                    if (!isSuccess) {
+                        throw new Exception(payload);
+                    }
+                    callback = callbacks.get(id);
+                    if (callback != null) {
+                        callbacks.remove(id);
+                        callback(payload);
+                    }
+                } else {
+                    hasMore = false;
+                }
+            }
+        }
+    }
+}

@@ -91,6 +91,10 @@ PST$sortedCopyOfArray = function(n) {
 	return a;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var addLiteralImpl = function(vm, row, stringArg) {
 	var g = vm[13];
 	var type = row[0];
@@ -1544,6 +1548,7 @@ var interpretImpl = function(vm, executionContextId) {
 	var string2 = null;
 	var objInstance1 = null;
 	var objInstance2 = null;
+	var obj1 = null;
 	var list1 = null;
 	var list2 = null;
 	var valueList1 = null;
@@ -4091,6 +4096,41 @@ var interpretImpl = function(vm, executionContextId) {
 						// addShutdownHandler;
 						arg1 = valueStack[--valueStackSize];
 						vm[10].push(arg1);
+						break;
+					case 42:
+						// nativeTunnelSend;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						objArray1 = PST$createNewArray(2);
+						objArray1[0] = arg1[1];
+						objArray1[1] = arg2[1];
+						obj1 = (PST$extCallbacks["nativeTunnelSend"] || ((o) => null))(objArray1);
+						int1 = 0;
+						if ((obj1 != null)) {
+							int1 = obj1;
+						}
+						output = buildInteger(globals, int1);
+						break;
+					case 43:
+						// nativeTunnelRecv;
+						arg1 = valueStack[--valueStackSize];
+						list1 = arg1[1];
+						objArray1 = PST$createNewArray(3);
+						obj1 = (PST$extCallbacks["nativeTunnelRecv"] || ((o) => null))(objArray1);
+						bool1 = false;
+						if ((obj1 != null)) {
+							bool1 = obj1;
+						}
+						output = buildBoolean(globals, bool1);
+						if (bool1) {
+							value = buildBoolean(globals, objArray1[0]);
+							value2 = buildInteger(globals, objArray1[1]);
+							value3 = buildString(globals, objArray1[2]);
+							list1[2][0] = value;
+							list1[2][1] = value2;
+							list1[2][2] = value3;
+						}
 						break;
 				}
 				if ((row[1] == 1)) {

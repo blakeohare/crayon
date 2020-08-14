@@ -56,6 +56,8 @@ namespace Interpreter.Vm
             get { return System.DateTime.UtcNow.Subtract(PST_UnixEpoch).TotalSeconds; }
         }
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
         private static string PST_Base64ToString(string b64Value)
         {
             byte[] utf8Bytes = System.Convert.FromBase64String(b64Value);
@@ -69,6 +71,10 @@ namespace Interpreter.Vm
             if (output[0] == '.') output = "0" + output;
             if (!output.Contains('.')) output += ".0";
             return output;
+        }
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
         }
 
         public static int addLiteralImpl(VmContext vm, int[] row, string stringArg)
@@ -1898,6 +1904,7 @@ namespace Interpreter.Vm
             string string2 = null;
             ObjectInstance objInstance1 = null;
             ObjectInstance objInstance2 = null;
+            object obj1 = null;
             ListImpl list1 = null;
             ListImpl list2 = null;
             List<Value> valueList1 = null;
@@ -5355,6 +5362,44 @@ namespace Interpreter.Vm
                                 // addShutdownHandler;
                                 arg1 = valueStack[--valueStackSize];
                                 vm.shutdownHandlers.Add(arg1);
+                                break;
+                            case 42:
+                                // nativeTunnelSend;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                objArray1 = new object[2];
+                                objArray1[0] = arg1.internalValue;
+                                objArray1[1] = arg2.internalValue;
+                                obj1 = (PST_ExtCallbacks.ContainsKey("nativeTunnelSend") ? PST_ExtCallbacks["nativeTunnelSend"].Invoke(objArray1) : null);
+                                int1 = 0;
+                                if ((obj1 != null))
+                                {
+                                    int1 = (int)obj1;
+                                }
+                                output = buildInteger(globals, int1);
+                                break;
+                            case 43:
+                                // nativeTunnelRecv;
+                                arg1 = valueStack[--valueStackSize];
+                                list1 = (ListImpl)arg1.internalValue;
+                                objArray1 = new object[3];
+                                obj1 = (PST_ExtCallbacks.ContainsKey("nativeTunnelRecv") ? PST_ExtCallbacks["nativeTunnelRecv"].Invoke(objArray1) : null);
+                                bool1 = false;
+                                if ((obj1 != null))
+                                {
+                                    bool1 = (bool)obj1;
+                                }
+                                output = buildBoolean(globals, bool1);
+                                if (bool1)
+                                {
+                                    value = buildBoolean(globals, (bool)objArray1[0]);
+                                    value2 = buildInteger(globals, (int)objArray1[1]);
+                                    value3 = buildString(globals, (string)objArray1[2]);
+                                    list1.array[0] = value;
+                                    list1.array[1] = value2;
+                                    list1.array[2] = value3;
+                                }
                                 break;
                         }
                         if ((row[1] == 1))

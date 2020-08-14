@@ -179,6 +179,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     string string2 = null;
     ObjectInstance objInstance1 = null;
     ObjectInstance objInstance2 = null;
+    object obj1 = null;
     ListImpl list1 = null;
     ListImpl list2 = null;
     List<Value> valueList1 = null;

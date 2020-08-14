@@ -1,0 +1,6 @@
+{
+    "name": "NativeTunnel",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/nativetunnel",
+    "description": "Library to send string messages to the native platform code. By default these messages do nothing, but can have handlers added on the platform code. This allows for platform-specific extensibility."
+}

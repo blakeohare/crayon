@@ -45,6 +45,8 @@ namespace Parser
         REFLECT_GET_CLASS = 39,
         CONVERT_LOCAL_FLOATS_TO_INTS = 40,
         ADD_SHUTDOWN_HANDLER = 41,
+        NATIVE_TUNNEL_SEND = 42,
+        NATIVE_TUNNEL_RECV = 43,
     }
 
     internal static class CoreFunctionIDHelper
@@ -94,6 +96,8 @@ namespace Parser
                 case "reflectGetClass": return (int)CoreFunctionID.REFLECT_GET_CLASS;
                 case "convertFloatArgsToInts": return (int)CoreFunctionID.CONVERT_LOCAL_FLOATS_TO_INTS;
                 case "addShutdownHandler": return (int)CoreFunctionID.ADD_SHUTDOWN_HANDLER;
+                case "nativeTunnelSend": return (int)CoreFunctionID.NATIVE_TUNNEL_SEND;
+                case "nativeTunnelRecv": return (int)CoreFunctionID.NATIVE_TUNNEL_RECV;
                 default: return -1;
             }
         }
