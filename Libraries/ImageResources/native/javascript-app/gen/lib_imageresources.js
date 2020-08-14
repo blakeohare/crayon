@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_imageresources_blit = function(vm, args) {
 	var object1 = null;
 	var objInstance1 = args[0][1];

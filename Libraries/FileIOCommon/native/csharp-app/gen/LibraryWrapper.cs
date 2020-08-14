@@ -14,6 +14,12 @@ namespace Interpreter.Libraries.FileIOCommon
 
         private static readonly double[] PST_FloatBuffer16 = new double[16];
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
+        }
+
         public static Value lib_fileiocommon_directoryCreate(VmContext vm, Value[] args)
         {
             bool bool1 = false;

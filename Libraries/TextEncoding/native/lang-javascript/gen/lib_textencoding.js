@@ -20,6 +20,10 @@ PST$createNewArray = function(s) {
 
 PST$intBuffer16 = PST$multiplyList([0], 16);
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_textencoding_convertBytesToText = function(vm, args) {
 	if ((args[0][0] != 6)) {
 		return buildInteger(vm[13], 2);

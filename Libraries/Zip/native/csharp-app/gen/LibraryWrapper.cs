@@ -8,6 +8,12 @@ namespace Interpreter.Libraries.Zip
     {
         public static bool AlwaysFalse() { return false; }
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
+        }
+
         public static Value lib_zip_ensureValidArchiveInfo(VmContext vm, Value[] args)
         {
             int sc = 0;

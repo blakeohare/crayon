@@ -1,3 +1,7 @@
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_gamegifcap_createGifContext = function(vm, args) {
 	var ms = args[1][1];
 	var oi = args[0][1];

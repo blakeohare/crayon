@@ -20,6 +20,10 @@ PST$stringBuffer16 = PST$multiplyList([''], 16);
 
 PST$intBuffer16 = PST$multiplyList([0], 16);
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_datetime_getNativeTimezone = function(value) {
 	var tzObj = value[1];
 	if ((tzObj[3] == null)) {

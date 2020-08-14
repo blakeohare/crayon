@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_zip_ensureValidArchiveInfo = function(vm, args) {
 	var sc = 0;
 	if ((args[0][0] != 5)) {

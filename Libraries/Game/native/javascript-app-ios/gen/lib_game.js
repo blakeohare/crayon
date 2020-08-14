@@ -26,6 +26,10 @@ PST$dictionaryKeys = function(d) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_audio_load_sfx_from_resourceImpl = function(obj, path) {
 	var sfx = C$audio$prepSoundForLoading(path);
 	obj[3] = PST$createNewArray(1);

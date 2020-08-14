@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_dispatcher_flushNativeQueue = function(vm, args) {
 	var nd = (args[0][1])[3];
 	var output = [];

@@ -8,6 +8,12 @@ namespace Interpreter.Libraries.Graphics2DText
     {
         private static readonly int[] PST_IntBuffer16 = new int[16];
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
+        }
+
         public static Value lib_graphics2dtext_createNativeFont(VmContext vm, Value[] args)
         {
             Value[] ints = vm.globals.positiveIntegers;

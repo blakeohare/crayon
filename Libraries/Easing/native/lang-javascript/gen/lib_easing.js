@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_easing_apply_pts = function(vm, args) {
 	var sampleValues = args[1][1];
 	var _len = sampleValues[1];

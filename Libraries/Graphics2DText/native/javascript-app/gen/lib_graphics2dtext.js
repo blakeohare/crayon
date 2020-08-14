@@ -18,6 +18,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_graphics2dtext_createNativeFont = function(vm, args) {
 	var ints = vm[13][9];
 	var nf = args[0][1];

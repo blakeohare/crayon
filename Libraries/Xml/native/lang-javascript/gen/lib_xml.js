@@ -20,6 +20,10 @@ PST$multiplyList = function(l, n) {
 
 PST$intBuffer16 = PST$multiplyList([0], 16);
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_xml_ampUnescape = function(value, entityLookup) {
 	var ampParts = value.split("&");
 	var i = 1;

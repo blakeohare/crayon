@@ -1,3 +1,7 @@
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_imageencoder_encodeToBytes = function(vm, args) {
 	var platformBitmap = getNativeDataItem(args[0], 0);
 	var imageFormat = args[1][1];

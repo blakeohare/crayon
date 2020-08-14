@@ -10,6 +10,12 @@ namespace Interpreter.Libraries.Http
 
         private static readonly string[] PST_StringBuffer16 = new string[16];
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
+        }
+
         public static Value lib_http_fastEnsureAllBytes(VmContext vm, Value[] args)
         {
             if ((args[0].type == 6))

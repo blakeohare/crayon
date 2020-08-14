@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_processutil_isSupported = function(vm, args) {
 	var t = C$common$alwaysFalse();
 	return buildBoolean(vm[13], t);

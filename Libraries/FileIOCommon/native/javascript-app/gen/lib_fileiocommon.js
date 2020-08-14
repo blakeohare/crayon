@@ -22,6 +22,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_fileiocommon_directoryCreate = function(vm, args) {
 	var bool1 = false;
 	var i = 0;

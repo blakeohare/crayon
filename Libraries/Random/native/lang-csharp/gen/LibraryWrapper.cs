@@ -8,6 +8,12 @@ namespace Interpreter.Libraries.Random
     {
         private static readonly System.Random PST_Random = new System.Random();
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
+        }
+
         public static Value lib_random_random_bool(VmContext vm, Value[] args)
         {
             if ((PST_Random.NextDouble() < 0.5))

@@ -10,6 +10,12 @@ namespace Interpreter.Libraries.DateTime
 
         private static readonly int[] PST_IntBuffer16 = new int[16];
 
+        private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
+
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+            PST_ExtCallbacks[name] = func;
+        }
+
         public static object lib_datetime_getNativeTimezone(Value value)
         {
             ObjectInstance tzObj = (ObjectInstance)value.internalValue;

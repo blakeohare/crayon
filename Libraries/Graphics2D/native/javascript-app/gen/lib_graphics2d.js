@@ -8,6 +8,10 @@ PST$clearList = function(v) {
 	v.length = 0;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_graphics2d_addImageRenderEvent = function(vm, args) {
 	var i = 0;
 	// get the drawing queue data;

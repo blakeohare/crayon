@@ -1,3 +1,7 @@
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_userdata_getProjectSandboxDirectory = function(vm, args) {
 	var output = vm[14];
 	var arg1 = args[0];

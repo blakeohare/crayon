@@ -20,6 +20,10 @@ PST$intBuffer16 = PST$multiplyList([0], 16);
 
 PST$stringBuffer16 = PST$multiplyList([''], 16);
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_http_fastEnsureAllBytes = function(vm, args) {
 	if ((args[0][0] == 6)) {
 		var list1 = args[0][1];

@@ -1,3 +1,7 @@
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_random_random_bool = function(vm, args) {
 	if ((Math.random() < 0.5)) {
 		return vm[15];

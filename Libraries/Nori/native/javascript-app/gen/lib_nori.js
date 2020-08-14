@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_nori_closeFrame = function(vm, args) {
 	var frameObj = args[0][1];
 	var nativeFrameHandle = frameObj[3][0];

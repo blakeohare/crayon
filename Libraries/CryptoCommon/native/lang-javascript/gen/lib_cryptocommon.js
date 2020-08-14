@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_cryptocommon_addBytes = function(vm, args) {
 	var obj = args[0][1];
 	var fromByteList = args[1][1];

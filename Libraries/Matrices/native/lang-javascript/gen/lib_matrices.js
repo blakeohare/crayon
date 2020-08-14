@@ -4,6 +4,10 @@ PST$createNewArray = function(s) {
 	return o;
 };
 
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_matrices_addMatrix = function(vm, args) {
 	var obj = args[0][1];
 	var nd1 = obj[3];

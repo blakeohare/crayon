@@ -1,3 +1,7 @@
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_resources_getResourceData = function(vm, args) {
 	var output = buildList(vm[9][2]);
 	vm[9][2] = null;

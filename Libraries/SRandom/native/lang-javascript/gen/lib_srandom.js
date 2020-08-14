@@ -1,3 +1,7 @@
+PST$extCallbacks = {};
+
+PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
+
 var lib_srandom_getBoolean = function(vm, args) {
 	var intPtr = args[0][1];
 	var value = 0;
