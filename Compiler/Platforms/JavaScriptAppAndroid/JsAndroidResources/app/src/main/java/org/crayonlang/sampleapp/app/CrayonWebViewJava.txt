@@ -240,8 +240,34 @@ public class CrayonWebView extends WebView {
                 }
                 break;
 
+            case "tunnel-message":
+                String[] parts = msg.split("\\|", 2);
+                String tunnelMessageType = parts[0];
+                int tunnelMessageId = Integer.parseInt(parts[1]);
+                String tunnelMessagePayload = parts[2];
+                this.handleTunnelMessage(tunnelMessageId, tunnelMessageType, tunnelMessagePayload);
+                break;
+
             default:
                 throw new RuntimeException("Unknown message: " + type);
+        }
+    }
+
+    private void sendTunnelMessageError(int msgId, String errorMsg, boolean recurring) {
+        this.sendMessage("tunnel-response", msgId + " F " + (recurring ? "T" : "F") + " " + errorMsg, true);
+    }
+
+    private void sendTunnelMessageResponse(int msgId, String payload, boolean recurring) {
+        this.sendMessage("tunnel-response", msgId + " T " + (recurring ? "T" : "F") + " " + payload, true);
+    }
+
+    private void handleTunnelMessage(int msgId, String type, String payload) {
+        switch (type) {
+            // ADD_TUNNEL_MESSAGE_EXTENSIBILITY_HERE
+
+            // END_TUNNEL_MESSAGE_EXTENSIBILITY
+            default:
+                this.sendTunnelMessageError(msgId, "No handler defined for type: '" + type + "'", false);
         }
     }
 

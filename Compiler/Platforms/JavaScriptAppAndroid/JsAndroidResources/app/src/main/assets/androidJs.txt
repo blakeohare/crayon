@@ -82,6 +82,14 @@ receiveMessage = function(type, payload, useEncoding) {
         case 'screen-ratio':
             C$common$globalOptions['aspect_ratio'] = parseInt(parts[0]) / 10000;
             break;
+        case 'tunnel-response':
+            tunnelResponseQueue.push({
+                msgId: parseInt(parts[0]),
+                isSuccessful: parts[1] == 'T',
+                payload: parts.slice(3).join(' '),
+                isRecurring: parts[2] == 'T',
+            });
+            break;
         default:
             console.log("Unknown message type: " + type);
             break;
@@ -93,3 +101,22 @@ sendMessage = function(type, msg) {
 };
 
 sendMessage('ready', '');
+
+let tunnelIdAlloc = 1;
+PST$registerExtensibleCallback('nativeTunnelSend', arr => {
+    let id = tunnelIdAlloc++;
+    sendMessage('tunnel-message', arr[0] + "|" + id + "|" + arr[1]);
+    return id;
+});
+
+let tunnelResponseQueue = [];
+PST$registerExtensibleCallback('nativeTunnelRecv', arr => {
+    if (tunnelResponseQueue.length == 0) return false;
+    let first = tunnelResponseQueue[0];
+    tunnelResponseQueue = tunnelResponseQueue.slice(1);
+    arr[0] = first.isSuccessful;
+    arr[1] = first.msgId;
+    arr[2] = first.payload;
+    arr[3] = first.isRecurring;
+    return true;
+});

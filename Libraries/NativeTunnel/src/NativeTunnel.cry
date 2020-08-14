@@ -6,28 +6,30 @@
 
         static function send(type, payload, cb = null) {
             id = $$$('nativeTunnelSend', type, payload);
-            if (cb != null && id > 0) {
+            sent = id > 0;
+            if (cb != null && sent) {
                 Tunnel._callbacksById[id] = cb;
             }
-            return id;
+            return sent;
         }
 
         static function flushRecvQueue() {
             hasMore = true;
             callbacks = Tunnel._callbacksById;
-            msg = [0] * 3;
+            msg = [false] * 4;
             while (hasMore) {
                 hasResponse = $$$('nativeTunnelRecv', msg);
                 if (hasResponse) {
                     id = msg[0];
                     isSuccess = msg[1];
                     payload = msg[2];
+                    isRecurring = msg[3];
                     if (!isSuccess) {
                         throw new Exception(payload);
                     }
                     callback = callbacks.get(id);
                     if (callback != null) {
-                        callbacks.remove(id);
+                        if (!isRecurring) callbacks.remove(id);
                         callback(payload);
                     }
                 } else {
