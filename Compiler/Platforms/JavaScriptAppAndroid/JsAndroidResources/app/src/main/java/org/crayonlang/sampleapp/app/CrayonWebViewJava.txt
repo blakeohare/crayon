@@ -242,10 +242,16 @@ public class CrayonWebView extends WebView {
 
             case "tunnel-message":
                 String[] parts = msg.split("\\|", 3);
-                String tunnelMessageType = parts[0];
-                int tunnelMessageId = Integer.parseInt(parts[1]);
-                String tunnelMessagePayload = parts[2];
-                this.handleTunnelMessage(tunnelMessageId, tunnelMessageType, tunnelMessagePayload);
+                final String tunnelMessageType = parts[0];
+                final int tunnelMessageId = Integer.parseInt(parts[1]);
+                final String tunnelMessagePayload = parts[2];
+                final CrayonWebView _this = this;
+                this.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _this.handleTunnelMessage(tunnelMessageId, tunnelMessageType, tunnelMessagePayload);
+                    }
+                });
                 break;
 
             default:
@@ -253,15 +259,15 @@ public class CrayonWebView extends WebView {
         }
     }
 
-    private void sendTunnelMessageNotRegistered(int msgId) {
+    void sendTunnelMessageNotRegistered(int msgId) {
         this.sendMessage("tunnel-response", msgId + " 2 F N/A", true);
     }
 
-    private void sendTunnelMessageError(int msgId, String errorMsg, boolean recurring) {
+    void sendTunnelMessageError(int msgId, String errorMsg, boolean recurring) {
         this.sendMessage("tunnel-response", msgId + " 0 " + (recurring ? "T" : "F") + " " + errorMsg, true);
     }
 
-    private void sendTunnelMessageResponse(int msgId, String payload, boolean recurring) {
+    void sendTunnelMessageResponse(int msgId, String payload, boolean recurring) {
         this.sendMessage("tunnel-response", msgId + " 1 " + (recurring ? "T" : "F") + " " + payload, true);
     }
 
