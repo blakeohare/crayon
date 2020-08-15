@@ -85,9 +85,9 @@ receiveMessage = function(type, payload, useEncoding) {
         case 'tunnel-response':
             tunnelResponseQueue.push({
                 msgId: parseInt(parts[0]),
-                isSuccessful: parts[1] == 'T',
-                payload: parts.slice(3).join(' '),
+                status: parseInt(parts[1]),
                 isRecurring: parts[2] == 'T',
+                payload: parts.slice(3).join(' '),
             });
             break;
         default:
@@ -114,8 +114,8 @@ PST$registerExtensibleCallback('nativeTunnelRecv', arr => {
     if (tunnelResponseQueue.length == 0) return false;
     let first = tunnelResponseQueue[0];
     tunnelResponseQueue = tunnelResponseQueue.slice(1);
-    arr[0] = first.isSuccessful;
-    arr[1] = first.msgId;
+    arr[0] = first.msgId;
+    arr[1] = first.status;
     arr[2] = first.payload;
     arr[3] = first.isRecurring;
     return true;

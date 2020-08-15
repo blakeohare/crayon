@@ -4116,7 +4116,8 @@ var interpretImpl = function(vm, executionContextId) {
 						// nativeTunnelRecv;
 						arg1 = valueStack[--valueStackSize];
 						list1 = arg1[1];
-						objArray1 = PST$createNewArray(3);
+						objArray1 = PST$createNewArray(4);
+						objArray1[3] = false;
 						obj1 = (PST$extCallbacks["nativeTunnelRecv"] || ((o) => null))(objArray1);
 						bool1 = false;
 						if ((obj1 != null)) {
@@ -4124,12 +4125,14 @@ var interpretImpl = function(vm, executionContextId) {
 						}
 						output = buildBoolean(globals, bool1);
 						if (bool1) {
-							value = buildBoolean(globals, objArray1[0]);
+							value = buildInteger(globals, objArray1[0]);
 							value2 = buildInteger(globals, objArray1[1]);
 							value3 = buildString(globals, objArray1[2]);
+							rightValue = buildBoolean(globals, objArray1[3]);
 							list1[2][0] = value;
 							list1[2][1] = value2;
 							list1[2][2] = value3;
+							list1[2][3] = rightValue;
 						}
 						break;
 				}

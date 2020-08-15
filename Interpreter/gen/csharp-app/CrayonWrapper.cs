@@ -5383,7 +5383,8 @@ namespace Interpreter.Vm
                                 // nativeTunnelRecv;
                                 arg1 = valueStack[--valueStackSize];
                                 list1 = (ListImpl)arg1.internalValue;
-                                objArray1 = new object[3];
+                                objArray1 = new object[4];
+                                objArray1[3] = false;
                                 obj1 = (PST_ExtCallbacks.ContainsKey("nativeTunnelRecv") ? PST_ExtCallbacks["nativeTunnelRecv"].Invoke(objArray1) : null);
                                 bool1 = false;
                                 if ((obj1 != null))
@@ -5393,12 +5394,14 @@ namespace Interpreter.Vm
                                 output = buildBoolean(globals, bool1);
                                 if (bool1)
                                 {
-                                    value = buildBoolean(globals, (bool)objArray1[0]);
+                                    value = buildInteger(globals, (int)objArray1[0]);
                                     value2 = buildInteger(globals, (int)objArray1[1]);
                                     value3 = buildString(globals, (string)objArray1[2]);
+                                    rightValue = buildBoolean(globals, (bool)objArray1[3]);
                                     list1.array[0] = value;
                                     list1.array[1] = value2;
                                     list1.array[2] = value3;
+                                    list1.array[3] = rightValue;
                                 }
                                 break;
                         }

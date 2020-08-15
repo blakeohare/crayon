@@ -3,37 +3,48 @@
     static class Tunnel {
 
         static field _callbacksById = {};
+        static field _failQueue = [];
 
         static function send(type, payload, cb = null) {
             id = $$$('nativeTunnelSend', type, payload);
-            sent = id > 0;
-            if (cb != null && sent) {
-                Tunnel._callbacksById[id] = cb;
+            if (cb != null) {
+                if (id > 0) {
+                    Tunnel._callbacksById[id] = cb;
+                } else {
+                    Tunnel._failQueue.add(cb);
+                }
             }
-            return sent;
         }
 
         static function flushRecvQueue() {
             hasMore = true;
             callbacks = Tunnel._callbacksById;
+            rq = Tunnel._failQueue;
             msg = [false] * 4;
             while (hasMore) {
-                hasResponse = $$$('nativeTunnelRecv', msg);
-                if (hasResponse) {
-                    id = msg[0];
-                    isSuccess = msg[1];
-                    payload = msg[2];
-                    isRecurring = msg[3];
-                    if (!isSuccess) {
-                        throw new Exception(payload);
-                    }
-                    callback = callbacks.get(id);
-                    if (callback != null) {
-                        if (!isRecurring) callbacks.remove(id);
-                        callback(payload);
-                    }
+                if (rq.length > 0) {
+                    callback = rq[0];
+                    rq = rq[1:];
+                    Tunnel._failQueue = rq;
+                    callback(null);
                 } else {
-                    hasMore = false;
+                    hasResponse = $$$('nativeTunnelRecv', msg);
+                    if (hasResponse) {
+                        id = msg[0];
+                        status = msg[1]; // 0 - fail, 1 - success, 2 - not registered
+                        payload = msg[2];
+                        isRecurring = msg[3];
+                        if (status == 0) {
+                            throw new Exception(payload);
+                        }
+                        callback = callbacks.get(id);
+                        if (callback != null) {
+                            if (!isRecurring) callbacks.remove(id);
+                            callback(status == 1 ? payload : null);
+                        }
+                    } else {
+                        hasMore = false;
+                    }
                 }
             }
         }

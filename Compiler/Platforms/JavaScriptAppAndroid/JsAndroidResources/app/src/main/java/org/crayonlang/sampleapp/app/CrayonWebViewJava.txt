@@ -241,7 +241,7 @@ public class CrayonWebView extends WebView {
                 break;
 
             case "tunnel-message":
-                String[] parts = msg.split("\\|", 2);
+                String[] parts = msg.split("\\|", 3);
                 String tunnelMessageType = parts[0];
                 int tunnelMessageId = Integer.parseInt(parts[1]);
                 String tunnelMessagePayload = parts[2];
@@ -253,12 +253,16 @@ public class CrayonWebView extends WebView {
         }
     }
 
+    private void sendTunnelMessageNotRegistered(int msgId) {
+        this.sendMessage("tunnel-response", msgId + " 2 F N/A", true);
+    }
+
     private void sendTunnelMessageError(int msgId, String errorMsg, boolean recurring) {
-        this.sendMessage("tunnel-response", msgId + " F " + (recurring ? "T" : "F") + " " + errorMsg, true);
+        this.sendMessage("tunnel-response", msgId + " 0 " + (recurring ? "T" : "F") + " " + errorMsg, true);
     }
 
     private void sendTunnelMessageResponse(int msgId, String payload, boolean recurring) {
-        this.sendMessage("tunnel-response", msgId + " T " + (recurring ? "T" : "F") + " " + payload, true);
+        this.sendMessage("tunnel-response", msgId + " 1 " + (recurring ? "T" : "F") + " " + payload, true);
     }
 
     private void handleTunnelMessage(int msgId, String type, String payload) {
@@ -267,7 +271,7 @@ public class CrayonWebView extends WebView {
 
             // END_TUNNEL_MESSAGE_EXTENSIBILITY
             default:
-                this.sendTunnelMessageError(msgId, "No handler defined for type: '" + type + "'", false);
+                this.sendTunnelMessageNotRegistered(msgId);
         }
     }
 
