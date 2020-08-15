@@ -17,6 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- APPLICATION_ELEMENT_EXT_BEGIN -->
+        <!-- APPLICATION_ELEMENT_EXT_END -->
     </application>
 
     <!-- TODO: conditionally include this based on the inclusion of the HTTP library -->
