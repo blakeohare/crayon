@@ -37,7 +37,6 @@ namespace Common
                 int x = (size - bmp.Width) / 2;
                 int y = (size - bmp.Height) / 2;
                 g.Blit(bmp, x, y);
-                g.Cleanup();
                 bmp = newBmp;
             }
             this.bitmaps.Add(bmp);
@@ -70,21 +69,10 @@ namespace Common
                 Bitmap bmp = new Bitmap(desiredSize, desiredSize);
                 Bitmap.Graphics g = bmp.MakeGraphics();
                 g.Blit(source, 0, 0, desiredSize, desiredSize);
-                g.Cleanup();
                 lookup.Add(desiredSize, bmp);
             }
 
-            this.Cleanup();
-
             return lookup;
-        }
-
-        private void Cleanup()
-        {
-            foreach (Bitmap bmp in this.ownedBitmapReferences)
-            {
-                bmp.CheesyCleanup();
-            }
         }
 
         private Bitmap FindBestMatch(Bitmap[] imagesFromLargestToSmallest, int desiredSize)

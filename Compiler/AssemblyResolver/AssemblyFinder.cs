@@ -5,6 +5,7 @@ using CommonUtil.Disk;
 using Localization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace AssemblyResolver
 {
@@ -63,9 +64,9 @@ namespace AssemblyResolver
             }
             placesWhereLibraryDirectoriesCanExist += ";" + (CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_PATH") ?? "");
 
-#if OSX
-            placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
-#endif
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+                placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
+            }
 
             List<string> unverifiedLibraryDirectories = new List<string>();
 
