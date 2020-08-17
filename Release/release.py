@@ -166,10 +166,10 @@ def buildRelease(args):
 
 	if isMono:
 		BUILD_CMD = XBUILD
-		SLN_PATH = '../Compiler/CrayonOSX.sln'
+		SLN_PATH = '../Compiler/Crayon.sln'
 	else:
 		BUILD_CMD = MSBUILD
-		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
+		SLN_PATH = '..\\Compiler\\Crayon.sln'
 	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
 	
 	log("Compiling the .sln file with command: " + cmd)
