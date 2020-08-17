@@ -104,26 +104,12 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' " />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" Condition=" '$(SolutionFileName)' == 'CrayonOSX.sln' " />
-  <Choose>
-    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
-      <PropertyGroup>
-        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
-        <FileAlignment>512</FileAlignment>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProductVersion>8.0.30703</ProductVersion>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <Prefer32Bit>false</Prefer32Bit>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
-        <UseMSBuildEngine>false</UseMSBuildEngine>
-        <ExternalConsole>true</ExternalConsole>
-      </PropertyGroup>
-      <ItemGroup>
-        <Reference Include="Mono.Cairo" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
+  <PropertyGroup>
+    <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
+    <FileAlignment>512</FileAlignment>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
 </Project>

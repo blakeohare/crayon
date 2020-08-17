@@ -55,19 +55,7 @@
       <Name>CommonUtil</Name>
     </ProjectReference>
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
-      <PropertyGroup>
-        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
-      </PropertyGroup>
-      <ItemGroup>
-        <Reference Include="Mono.Cairo" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
+  <PropertyGroup>
+    <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
+  </PropertyGroup>
 </Project>
