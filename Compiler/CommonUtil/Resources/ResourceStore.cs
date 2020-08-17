@@ -52,10 +52,8 @@ namespace CommonUtil.Resources
         {
             System.Reflection.Assembly assembly = this.Assembly;
             string canonicalizedPath = path.Replace('/', '.');
-#if WINDOWS
             // a rather odd difference...
             canonicalizedPath = canonicalizedPath.Replace('-', '_');
-#endif
             string assemblyName = assembly.GetName().Name.ToLowerInvariant();
 
             Dictionary<string, string> nameLookup;
