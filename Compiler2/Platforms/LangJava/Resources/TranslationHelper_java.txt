@@ -1,0 +1,126 @@
+﻿package org.crayonlang.interpreter;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.crayonlang.interpreter.structs.InterpreterResult;
+import org.crayonlang.interpreter.structs.Value;
+import org.crayonlang.interpreter.structs.VmContext;
+import org.crayonlang.interpreter.structs.VmGlobals;
+import org.crayonlang.interpreter.vm.CrayonWrapper;
+
+public final class TranslationHelper {
+
+  private TranslationHelper() {}
+
+  public static int Noop() {
+    return 0;
+  }
+
+  public static Object NoopWithReturnNull() {
+    return null;
+  }
+
+  public static boolean alwaysTrue() { return true; }
+  public static boolean alwaysFalse() { return false; }
+
+
+  private static VmContext vmContext = null;
+  public static VmGlobals vmGlobals = null;
+  public static void setProgramData(VmContext vm) { vmContext = vm; vmGlobals = vm.globals; }
+  public static VmContext getProgramData() { return vmContext; }
+
+  private static String resourceManifest = null;
+  public static void setResourceManifest(String resourceManifest) { TranslationHelper.resourceManifest = resourceManifest; }
+  public static String getResourceManifest() { return resourceManifest; }
+
+  public static void startInterpreter(boolean invokeSystemExit) {
+    handleVmResult(CrayonWrapper.startVm(vmContext), invokeSystemExit);
+  }
+
+  public static InterpreterResult runInterpreter(int executionContextId, boolean invokeSystemExit) {
+    return handleVmResult(CrayonWrapper.runInterpreter(vmContext, executionContextId), invokeSystemExit);
+  }
+
+  public static InterpreterResult runInterpreterWithFunctionPointer(Value functionPointer, Value[] args, boolean invokeSystemExit) {
+    return handleVmResult(CrayonWrapper.runInterpreterWithFunctionPointer(vmContext, functionPointer, args), invokeSystemExit);
+  }
+
+  private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
+    while (result.status == 5 || result.status == 6) {
+      if (result.status == 5) {
+        double sleepForSeconds = result.reinvokeDelay;
+        try {
+          Thread.sleep((int)(1000 * sleepForSeconds));
+        } catch (InterruptedException e) {
+        }
+      } else {
+        loadAssembly(result.loadAssemblyInformation);
+      }
+      result = CrayonWrapper.runInterpreter(vmContext, result.executionContextId);
+    }
+
+    if (result.status == 1 && result.isRootContext) {
+      if (invokeSystemExit) System.exit(0);
+      return result;
+    }
+    if (result.status == 3) { // FINISHED || FATAL
+      if (invokeSystemExit) System.exit(1);
+      return result;
+    }
+    if (result.status == 2) return result;
+    throw new RuntimeException(); // invalid status
+  }
+
+  private static void loadAssembly(String assemblyInfo) {
+    // .split will drop empty elements, so add spaces and then trim them out later.
+    String[] t = (" " + assemblyInfo + " ").split(",");
+    String name = t[0].trim();
+    String version = t[1].trim();
+    String startupFunction = t[2].trim();
+    new LibraryLoader().getLibClass(name, version, startupFunction);
+  }
+
+  private static final Object[] ARGS_REUSABLE = new Object[2];
+  public static Value invokeLibraryFunction(Object fn, Value[] args) {
+    try {
+      ARGS_REUSABLE[0] = vmContext;
+      ARGS_REUSABLE[1] = args;
+      return (Value) ((Method) fn).invoke(null, ARGS_REUSABLE);
+    } catch (Exception e) {
+      throw new RuntimeException("Error while running library function.", e);
+    }
+  }
+
+  public static abstract class FunctionFinder {
+    public abstract Object findFunction(String name);
+  }
+
+  private static final ArrayList<FunctionFinder> functionFinders = new ArrayList<>();
+
+  public static Object getFunction(String name) {
+    int comma = name.indexOf(',');
+    if (comma == -1) return null;
+    name = name.substring(comma + 1);
+    for (FunctionFinder fnFinder : functionFinders) {
+      Object fn = fnFinder.findFunction(name);
+      if (fn != null) {
+        return fn;
+      }
+    }
+    return null;
+  }
+
+  public static void registerFunctionFinder(FunctionFinder fnFinder) {
+    functionFinders.add(fnFinder);
+  }
+
+  public static Object invokeFunctionPointer(Method method, Object[] args) {
+    try {
+      return method.invoke(null, args);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+}
