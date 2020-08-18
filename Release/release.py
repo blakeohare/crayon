@@ -189,8 +189,14 @@ def buildRelease(args):
 
 	# Copy the compiler's release bits into the newly created release directory
 	releaseDir = '../Compiler/Crayon/bin/Release/netcoreapp3.1/' + ('osx-x64' if isMono else 'win-x64') + '/publish'
+	
 	log("Copying crayon.exe, readme, and license to output directory")
-	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))
+	if isWindows:
+		crayon_exe_name = 'Crayon.exe'
+	else:
+		crayon_exe_name = 'Crayon'
+	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), canonicalize_sep(copyToDir + '/crayon.exe'))
+	
 	shutil.copyfile(canonicalize_sep('../Compiler/Crayon/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
 	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
 
