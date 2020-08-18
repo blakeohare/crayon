@@ -29,11 +29,6 @@ namespace Crayon
             {
                 ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
             }
-
-            // Crash if there were any graphics contexts that weren't cleaned up.
-            // This is okay on Windows, but on OSX this is a problem, so ensure that a
-            // regressions are quickly noticed.
-            Bitmap.Graphics.EnsureCleanedUp();
 #endif
         }
 
