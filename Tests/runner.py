@@ -53,8 +53,6 @@ def run_unit_tests():
 def run_compiler_negative_tests(args):
 	print("Running compiler negative tests...")
 	
-	write_file('TestProj/TestProj.build', BUILD_FILE)
-	write_file('TestProj/source/main.cry', '''function main() { test(); }''')
 	passed = 0
 	failed = 0
 	files = filter(lambda f: f.endswith('cry'), os.listdir('tests'))
@@ -66,9 +64,16 @@ def run_compiler_negative_tests(args):
 	for file in files:
 		name = file[:-4]
 		code = read_file('tests/' + name + '.cry')
+		
+		no_main = 'FLAG:NO_MAIN' in code
+		
 		code += "\n\n" + helper_functions
+		
 		expected = read_file('tests/' + name + '.txt')
 		write_file('TestProj/source/test.cry', code)
+		write_file('TestProj/TestProj.build', BUILD_FILE)
+		write_file('TestProj/source/main.cry', '' if no_main else '''function main() { test(); }''')
+
 		result = run_command('crayon TestProj/TestProj.build')
 		print(name + '...')
 		if result == expected:

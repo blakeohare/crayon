@@ -1,0 +1,5 @@
+// FLAG:NO_MAIN
+
+function test() {
+	print("foo!");
+}

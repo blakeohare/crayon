@@ -29,6 +29,13 @@ namespace Parser
                         Errors = new Error[] { exception.ToCompilerError() },
                     };
                 }
+                catch (System.InvalidOperationException exception)
+                {
+                    result = new CompilationBundle()
+                    {
+                        Errors = new Error[] { new Error() { Message = exception.Message } },
+                    };
+                }
             }
             else
             {
