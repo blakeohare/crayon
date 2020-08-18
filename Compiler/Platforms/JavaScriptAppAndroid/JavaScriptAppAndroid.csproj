@@ -1,110 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E495CAC5-84B5-481B-A997-F370FE1B40A2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JavaScriptAppAndroid</RootNamespace>
-    <AssemblyName>JavaScriptAppAndroid</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
+    <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj" />
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\..\Platform\Platform.csproj" />
+    <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="PlatformImpl.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="JsAndroidResources\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\assets\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\interpreter\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\sampleapp\app\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\*.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\*\*.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\*\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradle\wrapper\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\*\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\*.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradle\wrapper\*.jar" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="JsAndroidResources\androidIml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\appIml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\buildGradle.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\gitignore.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\proguardRules.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\AndroidManifestXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\assets\androidJs.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\interpreter\AndroidTranslationHelper.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\sampleapp\app\CrayonWebViewJava.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\sampleapp\app\MainActivityJava.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\IcLauncherWeb.png" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableHdpi\ic_launcher.png" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableMdpi\ic_launcher.png" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableXhdpi\ic_launcher.png" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableXxhdpi\ic_launcher.png" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\layout\ActivityMainXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\menu\MainXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\valuesW820dp\DimensXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\values\DimensXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\values\StringsXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\values\StylesXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\buildGradle.txt" />
-    <EmbeddedResource Include="JsAndroidResources\gitignore.txt" />
-    <EmbeddedResource Include="JsAndroidResources\gradleProperties.txt" />
-    <EmbeddedResource Include="JsAndroidResources\gradlew.txt" />
-    <EmbeddedResource Include="JsAndroidResources\gradlewBat.txt" />
-    <EmbeddedResource Include="JsAndroidResources\gradle\wrapper\GradleWrapperProperties.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\compilerXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\copyright\profileSettings.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\encodingsXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\gradleXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\miscXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\modulesXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\scopes\scopeSettings.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\vcsXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\idea\workspaceXml.txt" />
-    <EmbeddedResource Include="JsAndroidResources\localProperties.txt" />
-    <EmbeddedResource Include="JsAndroidResources\settingsGradle.txt" />
-    <EmbeddedResource Include="JsAndroidResources\gradle\wrapper\GradleWrapper.jar" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Build\Build.csproj">
-      <Project>{5bee19d9-117d-4c0e-bf60-45da72c9d355}</Project>
-      <Name>Build</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj">
-      <Project>{8e422564-56ee-407c-aef7-b85f895ed320}</Project>
-      <Name>CommonUtil</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\Common.csproj">
-      <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Platform\Platform.csproj">
-      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
-      <Name>Platform</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj">
-      <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
-      <Name>JavaScriptApp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LangJavaScript\LangJavaScript.csproj">
-      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
-      <Name>LangJavaScript</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
