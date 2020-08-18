@@ -68,7 +68,7 @@ namespace Common
                 Bitmap source = this.FindBestMatch(sources, desiredSize);
                 Bitmap bmp = new Bitmap(desiredSize, desiredSize);
                 Bitmap.Graphics g = bmp.MakeGraphics();
-                g.Blit(source, 0, 0, desiredSize, desiredSize);
+                g.BlitStretched(source, 0, 0, desiredSize, desiredSize);
                 lookup.Add(desiredSize, bmp);
             }
 

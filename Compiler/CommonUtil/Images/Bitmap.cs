@@ -1,6 +1,12 @@
 ﻿using CommonUtil.Disk;
 using CommonUtil.Random;
-using System.Collections.Generic;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Drawing.Processing.Processors.Drawing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors;
 
 namespace CommonUtil.Images
 {
@@ -15,36 +21,21 @@ namespace CommonUtil.Images
      */
     public class Bitmap
     {
-        private System.Drawing.Bitmap bitmap;
+        private Image<Rgba32> bitmap;
 
         public int Width { get; set; }
         public int Height { get; set; }
 
         public Bitmap(string filepath)
         {
-            this.bitmap = new System.Drawing.Bitmap(filepath.Replace('/', '\\'));
-            this.bitmap.SetResolution(96, 96);
+            this.bitmap = Image.Load<Rgba32>(filepath.Replace('/', System.IO.Path.DirectorySeparatorChar));
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
-
-            // Java does not recognize the alpha channel on a small subset of PNG encodings.
-            // Re-encode them before handing them off to the universe.
-            System.Drawing.Bitmap newBmp = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBmp);
-            g.DrawImage(this.bitmap, 0, 0, this.Width, this.Height);
-            g.Flush();
-            g.Dispose();
-
-            this.bitmap = newBmp;
         }
 
         public Bitmap(byte[] bytes)
         {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes))
-            {
-                this.bitmap = new System.Drawing.Bitmap(ms);
-            }
-            this.bitmap.SetResolution(96, 96);
+            this.bitmap = Image.Load(bytes);
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
         }
@@ -53,8 +44,7 @@ namespace CommonUtil.Images
         {
             this.Width = width;
             this.Height = height;
-            this.bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            this.bitmap.SetResolution(96, 96);
+            this.bitmap = new Image<Rgba32>(width, height);
         }
 
         public Bitmap CloneToNewSize(int width, int height)
@@ -67,7 +57,7 @@ namespace CommonUtil.Images
             }
             else
             {
-                g.Blit(this, 0, 0, width, height);
+                g.BlitStretched(this, 0, 0, width, height);
             }
             return newBitmap;
         }
@@ -116,21 +106,92 @@ namespace CommonUtil.Images
 
         public class Graphics
         {
-            private System.Drawing.Graphics systemGraphics;
+            private Image<Rgba32> target;
 
             public Graphics(Bitmap owner)
             {
-                this.systemGraphics = System.Drawing.Graphics.FromImage(owner.bitmap);
+                this.target = owner.bitmap;
             }
 
             public void Blit(Bitmap bmp, int x, int y)
             {
-                this.systemGraphics.DrawImageUnscaled(bmp.bitmap, x, y);
+                int sourceLeft = 0;
+                int sourceTop = 0;
+                int sourceRight = bmp.Width - 1;
+                int sourceBottom = bmp.Height - 1;
+                int targetLeft = x;
+                int targetTop = y;
+                int targetRight = x + bmp.Width - 1;
+                int targetBottom = y + bmp.Height - 1;
+                if (targetLeft >= this.target.Width ||
+                    targetTop >= this.target.Height) return;
+                if (targetRight < 0 ||
+                    targetBottom < 0) return;
+                while (targetLeft < 0)
+                {
+                    targetLeft++;
+                    sourceLeft++;
+                }
+                while (targetTop < 0)
+                {
+                    targetTop++;
+                    sourceTop++;
+                }
+                while (targetRight >= this.target.Width)
+                {
+                    targetRight--;
+                    sourceRight--;
+                }
+                while (targetBottom >= this.target.Height)
+                {
+                    targetBottom--;
+                    sourceBottom--;
+                }
+
+                int copyWidth = sourceRight - sourceLeft + 1;
+                int copyHeight = sourceBottom - sourceTop + 1;
+                if (copyWidth <= 0 || copyHeight <= 0) return;
+                int px, py;
+
+                for (py = 0; py < copyHeight; ++py)
+                {
+                    for (px = 0; px < copyWidth; ++px)
+                    {
+                        Rgba32 o = bmp.bitmap[sourceLeft + px, sourceTop + py];
+                        this.target[targetLeft + px, targetTop + py] = o;
+                    }
+                }
             }
 
-            public void Blit(Bitmap bmp, int x, int y, int stretchWidth, int stretchHeight)
+            public void BlitStretched(Bitmap bmp, int x, int y, int stretchWidth, int stretchHeight)
             {
-                this.systemGraphics.DrawImage(bmp.bitmap, x, y, stretchWidth, stretchHeight);
+                //int sourceLeft = 0;
+                //int sourceTop = 0;
+                int sourceRight = bmp.Width;
+                int sourceBottom = bmp.Height;
+                int targetLeft = x;
+                int targetTop = y;
+                int targetRight = x + stretchWidth;
+                int targetBottom = y + stretchHeight;
+                if (stretchWidth <= 0 || stretchHeight <= 0) return;
+
+                int targetWidth = targetRight - targetLeft;
+                int targetHeight = targetBottom - targetTop;
+                int targetX, targetY, sourceX, sourceY;
+                for (y = 0; y < stretchHeight; ++y)
+                {
+                    targetY = y + targetLeft;
+                    sourceY = y * bmp.Height / stretchHeight;
+                    if (targetY < 0 || targetY >= this.target.Height) continue;
+
+                    for (x = 0; x < stretchWidth; ++x)
+                    {
+                        targetX = x + targetTop;
+                        sourceX = x * bmp.Width / stretchWidth;
+                        if (targetX < 0 || targetX >= this.target.Width) continue;
+                        this.target[targetX, targetY] = bmp.bitmap[sourceX, sourceY];
+                    }
+                }
             }
         }
     }
