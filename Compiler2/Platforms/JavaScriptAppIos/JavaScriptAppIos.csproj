@@ -11,4 +11,7 @@
     <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="SwiftResources\*.*" />
+  </ItemGroup>
 </Project>

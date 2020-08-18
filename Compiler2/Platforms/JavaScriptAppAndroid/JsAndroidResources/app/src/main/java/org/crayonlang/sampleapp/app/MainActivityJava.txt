@@ -1,0 +1,70 @@
+package %%%JAVA_PACKAGE%%%.app;
+
+import android.app.Activity;
+import android.graphics.Point;
+import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.Display;
+import android.view.Window;
+
+public class MainActivity extends Activity {
+
+    private CrayonWebView cwv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.ensureCrayonViewInitialized();
+        // MAIN_ACTIVITY_ON_CREATE_EXT_BEGIN
+        // MAIN_ACTIVITY_ON_CREATE_EXT_END
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.ensureCrayonViewInitialized();
+        this.cwv.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.cwv.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    private void ensureCrayonViewInitialized() {
+        if (this.cwv == null) {
+            Display display = this.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int actionBarHeight = this.getActionBarHeight();
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.cwv = new CrayonWebView(this, size.x, size.y - actionBarHeight);
+            this.setContentView(this.cwv);
+        }
+    }
+
+    private int getActionBarHeight() {
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            return TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        return 0;
+    }
+}

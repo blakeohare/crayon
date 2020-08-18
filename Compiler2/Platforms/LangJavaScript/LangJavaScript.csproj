@@ -10,4 +10,7 @@
     <ProjectReference Include="..\..\Platform\Platform.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*.txt" />
+  </ItemGroup>
 </Project>

@@ -8,4 +8,8 @@
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\*\*.txt" />
+  </ItemGroup>
+
 </Project>

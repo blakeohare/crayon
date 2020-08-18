@@ -1,0 +1,122 @@
+﻿// android.js
+// overrides to the regular JavaScript project.
+
+C$common$globalOptions['is_android'] = true;
+C$common$globalOptions['fullscreen'] = true;
+C$common$globalOptions['aspect_ratio'] = 1.0;
+
+C$android$receiveMessageDecoder = function(s) {
+    var output = [];
+    var codes = s.split(' ');
+    var length = codes.length;
+    for (var i = 0; i < length; ++i) {
+        output.push(String.fromCharCode(parseInt(codes[i])));
+    }
+    return output.join('');
+};
+
+C$game$enforcedScreenSize = function(w, h) {
+	return [null, null];
+};
+
+C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowSize, gameSize) {
+    var hack = document.getElementById('android_canvas_hack');
+    hack.style.width = windowSize[0] + 'px';
+    hack.style.height = windowSize[1] + 'px';
+    jsCanvas.style.width = '50%';
+    jsCanvas.style.height = '50%';
+    jsCanvas.width = gameSize[0];
+    jsCanvas.height = gameSize[1];
+};
+
+C$game$getScreenDimensionsForFullScreen = function() {
+    var width = document.body.offsetWidth;
+    var height = Math.floor(width * C$common$globalOptions['aspect_ratio'] + .5);
+    return [width, height];
+};
+
+C$game$wrapCanvasHtml = function(canvasHtml) {
+    return '<div id="android_canvas_hack">' + canvasHtml + '</div>';
+};
+
+C$game$activeMultiTouchPoints = null;
+C$game$syncPointers = (pts) => {
+    let t = C$game$activeMultiTouchPoints;
+    if (t != null) {
+        for (let pt of t) {
+            pts.push(pt);
+        }
+    }
+};
+
+receiveMessage = function(type, payload, useEncoding) {
+    if (useEncoding) {
+        type = C$android$receiveMessageDecoder(type);
+        payload = C$android$receiveMessageDecoder(payload);
+    }
+    var parts = payload.split(' ');
+    switch (type) {
+        case 'touch-points-status':
+            if (parseInt(parts[0]) == 0) {
+                C$game$activeMultiTouchPoints = null;
+            } else {
+                C$game$activeMultiTouchPoints = [];
+                for (let i = 1; i < parts.length; i += 2) {
+                    let x = Math.floor(C$game$width * parseInt(parts[i]) / 100000);
+                    let y = Math.floor(C$game$height * parseInt(parts[i + 1]) / 100000);
+                    C$game$activeMultiTouchPoints.push(x);
+                    C$game$activeMultiTouchPoints.push(y);
+                }
+            }
+            break;
+
+        case 'touch-event':
+            if (!!C$game$width) {
+                var eventId = parseInt(parts[0]);
+                var x = Math.floor(C$game$width * parseInt(parts[1]) / 100000);
+                var y = Math.floor(C$game$height * parseInt(parts[2]) / 100000);
+                var pointerId = eventId >= 64 ? parseInt(parts[3]) : 0;
+                C$input$eventRelays.push(buildRelayObj(eventId, x, y, pointerId, 0.0, ''));
+            }
+            break;
+        case 'screen-ratio':
+            C$common$globalOptions['aspect_ratio'] = parseInt(parts[0]) / 10000;
+            break;
+        case 'tunnel-response':
+            tunnelResponseQueue.push({
+                msgId: parseInt(parts[0]),
+                status: parseInt(parts[1]),
+                isRecurring: parts[2] == 'T',
+                payload: parts.slice(3).join(' '),
+            });
+            break;
+        default:
+            console.log("Unknown message type: " + type);
+            break;
+    }
+};
+
+sendMessage = function(type, msg) {
+    JavaScriptBridge.onSendNativeMessage(type, msg);
+};
+
+sendMessage('ready', '');
+
+let tunnelIdAlloc = 1;
+PST$registerExtensibleCallback('nativeTunnelSend', arr => {
+    let id = tunnelIdAlloc++;
+    sendMessage('tunnel-message', arr[0] + "|" + id + "|" + arr[1]);
+    return id;
+});
+
+let tunnelResponseQueue = [];
+PST$registerExtensibleCallback('nativeTunnelRecv', arr => {
+    if (tunnelResponseQueue.length == 0) return false;
+    let first = tunnelResponseQueue[0];
+    tunnelResponseQueue = tunnelResponseQueue.slice(1);
+    arr[0] = first.msgId;
+    arr[1] = first.status;
+    arr[2] = first.payload;
+    arr[3] = first.isRecurring;
+    return true;
+});

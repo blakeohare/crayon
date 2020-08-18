@@ -1,0 +1,108 @@
+﻿C$common = 1;
+C$common$textResources = {};
+C$common$jsFilePrefix = ''; // overridden by resources.js if present.
+C$common$programData = null;
+C$common$resources = {};
+C$common$binaryResources = {};
+C$common$libraryFunctionLookups = {};
+
+C$common$globalOptions = {};
+C$common$globalOptions['fullscreen'] = false;
+
+function main() {
+	C$common$programData = createVm(C$bytecode, C$common$resourceManifest);
+	C$handleVmResult(startVm(C$common$programData));
+}
+
+function C$runInterpreter(execId) {
+	var vm = C$common$programData;
+	return C$handleVmResult(runInterpreter(vm, execId));
+}
+
+function C$runInterpreterWithFunctionPointer(fp, args) {
+	var vm = C$common$programData;
+	return C$handleVmResult(runInterpreterWithFunctionPointer(vm, fp, args));
+}
+
+function C$handleVmResult(res) {
+	var vm = C$common$programData;
+	var status = getVmResultStatus(res);
+	while (status == 5 || status == 6) { // REINVOKE || LOAD_ASSEMBLY
+		if (status == 5) {
+			var delayMillis = Math.floor(1000 * getVmReinvokeDelay(res));
+			var execId = getVmResultExecId(res);
+			window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
+			return;
+		} else {
+			var parts = getVmResultAssemblyInfo(res).split(',');
+			var name = parts[0];
+			var version = parts[1];
+			var startupFunc = parts[2];
+			C$loadAssembly(name, version, startupFunc);
+		}
+		res = runInterpreter(vm, getVmResultExecId(res))
+		status = getVmResultStatus(res);
+	}
+
+	if (status == 1 || status == 2 || status == 3) return;
+
+	throw "Unknown status";
+}
+
+C$loadAssembly = function(name, ver, startupFn) {
+	if (startupFn.length > 0) {
+		var fn = window[startupFn];
+		if (fn !== undefined) {
+			fn(C$common$programData, []);
+		}
+	}
+};
+
+C$common$readResourceText = function (path) {
+	var v = C$common$getTextRes(path);
+	return !v ? null : v;
+};
+
+C$common$alwaysTrue = function () { return true; };
+C$common$alwaysFalse = function () { return false; };
+
+C$common$addTextRes = function (path, value) {
+	C$common$textResources[path] = value;
+};
+
+C$common$getTextRes = function (path) {
+	return C$common$textResources[path];
+};
+
+C$common$addBinaryRes = function (path, value) {
+	C$common$binaryResources[path] = value;
+};
+
+C$common$getBinaryResBase64 = function (path) {
+	return C$common$binaryResources[path];
+};
+
+C$common$print = function (value) {
+	console.log(value);
+};
+
+C$common$scrapeLibFuncNames = function(libname) {
+	var prefix = 'lib_' + libname + '_function_';
+	var functions = {};
+	for (var key in window) {
+		if (key.indexOf(prefix) === 0) {
+			var name = key.substring(prefix.length, key.length + prefix.length);
+			functions[name] = window[key];
+		}
+	}
+	C$common$libraryFunctionLookups[libname] = functions;
+};
+
+C$common$getFunction = function(name) {
+	var p = name.split(',');
+	var check = p[p.length - 1];
+	if (window[check] !== undefined) {
+		return window[check];
+	}
+	return null;
+};
