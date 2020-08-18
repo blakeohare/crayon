@@ -195,7 +195,7 @@ def buildRelease(args):
 		crayon_exe_name = 'Crayon.exe'
 	else:
 		crayon_exe_name = 'Crayon'
-	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), canonicalize_sep(copyToDir + '/crayon.exe'))
+	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), canonicalize_sep(copyToDir + '/' + crayon_exe_name.lower()))
 	
 	shutil.copyfile(canonicalize_sep('../Compiler/Crayon/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
 	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
