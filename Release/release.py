@@ -249,9 +249,11 @@ def buildRelease(args):
 	
 	# Use the newly built compiler to generate the VM source code (in VmTemp)
 	print("Generating VM code...")
-	runtimeCompilationCommand = canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
+	new_crayon_executable = copyToDir + '/crayon' + ('' if isMono else '.exe')
 	if isMono:
-		runtimeCompilationCommand = 'mono ' + runtimeCompilationCommand
+		runCommand('chmod +x ' + new_crayon_executable)
+	runtimeCompilationCommand = canonicalize_sep(new_crayon_executable) + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
+
 	log("Generating the VM C# project in VmTemp/ with the command: " + runtimeCompilationCommand)
 	print('running:')
 	print('  ' + runtimeCompilationCommand)
