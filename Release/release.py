@@ -177,7 +177,7 @@ def buildRelease(args):
 		os.path.join('..', 'Compiler', 'Crayon', 'Crayon.csproj'),
 		'-c Release',
 		'-r', 'osx-x64' if isMono else 'win-x64',
-		'--self-contained',
+		'--self-contained true',
 		'-p:PublishTrimmed=true',
 		'-p:PublishSingleFile=true'
 	])
