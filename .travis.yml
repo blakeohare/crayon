@@ -2,6 +2,6 @@ language: csharp
 mono: none
 dotnet: 3.1
 solution: Compiler/Crayon.sln
+
 script:
- - dotnet restore
- - dotnet build
+ - dotnet build Compiler/Crayon.sln
