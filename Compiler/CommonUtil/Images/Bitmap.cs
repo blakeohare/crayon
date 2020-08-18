@@ -115,80 +115,33 @@ namespace CommonUtil.Images
 
             public void Blit(Bitmap bmp, int x, int y)
             {
-                int sourceLeft = 0;
-                int sourceTop = 0;
-                int sourceRight = bmp.Width - 1;
-                int sourceBottom = bmp.Height - 1;
-                int targetLeft = x;
-                int targetTop = y;
-                int targetRight = x + bmp.Width - 1;
-                int targetBottom = y + bmp.Height - 1;
-                if (targetLeft >= this.target.Width ||
-                    targetTop >= this.target.Height) return;
-                if (targetRight < 0 ||
-                    targetBottom < 0) return;
-                while (targetLeft < 0)
-                {
-                    targetLeft++;
-                    sourceLeft++;
-                }
-                while (targetTop < 0)
-                {
-                    targetTop++;
-                    sourceTop++;
-                }
-                while (targetRight >= this.target.Width)
-                {
-                    targetRight--;
-                    sourceRight--;
-                }
-                while (targetBottom >= this.target.Height)
-                {
-                    targetBottom--;
-                    sourceBottom--;
-                }
-
-                int copyWidth = sourceRight - sourceLeft + 1;
-                int copyHeight = sourceBottom - sourceTop + 1;
-                if (copyWidth <= 0 || copyHeight <= 0) return;
-                int px, py;
-
-                for (py = 0; py < copyHeight; ++py)
-                {
-                    for (px = 0; px < copyWidth; ++px)
-                    {
-                        Rgba32 o = bmp.bitmap[sourceLeft + px, sourceTop + py];
-                        this.target[targetLeft + px, targetTop + py] = o;
-                    }
-                }
+                this.BlitStretched(bmp, x, y, bmp.Width, bmp.Height);
             }
 
             public void BlitStretched(Bitmap bmp, int x, int y, int stretchWidth, int stretchHeight)
             {
-                //int sourceLeft = 0;
-                //int sourceTop = 0;
-                int sourceRight = bmp.Width;
-                int sourceBottom = bmp.Height;
-                int targetLeft = x;
-                int targetTop = y;
-                int targetRight = x + stretchWidth;
-                int targetBottom = y + stretchHeight;
+                int sourceWidth = bmp.Width;
+                int sourceHeight = bmp.Height;
+                int originalTargetLeft = x;
+                int originalTargetTop = y;
+                int targetLeft = System.Math.Max(0, originalTargetLeft);
+                int targetTop = System.Math.Max(0, originalTargetTop);
+                int originalTargetRight = originalTargetLeft + stretchWidth;
+                int originalTargetBottom = originalTargetTop + stretchHeight;
+                int targetRight = System.Math.Min(this.target.Width, originalTargetRight);
+                int targetBottom = System.Math.Min(this.target.Height, originalTargetBottom);
+
                 if (stretchWidth <= 0 || stretchHeight <= 0) return;
 
-                int targetWidth = targetRight - targetLeft;
-                int targetHeight = targetBottom - targetTop;
                 int targetX, targetY, sourceX, sourceY;
-                for (y = 0; y < stretchHeight; ++y)
-                {
-                    targetY = y + targetLeft;
-                    sourceY = y * bmp.Height / stretchHeight;
-                    if (targetY < 0 || targetY >= this.target.Height) continue;
 
-                    for (x = 0; x < stretchWidth; ++x)
+                for (targetY = targetTop; targetY < targetBottom; ++targetY)
+                {
+                    sourceY = (targetY - originalTargetTop) * sourceHeight / stretchHeight;
+
+                    for (targetX = targetLeft; targetX < targetRight; ++targetX)
                     {
-                        targetX = x + targetTop;
-                        sourceX = x * bmp.Width / stretchWidth;
-                        if (targetX < 0 || targetX >= this.target.Width) continue;
+                        sourceX = (targetX - originalTargetLeft) * sourceWidth / stretchWidth;
                         this.target[targetX, targetY] = bmp.bitmap[sourceX, sourceY];
                     }
                 }
