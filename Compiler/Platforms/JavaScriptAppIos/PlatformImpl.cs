@@ -60,7 +60,7 @@ namespace JavaScriptAppIos
                 };
             }
 
-            output[appName + "/jsres/crayon/index.html"] = new FileOutput() 
+            output[appName + "/jsres/crayon/index.html"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
                 TextContent = "<html><body>Hello, World?</body></html>",
@@ -247,7 +247,7 @@ namespace JavaScriptAppIos
             Build.ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
-            replacements["ORGANIZATION_NAME"] = "Organization Name";
+            replacements["ORGANIZATION_NAME"] = options.GetStringOrNull(ExportOptionKey.ORGANIZATION_NAME) ?? "Organization Name";
             replacements["ORGANIZATION_NAME_LOWERCASE"] = replacements["ORGANIZATION_NAME"].Replace(" ", "").ToLowerInvariant();
 
             replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "";

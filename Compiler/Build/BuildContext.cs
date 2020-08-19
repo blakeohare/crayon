@@ -39,6 +39,7 @@ namespace Build
         public Locale CompilerLocale { get; set; }
         public string[] IconFilePaths { get; set; }
         public string DelegateMainTo { get; set; }
+        public string OrganizationName { get; set; }
 
         private static Target FindTarget(string targetName, IList<Target> targets)
         {
@@ -137,6 +138,7 @@ namespace Build
             string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
             string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
             string delegateMainTo = desiredTarget.DelegateMainTo ?? buildInput.DelegateMainTo;
+            string organizationName = desiredTarget.OrganizationName ?? buildInput.OrganizationName;
 
             if (output == null)
             {
@@ -202,6 +204,7 @@ namespace Build
                 WindowHeight = windowSize.Height,
                 CompilerLocale = Locale.Get(compilerLocale),
                 DelegateMainTo = delegateMainTo,
+                OrganizationName = organizationName,
             };
 
             ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(programmingLanguage);

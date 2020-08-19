@@ -16,6 +16,7 @@ namespace Exporter
         public bool JsFullPage { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; set; }
+        public string OrganizationName { get; set; }
         public NullableInteger WindowWidth { get; set; }
         public NullableInteger WindowHeight { get; set; }
         public string Orientations { get; set; }

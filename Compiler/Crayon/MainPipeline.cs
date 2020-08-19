@@ -195,6 +195,7 @@ namespace Crayon.Pipeline
                 JsFullPage = buildContext.JsFullPage,
                 IosBundlePrefix = buildContext.IosBundlePrefix,
                 JavaPackage = buildContext.JavaPackage,
+                OrganizationName = buildContext.OrganizationName,
                 IconPaths = buildContext.IconFilePaths,
                 LaunchScreenPath = buildContext.LaunchScreenPath,
                 WindowWidth = buildContext.WindowWidth,
