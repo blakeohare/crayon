@@ -1,1 +1,11 @@
-lorem ipsum
+import Foundation
+
+class ConsoleLogAction : AbstractAction {
+    
+    override func run(msg: NSDictionary, tag: String) {
+        let value = msg.value(forKey: "value") as! String;
+        print(value);
+        self.replyNoParams(tag: tag);
+    }
+    
+}

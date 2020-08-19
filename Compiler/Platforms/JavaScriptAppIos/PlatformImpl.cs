@@ -60,6 +60,12 @@ namespace JavaScriptAppIos
                 };
             }
 
+            output[appName + "/jsres/crayon/index.html"] = new FileOutput() 
+            {
+                Type = FileOutputType.Text,
+                TextContent = "<html><body>Hello, World?</body></html>",
+            };
+
             this.GenerateIcons(appName, options, output);
         }
 

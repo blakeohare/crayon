@@ -1,1 +1,124 @@
-lorem ipsum
+import WebKit
+import Foundation
+
+class MessageSender: UIViewController, WKScriptMessageHandler {
+    
+    var webview: WKWebView?;
+    var actions: [AbstractAction] = [];
+    
+    func initializeActions() {
+        self.actions = [
+            ConsoleLogAction(name: "log", messageSender: self),
+            HttpAction(name: "http", messageSender: self)
+        ];
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        handleRawString(rawString: String(describing: message.body));
+    }
+    
+    func handleRawString(rawString: String) {
+        let parts = rawString.split(separator: ":");
+        let type = String(parts[0]);
+        let tag = String(parts[1]);
+        let msg = NSMutableDictionary();
+        var i = 2;
+        while (i < parts.count) {
+            let key:String = String(parts[i]);
+            let value:String = convertHexToString(hexString: String(parts[i + 1]));
+            msg.setValue(value, forKey: key);
+            i += 2;
+        }
+        for action in self.actions {
+            if action.name == type {
+                action.run(msg: msg, tag: tag);
+                return;
+            }
+        }
+    }
+    
+    func hexByteToNum(n: UInt8) -> UInt32 {
+        // Blegh, this works off the top of my head and I'm too busy to be bothered to find the swifty way to do this.
+        if (n < 65) {
+            return UInt32(n - 48);
+        }
+        
+        if (n < 97) {
+            return UInt32(n - 65 + 10);
+        }
+        
+        return UInt32(n - 97 + 10);
+    }
+    
+    func convertHexToString(hexString: String) -> String {
+        let bytesObj = hexString.utf8;
+        let bytes = [UInt8](bytesObj);
+        var i = 0;
+        
+        let len = bytes.count;
+        let buffer = NSMutableArray();
+        while (i < len) {
+            let b = hexByteToNum(n: bytes[i]) * 16 + hexByteToNum(n: bytes[i + 1]);
+            buffer.add(b);
+            i += 2;
+        }
+        var utf8bytes = [UInt8](repeating: 0, count: buffer.count);
+        i = 0;
+        while i < buffer.count {
+            utf8bytes[i] = buffer[i] as! UInt8;
+            i += 1;
+        }
+        return String(bytes: utf8bytes, encoding: .utf8)!;
+    }
+    
+    func convertStringToHex(rawString: String) -> String {
+        let byteObj = rawString.utf8;
+        let bytes = [UInt8](byteObj);
+        let sb = NSMutableString();
+        
+        let len = bytes.count;
+        var i = 0;
+        var a = 0;
+        var b = 0;
+        var c:UInt8 = 0;
+        let hex = Array("0123456789abcdef").map { String($0) };
+        while (i < len) {
+            c = bytes[i];
+            a = Int(c >> 4);
+            b = Int(c & 15);
+            sb.append(hex[0 + a]);
+            sb.append(hex[0 + b]);
+            i += 1;
+        }
+        
+        return String(sb);
+    }
+    
+    func sendRawString(msgType: String, msgTag: String, msg: NSDictionary) {
+        let sb = NSMutableString();
+        sb.append("javascript:receiveStringInIosWebView('");
+        sb.append(msgType);
+        sb.append(":");
+        sb.append(msgTag);
+        let keys = msg.allKeys as! [String];
+        for key in keys {
+            let value = msg.value(forKey: key) as! String;
+            let encodedValue = convertStringToHex(rawString: value);
+            sb.append(":");
+            sb.append(key);
+            sb.append(":");
+            sb.append(encodedValue);
+        }
+        sb.append("')");
+        self.sendFinalizedJsString(jsString: String(sb));
+    }
+    
+    func sendFinalizedJsString(jsString: String) {
+        let webview = self.webview;
+        DispatchQueue.main.async {
+            webview?.evaluateJavaScript(jsString) {
+                (obj, error) in
+            };
+        };
+    }
+}
