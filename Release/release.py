@@ -172,6 +172,14 @@ def buildRelease(args):
 	#	SLN_PATH = '..\\Compiler\\Crayon.sln'
 	#cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
 	
+	print("Cleaning old build...")
+	cmd = ' '.join([
+		'dotnet',
+		'clean',
+		os.path.join('..', 'Compiler', 'Crayon.sln')
+		])
+	runCommand(cmd)
+
 	cmd = ' '.join([
 		'dotnet publish',
 		os.path.join('..', 'Compiler', 'Crayon', 'Crayon.csproj'),
@@ -184,8 +192,10 @@ def buildRelease(args):
 	
 	log("Compiling the .sln file with command: " + cmd)
 	print("Running: " + cmd)
-	print(runCommand(cmd))
-
+	output = runCommand(cmd)
+	if '): error CS' in output:
+		log("**** COMPILATION ERROR! ****")
+		return
 
 	# Copy the compiler's release bits into the newly created release directory
 	releaseDir = '../Compiler/Crayon/bin/Release/netcoreapp3.1/' + ('osx-x64' if isMono else 'win-x64') + '/publish'
