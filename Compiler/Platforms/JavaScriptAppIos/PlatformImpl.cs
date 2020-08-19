@@ -30,6 +30,92 @@ namespace JavaScriptAppIos
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, "");
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
+            string appName = options.GetString(ExportOptionKey.PROJECT_ID).ToLowerInvariant();
+            foreach (string t in new string[] {
+                appName + "/Actions/AbstractAction.swift|app_actions_abstractaction.swift",
+                appName + "/Actions/ConsoleLogAction.swift|app_actions_consolelogaction.swift",
+                appName + "/Actions/HttpAction.swift|app_actions_httpaction.swift",
+                appName + "/AppDelegate.swift|app_appdelegate.swift",
+                appName + "/Assets.xcassets/AppIcon.appiconset/Contents.json|app_assets_xcassets_appicon_appiconset_contents_json.txt",
+                appName + "/Assets.xcassets/Contents.json|app_assets_xcassets_contents_json.txt",
+                appName + "/Base.lproj/LaunchScreen.storyboard|app_base_lproj_launchscreen_storyboard.txt",
+                appName + "/ContentView.swift|app_contentview.swift",
+                appName + "/Info.plist|app_info_plist.txt",
+                appName + "/jsres/crayon/ios.js|app_jsres_ios.js",
+                appName + "/MessageSender.swift|app_messagesender.swift",
+                appName + "/Preview Content/Preview Assets.xcassets/Contents.json|app_preview_content_contents_json.txt",
+                appName + "/SceneDelegate.swift|app_scenedelegate.swift",
+                appName + ".xcodeproj/project.pbxproj|xcodeproj_project_pbxproj.txt",
+                appName + ".xcodeproj/project.xcworkspace/.gitignore|xcodeproj_project_xcworkspace_gitignore.txt",
+                appName + ".xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist|xcodeproj_project_xcworkspace_xcshareddata_ideworkspacechecks_plist.txt",
+                appName + ".xcodeproj/xcshareddata/xcschemes/" + appName + ".xcscheme|xcodeproj_xcshareddata_xcschemes_app_xcscheme.txt",
+            })
+            {
+                string[] parts = t.Split('|');
+                output[parts[0]] = new FileOutput()
+                {
+                    TrimBomIfPresent = true,
+                    Type = FileOutputType.Text,
+                    TextContent = this.LoadTextResource("ResourcesIos/" + parts[1], replacements),
+                };
+            }
+
+            this.GenerateIcons(appName, options, output);
+        }
+
+        private void GenerateIcons(string appName, Options options, Dictionary<string, FileOutput> files) {
+
+            IconSetGenerator icons = new IconSetGenerator();
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
+                foreach (string iconPath in iconPaths)
+                {
+                    Bitmap icon = new Bitmap(iconPath);
+                    icons.AddInputImage(icon);
+                }
+            }
+
+            Dictionary<int, Bitmap> iconImagesBySize = icons
+                .AddOutputSize(20 * 1)
+                .AddOutputSize(20 * 2)
+                .AddOutputSize(20 * 3)
+                .AddOutputSize(29 * 1)
+                .AddOutputSize(29 * 2)
+                .AddOutputSize(29 * 3)
+                .AddOutputSize(40 * 1)
+                .AddOutputSize(40 * 2)
+                .AddOutputSize(40 * 3)
+                .AddOutputSize(60 * 2)
+                .AddOutputSize(60 * 3)
+                .AddOutputSize(76 * 1)
+                .AddOutputSize(76 * 2)
+                .AddOutputSize(167) // 83.5 * 2
+                .AddOutputSize(1024)
+                .GenerateWithDefaultFallback();
+            foreach (int size in iconImagesBySize.Keys)
+            {
+                files[appName + "/Assets.xcassets/AppIcon.appiconset/icon" + size + ".png"] = new FileOutput()
+                {
+                    Type = FileOutputType.Image,
+                    Bitmap = iconImagesBySize[size],
+                };
+            }
+
+        }
+
+        public void ExportProjectOLD(
+            Dictionary<string, FileOutput> output,
+            string byteCode,
+            IList<LibraryForExport> libraries,
+            Build.ResourceDatabase resourceDatabase,
+            Options options)
+        {
+            options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
+            options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
+            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, "");
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(

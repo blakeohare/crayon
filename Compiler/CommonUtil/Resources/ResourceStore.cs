@@ -75,7 +75,8 @@ namespace CommonUtil.Resources
                             .Replace("_js.txt", ".js")
                             .Replace("_php.txt", ".php")
                             .Replace("_py.txt", ".py")
-                            .Replace("_xml.txt", ".xml");
+                            .Replace("_xml.txt", ".xml")
+                            .Replace("_swift.txt", ".swift");
                     }
 
                     nameLookup[lookupName] = resource;
