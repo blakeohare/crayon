@@ -248,6 +248,7 @@ namespace JavaScriptAppIos
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
             replacements["ORGANIZATION_NAME"] = "Organization Name";
+            replacements["ORGANIZATION_NAME_LOWERCASE"] = replacements["ORGANIZATION_NAME"].Replace(" ", "").ToLowerInvariant();
 
             replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "";
             replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "";
