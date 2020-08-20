@@ -55,6 +55,7 @@ namespace Build.BuildParseNodes
             item.IconFilePaths = (json.GetAsList("icons") ?? new object[0]).OfType<string>().ToArray();
             item.HasLegacyIcon = json.GetAsString("icon") != null;
             item.DelegateMainTo = json.GetAsString("delegateMainTo") ?? json.GetAsString("delegate-main-to");
+            item.OrganizationName = json.GetAsString("organizationName") ?? json.GetAsString("organization-name");
 
             List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();

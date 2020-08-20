@@ -26,6 +26,7 @@ namespace Build.BuildParseNodes
         public string ProjectTitle { get; set; }
         public bool HasLegacyTitle { get; set; }
         public string DelegateMainTo { get; set; }
+        public string OrganizationName { get; set; }
 
         // comma-delimited list of values
         // { portrait | upsidedown | landscape | landscapeleft | landscaperight | all }
