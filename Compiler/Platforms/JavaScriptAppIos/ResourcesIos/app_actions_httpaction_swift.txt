@@ -1,0 +1,42 @@
+import Foundation
+
+class HttpAction : AbstractAction {
+    
+    override func run(msg: NSDictionary, tag: String) {
+        
+        let method = msg.value(forKey: "method") as! String;
+        let url = msg.value(forKey: "url") as! String;
+        let contentType = msg.value(forKey: "contentType") as! String;
+        let content = msg.value(forKey: "content") as! String;
+        
+        let urlObj = URL(string: url)!
+        var request = URLRequest(url: urlObj)
+        request.httpMethod = method;
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type");
+        request.httpBody = Data(content.utf8);
+
+        let config = URLSessionConfiguration.default
+        let session = URLSession(configuration: config)
+        let dataTask = session.dataTask(with: request, completionHandler: {
+            (data, response, error) in
+            self.handleResponse(tag: tag, data: data, response: response, error: error);
+        });
+        
+        dataTask.resume();
+    }
+    
+    func handleResponse(tag: String, data: Data!, response: URLResponse!, error: Error!) {
+        let httpResponse = response as! HTTPURLResponse;
+        var responseContent = "";
+        if (error != nil) {
+            responseContent = "{\"ok\": false}";
+        } else {
+            responseContent = String(data: data, encoding: .utf8)!;
+        }
+        let msg = NSMutableDictionary();
+        msg.setValue(String(httpResponse.statusCode), forKey: "statusCode");
+        msg.setValue(responseContent, forKey: "content");
+        self.reply(msg: msg, tag: tag);
+        
+    }
+}

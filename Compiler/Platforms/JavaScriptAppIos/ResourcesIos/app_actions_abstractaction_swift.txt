@@ -1,0 +1,24 @@
+import Foundation
+
+class AbstractAction {
+    
+    let name: String;
+    let messageSender: MessageSender;
+    
+    init(name: String, messageSender: MessageSender) {
+        self.name = name;
+        self.messageSender = messageSender;
+    }
+    
+    func reply(msg: NSDictionary, tag: String) {
+        self.messageSender.sendRawString(msgType: "response", msgTag: tag, msg: msg);
+    }
+    
+    func replyNoParams(tag: String) {
+        self.reply(msg: NSDictionary(), tag: tag);
+    }
+    
+    func run(msg: NSDictionary, tag: String) {
+        preconditionFailure("This method needs to be overridden.");
+    }
+}

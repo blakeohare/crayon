@@ -13,5 +13,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="SwiftResources\*.*" />
+    <EmbeddedResource Include="ResourcesIos\*.*" />
   </ItemGroup>
 </Project>

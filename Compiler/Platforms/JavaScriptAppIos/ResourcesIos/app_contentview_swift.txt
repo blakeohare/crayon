@@ -1,0 +1,38 @@
+import SwiftUI
+import WebKit
+
+struct ContentView: View {
+    var body: some View {
+        WebView().edgesIgnoringSafeArea(.all)
+    }
+}
+
+struct WebView: UIViewRepresentable {
+    
+  func makeUIView(context: Context) -> WKWebView {
+    let msgSender = MessageSender();
+    msgSender.initializeActions();
+    let config = WKWebViewConfiguration();
+    config.userContentController.add(msgSender, name: "interop");
+    let webview = WKWebView(frame: CGRect.zero, configuration: config);
+    msgSender.webview = webview;
+    webview.scrollView.bounces = false;
+    return webview;
+  }
+
+  func updateUIView(_ webView: WKWebView, context: Context) {
+    
+    let htmlPath = Bundle.main.url(forResource: "crayon/index", withExtension: "html");
+    let request = URLRequest(url: htmlPath!);
+    webView.load(request);
+  }
+}
+
+#if DEBUG
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+#endif
+
