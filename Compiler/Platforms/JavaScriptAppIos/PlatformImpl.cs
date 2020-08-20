@@ -5,6 +5,7 @@ using CommonUtil.Resources;
 using Platform;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace JavaScriptAppIos
 {
@@ -29,8 +30,21 @@ namespace JavaScriptAppIos
             options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, "");
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-
             string appName = options.GetString(ExportOptionKey.PROJECT_ID).ToLowerInvariant();
+
+            Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
+            this.ParentPlatform.ExportProject(
+                basicProject,
+                byteCode,
+                libraries,
+                resourceDatabase,
+                options);
+            foreach (string file in basicProject.Keys)
+            {
+                if (file == "test_server.py") continue;
+                output[appName + "/jsres/crayon/" + file] = basicProject[file];
+            }
+
             foreach (string t in new string[] {
                 appName + "/Actions/AbstractAction.swift|app_actions_abstractaction.swift",
                 appName + "/Actions/ConsoleLogAction.swift|app_actions_consolelogaction.swift",
@@ -108,7 +122,6 @@ namespace JavaScriptAppIos
                     Bitmap = iconImagesBySize[size],
                 };
             }
-
         }
 
         public void ExportProjectOLD(
