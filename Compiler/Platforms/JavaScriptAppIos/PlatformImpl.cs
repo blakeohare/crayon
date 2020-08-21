@@ -293,16 +293,15 @@ namespace JavaScriptAppIos
         {
             string pbxproj = FileUtil.JoinPath(
                 outputDirectory,
-                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID),
-                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID) + ".xcodeproj",
+                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID).ToLowerInvariant() + ".xcodeproj",
                 "project.pbxproj");
             if (FileUtil.FileExists(pbxproj))
             {
                 string contents = FileUtil.ReadFileText(pbxproj);
-                int devTeam = contents.IndexOf("DevelopmentTeam = ");
+                int devTeam = contents.IndexOf("DEVELOPMENT_TEAM = ");
                 if (devTeam != -1)
                 {
-                    devTeam += "DevelopmentTeam = ".Length;
+                    devTeam += "DEVELOPMENT_TEAM = ".Length;
                     int devTeamEnd = contents.IndexOf(';', devTeam);
                     if (devTeamEnd != -1)
                     {
