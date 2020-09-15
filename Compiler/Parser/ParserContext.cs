@@ -387,7 +387,11 @@ namespace Parser
 
         internal void VerifyIdentifier(Token token)
         {
-            if (token.Type != TokenType.WORD)
+            if (token.Type == TokenType.KEYWORD)
+            {
+                throw new ParserException(token, "'" + token.Value + "' cannot be used as a name because it is a keyword.");
+            }
+            else if (token.Type != TokenType.WORD)
             {
                 throw new ParserException(token, "Identifier expected. Found '" + token.Value + "' instead.");
             }
