@@ -300,7 +300,8 @@ namespace Parser.ParseTree
                 this.Root is FieldReference ||
                 this.Root is FunctionReference ||
                 this.Root is BracketIndex ||
-                this.Root is BaseMethodReference)
+                this.Root is BaseMethodReference ||
+                this.Root is FunctionCall)
             {
                 return this;
             }
