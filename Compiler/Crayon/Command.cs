@@ -29,5 +29,8 @@
         public bool IsGenerateDefaultProject { get { return this.DefaultProjectId != null; } }
         public bool IsVmExportCommand { get { return this.VmExportDirectory != null || this.VmPlatform != null; } } // The actual VM exporter will throw the error if one is not specified.
         public bool IsCbxExport { get { return this.CbxExportPath != null; } }
+
+        public bool HasErrors { get; set; }
+        public Common.Error[] Errors { get; set; }
     }
 }

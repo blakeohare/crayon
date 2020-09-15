@@ -1,6 +1,5 @@
 ﻿using Common;
 using CommonUtil.Disk;
-using CommonUtil.Images;
 
 namespace Crayon
 {
@@ -17,11 +16,17 @@ namespace Crayon
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
 
-            Command command = FlagParser.Parse(commandLineArgs);
-
-            using (new PerformanceSection("Crayon"))
+            Command command = FlagParser.Parse(commandLineArgs, IS_RELEASE);
+            if (command.HasErrors)
             {
-                Pipeline.MainPipeline.Run(command, IS_RELEASE);
+                ErrorPrinter.ShowErrors(command.Errors);
+            }
+            else
+            {
+                using (new PerformanceSection("Crayon"))
+                {
+                    Pipeline.MainPipeline.Run(command, IS_RELEASE);
+                }
             }
 
 #if DEBUG

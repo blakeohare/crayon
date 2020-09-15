@@ -77,7 +77,30 @@ namespace Crayon
             { "genDefaultProjectJP", GEN_DEFAULT_PROJ_JP },
         };
 
-        internal static Command Parse(string[] args)
+        internal static Command Parse(string[] args, bool isRelease)
+        {
+            if (isRelease)
+            {
+                try
+                {
+                    return ParseImpl(args);
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    return new Command
+                    {
+                        Errors = new Common.Error[] { new Common.Error { Message = ioe.Message } },
+                        HasErrors = true,
+                    };
+                }
+            }
+            else
+            {
+                return ParseImpl(args);
+            }
+        }
+
+        private static Command ParseImpl(string[] args)
         {
             // just short circuit this one since this will only appear without a target project.
             // Otherwise it'll force a CR: prefix
