@@ -157,7 +157,7 @@ namespace Parser
 
         public VariableId RegisterSyntheticVariable(AType type)
         {
-            return this.RegisterVariable(type, "." + this.rootScope.syntheticIdAlloc++);
+            return this.RegisterVariable(type, "." + this.closureRootScope.syntheticIdAlloc++);
         }
 
         public VariableId RegisterVariableForcedReDeclaration(AType type, string name, Token throwToken)
