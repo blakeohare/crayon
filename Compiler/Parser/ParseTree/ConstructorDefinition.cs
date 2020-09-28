@@ -229,6 +229,11 @@ namespace Parser.ParseTree
                 int minArgCount = maxArgCount - optionalArgCount;
                 if (this.BaseArgs.Length < minArgCount || this.BaseArgs.Length > maxArgCount)
                 {
+                    if (this.FirstToken == null)
+                    {
+                        throw new ParserException(cd.FirstToken, "The class '" + cd.NameToken.Value + "' cannot have an implicit constructor since it needs to pass arguments to the base constructor of '" + cd.BaseClass.NameToken.Value + "'.");
+                    }
+
                     throw new ParserException(this, "Incorrect number of arguments passed to base constructor.");
                 }
 
