@@ -9,11 +9,31 @@ enum EnumTestEnum {
     CINCO
 }
 
+enum EnumTestAutoAlloc {
+    A = 2,
+    B,
+    C,
+    D,
+}
+
+enum EnumTestAutoAlloc2 {
+    A,
+    B = 100,
+    C,
+    D = 5,
+    E,
+}
+
 class EnumTest : Test {
 
     function testEnumFunctions() {
         assertThat(EnumTestEnum.length).isEqualTo(6);
         assertThat(EnumTestEnum.max).isEqualTo(5);
         assertThat(EnumTestEnum.values).isEqualTo([0, 1, 2, 3, 4, 5]);
+    }
+
+    function testAutoAlloc() {
+        assertThat(EnumTestAutoAlloc.values).isEqualTo([2, 0, 1, 3]);
+        assertThat(EnumTestAutoAlloc2.values).isEqualTo([0, 100, 1, 5, 2]);
     }
 }
