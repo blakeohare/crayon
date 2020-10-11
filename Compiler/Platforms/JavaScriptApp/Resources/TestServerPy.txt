@@ -36,17 +36,17 @@ class SimpleCrayonFileServer(BaseHTTPRequestHandler):
   def _set_not_found(self, headers_only):
     self._set_headers(404)
     if not headers_only:
-      self.wfile.write("Not found")
+      self.wfile.write("Not found".encode('utf-8'))
 
   def do_GET(self):
     self._do_get(False)
   def do_HEAD(self):
     self._do_get(True)
-    
+
   def _do_get(self, headers_only):
-    
+
     path = self.path[1:].split('?')[0].split('#')[0]
-    
+
     if '/resources/' in path:
       path = 'resources/' + path.split('/resources/')[-1]
     if path == '':
@@ -61,32 +61,34 @@ class SimpleCrayonFileServer(BaseHTTPRequestHandler):
         self._set_not_found(headers_only)
         return
       file = filepath
-    
+
     content_type = self._get_content_type(file)
     self._set_headers(200, content_type)
-    
+
     if not headers_only:
       with open(file, 'rb') as c:
         self.wfile.write(c.read())
 
 def run(port):
-  
+
   server = HTTPServer(('', port), SimpleCrayonFileServer)
-  
+
   # HTTPServer catches all exceptions and ignores them, including
   # the keyboard interrupt exception. By running the server in a daemon
   # thread, the main thread can still be killed from the command line.
   thread = threading.Thread(target = server.serve_forever)
   thread.daemon = True
   thread.start()
-  
-  print()
+
   print("Test server is now running.")
   print("Visit: http://localhost:" + str(port))
-  print("Press Ctrl + C to stop.")
-  print()
-  while True:
-    pass
+  print("Press Ctrl + C to stop.\n")
+
+  try:
+    while True:
+      pass
+  except KeyboardInterrupt:
+    print("Shutting down.")
 
 def main(args):
   port = 8080
