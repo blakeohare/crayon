@@ -17,20 +17,36 @@ namespace Interpreter.Vm
             Environment.OSVersion.Platform == PlatformID.Win32Windows ||
             Environment.OSVersion.Platform == PlatformID.WinCE;
 
+        private static int startingThreadId = 0;
+        private static int GetThreadId() { return System.Threading.Thread.CurrentThread.ManagedThreadId; }
+
+        public static void EnsureRunningOnStartingThread()
+        {
+            if (GetThreadId() != startingThreadId)
+            {
+                throw new Exception("The VM cannot be invoked on a separate thread.");
+            }
+        }
+
         public static InterpreterResult StartInterpreter()
         {
+            if (startingThreadId != 0) throw new Exception();
+            startingThreadId = GetThreadId();
+
             Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.startVm(ProgramData));
         }
 
         public static InterpreterResult RunInterpreter(int executionContextId)
         {
+            EnsureRunningOnStartingThread();
             Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.runInterpreter(ProgramData, executionContextId));
         }
 
         public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
         {
+            EnsureRunningOnStartingThread();
             Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
         }
@@ -93,6 +109,7 @@ namespace Interpreter.Vm
 
         public static void runAssemblyStartupFunction(String assemblyName, String startupFunction)
         {
+            EnsureRunningOnStartingThread();
             // Invoke the startup function, if present
             if (startupFunction.Length > 0)
             {
