@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -160,9 +161,21 @@ namespace Interpreter.Libraries.Nori
             }
         }
 
+        private delegate int UiThreadInvoker();
+
+        private void InvokeMethodOnUiThread(Func<int> fn)
+        {
+            UiThreadInvoker invoker = () => { return fn(); };
+            this.form.Invoke(invoker);
+        }
+
         internal void Close()
         {
-            this.form.Close();
+            this.InvokeMethodOnUiThread(() =>
+            {
+                this.form.Close();
+                return 1;
+            });
         }
 
         private string GetHtmlDocument(string initialUiData)
