@@ -1,0 +1,12 @@
+
+@import("inline/1_arg.pst");
+
+if (arg1.type == Types.FLOAT) {
+	float1 = (double) arg1.internalValue;
+	output = buildFloat(globals, Core.Cos(float1));
+} else if (arg1.type == Types.INTEGER) {
+	int1 = (int) arg1.internalValue;
+	output = buildFloat(globals, Core.Cos(int1));
+} else {
+	hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
+}

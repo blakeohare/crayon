@@ -1,0 +1,1 @@
+output = buildInteger(globals, ec.id);

@@ -1,0 +1,15 @@
+@import("inline/1_arg.pst");
+
+// type guaranteed
+float1 = getFloat(arg1);
+
+// Do the output-used check here.
+if (row[1] == 1) {
+	@import("inline/ValueStackCapacityCheck.pst");
+	valueStack[valueStackSize] = VALUE_NULL;
+	valueStackSize += 1;
+}
+
+prepareToSuspend(ec, stack, valueStackSize, pc);
+ec.activeInterrupt = new Interrupt(InterruptType.SLEEP, 0, "", float1, null);
+hasInterrupt = true;

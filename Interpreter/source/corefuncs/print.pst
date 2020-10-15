@@ -1,0 +1,4 @@
+@import("inline/1_arg.pst");
+
+output = VALUE_NULL;
+printToStdOut(vm.environment.stdoutPrefix, valueToString(vm, arg1));

@@ -1,0 +1,6 @@
+@import("inline/2_arg.pst");
+
+objInstance1 = (ObjectInstance) arg1.internalValue;
+int1 = (int) arg2.internalValue;
+objArray1 = new Array<object>(int1);
+objInstance1.nativeData = objArray1;

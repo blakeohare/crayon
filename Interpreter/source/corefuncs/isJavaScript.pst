@@ -1,0 +1,6 @@
+
+if (@ext_boolean("IS_JAVASCRIPT")) {
+	output = VALUE_TRUE;
+} else {
+	output = VALUE_FALSE;
+}

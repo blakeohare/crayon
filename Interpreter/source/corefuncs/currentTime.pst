@@ -1,0 +1,1 @@
+output = buildFloat(globals, Core.CurrentTimeSeconds());

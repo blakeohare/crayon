@@ -1,0 +1,27 @@
+@import("inline/1_arg.pst");
+list1 = (ListImpl) arg1.internalValue;
+objArray1 = new Array<object>(4);
+objArray1[3] = false;
+
+obj1 = Core.ExtensibleCallbackInvoke("nativeTunnelRecv", objArray1);
+bool1 = false;
+if (obj1 != null) bool1 = (bool) obj1;
+output = buildBoolean(globals, bool1);
+if (bool1) {
+	value = buildInteger(globals, (int)objArray1[0]);
+	value2 = buildInteger(globals, (int)objArray1[1]);
+	value3 = buildString(globals, (string)objArray1[2]);
+	rightValue = buildBoolean(globals, (bool)objArray1[3]); // rename this when refactored into a helper function
+
+	if (@ext_boolean("ARRAY_IS_LIST")) {
+		list1.list[0] = value;
+		list1.list[1] = value2;
+		list1.list[2] = value3;
+		list1.list[3] = rightValue;
+	} else {
+		list1.array[0] = value;
+		list1.array[1] = value2;
+		list1.array[2] = value3;
+		list1.array[3] = rightValue;
+	}
+}

@@ -1,0 +1,13 @@
+@import("inline/1_arg.pst");
+
+int1 = arg1.type;
+int2 = row[2]; // arg count
+output = VALUE_FALSE;
+while (int2 > 0) {
+	if (row[(2 + int2)] == int1) {
+		output = VALUE_TRUE;
+		int2 = 0;
+	} else {
+		int2 -= 1;
+	}
+}

@@ -1,0 +1,11 @@
+@import("inline/3_arg.pst");
+
+if (arg1.type != Types.BOOLEAN) {
+	hasInterrupt = EX_InvalidArgument(ec, "Assertion expression must be a boolean.");
+} else if ((bool) arg1.internalValue) {
+	output = VALUE_NULL;
+} else {
+	string1 = valueToString(vm, arg2);
+	if ((bool) arg3.internalValue) string1 = Core.StringConcatAll("Assertion failed: ", string1);
+	hasInterrupt = EX_AssertionFailed(ec, string1);
+}

@@ -1,0 +1,8 @@
+@import("inline/1_arg.pst");
+
+if (arg1.type != Types.INSTANCE) {
+	hasInterrupt = EX_InvalidArgument(ec, "Cannot get class from non-instance types.");
+} else {
+	objInstance1 = (ObjectInstance) arg1.internalValue;
+	output = new Value(Types.CLASS, new ClassValue(false, objInstance1.classId));
+}

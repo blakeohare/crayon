@@ -1,0 +1,13 @@
+@import("inline/1_arg.pst");
+
+output = null;
+if (arg1.type == Types.STRING) {
+	string1 = ((string) arg1.internalValue);
+	if (string1.Size() == 1) {
+		output = buildInteger(globals, string1.CharCodeAt(0));
+	}
+}
+
+if (output == null) {
+	hasInterrupt = EX_InvalidArgument(ec, "ord requires a 1 character string.");
+}

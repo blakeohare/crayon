@@ -1,0 +1,13 @@
+/*
+	arg 1: object instance
+	arg 2: native data index
+	arg 3: bool if this should be treated as a common string (this is useful for rapid-access short strings)
+*/
+@import("inline/3_arg.pst");
+
+string1 = (string) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue];
+if ((bool) arg3.internalValue) {
+	output = buildCommonString(globals, string1);
+} else {
+	output = buildString(globals, string1);
+}

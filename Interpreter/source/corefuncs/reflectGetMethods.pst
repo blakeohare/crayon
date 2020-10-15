@@ -1,0 +1,3 @@
+@import("inline/1_arg.pst");
+output = Reflect_getMethods(vm, ec, arg1);
+hasInterrupt = ec.activeInterrupt != null;

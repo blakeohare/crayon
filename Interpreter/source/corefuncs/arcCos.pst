@@ -1,0 +1,17 @@
+@import("inline/1_arg.pst");
+
+if (arg1.type == Types.FLOAT) {
+	float1 = (double) arg1.internalValue;
+} else if (arg1.type == Types.INTEGER) {
+	float1 = 0.0 + (int) arg1.internalValue;
+} else {
+	hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.");
+}
+
+if (!hasInterrupt) {
+	if (float1 < -1 || float1 > 1) {
+		hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number in the range of -1 to 1.");
+	} else {
+		output = buildFloat(globals, Core.ArcCos(float1));
+	}
+}

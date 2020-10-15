@@ -1,0 +1,29 @@
+
+// Quickly converts all floats in the current stack frame into ints until it encounters an unset local
+// The purpose of this is to efficiently write library functions that can take floats but require integers.
+// This is primarily used by the graphics drawing functions which use integers but having the user convert
+// everythiing to a float shouldn't be necessary.
+int1 = stack.localsStackOffsetEnd;
+for (i = localsStackOffset; i < int1; i += 1) {
+	value = localsStack[i];
+	if (localsStackSet[i] != localsStackSetToken) {
+		i += int1; // break
+	} else if (value.type == Types.FLOAT) {
+		float1 = (double) value.internalValue;
+		if (@ext_boolean("INT_IS_FLOOR")) {
+			int2 = Core.Int(float1);
+		} else {
+			if (float1 < 0 && float1 % 1 != 0) {
+				int2 = Core.Int(float1) - 1;
+			} else {
+				int2 = Core.Int(float1);
+			}
+		}
+		if ((int2 >= 0) && (int2 < INTEGER_POSITIVE_CACHE_SIZE)) {
+			// super-common case and faster than calling a function.
+			localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
+		} else {
+			localsStack[i] = buildInteger(globals, int2);
+		}
+	}
+}

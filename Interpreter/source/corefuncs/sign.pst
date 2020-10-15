@@ -1,0 +1,10 @@
+@import("inline/1_arg.pst");
+
+if (arg1.type == Types.INTEGER) float1 = 0.0 + Core.ForceParens((int) arg1.internalValue);
+else if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
+else hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.");
+
+// These don't hurt even if there's an interrupt
+if (float1 == 0) output = VALUE_INT_ZERO;
+else if (float1 > 0) output = VALUE_INT_ONE;
+else output = INTEGER_NEGATIVE_CACHE[1];

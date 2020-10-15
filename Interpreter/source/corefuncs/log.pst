@@ -1,0 +1,23 @@
+/*
+	arg1: value to take the natural log of
+	arg2: constant float value to multiply the output by to change the base. [type safety guaranteed]
+
+	to help avoid floating point arithmetic errors, add an tiny epsilon and then round
+	down to check for crossing an int boundary.
+*/
+@import("inline/2_arg.pst");
+
+if (arg1.type == Types.FLOAT) {
+	float1 = (double) arg1.internalValue;
+} else if (arg1.type == Types.INTEGER) {
+	float1 = 0.0 + (int) arg1.internalValue;
+} else {
+	hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.");
+}
+if (!hasInterrupt) {
+	if (float1 <= 0) {
+		hasInterrupt = EX_InvalidArgument(ec, "logarithms require positive inputs.");
+	} else {
+		output = buildFloat(globals, fixFuzzyFloatPrecision(Core.Log(float1) * (double) arg2.internalValue));
+	}
+}

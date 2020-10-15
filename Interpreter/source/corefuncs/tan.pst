@@ -1,0 +1,22 @@
+@import("inline/1_arg.pst");
+
+// Checking for pi / 2 is not really necessary even though it is not a valid tan value, because
+// floating point arithmetic will never create a "true" pi / 2 and will instead return giant numbers.
+// TODO: unit test so that I know this is actually true in practice.
+if (arg1.type == Types.FLOAT) {
+	float1 = (double) arg1.internalValue;
+} else if (arg1.type == Types.INTEGER) {
+	float1 = 0.0 + (int) arg1.internalValue;
+} else {
+	hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.");
+}
+
+if (!hasInterrupt) {
+	float2 = Core.Cos(float1);
+	if (float2 < 0) float2 = -float2;
+	if (float2 < 0.0000000001) {
+		hasInterrupt = EX_DivisionByZero(ec, "Tangent is undefined.");
+	} else {
+		output = buildFloat(globals, Core.Tan(float1));
+	}
+}

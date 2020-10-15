@@ -1,0 +1,3 @@
+@import("inline/3_arg.pst");
+
+Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue] = arg3.internalValue;

@@ -1,0 +1,12 @@
+@import("inline/1_arg.pst");
+
+output = VALUE_NULL;
+if (arg1.type == Types.STRING) {
+	string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
+	Core.TryParseFloat(string1, floatList1);
+	if (floatList1[0] >= 0) {
+		output = buildFloat(globals, floatList1[1]);
+	}
+} else {
+	hasInterrupt = EX_InvalidArgument(ec, "parseFloat requires a string argument.");
+}
