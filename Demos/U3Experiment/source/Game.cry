@@ -1,0 +1,66 @@
+﻿import U3Direct;
+
+class GameWindow {
+
+    field _window;
+    field _fps;
+    field _flipTime;
+    field _drawingContext;
+
+    constructor(title, fps, width, height) {
+        this._fps = fps;
+
+        this._window = new U3Window()
+            .setType(U3Direct.WindowMode.GRAPHICS)
+            .setSize(640, 480)
+            .setTitle("Test window");
+
+        this._drawingContext = new GraphicsContext(this._window);
+    }
+
+    function show() {
+        this._window.show();
+        this._flipTime = Core.currentTime();
+    }
+
+    function getGraphicsContext() {
+        return this._drawingContext;
+    }
+
+    function clockTick() {
+        buffer = this._drawingContext._buffer;
+        this._window.sendMessage(buffer);
+        buffer.clear();
+        buffer.add('GAME_RENDER');
+
+        now = Core.currentTime();
+        delay = now - this._flipTime;
+        diff = 1.0 / this._fps - delay;
+        if (diff > 0) {
+            Core.sleep(diff);
+        }
+        this._flipTime = now;
+    }
+
+    function close() {
+        this._window.close();
+    }
+}
+
+class GraphicsContext {
+
+    field _window;
+    field _buffer = ['GAME_RENDER'];
+
+    constructor(window) {
+        this._window = window;
+    }
+
+    function fill(r, g, b) {
+        this._buffer.add('F', r, g, b);
+    }
+
+    function rectangle(x, y, w, h, r, g, b, a = 255) {
+        this._buffer.add('R', x, y, w, h, r, g, b); // TODO: Alpha!
+    }
+}

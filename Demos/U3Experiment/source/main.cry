@@ -1,0 +1,29 @@
+﻿import Math;
+
+function main(args) {
+    print("Hello, World!");
+
+    fps = 30;
+    width = 640;
+    height = 480;
+    window = new GameWindow("Test window", fps, width, height);
+
+    window.show();
+
+    g = window.getGraphicsContext();
+
+    x = 0;
+    y = 0;
+
+    while (true) {
+        x = (x + 2) % 640;
+        y = (y + 1) % 480;
+
+        g.fill(0, 128, 255);
+        g.rectangle(x, y, 50, 50, 255, 0, 0);
+
+        window.clockTick();
+    }
+
+    window.close();
+}
