@@ -6829,22 +6829,27 @@ namespace Interpreter.Vm
 
         public static string IpcNamedPipe_create(Value objValue, Value nameValue)
         {
-            return "Not implemented.";
+            ObjectInstance obj = (ObjectInstance)objValue.internalValue;
+            obj.nativeData = new object[1];
+            obj.nativeData[0] = CoreFunctions.NamedPipeCreate((string)nameValue.internalValue);
+            return null;
         }
 
         public static string IpcNamedPipe_flush(Value objValue)
         {
-            return "Not implemented.";
+            object pipe = getNativeDataItem(objValue, 0);
+            return CoreFunctions.NamedPipeFlush(pipe);
         }
 
         public static bool IpcNamedPipe_isSupported()
         {
-            return false;
+            return true;
         }
 
         public static string IpcNamedPipe_send(Value objValue, Value strValue)
         {
-            return "Not implemented.";
+            object pipe = getNativeDataItem(objValue, 0);
+            return CoreFunctions.NamedPipeWriteLine(pipe, (string)strValue.internalValue);
         }
 
         public static bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId)

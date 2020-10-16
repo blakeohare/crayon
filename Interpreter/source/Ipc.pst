@@ -1,15 +1,20 @@
 ﻿bool IpcNamedPipe_isSupported() {
-    return false;
+    return Extension.CoreFunc_NamedPipeIsSupported();
 }
 
 string IpcNamedPipe_create(Value objValue, Value nameValue) {
-    return "Not implemented.";
+    ObjectInstance obj = (ObjectInstance)objValue.internalValue;
+    obj.nativeData = new Array<object>(1);
+    obj.nativeData[0] = Extension.CoreFunc_NamedPipeCreate((string)nameValue.internalValue);
+    return null;
 }
 
 string IpcNamedPipe_send(Value objValue, Value strValue) {
-    return "Not implemented.";
+    object pipe = getNativeDataItem(objValue, 0);
+    return Extension.CoreFunc_NamedPipeSend(pipe, (string) strValue.internalValue);
 }
 
 string IpcNamedPipe_flush(Value objValue) {
-    return "Not implemented.";
+    object pipe = getNativeDataItem(objValue, 0);
+    return Extension.CoreFunc_NamedPipeFlush(pipe);
 }

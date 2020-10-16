@@ -5250,11 +5250,15 @@ var invokeNamedCallback = function(vm, id, args) {
 };
 
 var IpcNamedPipe_create = function(objValue, nameValue) {
-	return "Not implemented.";
+	var obj = objValue[1];
+	obj[3] = PST$createNewArray(1);
+	obj[3][0] = (() => {})();
+	return null;
 };
 
 var IpcNamedPipe_flush = function(objValue) {
-	return "Not implemented.";
+	var pipe = getNativeDataItem(objValue, 0);
+	return (() => {})();
 };
 
 var IpcNamedPipe_isSupported = function() {
@@ -5262,7 +5266,8 @@ var IpcNamedPipe_isSupported = function() {
 };
 
 var IpcNamedPipe_send = function(objValue, strValue) {
-	return "Not implemented.";
+	var pipe = getNativeDataItem(objValue, 0);
+	return (() => {})();
 };
 
 var isClassASubclassOf = function(vm, subClassId, parentClassId) {

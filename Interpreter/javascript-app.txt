@@ -1,6 +1,7 @@
 IMPORT: base.txt
 IMPORT: flags-javascript.txt
 IMPORT: headers-javascript.txt
+IMPORT: ext-javascript.txt
 
 LANGUAGE: javascript
 

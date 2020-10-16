@@ -1,1 +1,3 @@
 SOURCE: source/main.pst
+
+IMPORT: ext-base.txt

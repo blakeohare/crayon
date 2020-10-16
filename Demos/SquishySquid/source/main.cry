@@ -1,5 +1,4 @@
 ﻿import Game;
-import Ipc;
 
 const IS_LANDSCAPE_MODE = $var['is_landscape'];
 const FPS = 60;

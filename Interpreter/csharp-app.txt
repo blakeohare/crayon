@@ -1,6 +1,7 @@
 IMPORT: base.txt
 IMPORT: flags-csharp.txt
 IMPORT: headers-csharp.txt
+IMPORT: ext-csharp.txt
 
 LANGUAGE: csharp
 

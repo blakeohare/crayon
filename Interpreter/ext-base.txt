@@ -1,0 +1,5 @@
+
+EXT-TYPE: bool CoreFunc_NamedPipeIsSupported();
+EXT-TYPE: Array<object> CoreFunc_NamedPipeCreate(string pipeName);
+EXT-TYPE: string CoreFunc_NamedPipeSend(object pipe, string data);
+EXT-TYPE: string CoreFunc_NamedPipeFlush(object pipe);

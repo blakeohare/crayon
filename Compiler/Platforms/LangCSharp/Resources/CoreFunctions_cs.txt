@@ -18,14 +18,16 @@
             return (System.IO.StreamWriter)((object[])pipeWrapper)[2];
         }
 
-        public static void NamedPipeWriteLine(object pipeWrapper, string value)
+        public static string NamedPipeWriteLine(object pipeWrapper, string value)
         {
             GetStreamWriter(pipeWrapper).WriteLine(value);
+            return null;
         }
 
-        public static void NamedPipeFlushWriteStream(object pipeWrapper)
+        public static string NamedPipeFlush(object pipeWrapper)
         {
             GetStreamWriter(pipeWrapper).Flush();
+            return null;
         }
     }
 }
