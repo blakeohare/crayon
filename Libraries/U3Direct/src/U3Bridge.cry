@@ -1,0 +1,68 @@
+﻿import Ipc;
+import ProcessUtil;
+import Random;
+
+namespace U3Direct {
+    enum BridgeType {
+        NAMED_PIPE,
+        JAVASCRIPT_HUB,
+    }
+
+    // TODO: remove this before release
+    const U3_BRIDGE_DEBUG_MODE = $var['u3_bridge_debug_mode'] == true;
+
+    class U3Bridge {
+
+        field type;
+        field pipe;
+
+        constructor() {
+            // TODO: to prevent regressions from attempting to make
+            // some of these libraries compatible on weird platforms
+            // by simulating their implementation, this should really
+            // just check the ACTUAL environment it's running on.
+            // i.e if (isWindows()) type = NAMED_PIPE else if (isJs()) etc...
+            if (Ipc.NamedPipe.isSupported()) {
+                this.type = BridgeType.NAMED_PIPE;
+            } else {
+                this.type = BridgeType.JAVASCRIPT_HUB;
+            }
+        }
+
+        function start(options) {
+            switch (this.type) {
+                case BridgeType.NAMED_PIPE:
+
+                    pipename = 'u3pipe';
+                    if (!U3_BRIDGE_DEBUG_MODE) {
+                        pipename = ['u3_'];
+                        letters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                        for (i = 0; i < 20; ++i) {
+                            pipename.add(letters[Random.randomInt(letters.length)]);
+                        }
+                        pipename = pipename.join('');
+                    }
+
+                    this.pipe = new Ipc.NamedPipe(pipename);
+
+                    break;
+
+                case BridgeType.JAVASCRIPT_HUB:
+                    throw new NotImplementedException();
+            }
+            return this;
+        }
+
+        function send(items) {
+            switch (this.type) {
+                case BridgeType.NAMED_PIPE:
+                    line = items.join(' ');
+                    this.pipe.writeLine(line);
+                    this.pipe.flush();
+                    break;
+                case BridgeType.JAVASCRIPT_HUB:
+                    throw new NotImplementedException();
+            }
+        }
+    }
+}

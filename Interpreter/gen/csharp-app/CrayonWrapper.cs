@@ -5413,19 +5413,43 @@ namespace Interpreter.Vm
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                output = buildString(globals, IpcNamedPipe_create(arg1, arg2));
+                                string1 = IpcNamedPipe_create(arg1, arg2);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
                                 break;
                             case 46:
                                 // ipcNamedPipeSend;
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                output = buildString(globals, IpcNamedPipe_send(arg1, arg2));
+                                string1 = IpcNamedPipe_send(arg1, arg2);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
                                 break;
                             case 47:
                                 // ipcNamedPipeFlush;
                                 arg1 = valueStack[--valueStackSize];
-                                output = buildString(globals, IpcNamedPipe_flush(arg1));
+                                string1 = IpcNamedPipe_flush(arg1);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
                                 break;
                         }
                         if ((row[1] == 1))

@@ -1,0 +1,46 @@
+﻿namespace U3Direct {
+
+    enum WindowMode {
+        GRAPHICS,
+        UI,
+    }
+
+    class U3Window {
+        field _bridge = null;
+        field _options = {
+            'type': WindowMode.UI,
+            'width': 400,
+            'height': 300,
+            'title': "Window",
+        };
+
+        constructor() {
+
+        }
+
+        function setType(type) {
+            this._options['type'] = type;
+            return this;
+        }
+
+        function setSize(width, height) {
+            this._options['width'] = width;
+            this._options['height'] = height;
+            return this;
+        }
+
+        function setTitle(str) {
+            this._options['title'] = str + '';
+            return this;
+        }
+
+        function show() {
+            this._bridge = new U3Bridge().start(this._options);
+            return this;
+        }
+
+        function sendMessage(items) {
+            this._bridge.send(items);
+        }
+    }
+}

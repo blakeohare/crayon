@@ -128,8 +128,11 @@ MATCHERS = [
   ('Libraries/*.acr', ACRYLIC_STYLE),
   ('Libraries/*/manifest.json', JSON_STYLE),
 
-  # Docs
-  ('*.md', MARKDOWN_STYLE),
+  # Docs (only whitelist directories where .md occurs otherwise U3's node_modules has lots of false hits)
+  ('README.md', MARKDOWN_STYLE),
+  ('Docs/*.md', MARKDOWN_STYLE),
+  ('Release/README.md', MARKDOWN_STYLE),
+  ('Tutorials/*.md', MARKDOWN_STYLE),
 
   # Clean Scripts
   ('Scripts/*.py', PYTHON_STYLE_2_SPACES),

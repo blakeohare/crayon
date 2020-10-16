@@ -1,3 +1,8 @@
 ﻿@import("inline/1_arg.pst");
 
-output = buildString(globals, IpcNamedPipe_flush(arg1));
+string1 = IpcNamedPipe_flush(arg1);
+if (string1 == null) {
+    output = globals.valueNull;
+} else {
+    output = buildString(globals, string1);
+}
