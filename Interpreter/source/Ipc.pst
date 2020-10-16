@@ -1,0 +1,15 @@
+﻿bool IpcNamedPipe_isSupported() {
+    return false;
+}
+
+string IpcNamedPipe_create(Value objValue, Value nameValue) {
+    return "Not implemented.";
+}
+
+string IpcNamedPipe_send(Value objValue, Value strValue) {
+    return "Not implemented.";
+}
+
+string IpcNamedPipe_flush(Value objValue) {
+    return "Not implemented.";
+}

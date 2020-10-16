@@ -4135,6 +4135,29 @@ var interpretImpl = function(vm, executionContextId) {
 							list1[2][3] = rightValue;
 						}
 						break;
+					case 44:
+						// ipcNamedPipeIsSupported;
+						output = buildBoolean(globals, IpcNamedPipe_isSupported());
+						break;
+					case 45:
+						// ipcNamedPipeCreate;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = buildString(globals, IpcNamedPipe_create(arg1, arg2));
+						break;
+					case 46:
+						// ipcNamedPipeSend;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = buildString(globals, IpcNamedPipe_send(arg1, arg2));
+						break;
+					case 47:
+						// ipcNamedPipeFlush;
+						arg1 = valueStack[--valueStackSize];
+						output = buildString(globals, IpcNamedPipe_flush(arg1));
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -5224,6 +5247,22 @@ var interpretImpl = function(vm, executionContextId) {
 var invokeNamedCallback = function(vm, id, args) {
 	var cb = vm[12][0][id];
 	return cb(args);
+};
+
+var IpcNamedPipe_create = function(objValue, nameValue) {
+	return "Not implemented.";
+};
+
+var IpcNamedPipe_flush = function(objValue) {
+	return "Not implemented.";
+};
+
+var IpcNamedPipe_isSupported = function() {
+	return false;
+};
+
+var IpcNamedPipe_send = function(objValue, strValue) {
+	return "Not implemented.";
 };
 
 var isClassASubclassOf = function(vm, subClassId, parentClassId) {

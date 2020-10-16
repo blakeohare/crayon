@@ -47,6 +47,10 @@ namespace Parser
         ADD_SHUTDOWN_HANDLER = 41,
         NATIVE_TUNNEL_SEND = 42,
         NATIVE_TUNNEL_RECV = 43,
+        IPC_NAMED_PIPE_IS_SUPPORTED = 44,
+        IPC_NAMED_PIPE_CREATE = 45,
+        IPC_NAMED_PIPE_SEND = 46,
+        IPC_NAMED_PIPE_FLUSH = 47,
     }
 
     internal static class CoreFunctionIDHelper
@@ -98,6 +102,10 @@ namespace Parser
                 case "addShutdownHandler": return (int)CoreFunctionID.ADD_SHUTDOWN_HANDLER;
                 case "nativeTunnelSend": return (int)CoreFunctionID.NATIVE_TUNNEL_SEND;
                 case "nativeTunnelRecv": return (int)CoreFunctionID.NATIVE_TUNNEL_RECV;
+                case "ipcNamedPipeIsSupported": return (int) CoreFunctionID.IPC_NAMED_PIPE_IS_SUPPORTED;
+                case "ipcNamedPipeCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_CREATE;
+                case "ipcNamedPipeSend": return (int)CoreFunctionID.IPC_NAMED_PIPE_SEND;
+                case "ipcNamedPipeFlush": return (int)CoreFunctionID.IPC_NAMED_PIPE_FLUSH;
                 default: return -1;
             }
         }

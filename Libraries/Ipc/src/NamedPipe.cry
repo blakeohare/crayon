@@ -1,0 +1,27 @@
+﻿namespace Ipc {
+    class NamedPipe {
+
+        constructor(name) {
+            if (!$$$('ipcNamedPipeIsSupported')) {
+                throw new InvalidOperationException("Named pipes are not supported on this platform.");
+            }
+            NamedPipe.throwIfErr($$$('ipcNamedPipeCreate', this, name));
+        }
+
+        function writeLine(s) {
+            NamedPipe.throwIfErr($$$('ipcNamedPipeSend', this, (s ?? '') + ''));
+        }
+
+        function flush() {
+            NamedPipe.throwIfErr($$$('ipcNamedPipeFlush', this));
+        }
+
+        static function isSupported() {
+            return $$$('ipcNamedPipeIsSupported');
+        }
+
+        static function throwIfErr(s) {
+            if (s != null) throw new Exception(s);
+        }
+    }
+}

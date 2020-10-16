@@ -1,0 +1,3 @@
+﻿@import("inline/2_arg.pst");
+
+output = buildString(globals, IpcNamedPipe_send(arg1, arg2));

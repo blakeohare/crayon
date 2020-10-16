@@ -1,0 +1,4 @@
+﻿@import("inline/2_arg.pst");
+
+// return value is an error message or null. The pipe itself is applied to the first argument (the object instance)
+output = buildString(globals, IpcNamedPipe_create(arg1, arg2));

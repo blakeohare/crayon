@@ -5404,6 +5404,29 @@ namespace Interpreter.Vm
                                     list1.array[3] = rightValue;
                                 }
                                 break;
+                            case 44:
+                                // ipcNamedPipeIsSupported;
+                                output = buildBoolean(globals, IpcNamedPipe_isSupported());
+                                break;
+                            case 45:
+                                // ipcNamedPipeCreate;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = buildString(globals, IpcNamedPipe_create(arg1, arg2));
+                                break;
+                            case 46:
+                                // ipcNamedPipeSend;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = buildString(globals, IpcNamedPipe_send(arg1, arg2));
+                                break;
+                            case 47:
+                                // ipcNamedPipeFlush;
+                                arg1 = valueStack[--valueStackSize];
+                                output = buildString(globals, IpcNamedPipe_flush(arg1));
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -6802,6 +6825,26 @@ namespace Interpreter.Vm
         {
             System.Func<object[], object> cb = vm.namedCallbacks.callbacksById[id];
             return cb(args);
+        }
+
+        public static string IpcNamedPipe_create(Value objValue, Value nameValue)
+        {
+            return "Not implemented.";
+        }
+
+        public static string IpcNamedPipe_flush(Value objValue)
+        {
+            return "Not implemented.";
+        }
+
+        public static bool IpcNamedPipe_isSupported()
+        {
+            return false;
+        }
+
+        public static string IpcNamedPipe_send(Value objValue, Value strValue)
+        {
+            return "Not implemented.";
         }
 
         public static bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId)

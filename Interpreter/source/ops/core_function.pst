@@ -43,6 +43,10 @@
     case 41: Core.EmitComment("addShutdownHandler"); @import("corefuncs/addShutdownHandler.pst"); break;
     case 42: Core.EmitComment("nativeTunnelSend"); @import("corefuncs/nativeTunnelSend.pst"); break;
     case 43: Core.EmitComment("nativeTunnelRecv"); @import("corefuncs/nativeTunnelRecv.pst"); break;
+    case 44: Core.EmitComment("ipcNamedPipeIsSupported"); @import("corefuncs/ipcNamedPipeIsSupported.pst"); break;
+    case 45: Core.EmitComment("ipcNamedPipeCreate"); @import("corefuncs/ipcNamedPipeCreate.pst"); break;
+    case 46: Core.EmitComment("ipcNamedPipeSend"); @import("corefuncs/ipcNamedPipeSend.pst"); break;
+    case 47: Core.EmitComment("ipcNamedPipeFlush"); @import("corefuncs/ipcNamedPipeFlush.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

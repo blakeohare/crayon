@@ -1,0 +1,31 @@
+﻿namespace Interpreter.Vm
+{
+    internal static class CoreFunctions
+    {
+        public static object[] NamedPipeCreate(string name)
+        {
+            System.IO.Pipes.NamedPipeClientStream pipe = new System.IO.Pipes.NamedPipeClientStream(name);
+            pipe.Connect();
+            return new object[] {
+                pipe,
+                new System.IO.StreamReader(pipe),
+                new System.IO.StreamWriter(pipe),
+            };
+        }
+
+        private static System.IO.StreamWriter GetStreamWriter(object pipeWrapper)
+        {
+            return (System.IO.StreamWriter)((object[])pipeWrapper)[2];
+        }
+
+        public static void NamedPipeWriteLine(object pipeWrapper, string value)
+        {
+            GetStreamWriter(pipeWrapper).WriteLine(value);
+        }
+
+        public static void NamedPipeFlushWriteStream(object pipeWrapper)
+        {
+            GetStreamWriter(pipeWrapper).Flush();
+        }
+    }
+}
