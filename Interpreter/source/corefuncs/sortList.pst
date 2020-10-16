@@ -1,4 +1,4 @@
-@import("inline/2_arg.pst");
+﻿@import("inline/2_arg.pst");
 
 // No arg checks because the primitive method resolver already resolved the item list and the key list is from embed.cry code.
 // Identical length is also presumed.
@@ -7,5 +7,5 @@ list1 = (ListImpl) arg1.internalValue; // original items
 list2 = (ListImpl) arg2.internalValue; // keys
 sortLists(list2, list1, Core.IntBuffer16);
 if (Core.IntBuffer16[0] > 0) {
-	hasInterrupt = EX_InvalidArgument(ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+    hasInterrupt = EX_InvalidArgument(ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
 }

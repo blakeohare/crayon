@@ -1,28 +1,27 @@
-
-@import("inline/1_arg.pst");
+﻿@import("inline/1_arg.pst");
 
 if (arg1.type == Types.FLOAT) {
-	float1 = (double) arg1.internalValue;
-	if (@ext_boolean("INT_IS_FLOOR")) {
-		int1 = Core.Int(float1);
-	} else if (float1 < 0 && float1 % 1 != 0) {
-		int1 = Core.Int(float1) - 1;
-	} else {
-		int1 = Core.Int(float1);
-	}
-	if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-		if (int1 >= 0) {
-			output = INTEGER_POSITIVE_CACHE[int1];
-		} else if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-			output = INTEGER_NEGATIVE_CACHE[-int1];
-		} else {
-			output = new Value(Types.INTEGER, int1);
-		}
-	} else {
-		output = new Value(Types.INTEGER, int1);
-	}
+    float1 = (double) arg1.internalValue;
+    if (@ext_boolean("INT_IS_FLOOR")) {
+        int1 = Core.Int(float1);
+    } else if (float1 < 0 && float1 % 1 != 0) {
+        int1 = Core.Int(float1) - 1;
+    } else {
+        int1 = Core.Int(float1);
+    }
+    if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
+        if (int1 >= 0) {
+            output = INTEGER_POSITIVE_CACHE[int1];
+        } else if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+            output = INTEGER_NEGATIVE_CACHE[-int1];
+        } else {
+            output = new Value(Types.INTEGER, int1);
+        }
+    } else {
+        output = new Value(Types.INTEGER, int1);
+    }
 } else if (arg1.type == Types.INTEGER) {
-	output = arg1;
+    output = arg1;
 } else {
-	hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
+    hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
 }

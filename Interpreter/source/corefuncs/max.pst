@@ -1,5 +1,4 @@
-
-@import("inline/2_arg.pst");
+﻿@import("inline/2_arg.pst");
 
 bool1 = false;
 if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
@@ -11,9 +10,9 @@ else if (arg2.type == Types.INTEGER) float2 = 0.0 + (int) arg2.internalValue;
 else bool1 = true;
 
 if (bool1) {
-	hasInterrupt = EX_InvalidArgument(ec, "max requires numeric arguments.");
+    hasInterrupt = EX_InvalidArgument(ec, "max requires numeric arguments.");
 } else if (float1 >= float2) {
-	output = arg1;
+    output = arg1;
 } else {
-	output = arg2;
+    output = arg2;
 }

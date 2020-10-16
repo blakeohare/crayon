@@ -1,4 +1,4 @@
-output = VALUE_NULL;
+﻿output = VALUE_NULL;
 int1 = row[2];
 valueStackSize -= int1 + 1;
 
@@ -7,24 +7,24 @@ objArray1 = Core.ForceParens((ObjectInstance) value.internalValue).nativeData;
 intArray1 = (Array<int>) objArray1[0];
 _len = (int) objArray1[1];
 if (_len >= intArray1.Size()) {
-	intArray2 = new Array<int>((_len * 2) + 16);
-	for (j = 0; j < _len; j += 1) {
-		intArray2[j] = intArray1[j];
-	}
-	intArray1 = intArray2;
-	objArray1[0] = intArray1;
+    intArray2 = new Array<int>((_len * 2) + 16);
+    for (j = 0; j < _len; j += 1) {
+        intArray2[j] = intArray1[j];
+    }
+    intArray1 = intArray2;
+    objArray1[0] = intArray1;
 }
 objArray1[1] = _len + 16;
 
 for (i = int1 - 1; i >= 0; i -= 1) {
-	value = valueStack[(valueStackSize + 1) + i];
-	if (value.type == Types.INTEGER) {
-		intArray1[_len + i] = (int) value.internalValue;
-	} else if (value.type == Types.FLOAT) {
-		float1 = 0.5 + (double) value.internalValue;
-		intArray1[_len + i] = Core.Int(float1);
-	} else {
-		hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
-		i = -1; // break
-	}
+    value = valueStack[(valueStackSize + 1) + i];
+    if (value.type == Types.INTEGER) {
+        intArray1[_len + i] = (int) value.internalValue;
+    } else if (value.type == Types.FLOAT) {
+        float1 = 0.5 + (double) value.internalValue;
+        intArray1[_len + i] = Core.Int(float1);
+    } else {
+        hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
+        i = -1; // break
+    }
 }

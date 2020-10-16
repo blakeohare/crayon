@@ -1,1 +1,1 @@
-output = buildInteger(globals, ec.executionCounter);
+﻿output = buildInteger(globals, ec.executionCounter);

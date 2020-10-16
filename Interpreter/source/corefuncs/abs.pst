@@ -1,14 +1,14 @@
-@import("inline/1_arg.pst");
+﻿@import("inline/1_arg.pst");
 
 output = arg1;
 if (arg1.type == Types.INTEGER) {
-	if ((int) arg1.internalValue < 0) {
-		output = buildInteger(globals, -(int) arg1.internalValue);
-	}
+    if ((int) arg1.internalValue < 0) {
+        output = buildInteger(globals, -(int) arg1.internalValue);
+    }
 } else if (arg1.type == Types.FLOAT) {
-	if ((double) arg1.internalValue < 0) {
-		output = buildFloat(globals, -(double) arg1.internalValue);
-	}
+    if ((double) arg1.internalValue < 0) {
+        output = buildFloat(globals, -(double) arg1.internalValue);
+    }
 } else {
-	hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
+    hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
 }

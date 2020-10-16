@@ -1,4 +1,4 @@
-@import("inline/1_arg.pst");
+﻿@import("inline/1_arg.pst");
 
 // TODO: UNIT TEST!!!! This is fast-but-brittle code.
 output = buildInteger(globals, arg1.type - 1);

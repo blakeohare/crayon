@@ -1,13 +1,12 @@
-@import("inline/1_arg.pst");
+﻿@import("inline/1_arg.pst");
 
 intList1 = (List<int>) getNativeDataItem(arg1, 1);
 list1 = makeEmptyList(globals.stringType, 20);
 output = new Value(Types.LIST, list1);
 if (intList1 != null) {
-	stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
-	for (i = 0; i < stringList1.Size(); i += 1) {
-		addToList(list1, buildString(globals, stringList1[i]));
-	}
-	reverseList(list1);
+    stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
+    for (i = 0; i < stringList1.Size(); i += 1) {
+        addToList(list1, buildString(globals, stringList1[i]));
+    }
+    reverseList(list1);
 }
-

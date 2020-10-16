@@ -1,4 +1,4 @@
-@import("inline/2_arg.pst");
+﻿@import("inline/2_arg.pst");
 
 objInstance1 = (ObjectInstance) arg1.internalValue;
 int1 = (int) arg2.internalValue;

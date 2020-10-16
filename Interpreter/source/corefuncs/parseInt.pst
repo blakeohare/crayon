@@ -1,12 +1,11 @@
-
-@import("inline/1_arg.pst");
+﻿@import("inline/1_arg.pst");
 
 output = VALUE_NULL;
 if (arg1.type == Types.STRING) {
-	string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
-	if (Core.IsValidInteger(string1)) {
-		output = buildInteger(globals, Core.ParseInt(string1));
-	}
+    string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
+    if (Core.IsValidInteger(string1)) {
+        output = buildInteger(globals, Core.ParseInt(string1));
+    }
 } else {
-	hasInterrupt = EX_InvalidArgument(ec, "parseInt requires a string argument.");
+    hasInterrupt = EX_InvalidArgument(ec, "parseInt requires a string argument.");
 }

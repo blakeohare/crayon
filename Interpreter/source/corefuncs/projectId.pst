@@ -1,1 +1,1 @@
-output = buildCommonString(globals, metadata.projectId);
+﻿output = buildCommonString(globals, metadata.projectId);

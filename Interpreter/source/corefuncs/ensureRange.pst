@@ -1,5 +1,4 @@
-
-// arg 1: value
+﻿// arg 1: value
 // arg 2: min
 // arg 3: max
 @import("inline/3_arg.pst");
@@ -15,15 +14,15 @@ else if (arg3.type == Types.INTEGER) float3 = 0.0 + (int) arg3.internalValue;
 else bool1 = true;
 
 if (!bool1 && float3 < float2) {
-	// Min and max are swapped D:
-	// It OK.
-	// I fix 4 u.
-	float1 = float3;
-	float3 = float2;
-	float2 = float1;
-	value = arg2;
-	arg2 = arg3;
-	arg3 = value;
+    // Min and max are swapped D:
+    // It OK.
+    // I fix 4 u.
+    float1 = float3;
+    float3 = float2;
+    float2 = float1;
+    value = arg2;
+    arg2 = arg3;
+    arg3 = value;
 }
 
 if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
@@ -31,11 +30,11 @@ else if (arg1.type == Types.INTEGER) float1 = 0.0 + (int) arg1.internalValue;
 else bool1 = true;
 
 if (bool1) {
-	hasInterrupt = EX_InvalidArgument(ec, "ensureRange requires numeric arguments.");
+    hasInterrupt = EX_InvalidArgument(ec, "ensureRange requires numeric arguments.");
 } else if (float1 < float2) {
-	output = arg2;
+    output = arg2;
 } else if (float1 > float3) {
-	output = arg3;
+    output = arg3;
 } else {
-	output = arg1;
+    output = arg1;
 }

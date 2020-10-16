@@ -1,4 +1,4 @@
-@import("inline/2_arg.pst");
+﻿@import("inline/2_arg.pst");
 objArray1 = new Array<object>(2);
 objArray1[0] = arg1.internalValue;
 objArray1[1] = arg2.internalValue;

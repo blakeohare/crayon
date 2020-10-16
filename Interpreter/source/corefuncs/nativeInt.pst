@@ -1,6 +1,6 @@
-/*
-	arg 1: object instance
-	arg 2: native data index
+﻿/*
+    arg 1: object instance
+    arg 2: native data index
 */
 @import("inline/2_arg.pst");
 output = buildInteger(globals, (int) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue]);
