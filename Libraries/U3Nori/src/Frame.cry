@@ -13,6 +13,7 @@ namespace U3Nori {
     */
     class Frame {
 
+        field _title = 'Untitled Window';
         field _fullFlushElements = {};
         field _partialFlushElements = {};
         field _dirtyPanels = {};
@@ -45,6 +46,12 @@ namespace U3Nori {
             this._rootElementId = e._id;
             this._rootElementChanged = true;
             return e;
+        }
+
+        function setTitle(title) {
+            // TODO: if it's already shown, then need to send a message.
+            this._title = title + '';
+            return this;
         }
 
         function setContent(e) {
@@ -177,7 +184,7 @@ namespace U3Nori {
                 execId = Core.getCurrentExecutionToken();
 
                 this._u3window.show();
-                renderData = ['INIT', NoriUtil.textToBase64('Test Window'), this._size[0], this._size[1]] + renderData;
+                renderData = ['INIT', NoriUtil.textToBase64(this._title), this._size[0], this._size[1]] + renderData;
                 this._u3window.sendMessage(renderData);
 
                 while (true) {
