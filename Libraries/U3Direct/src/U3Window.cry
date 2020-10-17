@@ -7,40 +7,18 @@
 
     class U3Window {
         field _bridge = null;
-        field _options = {
-            'type': WindowMode.UI,
-            'width': 400,
-            'height': 300,
-            'title': "Window",
-        };
 
-        constructor() {
-
-        }
-
-        function setType(type) {
-            this._options['type'] = type;
-            return this;
-        }
-
-        function setSize(width, height) {
-            this._options['width'] = width;
-            this._options['height'] = height;
-            return this;
-        }
-
-        function setTitle(str) {
-            this._options['title'] = str + '';
-            return this;
-        }
+        constructor() { }
 
         function show() {
-            this._bridge = new U3Bridge().start(this._options);
+            this._bridge = new U3Bridge();
+            this._bridge.start();
             return this;
         }
 
         function sendMessage(items) {
             this._bridge.send(items);
+            return this;
         }
     }
 }

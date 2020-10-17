@@ -29,7 +29,7 @@ namespace U3Direct {
             }
         }
 
-        function start(options) {
+        function start() {
             switch (this.type) {
                 case BridgeType.NAMED_PIPE:
 

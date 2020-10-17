@@ -9,7 +9,6 @@ let runServer = (name, onData, onCreate, onClose) => {
         });
 
         stream.on('end', () => {
-            stream.close();
             if (onClose) onClose();
         });
     });
@@ -18,7 +17,7 @@ let runServer = (name, onData, onCreate, onClose) => {
         if (onCreate) onCreate();
     });
 };
-    
+
 module.exports = {
     runServer,
 };
