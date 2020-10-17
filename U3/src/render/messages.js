@@ -11,11 +11,11 @@ window.sendMessage = null;
 
     ipcRenderer.on('rboundmsg', (event, data) => {
         if (listener !== null) {
-            listener(data.type, data.value);
+            listener(data);
         }
     });
 
-    window.sendMessage = (type, value) => {
-        ipcRenderer.send('mboundmsg', { type, value });
+    window.sendMessage = (data) => {
+        ipcRenderer.send('mboundmsg', data);
     };
 })();

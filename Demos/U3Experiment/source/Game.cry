@@ -1,4 +1,6 @@
 ﻿import U3Direct;
+import Base64;
+import Math;
 
 class GameWindow {
 
@@ -7,19 +9,30 @@ class GameWindow {
     field _flipTime;
     field _drawingContext;
 
-    constructor(title, fps, width, height) {
-        this._fps = fps;
+    field _title;
+    field _width;
+    field _height;
 
-        this._window = new U3Window()
-            .setType(U3Direct.WindowMode.GRAPHICS)
-            .setSize(640, 480)
-            .setTitle("Test window");
+    constructor(title, fps, width, height) {
+        this._title = title + '';
+        this._fps = fps * 1.0;
+        this._width = Math.floor(width);
+        this._height = Math.floor(height);
+
+        this._window = new U3Window();
 
         this._drawingContext = new GraphicsContext(this._window);
     }
 
     function show() {
         this._window.show();
+        bytes = [];
+        for (c : this._title) {
+            bytes.add(ord(c));
+        }
+        titleb64 = bytesToBase64(bytes);
+        this._window.sendMessage(['INIT', titleb64, this._width, this._height]);
+
         this._flipTime = Core.currentTime();
     }
 
