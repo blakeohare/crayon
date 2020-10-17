@@ -1,0 +1,45 @@
+﻿namespace U3Nori {
+
+    const ScrollPanel_XMode = 'scroll.x';
+    const ScrollPanel_YMode = 'scroll.y';
+
+    enum ScrollMode {
+        NONE = 0,
+        AUTO = 1,
+        SCROLL = 2,
+        CROP = 3,
+    }
+
+    class ScrollPanel : Panel {
+        constructor() : base('ScrollPanel', true) {
+            this.setXScrollMode(ScrollMode.NONE)
+                .setYScrollMode(ScrollMode.AUTO);
+        }
+
+        function getXScrollMode() { return this._getIntProperty(ScrollPanel_XMode); }
+        function setXScrollMode(value) { return this._setEnumProperty(ScrollPanel_XMode, value, 0, 3); }
+
+        function getYScrollMode() { return this._getIntProperty(ScrollPanel_YMode); }
+        function setYScrollMode(value) { return this._setEnumProperty(ScrollPanel_YMode, value, 0, 3); }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'xScroll': return this._setEnumWithString(ScrollPanel_XMode, strValue);
+                case 'yScroll': return this._setEnumWithString(ScrollPanel_YMode, strValue);
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
+
+        function scrollToTop() { return this._scrollImpl('E', 'N', 0); }
+        function scrollToBottom() { return this._scrollImpl('E', 'S', 0); }
+        function scrollToLeft() { return this._scrollImpl('E', 'W', 0); }
+        function scrollToRight() { return this._scrollImpl('E', 'E', 0); }
+
+        function _scrollImpl(type, dir, amt) {
+            if (this._frame != null) {
+                this._frame._queuedCommandsWireData.add('SC', this._id, type, dir, amt);
+            }
+            return this;
+        }
+    }
+}

@@ -1,0 +1,20 @@
+﻿namespace U3Nori {
+
+    const Image_Source = 'img.src';
+
+    class Image : Element {
+
+        static field globalImageIdAlloc = 1;
+
+        field _vmImageResourceData = null;
+
+        constructor() : base('Image') { }
+
+        function setSource(imageResource) {
+            id = Image.globalImageIdAlloc++;
+            nr = imageResource._nativeResource;
+            this._vmImageResourceData = [id, nr, imageResource._x, imageResource._y, imageResource._width, imageResource._height];
+            return this._setStringProperty(Image_Source, "res:" + id);
+        }
+    }
+}

@@ -1,0 +1,42 @@
+﻿import Math;
+
+namespace U3Nori {
+
+    const TextBlock_Text = 'txtblk.text';
+    const TextBlock_Wrap = 'txtblk.wrap';
+    const TextBlock_FontSize = 'txtblk.sz';
+
+    class TextBlock : Element {
+
+        constructor() : base('TextBlock') {
+            this.setText('text').setWrap(false).setFontSize(12);
+        }
+
+        function setText(value) { return this._setStringProperty(TextBlock_Text, value); }
+        function getText() { return this._getStringProperty(TextBlock_Text); }
+
+        function setFontSize(value) { return this._setIntProperty(TextBlock_FontSize, Math.floor(value * 1000)); }
+        function getFontSize() { return this._getIntProperty(TextBlock_FontSize) / 1000.0; }
+
+        function setWrap(value) { return this._setBoolProperty(TextBlock_Wrap, value); }
+        function getWrap(value) { return this._getBoolProperty(TextBlock_Wrap); }
+
+        // TODO: font, size, etc.
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case '<content>':
+                case 'text':
+                    return this.setText(strValue);
+
+                case 'wrap':
+                    return this._setBooleanAsString(TextBlock_Wrap, strValue);
+
+                case 'size':
+                    return this.setFontSize(Core.parseFloat(strValue));
+
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
+    }
+}

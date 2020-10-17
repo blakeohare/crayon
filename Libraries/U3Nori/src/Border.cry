@@ -1,0 +1,78 @@
+﻿import Math;
+
+namespace U3Nori {
+
+    const Border_LeftThickness = 'border.leftthickness';
+    const Border_TopThickness = 'border.topthickness';
+    const Border_RightThickness = 'border.rightthickness';
+    const Border_BottomThickness = 'border.bottomthickness';
+    const Border_LeftColor = 'border.leftcolor';
+    const Border_TopColor = 'border.topcolor';
+    const Border_RightColor = 'border.rightcolor';
+    const Border_BottomColor = 'border.bottomcolor';
+
+    class Border : Panel {
+        constructor() : base('Border', true) { }
+
+        function addChild(e) {
+            if (this._children.length > 0) throw new InvalidArgumentException("Cannot add multiple elements to a border.");
+            return base.addChild(e);
+        }
+
+        function getLeftColor() { return this._getColorProperty(Border_LeftColor); }
+        function getTopColor() { return this._getColorProperty(Border_TopColor); }
+        function getRightColor() { return this._getColorProperty(Border_RightColor); }
+        function getBottomColor() { return this._getColorProperty(Border_BottomColor); }
+
+        function getLeftThickness() { return this._getIntProperty(Border_LeftThickness); }
+        function getTopThickness() { return this._getIntProperty(Border_TopThickness); }
+        function getRightThickness() { return this._getIntProperty(Border_RightThickness); }
+        function getBottomThickness() { return this._getIntProperty(Border_BottomThickness); }
+
+        function setColor(r, g, b, a = 255) {
+            // TODO: Inline all this
+            this._setColorProperty(Border_LeftColor, r, g, b, a);
+            this._setColorProperty(Border_TopColor, r, g, b, a);
+            this._setColorProperty(Border_RightColor, r, g, b, a);
+            return this._setColorProperty(Border_BottomColor, r, g, b, a);
+        }
+
+        function setThickness(value) {
+            value = Math.floor(value);
+            this._newProperties[Border_LeftThickness] = value;
+            this._newProperties[Border_TopThickness] = value;
+            this._newProperties[Border_RightThickness] = value;
+            return this._setIntProperty(Border_BottomThickness, value);
+        }
+
+        function setLeftColor(r, g, b, a = 255) { return this._setColorProperty(Border_LeftColor, r, g, b, a); }
+        function setTopColor(r, g, b, a = 255) { return this._setColorProperty(Border_TopColor, r, g, b, a); }
+        function setRightColor(r, g, b, a = 255) { return this._setColorProperty(Border_RightColor, r, g, b, a); }
+        function setBottomColor(r, g, b, a = 255) { return this._setColorProperty(Border_BottomColor, r, g, b, a); }
+
+        function setLeftThickness(value) { return this._setIntProperty(Border_LeftThickness, value); }
+        function setTopThickness(value) { return this._setIntProperty(Border_TopThickness, value); }
+        function setRightThickness(value) { return this._setIntProperty(Border_RightThickness, value); }
+        function setBottomThickness(value) { return this._setIntProperty(Border_BottomThickness, value); }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'color':
+                    c = NoriUtil._parseColor(strValue);
+                    return this.setColor(c[0], c[1], c[2], c[3]);
+                case 'colorLeft': return this._setColorWithString(Border_LeftColor, strValue);
+                case 'colorTop': return this._setColorWithString(Border_TopColor, strValue);
+                case 'colorRight': return this._setColorWithString(Border_RightColor, strValue);
+                case 'colorBottom': return this._setColorWithString(Border_BottomColor, strValue);
+
+                case 'thickness': return this._setDirectionalIntWithString(Border_LeftThickness, Border_TopThickness, Border_RightThickness, Border_BottomThickness, strValue);
+                case 'thicknessLeft': return this.setLeftThickness(parseInt(strValue));
+                case 'thicknessTop': return this.setTopThickness(parseInt(strValue));
+                case 'thicknessRight': return this.setRightThickness(parseInt(strValue));
+                case 'thicknessBottom': return this.setBottomThickness(parseInt(strValue));
+
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
+    }
+}
