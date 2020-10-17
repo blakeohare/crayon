@@ -3,7 +3,7 @@ const { ipcMain } = require('electron')
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = (title, width, height) => {
+let createWindow = (title, width, height, initialData) => {
 
     let listener = null;
     let mBoundMessageQueue = [];
@@ -38,13 +38,18 @@ let createWindow = (title, width, height) => {
 
     // and load the index.html of the app.
     win.loadFile('render/index.html').then(() => {
+        // TODO: find a more synchronous way to introduce the initialData values into the HTML
+        // to prevent any chance of a "start flicker".
+
         if (AUTO_OPEN_DEV_TOOLS) {
             win.webContents.openDevTools();
         }
 
-        let data = { buffers: rBoundMessageQueue };
+        let buffers = initialData === null ? [] : [initialData];
+        buffers.concat(rBoundMessageQueue);
         rBoundMessageQueue = null;
-        win.webContents.send('rboundmsg', data);
+        
+        win.webContents.send('rboundmsg', { buffers });
     });
 
     return {
