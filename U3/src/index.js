@@ -15,7 +15,8 @@ app.whenReady().then(() => {
             let title = base64ToText(parts[1]);
             let width = parseInt(parts[2]);
             let height = parseInt(parts[3]);
-            rwindow = renderwindow.createWindow(title, width, height);
+            let initialData = parts.slice(4);
+            rwindow = renderwindow.createWindow(title, width, height, initialData.length === 0 ? null : initialData);
         } else if (rwindow === null) {
             throw new Error("The first message must be INIT");
         }
