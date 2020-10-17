@@ -61,6 +61,10 @@ class GraphicsContext {
     }
 
     function rectangle(x, y, w, h, r, g, b, a = 255) {
-        this._buffer.add('R', x, y, w, h, r, g, b); // TODO: Alpha!
+        this._buffer.add('R', x, y, w, h, r, g, b, a);
+    }
+
+    function ellipse(x, y, w, h, r, g, b, a = 255) {
+        this._buffer.add('E', x, y, w, h, r, g, b, a);
     }
 }

@@ -38,32 +38,53 @@
 
         let gameRenderHandler = data => {
             let len = data.length;
-            let i = 0;
-            let r, g, b, width, height, x, y;
+            let i = 1;
+            let r, g, b, a, width, height, x, y;
             while (i < len) {
                 switch (data[i]) {
                     case 'F':
-                        r = Math.floor(data[i + 1]);
-                        g = Math.floor(data[i + 2]);
-                        b = Math.floor(data[i + 3]);
+                        r = parseInt(data[i + 1]);
+                        g = parseInt(data[i + 2]);
+                        b = parseInt(data[i + 3]);
                         i += 4;
                         ctx.fillStyle = rgbToHex(r, g, b);
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
                         break;
                     
                     case 'R':
-                        x = data[i + 1];
-                        y = data[i + 2];
-                        width = data[i + 3];
-                        height = data[i + 4];
-                        r = data[i + 5];
-                        g = data[i + 6];
-                        b = data[i + 7];
-                        i += 8;
+                        x = parseInt(data[i + 1]);
+                        y = parseInt(data[i + 2]);
+                        width = parseInt(data[i + 3]);
+                        height = parseInt(data[i + 4]);
+                        r = parseInt(data[i + 5]);
+                        g = parseInt(data[i + 6]);
+                        b = parseInt(data[i + 7]);
+                        a = parseInt(data[i + 8]);
+                        i += 9;
                         ctx.fillStyle = rgbToHex(r, g, b);
                         ctx.fillRect(x, y, width, height);
                         break;
                     
+                    case 'E':
+                        x = parseInt(data[i + 1]);
+                        y = parseInt(data[i + 2]);
+                        width = parseInt(data[i + 3]);
+                        height = parseInt(data[i + 4]);
+                        x += width / 2.0;
+                        y += height / 2.0;
+                        width *= .5;
+                        height *= .5;
+                        r = parseInt(data[i + 5]);
+                        g = parseInt(data[i + 6]);
+                        b = parseInt(data[i + 7]);
+                        a = parseInt(data[i + 8]);
+                        i += 9;
+                        ctx.fillStyle = rgbToHex(r, g, b);
+                        ctx.beginPath();
+                        ctx.ellipse(x, y, width, height, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+
                     default:
                         throw new Error("Not implemented: '" + data[i] + "'");
                 }
