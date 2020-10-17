@@ -10,6 +10,10 @@
     "version": "2.9.0",
     "guidSeed": "org.crayonlang.demos.calculator,%VERSION%,%TARGET_NAME%",
 
+    "vars": [
+        { "name": "u3_bridge_debug_mode", "value": true }
+    ],
+
     "targets": [
         {
             "name": "javascript",
