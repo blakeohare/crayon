@@ -56,8 +56,8 @@ namespace U3Direct {
         function send(items) {
             switch (this.type) {
                 case BridgeType.NAMED_PIPE:
-                    line = items.join(' ');
-                    this.pipe.writeLine(line);
+                    msg = items.join(' ');
+                    this.pipe.writeLine(msg.length + '@' + msg);
                     this.pipe.flush();
                     break;
                 case BridgeType.JAVASCRIPT_HUB:

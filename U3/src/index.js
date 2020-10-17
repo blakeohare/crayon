@@ -1,5 +1,5 @@
 const { app } = require('electron');
-const namedpipeserver = require('./namedpipeserver.js');
+const namedpipeserver = require('./namedbigpipeserver.js');
 const renderwindow = require('./renderwindow.js');
 const { base64ToText } = require('./util.js');
 
