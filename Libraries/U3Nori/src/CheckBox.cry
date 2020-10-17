@@ -1,0 +1,23 @@
+﻿namespace U3Nori {
+
+    class CheckBox : InputElement {
+        constructor() : base('CheckBox') { }
+
+        function isChecked() {
+            return this._getValue() == '1';
+        }
+
+        function setChecked(value) {
+            return this._setValue(value ? '1' : '');
+        }
+
+        function toggleCheck() {
+            return this.setChecked(!this.isChecked());
+        }
+
+        function setOnCheckedChangedHandler(fn) {
+            return this._setValueChangedHandler((s) => { fn(s == '1'); });
+        }
+        function clearOnCheckedChangedHandler() { return this._setValueChangedHandler(null); }
+    }
+}

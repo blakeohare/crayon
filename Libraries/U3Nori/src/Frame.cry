@@ -1,0 +1,276 @@
+﻿//import Dispatcher;
+import Math;
+import U3Direct;
+
+namespace U3Nori {
+
+    const Frame_OnResize = 'frame.onresize';
+
+    /*
+        Represents a window-like UI object.
+
+        nativeData[0] -> native handle to the window.
+    */
+    class Frame {
+
+        field _fullFlushElements = {};
+        field _partialFlushElements = {};
+        field _dirtyPanels = {};
+        field _newImageSources = [];
+        field _queuedCommandsWireData = [];
+
+        field _elementById = {};
+        field _isShown = false;
+        field _rootElementId = null;
+        field _rootElementChanged = false;
+        field _handlers = {};
+        field _loadQueue = [];
+
+        field _size = [400, 300];
+
+        field _internalBorder;
+
+        field _u3window;
+
+        constructor() {
+            this._u3window = new U3Window();
+            this._handlers['on-render-pass'] = [this._maybeFireOnLoadHandlers, null];
+            this._handlers['on-timeout-callback'] = [this._handleTimeout, (args) => { return [Core.parseInt(args)]; }];
+            this._internalBorder = this._setContentInternal(new Border());
+        }
+
+        function _setContentInternal(e) {
+            e._parent = this;
+            Panel._applyFrameToElementAndChildren(e, this);
+            this._rootElementId = e._id;
+            this._rootElementChanged = true;
+            return e;
+        }
+
+        function setContent(e) {
+            this._internalBorder.setChild(e);
+            return this;
+        }
+
+        static function parseTwoInt(a) {
+            a = a.split(',');
+            return [parseInt(a[0]), parseInt(a[1])];
+        }
+
+        function setResizeHandler(fn) {
+            this._handlers[Frame_OnResize] = [fn, Frame.parseTwoInt];
+            return this;
+        }
+
+        function clearResizeHandler() {
+            this._handlers[Frame_OnResize] = null;
+            return this;
+        }
+
+        /*
+            This is a list of serialized data for the frame.
+
+            The first item is the element ID for the root element of the frame.
+
+            The 2nd element is a count of elements that have been removed from the visible frame.
+            They may still exist but are simply invisible now and should be treated as removed by the renderer.
+            After the count is the actual list of elements which exists as a list of pairs (so the length of this next
+            part is double the number indicated in the count). The first item in each pair is the element removed and
+            the 2nd item in each pair is the panel ID from which it was removed. If the root element was removed, 0 is used
+            as the frame's ID.
+
+            The remaining data is a list of elements. No count is given as it's just the rest of the list.
+
+            Each element contains 4 basic properties: type, ID, children count, property count.
+            Following these properties are the children ID's, which are then followed by property data
+            which is double the length of the property count (because it's an alternating list of keys and values.
+        */
+        function _getRenderData() {
+
+            wireData = [];
+
+            if (this._fullFlushElements.length > 0) {
+                for (id : this._fullFlushElements.keys()) {
+                    e = this._fullFlushElements[id];
+                    e._flushVisualProperties(wireData, true);
+                }
+                this._fullFlushElements.clear();
+            }
+
+            if (this._partialFlushElements.length > 0) {
+                for (id : this._partialFlushElements.keys()) {
+                    e = this._partialFlushElements[id];
+                    e._flushVisualProperties(wireData, false);
+                }
+                this._partialFlushElements.clear();
+            }
+
+            if (this._dirtyPanels.length > 0) {
+                for (id : this._dirtyPanels.keys()) {
+                    panel = this._dirtyPanels[id];
+                    if (panel._canFlushIncrementally) {
+                        wireData.add('CI', id, panel._childRemovalCount, panel._childrenIdsAdded.length);
+                        wireData.concat(panel._childrenIdsAdded);
+                    } else {
+                        panel._canFlushIncrementally = true;
+                        wireData.add('CF', id, panel._children.length);
+                        wireData.concat(panel._childrenIds);
+                    }
+                    panel._childrenIdsAdded.clear();
+                    panel._childRemovalCount = 0;
+                }
+                this._dirtyPanels.clear();
+            }
+
+            if (this._queuedCommandsWireData.length > 0) {
+                wireData.concat(this._queuedCommandsWireData);
+                this._queuedCommandsWireData.clear();
+            }
+
+            if (this._rootElementChanged) {
+                wireData.add('RE', this._rootElementId);
+                this._rootElementChanged = false;
+            }
+
+            return wireData;
+        }
+
+        function _flushUpdatesIfNeeded() {
+            if (this._partialFlushElements.length != 0 ||
+                this._fullFlushElements.length != 0 ||
+                this._dirtyPanels.length != 0) {
+
+                this.flushUpdates();
+            }
+        }
+
+        function flushUpdates() {
+            renderData = this._getRenderData();
+
+            for (img : this._newImageSources) {
+                t = img._vmImageResourceData;
+                // $lib_nori_prepImageResource(this, t[0], t[1], t[2], t[3], t[4], t[5]);
+            }
+            this._newImageSources.clear();
+
+            this._u3window.sendMessage(renderData);
+        }
+
+        function dispatcherCbComplete() {
+            return this._flushUpdatesIfNeeded();
+        }
+
+        function setWidth(w) {
+            this._size[0] = Math.floor(w);
+            return this;
+        }
+
+        function setHeight(h) {
+            this._size[1] = Math.floor(h);
+            return this;
+        }
+
+        function show() {
+            if (!this._isShown) {
+                this._isShown = true;
+                renderData = this._getRenderData();
+                execId = Core.getCurrentExecutionToken();
+
+                this._u3window.show();
+                renderData = ['INIT', NoriUtil.textToBase64('Test Window'), this._size[0], this._size[1]] + renderData;
+                this._u3window.sendMessage(renderData);
+
+                while (true) {
+                    Core.sleep(2);
+                    print("WHAT TO DO ABOUT THE EVENT LOOP?");
+                }
+
+                // don't register the dispatcher framework until the native frame is ready to go, otherwise a dispatcher
+                // callback that attempts to change the UI tree will cause a crash.
+                //Dispatcher.registerDispatcherFramework(this);
+
+                // This will save the VM state for this context and potentially kick off a
+                // while loop that spins and watches for events. Only one instance of this loop
+                // exists and waits for all active frames to disappear before ending.
+                // If it is already running, then this execution context will simply end and yield
+                // back to the existing loop.
+
+                // TODO: re-think how to do this
+                // $lib_nori_runEventWatcher(this, execId, handleUiGeneratedEvent, postLoadHandler);
+            }
+            return this;
+        }
+
+        function close() {
+            if (this._isShown) {
+                this._isShown = false;
+
+                // Dispatcher.registerDispatcherFramework(null);
+
+                this._u3window.close();
+            }
+        }
+
+        static function escapeStringToHex(str) {
+            hex = '0123456789abcdef';
+            output = [];
+            for (c : str) {
+                code = Core.ord(c);
+                output.add(hex[(code >> 4) & 15], hex[code & 15]);
+            }
+            return output.join('');
+        }
+
+        function _maybeFireOnLoadHandlers() {
+            if (this._isShown) {
+                lq = this._loadQueue.clone();
+                this._loadQueue.clear();
+                for (e : lq) {
+                    cb = e._handlers.get(Element_OnLoad);
+                    if (cb != null) {
+                        cb[0]();
+                    }
+                }
+                this._flushUpdatesIfNeeded();
+            }
+        }
+
+        field _callbackIdAlloc = 0;
+        field _callbacksById = {};
+
+        function _setTimedCallback(deadline, cb) {
+            t = Math.max(0, Math.floor(1000 * (deadline - Core.currentTime()) + .5));
+            id = ++this._callbackIdAlloc;
+            this._callbacksById[id] = cb;
+
+            // TODO: U3Direct
+            this._u3window.sendMessage(['TO', id, t].join(' '));
+        }
+
+        function _handleTimeout(id) {
+            cb = this._callbacksById.get(id);
+            if (cb == null) throw new Exception(); // this shouldn't happen
+            this._callbacksById.remove(id);
+            cb();
+            this._flushUpdatesIfNeeded();
+        }
+    }
+
+    function postLoadHandler(frame) {
+        frame._maybeFireOnLoadHandlers();
+    }
+
+    function handleUiGeneratedEvent(frame, id, type, argString) {
+        elementOrFrame = id == -1 ? frame : frame._elementById.get(id);
+        if (elementOrFrame != null) {
+            handlerAndParser = elementOrFrame._handlers.get(type);
+            if (handlerAndParser != null) {
+                handler = handlerAndParser[0];
+                parser = handlerAndParser[1];
+                args = parser == null ? [] : parser(argString);
+                handler.invoke(args);
+                frame._flushUpdatesIfNeeded();
+            }
+        }
+    }
+}

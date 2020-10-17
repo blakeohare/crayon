@@ -20,5 +20,9 @@
             this._bridge.send(items);
             return this;
         }
+
+        function close() {
+            this._bridge.close();
+        }
     }
 }

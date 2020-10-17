@@ -64,5 +64,17 @@ namespace U3Direct {
                     throw new NotImplementedException();
             }
         }
+
+        function close() {
+            switch (this.type) {
+                case BridgeType.NAMED_PIPE:
+                    // this.pipe.close();
+                    // break;
+                    throw new NotImplementedException();
+
+                case BridgeType.JAVASCRIPT_HUB:
+                    throw new NotImplementedException();
+            }
+        }
     }
 }

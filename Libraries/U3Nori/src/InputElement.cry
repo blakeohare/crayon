@@ -1,0 +1,56 @@
+﻿namespace U3Nori {
+
+    const InputElement_Value = 'input.value';
+    const InputElement_OnValueChanged = 'input.changed';
+
+    class InputElement : Element {
+
+        field _nori_input_element_value = '';
+        field _nori_input_change_callback = null;
+
+        constructor(type) : base(type) {
+            this._setEventHandler(
+                InputElement_OnValueChanged,
+                this._nori_onValueChanged,
+                InputElement.noopPassthrough);
+        }
+
+        function _getValue() {
+            return this._nori_input_element_value;
+        }
+
+        function _setValue(value) {
+            value = (value ?? '') + '';
+            if (this._nori_input_element_value != value) {
+                this._nori_input_element_value = value;
+                return this._setStringProperty(InputElement_Value, value); // this is the means by which it gets propagated downstream to the renderer.
+            }
+            return this;
+        }
+
+        static function noopPassthrough(s) { return [s]; }
+
+        function _setValueChangedHandler(fn) {
+            this._nori_input_change_callback = fn;
+            return this;
+        }
+
+        function _nori_onValueChanged(value) {
+            // incoming value will never be a null or non-string
+
+            // just for safe measure, clear out any pending changes since this supercedes those.
+            this._properties[InputElement_Value] = value;
+            if (this._newProperties.get(InputElement_Value) != null) {
+                this._newProperties.remove(InputElement_Value);
+            }
+
+            // If the value is different than the current value, fire the onchange callback, if one is set.
+            if (this._nori_input_element_value != value) {
+                this._setValue(value);
+                if (this._nori_input_change_callback != null) {
+                    this._nori_input_change_callback(value);
+                }
+            }
+        }
+    }
+}

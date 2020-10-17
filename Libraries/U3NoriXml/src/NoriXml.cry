@@ -1,0 +1,80 @@
+﻿import U3Nori;
+import Xml;
+
+namespace U3NoriXml {
+
+    static class NXUtil {
+
+        static field classesByName = {};
+
+        static constructor() {
+
+            doNotUse = {};
+            // TODO: use abstract classes.
+            for (cls : [
+                U3Nori.Element.class,
+                U3Nori.Panel.class,
+                U3Nori.AbstractTextBox.class,
+                U3Nori.InputElement.class,
+            ]) {
+                doNotUse[cls.getName().split('.')[-1]] = true;
+            }
+            for (cls : Core.Reflection.getClasses(U3Nori.Element.class)) {
+                name = cls.getName().split('.')[-1];
+                if (doNotUse.get(name) != true) {
+                    NXUtil.classesByName[name] = cls;
+                }
+            }
+        }
+
+        static function xmlToElement(element) {
+
+            if (element.type != NodeType.ELEMENT) {
+                throw new InvalidArgumentException("Cannot convert text into element: " + element.value);
+            }
+
+            attr = element.attributes;
+            cls = NXUtil.classesByName.get(element.name);
+            if (cls == null) throw new InvalidArgumentException("Unknown element type: " + element.name);
+            e = cls.createInstance();
+
+            for (k : attr.keys()) {
+                v = attr[k];
+                e.setAttributeWithString(k, attr[k]);
+            }
+
+            if (e is U3Nori.Panel) {
+                for (child : element.children) {
+                    if (child.type == NodeType.TEXT) {
+                        if (child.value.trim().length > 0) {
+                            throw new InvalidArgumentException(e.getName() + " does not support text content.");
+                        }
+                    } else {
+                        e.addChild(NXUtil.xmlToElement(child));
+                    }
+                }
+            } else {
+                children = element.children;
+                if (children.length > 0) {
+                    child = element.children[0];
+
+                    if (child.type == NodeType.TEXT) {
+                        e.setAttributeWithString('<content>', child.value.trim());
+                        children = children[1:];
+                    }
+
+                    if (children.length > 0) {
+                        throw new InvalidArgumentException("Unexpected element inside " + e.getName() + " element: " + element.children[1].name);
+                    }
+                }
+            }
+
+            return e;
+        }
+    }
+
+    function build(xml) {
+        tree = Xml.parse(xml);
+        return NXUtil.xmlToElement(tree);
+    }
+}

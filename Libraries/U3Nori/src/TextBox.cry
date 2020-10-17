@@ -1,0 +1,29 @@
+﻿namespace U3Nori {
+
+    class AbstractTextBox : InputElement {
+
+        field _isPassword;
+
+        constructor(type) : base(type) {
+            this._isPassword = type == 'PasswordBox';
+        }
+
+        function getText() {
+            return this._getValue();
+        }
+
+        function setText(text) {
+            return this._setValue(text);
+        }
+
+        function setOnTextChangedHandler(fn) { return this._setValueChangedHandler(fn); }
+        function clearOnTextChangedHandler() { return this._setValueChangedHandler(null); }
+    }
+
+    class TextBox : AbstractTextBox {
+        constructor() : base('TextBox') { }
+    }
+    class PasswordBox : AbstractTextBox {
+        constructor() : base('PasswordBox') { }
+    }
+}
