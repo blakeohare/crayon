@@ -18,15 +18,36 @@
             return (System.IO.StreamWriter)((object[])pipeWrapper)[2];
         }
 
+        private static string NamedPipeConvertErrorMessage(string dotNetError)
+        {
+            if (dotNetError.StartsWith("Pipe is broken")) return "Pipe is broken.";
+
+            return "An unknown error has occurred.";
+        }
+
         public static string NamedPipeWriteLine(object pipeWrapper, string value)
         {
-            GetStreamWriter(pipeWrapper).WriteLine(value);
+            try
+            {
+                GetStreamWriter(pipeWrapper).WriteLine(value);
+            }
+            catch (System.IO.IOException ioe)
+            {
+                return NamedPipeConvertErrorMessage(ioe.Message);
+            }
             return null;
         }
 
         public static string NamedPipeFlush(object pipeWrapper)
         {
-            GetStreamWriter(pipeWrapper).Flush();
+            try
+            {
+                GetStreamWriter(pipeWrapper).Flush();
+            }
+            catch (System.IO.IOException ioe)
+            {
+                return NamedPipeConvertErrorMessage(ioe.Message);
+            }
             return null;
         }
     }
