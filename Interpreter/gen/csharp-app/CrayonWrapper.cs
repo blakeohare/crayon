@@ -5451,6 +5451,34 @@ namespace Interpreter.Vm
                                     output = buildString(globals, string1);
                                 }
                                 break;
+                            case 48:
+                                // randomFloat;
+                                output = new Value(4, PST_Random.NextDouble());
+                                break;
+                            case 49:
+                                // randomInt;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                if (((arg1.type != 3) || (arg2.type != 3)))
+                                {
+                                    output = vm.globalNull;
+                                }
+                                else
+                                {
+                                    int1 = (int)arg1.internalValue;
+                                    int2 = (int)arg2.internalValue;
+                                    if ((int1 >= int2))
+                                    {
+                                        output = vm.globalNull;
+                                    }
+                                    else
+                                    {
+                                        int3 = (int)((PST_Random.NextDouble() * (int2 - int1)));
+                                        output = buildInteger(vm.globals, (int1 + int3));
+                                    }
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {

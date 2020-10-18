@@ -47,6 +47,8 @@
     case 45: Core.EmitComment("ipcNamedPipeCreate"); @import("corefuncs/ipcNamedPipeCreate.pst"); break;
     case 46: Core.EmitComment("ipcNamedPipeSend"); @import("corefuncs/ipcNamedPipeSend.pst"); break;
     case 47: Core.EmitComment("ipcNamedPipeFlush"); @import("corefuncs/ipcNamedPipeFlush.pst"); break;
+    case 48: Core.EmitComment("randomFloat"); @import("corefuncs/randomFloat.pst"); break;
+    case 49: Core.EmitComment("randomInt"); @import("corefuncs/randomInt.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

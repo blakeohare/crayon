@@ -4173,6 +4173,28 @@ var interpretImpl = function(vm, executionContextId) {
 							output = buildString(globals, string1);
 						}
 						break;
+					case 48:
+						// randomFloat;
+						output = [4, Math.random()];
+						break;
+					case 49:
+						// randomInt;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						if (((arg1[0] != 3) || (arg2[0] != 3))) {
+							output = vm[14];
+						} else {
+							int1 = arg1[1];
+							int2 = arg2[1];
+							if ((int1 >= int2)) {
+								output = vm[14];
+							} else {
+								int3 = Math.floor(((Math.random() * (int2 - int1))));
+								output = buildInteger(vm[13], (int1 + int3));
+							}
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

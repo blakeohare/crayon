@@ -1,9 +1,0 @@
-﻿/*
-    Returns a random boolean.
-*/
-VM.Value lib_random_random_bool(VM.VmContext vm, Array<VM.Value> args) {
-    if (Core.RandomFloat() < 0.5) {
-        return vm.globalTrue;
-    }
-    return vm.globalFalse;
-}

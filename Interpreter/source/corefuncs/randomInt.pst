@@ -1,0 +1,16 @@
+﻿@import("inline/2_arg.pst");
+
+if (arg1.type != Types.INTEGER || arg2.type != Types.INTEGER) {
+    output = vm.globalNull;
+} else {
+
+    int1 = (int) arg1.internalValue;
+    int2 = (int) arg2.internalValue;
+
+    if (int1 >= int2) {
+        output = vm.globalNull;
+    } else {
+        int3 = Core.Int(Core.ForceParens((Core.RandomFloat() * (int2 - int1))));
+        output = buildInteger(vm.globals, int1 + int3);
+    }
+}
