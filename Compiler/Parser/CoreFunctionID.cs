@@ -55,6 +55,7 @@ namespace Parser
         RANDOM_INT = 49,
         RESOURCE_GET_MANIFEST = 50,
         RESOURCE_GET_TEXT = 51,
+        ENVIRONMENT_GET_VARIABLE = 52,
     }
 
     internal static class CoreFunctionIDHelper
@@ -114,6 +115,7 @@ namespace Parser
                 case "randomInt": return (int)CoreFunctionID.RANDOM_INT;
                 case "resourceGetManifest": return (int)CoreFunctionID.RESOURCE_GET_MANIFEST;
                 case "resourceGetText": return (int)CoreFunctionID.RESOURCE_GET_TEXT;
+                case "environmentGetVariable": return (int)CoreFunctionID.ENVIRONMENT_GET_VARIABLE;
                 default: return -1;
             }
         }

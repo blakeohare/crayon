@@ -1,0 +1,6 @@
+﻿@import("inline/1_arg.pst");
+
+string1 = Extension.CoreFunc_EnvironmentGetVariable((string)arg1.internalValue);
+if (string1 != null) {
+    output = buildString(globals, string1);
+}

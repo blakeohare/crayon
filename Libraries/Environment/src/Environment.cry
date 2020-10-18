@@ -1,7 +1,7 @@
 ﻿namespace Environment {
 
     function getEnvironmentVariable(name) {
-        return $lib_environment_get(name.upper());
+        return $$$('environmentGetVariable', name.upper());
     }
 
     // Replace instances of environment variables that appear in a string in %VAR_NAME% format.

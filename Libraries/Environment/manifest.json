@@ -2,9 +2,5 @@
     "name": "Environment",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/environment",
-    "description": "Library for accessing environment variables.",
-
-    "cni": [
-        { "name": "lib_environment_get", "argc": 1 }
-    ]
+    "description": "Library for accessing environment variables."
 }

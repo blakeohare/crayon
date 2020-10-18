@@ -5488,6 +5488,15 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[--valueStackSize];
                                 output = buildString(globals, Interpreter.ResourceReader.ReadTextResource((string)arg1.internalValue));
                                 break;
+                            case 52:
+                                // environmentGetVariable;
+                                arg1 = valueStack[--valueStackSize];
+                                string1 = System.Environment.GetEnvironmentVariable((string)arg1.internalValue);
+                                if ((string1 != null))
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {

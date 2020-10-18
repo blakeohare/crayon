@@ -1,3 +1,0 @@
-SOURCE: src/main.pst
-
-EXT-TYPE: string _lib_environment_get(string name);

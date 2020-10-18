@@ -1,4 +1,5 @@
 
+EXT: CoreFunc_EnvironmentGetVariable: null
 EXT: CoreFunc_NamedPipeIsSupported: false
 EXT: CoreFunc_NamedPipeCreate: (() => {})()
 EXT: CoreFunc_NamedPipeSend: (() => {})()

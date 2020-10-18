@@ -51,6 +51,7 @@
     case 49: Core.EmitComment("randomInt"); @import("corefuncs/randomInt.pst"); break;
     case 50: Core.EmitComment("resourceGetManifest"); @import("corefuncs/resourceGetManifest.pst"); break;
     case 51: Core.EmitComment("resourceGetText"); @import("corefuncs/resourceGetText.pst"); break;
+    case 52: Core.EmitComment("environmentGetVariable"); @import("corefuncs/environmentGetVariable.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

@@ -1,4 +1,5 @@
 
+EXT: CoreFunc_EnvironmentGetVariable: System.Environment.GetEnvironmentVariable([ARG:1])
 EXT: CoreFunc_NamedPipeIsSupported: true
 EXT: CoreFunc_NamedPipeCreate: CoreFunctions.NamedPipeCreate([ARG:1])
 EXT: CoreFunc_NamedPipeSend: CoreFunctions.NamedPipeWriteLine([ARG:1], [ARG:2])
