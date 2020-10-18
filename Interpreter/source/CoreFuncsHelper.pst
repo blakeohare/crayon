@@ -1,0 +1,25 @@
+﻿int SRandomQueuePopulate(VmGlobals globals, int seed, ListImpl queue, int size) {
+
+    int sign = 1;
+    int num = 0;
+
+    while (size > 0) {
+        size -= 1;
+
+        if ((seed & 2) == 0) sign = -1;
+        else sign = 1;
+
+        num = (seed >> 8) & 255;
+        seed = (seed * 20077 + 12345) & 65535;
+        num = num * 256 + ((seed >> 8) & 255);
+        seed = Core.ForceParens(seed * 20077 + 12345) & 65535;
+        num = num * 256 + ((seed >> 8) & 255);
+        seed = Core.ForceParens(seed * 20077 + 12345) & 65535;
+        num = num * 256 + ((seed >> 8) & 255);
+        seed = Core.ForceParens(seed * 20077 + 12345) & 65535;
+
+        addToList(queue, buildInteger(globals, sign * num));
+    }
+
+    return seed;
+}

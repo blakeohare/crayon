@@ -4212,6 +4212,14 @@ var interpretImpl = function(vm, executionContextId) {
 							output = buildString(globals, string1);
 						}
 						break;
+					case 53:
+						// srandomPopulateQueue;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = buildInteger(globals, SRandomQueuePopulate(globals, arg1[1], arg2[1], arg3[1]));
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -6326,6 +6334,29 @@ var sortLists = function(keyList, parallelList, intOutParam) {
 		i += 1;
 	}
 	return 0;
+};
+
+var SRandomQueuePopulate = function(globals, seed, queue, size) {
+	var sign = 1;
+	var num = 0;
+	while ((size > 0)) {
+		size -= 1;
+		if (((seed & 2) == 0)) {
+			sign = -1;
+		} else {
+			sign = 1;
+		}
+		num = ((seed >> 8) & 255);
+		seed = (((seed * 20077) + 12345) & 65535);
+		num = ((num * 256) + ((seed >> 8) & 255));
+		seed = ((((seed * 20077) + 12345)) & 65535);
+		num = ((num * 256) + ((seed >> 8) & 255));
+		seed = ((((seed * 20077) + 12345)) & 65535);
+		num = ((num * 256) + ((seed >> 8) & 255));
+		seed = ((((seed * 20077) + 12345)) & 65535);
+		addToList(queue, buildInteger(globals, (sign * num)));
+	}
+	return seed;
 };
 
 var stackItemIsLibrary = function(stackInfo) {

@@ -2,11 +2,5 @@
     "name": "SRandom",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/srandom",
-    "description": "Library for generating seedable random numbers that generates consistent values for the same seed across different platforms.",
-
-    "cni": [
-        { "name": "lib_srandom_getBoolean", "argc": 1 },
-        { "name": "lib_srandom_getInteger", "argc": 1 },
-        { "name": "lib_srandom_getFloat", "argc": 1 }
-    ]
+    "description": "Library for generating seedable random numbers that generates consistent values for the same seed across different platforms."
 }

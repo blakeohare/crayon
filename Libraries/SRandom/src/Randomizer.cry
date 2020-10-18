@@ -1,44 +1,67 @@
 ﻿namespace SRandom {
+
+    const SIGNED_INT32_MAX = 0x7fffffff;
+    const SIGNED_INT32_MAXF = 1.0 * SIGNED_INT32_MAX;
+
     class Randomizer {
-        field _activeSeed;
+        field _seed;
+        field _queue = [];
 
         constructor(seed) {
             seed = 'salted-seed:' + seed;
             hash = 2;
             for (c : seed) {
-                hash = (hash * 37 + Core.ord(c)) & 0x7fffffff;
+                hash = (hash * 37 + Core.ord(c)) & SIGNED_INT32_MAX;
             }
-            this._activeSeed = [hash];
+            this._seed = hash;
         }
 
         function getInteger(min = null, max = null) {
-            if (min == null) return $lib_srandom_getInteger(this._activeSeed);
-            if (max == null) return $lib_srandom_getInteger(this._activeSeed) % min;
-            return ($lib_srandom_getInteger(this._activeSeed) % (max - min)) + min;
+            if (this._queue.length == 0) this._populateQueue(50);
+
+            if (max == null) {
+                if (min == null) {
+                    return this._queue.pop();
+                }
+                return this._queue.pop() % min;
+            }
+
+            diff = max - min;
+            return (this._queue.pop() % diff) + min;
         }
 
         function getBoolean() {
-            return $lib_srandom_getBoolean(this._activeSeed);
+            if (this._queue.length == 0) this._populateQueue(50);
+            return this._queue.pop() & 1 == 1;
         }
 
         function getFloat() {
-            return $lib_srandom_getFloat(this._activeSeed);
+            if (this._queue.length == 0) this._populateQueue(50);
+            return (this._queue.pop() & SIGNED_INT32_MAX) / SIGNED_INT32_MAXF;
         }
 
         function shuffle(list) {
             length = list.length;
+
+            if (this._queue.length < length) this._populateQueue(length - this._queue.length + 50);
+
             for (i = 0; i < length; ++i) {
-                index = $lib_srandom_getInteger(this._activeSeed) % length;
-                if (i != index) {
-                    t = list[i];
-                    list[i] = list[index];
-                    list[index] = t;
-                }
+                j = this._queue.pop() % length;
+                t = list[i];
+                list[i] = list[j];
+                list[j] = t;
             }
         }
 
         function choice(list) {
-            return list[$lib_srandom_getInteger(this._activeSeed) % list.length];
+            if (this._queue.length == 0) this._populateQueue(50);
+            return list[this._queue.pop() % list.length];
+        }
+
+        function _populateQueue(n) {
+            this._queue.reverse();
+            this._seed = $$$('srandomPopulateQueue', this._seed, this._queue, n);
+            this._queue.reverse();
         }
     }
 }

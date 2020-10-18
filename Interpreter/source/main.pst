@@ -3,6 +3,7 @@
 
 @import("BinaryOpsUtil.pst");
 @import("ByteCodeLoader.pst");
+@import("CoreFuncsHelper.pst");
 @import("Debugger.pst");
 @import("Ipc.pst");
 @import("Interpreter.pst");

@@ -56,6 +56,7 @@ namespace Parser
         RESOURCE_GET_MANIFEST = 50,
         RESOURCE_GET_TEXT = 51,
         ENVIRONMENT_GET_VARIABLE = 52,
+        SRANDOM_POPULATE_QUEUE = 53,
     }
 
     internal static class CoreFunctionIDHelper
@@ -116,6 +117,7 @@ namespace Parser
                 case "resourceGetManifest": return (int)CoreFunctionID.RESOURCE_GET_MANIFEST;
                 case "resourceGetText": return (int)CoreFunctionID.RESOURCE_GET_TEXT;
                 case "environmentGetVariable": return (int)CoreFunctionID.ENVIRONMENT_GET_VARIABLE;
+                case "srandomPopulateQueue": return (int)CoreFunctionID.SRANDOM_POPULATE_QUEUE;
                 default: return -1;
             }
         }

@@ -5497,6 +5497,14 @@ namespace Interpreter.Vm
                                     output = buildString(globals, string1);
                                 }
                                 break;
+                            case 53:
+                                // srandomPopulateQueue;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = buildInteger(globals, SRandomQueuePopulate(globals, (int)arg1.internalValue, (ListImpl)arg2.internalValue, (int)arg3.internalValue));
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -8219,6 +8227,34 @@ namespace Interpreter.Vm
                 i += 1;
             }
             return 0;
+        }
+
+        public static int SRandomQueuePopulate(VmGlobals globals, int seed, ListImpl queue, int size)
+        {
+            int sign = 1;
+            int num = 0;
+            while ((size > 0))
+            {
+                size -= 1;
+                if (((seed & 2) == 0))
+                {
+                    sign = -1;
+                }
+                else
+                {
+                    sign = 1;
+                }
+                num = ((seed >> 8) & 255);
+                seed = (((seed * 20077) + 12345) & 65535);
+                num = ((num * 256) + ((seed >> 8) & 255));
+                seed = ((((seed * 20077) + 12345)) & 65535);
+                num = ((num * 256) + ((seed >> 8) & 255));
+                seed = ((((seed * 20077) + 12345)) & 65535);
+                num = ((num * 256) + ((seed >> 8) & 255));
+                seed = ((((seed * 20077) + 12345)) & 65535);
+                addToList(queue, buildInteger(globals, (sign * num)));
+            }
+            return seed;
         }
 
         public static bool stackItemIsLibrary(string stackInfo)
