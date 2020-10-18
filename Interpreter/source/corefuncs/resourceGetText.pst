@@ -1,0 +1,2 @@
+﻿@import("inline/1_arg.pst");
+output = buildString(globals, Extension.CoreFunc_ResourceGetText((string) arg1.internalValue));

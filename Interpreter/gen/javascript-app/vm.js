@@ -4195,6 +4195,15 @@ var interpretImpl = function(vm, executionContextId) {
 							}
 						}
 						break;
+					case 50:
+						// resourceGetManifest;
+						output = buildList(vm[9][2]);
+						break;
+					case 51:
+						// resourceGetText;
+						arg1 = valueStack[--valueStackSize];
+						output = buildString(globals, C$common$readResourceText(arg1[1]));
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

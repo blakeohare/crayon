@@ -1,7 +1,0 @@
-﻿/*
-    arg[0]: Internal file path relative to where text files are stored. Not a user-defined path.
-*/
-VM.Value lib_resources_readText(VM.VmContext vm, Array<VM.Value> args) {
-    string string1 = Extension._lib_resources_read_text((string) args[0].internalValue);
-    return VM.buildString(vm.globals, string1);
-}

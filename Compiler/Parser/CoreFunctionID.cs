@@ -53,6 +53,8 @@ namespace Parser
         IPC_NAMED_PIPE_FLUSH = 47,
         RANDOM_FLOAT = 48,
         RANDOM_INT = 49,
+        RESOURCE_GET_MANIFEST = 50,
+        RESOURCE_GET_TEXT = 51,
     }
 
     internal static class CoreFunctionIDHelper
@@ -110,6 +112,8 @@ namespace Parser
                 case "ipcNamedPipeFlush": return (int)CoreFunctionID.IPC_NAMED_PIPE_FLUSH;
                 case "randomFloat": return (int)CoreFunctionID.RANDOM_FLOAT;
                 case "randomInt": return (int)CoreFunctionID.RANDOM_INT;
+                case "resourceGetManifest": return (int)CoreFunctionID.RESOURCE_GET_MANIFEST;
+                case "resourceGetText": return (int)CoreFunctionID.RESOURCE_GET_TEXT;
                 default: return -1;
             }
         }

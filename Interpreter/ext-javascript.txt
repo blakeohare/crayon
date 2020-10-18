@@ -3,3 +3,4 @@ EXT: CoreFunc_NamedPipeIsSupported: false
 EXT: CoreFunc_NamedPipeCreate: (() => {})()
 EXT: CoreFunc_NamedPipeSend: (() => {})()
 EXT: CoreFunc_NamedPipeFlush: (() => {})()
+EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:1])

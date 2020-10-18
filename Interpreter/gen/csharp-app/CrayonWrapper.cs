@@ -5479,6 +5479,15 @@ namespace Interpreter.Vm
                                     }
                                 }
                                 break;
+                            case 50:
+                                // resourceGetManifest;
+                                output = buildList(vm.resourceDatabase.dataList);
+                                break;
+                            case 51:
+                                // resourceGetText;
+                                arg1 = valueStack[--valueStackSize];
+                                output = buildString(globals, Interpreter.ResourceReader.ReadTextResource((string)arg1.internalValue));
+                                break;
                         }
                         if ((row[1] == 1))
                         {

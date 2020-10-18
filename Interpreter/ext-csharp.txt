@@ -3,3 +3,4 @@ EXT: CoreFunc_NamedPipeIsSupported: true
 EXT: CoreFunc_NamedPipeCreate: CoreFunctions.NamedPipeCreate([ARG:1])
 EXT: CoreFunc_NamedPipeSend: CoreFunctions.NamedPipeWriteLine([ARG:1], [ARG:2])
 EXT: CoreFunc_NamedPipeFlush: CoreFunctions.NamedPipeFlush([ARG:1])
+EXT: CoreFunc_ResourceGetText: Interpreter.ResourceReader.ReadTextResource([ARG:1])
