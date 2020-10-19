@@ -353,26 +353,8 @@ namespace Interpreter.Libraries.Game
                 }
             }
 
-            InterpreterResult result = EventLoop.RunInterpreter(this.executionContextId);
-            int vmStatus = result.status;
-
-            if (vmStatus == 1 || // Finished
-                vmStatus == 3) // Error
-            {
-                // Because sometimes once isn't enough.
-                this.Close();
-                this.Exit();
-                System.Environment.Exit(0);
-                return;
-            }
-
-            if (vmStatus == 7)
-            {
-                isHaltedByDebugger = true;
-                string breakpointId = result.loadAssemblyInformation;
-                Debugger.INSTANCE.BroadcastMessage(new string[] { "breakpoint-hit", breakpointId });
-                return;
-            }
+            EventLoop.ResumeExecution(this.executionContextId);
+            EventLoop.RunEventLoopThroughCurrentItems();
         }
 
         // defaults are valid and empty

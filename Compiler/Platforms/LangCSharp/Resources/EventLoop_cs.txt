@@ -1,10 +1,91 @@
-﻿using System;
-using Interpreter.Structs;
+﻿using Interpreter.Structs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Interpreter.Vm
 {
     public static class EventLoop
     {
+        private class EventLoopInvocation
+        {
+            public bool StartFromBeginning { get; set; }
+            public double Timestamp { get; set; }
+            public Value FunctionPointer { get; set; }
+            public Value[] FunctionPointerArgs { get; set; }
+            public int ExecutionContextId { get; set; }
+        }
+
+        private static List<EventLoopInvocation> queue = new List<EventLoopInvocation>();
+
+        public static void ResumeExecution(int executionContextId)
+        {
+            AddItemToQueue(new EventLoopInvocation()
+            {
+                ExecutionContextId = executionContextId,
+            });
+        }
+
+        public static void ExecuteFunctionPointer(Value fp, IList<Value> args)
+        {
+            AddItemToQueue(new EventLoopInvocation()
+            {
+                FunctionPointer = fp,
+                FunctionPointerArgs = args.ToArray(),
+            });
+        }
+
+        public static void ResumeExecutionAfterDelay(int executionContextId, double delay)
+        {
+            if (delay <= 0) ResumeExecution(executionContextId);
+            else
+            {
+                AddItemToQueue(new EventLoopInvocation()
+                {
+                    ExecutionContextId = executionContextId,
+                    Timestamp = TranslationHelper.GetCurrentTime() + delay,
+                });
+            }
+        }
+
+        private static void AddItemToQueue(EventLoopInvocation invocation)
+        {
+            if (invocation.Timestamp == 0)
+            {
+                invocation.Timestamp = TranslationHelper.GetCurrentTime() - 0.0000001;
+            }
+            lock (queue)
+            {
+                queue.Add(invocation);
+            }
+        }
+
+        private static EventLoopInvocation PopItemFromQueue()
+        {
+            double currentTime = TranslationHelper.GetCurrentTime();
+            EventLoopInvocation lowest = null;
+            int lowestIndex = -1;
+            lock (queue)
+            {
+                for (int i = 0; i < queue.Count; ++i)
+                {
+                    EventLoopInvocation item = queue[i];
+                    if (item.Timestamp < currentTime && (lowest == null || item.Timestamp < lowest.Timestamp))
+                    {
+                        lowestIndex = i;
+                        lowest = item;
+                    }
+                }
+
+                if (lowest != null)
+                {
+                    queue.RemoveAt(lowestIndex);
+                }
+            }
+
+            return lowest;
+        }
+
         private static int startingThreadId = 0;
         private static int GetThreadId() { return System.Threading.Thread.CurrentThread.ManagedThreadId; }
 
@@ -16,13 +97,106 @@ namespace Interpreter.Vm
             }
         }
 
-        public static InterpreterResult StartInterpreter()
+        public static void StartInterpreter()
         {
             if (startingThreadId != 0) throw new Exception();
             startingThreadId = GetThreadId();
+            AddItemToQueue(new EventLoopInvocation()
+            {
+                StartFromBeginning = true,
+            });
+            RunEventLoop();
+        }
+
+        private static void RunEventLoopIteration(EventLoopInvocation invocation)
+        {
+            VmContext vm = TranslationHelper.ProgramData;
+            EnsureRunningOnStartingThread();
 
             Debugger.INSTANCE.FlushMessageQueue();
-            return HandleInterpreterStatus(CrayonWrapper.startVm(TranslationHelper.ProgramData));
+
+            if (invocation == null) return;
+
+            InterpreterResult result;
+            if (invocation.StartFromBeginning)
+            {
+                result = CrayonWrapper.startVm(vm);
+            }
+            else if (invocation.FunctionPointer != null)
+            {
+                result = CrayonWrapper.runInterpreterWithFunctionPointer(vm, invocation.FunctionPointer, invocation.FunctionPointerArgs);
+            }
+            else
+            {
+                result = CrayonWrapper.runInterpreter(vm, invocation.ExecutionContextId);
+            }
+
+            switch (result.status)
+            {
+                case 1: // execution context is FINISHED
+                    if (result.isRootContext) Environment.Exit(0);
+                    break;
+
+                case 2: // SUSPEND
+                    // do nothing.
+                    break;
+
+                case 3: // FATAL ERROR
+                    if (result.isRootContext) Environment.Exit(1);
+                    break;
+
+                case 5: // RE-INVOKE, possibly with a delay
+                    ResumeExecutionAfterDelay(result.executionContextId, result.reinvokeDelay);
+                    break;
+
+                case 6: // LOAD_ASSEMBLY
+                    string[] parts = result.loadAssemblyInformation.Split(',');
+                    string name = parts[0];
+                    string version = parts[1];
+                    string startupFunction = parts[2];
+                    TranslationHelper.LibraryRegistry.LoadAssembly(name, version, startupFunction);
+                    ResumeExecution(result.executionContextId);
+                    break;
+
+                case 7: // BREAKPOINT
+                    // do nothing
+                    break;
+            }
+        }
+
+        public static void RunEventLoop()
+        {
+            while (true)
+            {
+                EventLoopInvocation invocation = PopItemFromQueue();
+                if (invocation == null) break;
+
+                RunEventLoopIteration(invocation);
+
+                System.Threading.Thread.Sleep(1);
+            }
+        }
+
+        public static void RunEventLoopThroughCurrentItems()
+        {
+            bool foundAny = true;
+            while (foundAny)
+            {
+                List<EventLoopInvocation> items = new List<EventLoopInvocation>();
+                while (true)
+                {
+                    EventLoopInvocation invocation = PopItemFromQueue();
+                    if (invocation == null) break;
+                    else items.Add(invocation);
+                }
+
+                foundAny = items.Count > 0;
+
+                foreach (EventLoopInvocation item in items)
+                {
+                    RunEventLoopIteration(item);
+                }
+            }
         }
 
         public static InterpreterResult RunInterpreter(int executionContextId)
@@ -93,6 +267,5 @@ namespace Interpreter.Vm
                 }
             }
         }
-
     }
 }

@@ -38,5 +38,10 @@ namespace Interpreter.Vm
         {
             functionPointerResolvers.Add(resolver);
         }
+
+        public static double GetCurrentTime()
+        {
+            return DateTime.Now.Ticks / 10000000.0;
+        }
     }
 }
