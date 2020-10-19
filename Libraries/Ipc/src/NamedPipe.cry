@@ -1,19 +1,23 @@
 ﻿namespace Ipc {
-    class NamedPipe {
+    class NamedPipeClient {
 
         constructor(name) {
-            if (!$$$('ipcNamedPipeIsSupported')) {
-                throw new InvalidOperationException("Named pipes are not supported on this platform.");
-            }
-            NamedPipe.throwIfErr($$$('ipcNamedPipeCreate', this, name));
+            NamedPipeClient.ensureSupported();
+            NamedPipeClient.throwIfErr($$$('ipcNamedPipeCreate', this, name));
         }
 
         function writeLine(s) {
-            NamedPipe.throwIfErr($$$('ipcNamedPipeSend', this, (s ?? '') + ''));
+            NamedPipeClient.throwIfErr($$$('ipcNamedPipeSend', this, (s ?? '') + ''));
         }
 
         function flush() {
-            NamedPipe.throwIfErr($$$('ipcNamedPipeFlush', this));
+            NamedPipeClient.throwIfErr($$$('ipcNamedPipeFlush', this));
+        }
+
+        static function ensureSupported() {
+            if (!NamedPipeClient.isSupported()) {
+                throw new InvalidOperationException("Named pipes are not supported on this platform.");
+            }
         }
 
         static function isSupported() {
@@ -22,6 +26,47 @@
 
         static function throwIfErr(s) {
             if (s != null) throw new Exception(s);
+        }
+    }
+
+    class NamedPipeServer {
+
+        field _name;
+        field _onData = data => {};
+        field _onStart = () => {};
+        field _onClose = () => {};
+
+        constructor(name) {
+            this._name = name;
+            NamedPipeClient.ensureSupported();
+        }
+
+        function setListener(cb) {
+            this._onData = cb;
+            return this;
+        }
+
+        function setOnStart(cb) {
+            this._onStart = cb;
+            return this;
+        }
+
+        function setOnClosed(cb) {
+            this._onClose = cb;
+            return this;
+        }
+
+        function start() {
+            NamedPipeClient.throwIfErr($$$('ipcNamedPipeServerCreate',
+                this,
+                this._name,
+                () => { this._onStart(); },
+                data => { this._onData(data); },
+                () => { this._onClose(); }));
+        }
+
+        function close() {
+            NamedPipeClient.throwIfErr($$$('ipcNamedPipeServerClose', this));
         }
     }
 }

@@ -1,0 +1,7 @@
+﻿@import("inline/1_arg.pst");
+string1 = IpcNamedPipeServer_close(arg1);
+if (string1 == null) {
+    output = globals.valueNull;
+} else {
+    output = buildString(globals, string1);
+}

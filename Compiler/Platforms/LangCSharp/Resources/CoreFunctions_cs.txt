@@ -1,4 +1,8 @@
-﻿namespace Interpreter.Vm
+﻿using Interpreter.Structs;
+using System;
+using System.Windows.Forms;
+
+namespace Interpreter.Vm
 {
     internal static class CoreFunctions
     {
@@ -48,6 +52,28 @@
             {
                 return NamedPipeConvertErrorMessage(ioe.Message);
             }
+            return null;
+        }
+
+        public static object NamedPipeServerCreate(string name, Value startFn, Value onDataFn, Value closeFn)
+        {
+            System.IO.Pipes.NamedPipeServerStream namedPipe = new System.IO.Pipes.NamedPipeServerStream(name, System.IO.Pipes.PipeDirection.In);
+            System.IO.StreamReader reader = new System.IO.StreamReader(namedPipe);
+            object[] output = new object[] { namedPipe, reader, startFn, onDataFn, closeFn };
+
+            // TODO: do this in another thread and then fire the startFn
+            namedPipe.WaitForConnection();
+
+            // TODO: EventLoop work to invoke onDataFn on ReadLine.
+
+            return output;
+        }
+
+        public static string NamedPipeServerClose(object pipeRaw)
+        {
+            object[] pipe = (object[])pipeRaw;
+            System.IO.Pipes.NamedPipeServerStream namedPipe = (System.IO.Pipes.NamedPipeServerStream)pipe[0];
+            namedPipe.Close();
             return null;
         }
     }

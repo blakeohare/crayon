@@ -4,6 +4,8 @@ EXT: CoreFunc_NamedPipeIsSupported: false
 EXT: CoreFunc_NamedPipeCreate: (() => {})()
 EXT: CoreFunc_NamedPipeSend: (() => {})()
 EXT: CoreFunc_NamedPipeFlush: (() => {})()
+EXT: CoreFunc_NamedPipeServerCreate: (() => {})()
+EXT: CoreFunc_NamedPipeServerClose: (() => {})()
 EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:1])
 
 EXT: CoreFunc_DateTimeParseDate: LIB$datetime$parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])

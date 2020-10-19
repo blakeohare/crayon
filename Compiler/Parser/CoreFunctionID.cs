@@ -63,7 +63,8 @@ namespace Parser
         DATETIME_IS_DST_OCCURRING_AT = 57,
         DATETIME_PARSE_DATE = 58,
         DATETIME_UNIX_TO_STRUCTURED = 59,
-
+        IPC_NAMED_PIPE_SERVER_CREATE = 60,
+        IPC_NAMED_PIPE_SERVER_CLOSE = 61,
     }
 
     internal static class CoreFunctionIDHelper
@@ -131,6 +132,8 @@ namespace Parser
                 case "dateTimeIsDstOccurringAt": return (int)CoreFunctionID.DATETIME_IS_DST_OCCURRING_AT;
                 case "dateTimeParseDate": return (int)CoreFunctionID.DATETIME_PARSE_DATE;
                 case "dateTimeUnixToStructured": return (int)CoreFunctionID.DATETIME_UNIX_TO_STRUCTURED;
+                case "ipcNamedPipeServerCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_SERVER_CREATE;
+                case "ipcNamedPipeServerClose": return (int)CoreFunctionID.IPC_NAMED_PIPE_SERVER_CLOSE;
                 default: return -1;
             }
         }

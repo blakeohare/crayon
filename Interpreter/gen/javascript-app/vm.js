@@ -1672,6 +1672,8 @@ var interpretImpl = function(vm, executionContextId) {
 	var arg1 = null;
 	var arg2 = null;
 	var arg3 = null;
+	var arg4 = null;
+	var arg5 = null;
 	var tokenList = null;
 	var globalNameIdToPrimitiveMethodName = vm[4][12];
 	var magicNumbers = vm[4][19];
@@ -4360,6 +4362,31 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[valueStackSize];
 						output = DateTime_unixToStructured(vm, arg1, arg2);
 						break;
+					case 60:
+						// ipcNamedPipeServerCreate;
+						valueStackSize -= 5;
+						arg5 = valueStack[(valueStackSize + 4)];
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						string1 = IpcNamedPipeServer_create(arg1, arg2, arg3, arg4, arg5);
+						if ((string1 == null)) {
+							output = globals[0];
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
+					case 61:
+						// ipcNamedPipeServerClose;
+						arg1 = valueStack[--valueStackSize];
+						string1 = IpcNamedPipeServer_close(arg1);
+						if ((string1 == null)) {
+							output = globals[0];
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -5470,6 +5497,19 @@ var IpcNamedPipe_isSupported = function() {
 var IpcNamedPipe_send = function(objValue, strValue) {
 	var pipe = getNativeDataItem(objValue, 0);
 	return (() => {})();
+};
+
+var IpcNamedPipeServer_close = function(objValue) {
+	var obj = objValue[1];
+	var pipe = obj[3][0];
+	return (() => {})();
+};
+
+var IpcNamedPipeServer_create = function(objValue, nameValue, startFn, dataFn, closeFn) {
+	var obj = objValue[1];
+	obj[3] = PST$createNewArray(1);
+	obj[3][0] = (() => {})();
+	return null;
 };
 
 var isClassASubclassOf = function(vm, subClassId, parentClassId) {

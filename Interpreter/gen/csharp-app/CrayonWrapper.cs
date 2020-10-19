@@ -2043,6 +2043,8 @@ namespace Interpreter.Vm
             Value arg1 = null;
             Value arg2 = null;
             Value arg3 = null;
+            Value arg4 = null;
+            Value arg5 = null;
             List<Token> tokenList = null;
             int[] globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
             MagicNumbers magicNumbers = vm.metadata.magicNumbers;
@@ -5660,6 +5662,37 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[valueStackSize];
                                 output = DateTime_unixToStructured(vm, arg1, arg2);
                                 break;
+                            case 60:
+                                // ipcNamedPipeServerCreate;
+                                valueStackSize -= 5;
+                                arg5 = valueStack[(valueStackSize + 4)];
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                string1 = IpcNamedPipeServer_create(arg1, arg2, arg3, arg4, arg5);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
+                            case 61:
+                                // ipcNamedPipeServerClose;
+                                arg1 = valueStack[--valueStackSize];
+                                string1 = IpcNamedPipeServer_close(arg1);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -7083,6 +7116,21 @@ namespace Interpreter.Vm
         {
             object pipe = getNativeDataItem(objValue, 0);
             return CoreFunctions.NamedPipeWriteLine(pipe, (string)strValue.internalValue);
+        }
+
+        public static string IpcNamedPipeServer_close(Value objValue)
+        {
+            ObjectInstance obj = (ObjectInstance)objValue.internalValue;
+            object pipe = obj.nativeData[0];
+            return CoreFunctions.NamedPipeServerClose(pipe);
+        }
+
+        public static string IpcNamedPipeServer_create(Value objValue, Value nameValue, Value startFn, Value dataFn, Value closeFn)
+        {
+            ObjectInstance obj = (ObjectInstance)objValue.internalValue;
+            obj.nativeData = new object[1];
+            obj.nativeData[0] = CoreFunctions.NamedPipeServerCreate((string)nameValue.internalValue, startFn, dataFn, closeFn);
+            return null;
         }
 
         public static bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId)
