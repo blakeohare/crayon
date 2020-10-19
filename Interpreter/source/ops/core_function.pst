@@ -53,6 +53,12 @@
     case 51: Core.EmitComment("resourceGetText"); @import("corefuncs/resourceGetText.pst"); break;
     case 52: Core.EmitComment("environmentGetVariable"); @import("corefuncs/environmentGetVariable.pst"); break;
     case 53: Core.EmitComment("srandomPopulateQueue"); @import("corefuncs/srandomPopulateQueue.pst"); break;
+    case 54: Core.EmitComment("dateTimeGetUtcOffsetAt"); @import("corefuncs/dateTimeGetUtcOffsetAt.pst"); break;
+    case 55: Core.EmitComment("dateTimeInitTimeZone"); @import("corefuncs/dateTimeInitTimeZone.pst"); break;
+    case 56: Core.EmitComment("dateTimeInitTimeZoneList"); @import("corefuncs/dateTimeInitTimeZoneList.pst"); break;
+    case 57: Core.EmitComment("dateTimeIsDstOccurringAt"); @import("corefuncs/dateTimeIsDstOccurringAt.pst"); break;
+    case 58: Core.EmitComment("dateTimeParseDate"); @import("corefuncs/dateTimeParseDate.pst"); break;
+    case 59: Core.EmitComment("dateTimeUnixToStructured"); @import("corefuncs/dateTimeUnixToStructured.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

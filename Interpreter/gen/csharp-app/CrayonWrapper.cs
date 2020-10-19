@@ -6,6 +6,8 @@ namespace Interpreter.Vm
 {
     public static class CrayonWrapper
     {
+        private static readonly string[] PST_StringBuffer16 = new string[16];
+
         private static readonly int[] PST_IntBuffer16 = new int[16];
 
         public static string PST_StringReverse(string value)
@@ -722,6 +724,120 @@ namespace Interpreter.Vm
             executionContexts[0] = executionContext;
             VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, new Dictionary<int, System.Func<VmContext, Value[], Value>>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
             return vm;
+        }
+
+        public static object DateTime_getNativeTimezone(Value value)
+        {
+            ObjectInstance tzObj = (ObjectInstance)value.internalValue;
+            if ((tzObj.nativeData == null))
+            {
+                return null;
+            }
+            return tzObj.nativeData[0];
+        }
+
+        public static Value DateTime_getUtcOffsetAt(VmContext vm, Value arg1, Value arg2)
+        {
+            object nativeTz = DateTime_getNativeTimezone(arg1);
+            int unixTime = (int)arg2.internalValue;
+            int offsetSeconds = DateTimeHelper.GetUtcOffsetAt(nativeTz, unixTime);
+            return buildInteger(vm.globals, offsetSeconds);
+        }
+
+        public static Value DateTime_initTimeZone(VmContext vm, Value arg1, Value arg2, Value arg3)
+        {
+            ObjectInstance timezone = (ObjectInstance)arg1.internalValue;
+            timezone.nativeData = new object[1];
+            object nativeTzRef = null;
+            string readableName = null;
+            int offsetFromUtc = 0;
+            int isDstObserved = 0;
+            string fingerprint = null;
+            if ((arg2.type == 1))
+            {
+                string[] strOut = PST_StringBuffer16;
+                int[] intOut = PST_IntBuffer16;
+                nativeTzRef = DateTimeHelper.GetDataForLocalTimeZone(strOut, intOut);
+                readableName = strOut[0];
+                fingerprint = strOut[1];
+                offsetFromUtc = intOut[0];
+                isDstObserved = intOut[1];
+            }
+            else
+            {
+                return vm.globalNull;
+            }
+            timezone.nativeData = new object[5];
+            timezone.nativeData[0] = nativeTzRef;
+            timezone.nativeData[1] = readableName;
+            timezone.nativeData[2] = offsetFromUtc;
+            timezone.nativeData[3] = (isDstObserved == 1);
+            timezone.nativeData[4] = fingerprint;
+            List<Value> values = new List<Value>();
+            values.Add(buildString(vm.globals, readableName));
+            values.Add(buildInteger(vm.globals, offsetFromUtc));
+            values.Add(buildBoolean(vm.globals, (isDstObserved == 1)));
+            values.Add(buildString(vm.globals, fingerprint));
+            return buildList(values);
+        }
+
+        public static Value DateTime_initTimeZoneList(VmContext vm, Value arg1)
+        {
+            ObjectInstance obj = (ObjectInstance)arg1.internalValue;
+            obj.nativeData = new object[1];
+            object[] timezones = DateTimeHelper.InitializeTimeZoneList();
+            obj.nativeData[0] = timezones;
+            int length = timezones.Length;
+            return buildInteger(vm.globals, length);
+        }
+
+        public static Value DateTime_isDstOccurringAt(VmContext vm, Value arg1, Value arg2)
+        {
+            object nativeTz = DateTime_getNativeTimezone(arg1);
+            int unixtime = (int)arg2.internalValue;
+            return buildBoolean(vm.globals, DateTimeHelper.IsDstOccurringAt(nativeTz, unixtime));
+        }
+
+        public static Value DateTime_parseDate(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4, Value arg5, Value arg6, Value arg7)
+        {
+            int year = (int)arg1.internalValue;
+            int month = (int)arg2.internalValue;
+            int day = (int)arg3.internalValue;
+            int hour = (int)arg4.internalValue;
+            int minute = (int)arg5.internalValue;
+            int microseconds = (int)arg6.internalValue;
+            object nullableTimeZone = DateTime_getNativeTimezone(arg7);
+            if (((year >= 1970) && (year < 2100) && (month >= 1) && (month <= 12) && (day >= 1) && (day <= 31) && (hour >= 0) && (hour < 24) && (minute >= 0) && (minute < 60) && (microseconds >= 0) && (microseconds < 60000000)))
+            {
+                int[] intOut = PST_IntBuffer16;
+                DateTimeHelper.ParseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
+                if ((intOut[0] == 1))
+                {
+                    double unixFloat = (intOut[1] + (intOut[2]) / (1000000.0));
+                    return buildFloat(vm.globals, unixFloat);
+                }
+            }
+            return vm.globalNull;
+        }
+
+        public static Value DateTime_unixToStructured(VmContext vm, Value arg1, Value arg2)
+        {
+            double unixTime = (double)arg1.internalValue;
+            object nullableTimeZone = DateTime_getNativeTimezone(arg2);
+            List<Value> output = new List<Value>();
+            int[] intOut = PST_IntBuffer16;
+            bool success = DateTimeHelper.UnixToStructured(intOut, nullableTimeZone, unixTime);
+            if (!success)
+            {
+                return vm.globalNull;
+            }
+            int i = 0;
+            while ((i < 9))
+            {
+                output.Add(buildInteger(vm.globals, intOut[i]));
+                i += 1;
+            }
+            return buildList(output);
         }
 
         public static int debuggerClearBreakpoint(VmContext vm, int id)
@@ -5504,6 +5620,45 @@ namespace Interpreter.Vm
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
                                 output = buildInteger(globals, SRandomQueuePopulate(globals, (int)arg1.internalValue, (ListImpl)arg2.internalValue, (int)arg3.internalValue));
+                                break;
+                            case 54:
+                                // dateTimeGetUtcOffsetAt;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = DateTime_getUtcOffsetAt(vm, arg1, arg2);
+                                break;
+                            case 55:
+                                // dateTimeInitTimeZone;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = DateTime_initTimeZone(vm, arg1, arg2, arg3);
+                                break;
+                            case 56:
+                                // dateTimeInitTimeZoneList;
+                                arg1 = valueStack[--valueStackSize];
+                                output = DateTime_initTimeZoneList(vm, arg1);
+                                break;
+                            case 57:
+                                // dateTimeIsDstOccurringAt;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = DateTime_isDstOccurringAt(vm, arg1, arg2);
+                                break;
+                            case 58:
+                                // dateTimeParseDate;
+                                valueStackSize -= 7;
+                                output = DateTime_parseDate(vm, valueStack[valueStackSize], valueStack[(valueStackSize + 1)], valueStack[(valueStackSize + 2)], valueStack[(valueStackSize + 3)], valueStack[(valueStackSize + 4)], valueStack[(valueStackSize + 5)], valueStack[(valueStackSize + 6)]);
+                                break;
+                            case 59:
+                                // dateTimeUnixToStructured;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = DateTime_unixToStructured(vm, arg1, arg2);
                                 break;
                         }
                         if ((row[1] == 1))

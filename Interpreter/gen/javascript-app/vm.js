@@ -20,6 +20,10 @@ PST$multiplyList = function(l, n) {
 	return o;
 };
 
+PST$stringBuffer16 = PST$multiplyList([''], 16);
+
+PST$intBuffer16 = PST$multiplyList([0], 16);
+
 PST$dictionaryKeys = function(d) {
 	var o = [];
 	for (var k in d) {
@@ -27,8 +31,6 @@ PST$dictionaryKeys = function(d) {
 	}
 	return o;
 };
-
-PST$intBuffer16 = PST$multiplyList([0], 16);
 
 PST$stringEndsWith = function(s, v) {
 	return s.indexOf(v, s.length - v.length) !== -1;
@@ -584,6 +586,105 @@ var createVm = function(rawByteCode, resourceManifest) {
 	executionContexts[0] = executionContext;
 	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, {}, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
 	return vm;
+};
+
+var DateTime_getNativeTimezone = function(value) {
+	var tzObj = value[1];
+	if ((tzObj[3] == null)) {
+		return null;
+	}
+	return tzObj[3][0];
+};
+
+var DateTime_getUtcOffsetAt = function(vm, arg1, arg2) {
+	var nativeTz = DateTime_getNativeTimezone(arg1);
+	var unixTime = arg2[1];
+	var offsetSeconds = LIB$datetime$getUtcOffsetAt(nativeTz, unixTime);
+	return buildInteger(vm[13], offsetSeconds);
+};
+
+var DateTime_initTimeZone = function(vm, arg1, arg2, arg3) {
+	var timezone = arg1[1];
+	timezone[3] = PST$createNewArray(1);
+	var nativeTzRef = null;
+	var readableName = null;
+	var offsetFromUtc = 0;
+	var isDstObserved = 0;
+	var fingerprint = null;
+	if ((arg2[0] == 1)) {
+		var strOut = PST$stringBuffer16;
+		var intOut = PST$intBuffer16;
+		nativeTzRef = LIB$datetime$getDataForLocalTimeZone(strOut, intOut);
+		readableName = strOut[0];
+		fingerprint = strOut[1];
+		offsetFromUtc = intOut[0];
+		isDstObserved = intOut[1];
+	} else {
+		return vm[14];
+	}
+	timezone[3] = PST$createNewArray(5);
+	timezone[3][0] = nativeTzRef;
+	timezone[3][1] = readableName;
+	timezone[3][2] = offsetFromUtc;
+	timezone[3][3] = (isDstObserved == 1);
+	timezone[3][4] = fingerprint;
+	var values = [];
+	values.push(buildString(vm[13], readableName));
+	values.push(buildInteger(vm[13], offsetFromUtc));
+	values.push(buildBoolean(vm[13], (isDstObserved == 1)));
+	values.push(buildString(vm[13], fingerprint));
+	return buildList(values);
+};
+
+var DateTime_initTimeZoneList = function(vm, arg1) {
+	var obj = arg1[1];
+	obj[3] = PST$createNewArray(1);
+	var timezones = LIB$datetime$initializeTimeZoneList();
+	obj[3][0] = timezones;
+	var length = timezones.length;
+	return buildInteger(vm[13], length);
+};
+
+var DateTime_isDstOccurringAt = function(vm, arg1, arg2) {
+	var nativeTz = DateTime_getNativeTimezone(arg1);
+	var unixtime = arg2[1];
+	return buildBoolean(vm[13], LIB$datetime$isDstOccurringAt(nativeTz, unixtime));
+};
+
+var DateTime_parseDate = function(vm, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+	var year = arg1[1];
+	var month = arg2[1];
+	var day = arg3[1];
+	var hour = arg4[1];
+	var minute = arg5[1];
+	var microseconds = arg6[1];
+	var nullableTimeZone = DateTime_getNativeTimezone(arg7);
+	if (((year >= 1970) && (year < 2100) && (month >= 1) && (month <= 12) && (day >= 1) && (day <= 31) && (hour >= 0) && (hour < 24) && (minute >= 0) && (minute < 60) && (microseconds >= 0) && (microseconds < 60000000))) {
+		var intOut = PST$intBuffer16;
+		LIB$datetime$parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
+		if ((intOut[0] == 1)) {
+			var unixFloat = (intOut[1] + (intOut[2] / 1000000.0));
+			return buildFloat(vm[13], unixFloat);
+		}
+	}
+	return vm[14];
+};
+
+var DateTime_unixToStructured = function(vm, arg1, arg2) {
+	var unixTime = arg1[1];
+	var nullableTimeZone = DateTime_getNativeTimezone(arg2);
+	var output = [];
+	var intOut = PST$intBuffer16;
+	var success = LIB$datetime$unixToStructured(intOut, nullableTimeZone, unixTime);
+	if (!success) {
+		return vm[14];
+	}
+	var i = 0;
+	while ((i < 9)) {
+		output.push(buildInteger(vm[13], intOut[i]));
+		i += 1;
+	}
+	return buildList(output);
 };
 
 var debuggerClearBreakpoint = function(vm, id) {
@@ -4219,6 +4320,45 @@ var interpretImpl = function(vm, executionContextId) {
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
 						output = buildInteger(globals, SRandomQueuePopulate(globals, arg1[1], arg2[1], arg3[1]));
+						break;
+					case 54:
+						// dateTimeGetUtcOffsetAt;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = DateTime_getUtcOffsetAt(vm, arg1, arg2);
+						break;
+					case 55:
+						// dateTimeInitTimeZone;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = DateTime_initTimeZone(vm, arg1, arg2, arg3);
+						break;
+					case 56:
+						// dateTimeInitTimeZoneList;
+						arg1 = valueStack[--valueStackSize];
+						output = DateTime_initTimeZoneList(vm, arg1);
+						break;
+					case 57:
+						// dateTimeIsDstOccurringAt;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = DateTime_isDstOccurringAt(vm, arg1, arg2);
+						break;
+					case 58:
+						// dateTimeParseDate;
+						valueStackSize -= 7;
+						output = DateTime_parseDate(vm, valueStack[valueStackSize], valueStack[(valueStackSize + 1)], valueStack[(valueStackSize + 2)], valueStack[(valueStackSize + 3)], valueStack[(valueStackSize + 4)], valueStack[(valueStackSize + 5)], valueStack[(valueStackSize + 6)]);
+						break;
+					case 59:
+						// dateTimeUnixToStructured;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = DateTime_unixToStructured(vm, arg1, arg2);
 						break;
 				}
 				if ((row[1] == 1)) {

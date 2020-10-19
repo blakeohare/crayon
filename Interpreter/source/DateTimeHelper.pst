@@ -1,0 +1,171 @@
+﻿object DateTime_getNativeTimezone(Value value) {
+    ObjectInstance tzObj = (ObjectInstance) value.internalValue;
+    if (tzObj.nativeData == null) return null;
+    return tzObj.nativeData[0];
+}
+
+/*
+    args[0] -> (ObjectInstance) nullable time zone
+        nativeData[0] -> native time zone data
+    args[1] -> (int) unix timestamp
+*/
+Value DateTime_getUtcOffsetAt(VmContext vm, Value arg1, Value arg2) {
+    object nativeTz = DateTime_getNativeTimezone(arg1);
+    int unixTime = (int) arg2.internalValue;
+    int offsetSeconds = Extension.CoreFunc_DateTimeGetUtcOffsetAt(nativeTz, unixTime);
+    return buildInteger(vm.globals, offsetSeconds);
+}
+
+/*
+    args[0] -> new TimeZone instance
+    args[1] -> nullable ObjectInstace Core.Object
+        nativeData -> an array of native TimeZone objects
+    args[2] -> (int) index in the native TimeZone object list
+
+    if the object containing the TimeZone native objects is null, then this is simply just a
+    current local time zone instance that is being initialized.
+
+    returns a list of data:
+
+    output[0] -> (string) readable name e.g. America/New York
+    output[1] -> (int) offset from UTC (in seconds) when not during DST
+    output[2] -> (bool) DST is observed?
+    output[3] -> (string) some sort of unique fingerprint for this timezone
+*/
+Value DateTime_initTimeZone(VmContext vm, Value arg1, Value arg2, Value arg3) {
+
+    ObjectInstance timezone = (ObjectInstance) arg1.internalValue;
+    timezone.nativeData = new Array<object>(1);
+    object nativeTzRef = null;
+    string readableName = null;
+    int offsetFromUtc = 0;
+    int isDstObserved = 0;
+    string fingerprint = null;
+
+    if (arg2.type == Types.NULL) {
+        Array<string> strOut = Core.StringBuffer16;
+        Array<int> intOut = Core.IntBuffer16;
+        nativeTzRef = Extension.CoreFunc_DateTimeGetDataForLocalTimeZone(strOut, intOut);
+        readableName = strOut[0];
+        fingerprint = strOut[1];
+        offsetFromUtc = intOut[0];
+        isDstObserved = intOut[1];
+    } else {
+        // TODO: implement this
+        return vm.globalNull;
+    }
+
+    timezone.nativeData = new Array<object>(5);
+    timezone.nativeData[0] = nativeTzRef;
+    timezone.nativeData[1] = readableName;
+    timezone.nativeData[2] = offsetFromUtc;
+    timezone.nativeData[3] = isDstObserved == 1;
+    timezone.nativeData[4] = fingerprint;
+
+    List<Value> values = new List<Value>();
+    values.Add(buildString(vm.globals, readableName));
+    values.Add(buildInteger(vm.globals, offsetFromUtc));
+    values.Add(buildBoolean(vm.globals, isDstObserved == 1));
+    values.Add(buildString(vm.globals, fingerprint));
+
+    return buildList(values);
+}
+
+/*
+    args[0] -> (ObjectInstance) just a dummy object to carry nativeData
+        nativeData[0] -> an object array containing 5n items of native data for the time zone.
+
+    output -> (int) length of the nested native data array. Should be a number divisible by 5.
+*/
+Value DateTime_initTimeZoneList(VmContext vm, Value arg1) {
+    ObjectInstance obj = (ObjectInstance) arg1.internalValue;
+    obj.nativeData = new Array<object>(1);
+    Array<object> timezones = Extension.CoreFunc_DateTimeInitializeTimeZoneList();
+    obj.nativeData[0] = timezones;
+    int length = timezones.Length();
+    return buildInteger(vm.globals, length);
+}
+
+/*
+    args[0] -> TimeZone object
+    args[1] -> unix timestamp
+*/
+Value DateTime_isDstOccurringAt(VmContext vm, Value arg1, Value arg2) {
+
+    // existence is guaranteed since UTC timezone will shortcircuit around this function
+    object nativeTz = DateTime_getNativeTimezone(arg1);
+    int unixtime = (int) arg2.internalValue;
+
+    return buildBoolean(vm.globals, Extension.CoreFunc_DateTimeIsDstOccurringAt(nativeTz, unixtime));
+}
+
+/*
+    args[0] -> (int) year
+    args[1] -> (int) month
+    args[2] -> (int) day
+    args[3] -> (int) hour of 24
+    args[4] -> (int) minute
+    args[5] -> (int) microseconds
+    args[6] -> (ObjectInstance) time zone
+
+*/
+Value DateTime_parseDate(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4, Value arg5, Value arg6, Value arg7) {
+
+    int year = (int) arg1.internalValue;
+    int month = (int) arg2.internalValue;
+    int day = (int) arg3.internalValue;
+    int hour = (int) arg4.internalValue;
+    int minute = (int) arg5.internalValue;
+    int microseconds = (int) arg6.internalValue;
+    object nullableTimeZone = DateTime_getNativeTimezone(arg7);
+
+    if (year >= 1970 && year < 2100 &&
+        month >= 1 && month <= 12 &&
+        day >= 1 && day <= 31 &&
+        hour >= 0 && hour < 24 &&
+        minute >= 0 && minute < 60 &&
+        microseconds >= 0 && microseconds < 60000000) {
+
+        Array<int> intOut = Core.IntBuffer16;
+        Extension.CoreFunc_DateTimeParseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
+
+        if (intOut[0] == 1) {
+            double unixFloat = intOut[1] + Core.FloatDivision(intOut[2], 1000000.0);
+            return buildFloat(vm.globals, unixFloat);
+        }
+    }
+
+    return vm.globalNull;
+}
+
+/*
+    args[0] -> (int) unix timestamp
+    args[1] -> (ObjectInstance) time zone
+
+    returns a list of integers or null if the conversion failed.
+        output[0] -> year (1970-2100)
+        output[1] -> month (1-12)
+        output[2] -> day (1-31)
+        output[3] -> hour (0-23)
+        output[4] -> minute (0-59)
+        output[5] -> second (0-59)
+        output[6] -> millis (0-999)
+        output[7] -> micros (0-999)
+        output[8] -> day of week (1-7)
+
+*/
+Value DateTime_unixToStructured(VmContext vm, Value arg1, Value arg2) {
+    double unixTime = (double) arg1.internalValue;
+    object nullableTimeZone = DateTime_getNativeTimezone(arg2);
+
+    List<Value> output = new List<Value>();
+    Array<int> intOut = Core.IntBuffer16; // int out parameters match the final output.
+    bool success = Extension.CoreFunc_DateTimeUnixToStructured(intOut, nullableTimeZone, unixTime);
+    if (!success) return vm.globalNull;
+
+    for (int i = 0; i < 9; i += 1) {
+        output.Add(buildInteger(vm.globals, intOut[i]));
+    }
+
+    return buildList(output);
+}

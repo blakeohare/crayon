@@ -1,0 +1,21 @@
+﻿import CrayonUnit;
+import DateTime;
+
+class DateTimeTest : Test {
+
+    function testBasics() {
+
+        UTC = TimeZone.getUtc();
+        moment1 = Moment.at(2020, 10, 18, 19, 40, 8, UTC);
+        unixtime = moment1.unixTime;
+
+        assertThat(unixtime).isEqualTo(1603050008.0);
+
+        moment2 = Moment.fromTimestamp(unixtime, UTC);
+
+        a = moment1.format("%N %F %j%S, %Y at %g:%i:%s %A");
+        b = moment2.format("%N %F %j%S, %Y at %g:%i:%s %A");
+        assertThat(a).isEqualTo("Sunday October 18th, 2020 at 7:40:08 PM");
+        assertThat(a).isEqualTo(b);
+    }
+}

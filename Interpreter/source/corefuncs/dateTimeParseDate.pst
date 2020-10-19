@@ -1,0 +1,10 @@
+﻿valueStackSize -= 7;
+
+output = DateTime_parseDate(vm,
+    valueStack[valueStackSize],
+    valueStack[valueStackSize + 1],
+    valueStack[valueStackSize + 2],
+    valueStack[valueStackSize + 3],
+    valueStack[valueStackSize + 4],
+    valueStack[valueStackSize + 5],
+    valueStack[valueStackSize + 6]);

@@ -34,7 +34,7 @@ namespace DateTime {
 
         static function at(year, month, day, hour, minute, secondIntOrFloat, tz = null) {
             dt = new Moment(tz);
-            dt.unixTime = $lib_datetime_parseDate(
+            dt.unixTime = $$$('dateTimeParseDate',
                 Math.floor(year),
                 Math.floor(month),
                 Math.floor(day),
@@ -53,7 +53,7 @@ namespace DateTime {
         }
 
         function _populateFields() {
-            f = $lib_datetime_unixToStructured(this.unixTime, this._tz);
+            f = $$$('dateTimeUnixToStructured', this.unixTime, this._tz);
             if (f == null) throw new InvalidArgumentException("Unix time stamp is out of range.");
             this.year = f[0];
             this.month = f[1];
@@ -70,7 +70,7 @@ namespace DateTime {
         }
 
         function getUtcOffsetSeconds() {
-            return this._tz._isLocal ? $lib_datetime_getUtcOffsetAt(this._tz, Math.floor(this.unixTime)) : 0;
+            return this._tz._isLocal ? $$$('dateTimeGetUtcOffsetAt', this._tz, Math.floor(this.unixTime)) : 0;
         }
 
         function getFormattedOffset() {
@@ -88,14 +88,14 @@ namespace DateTime {
         }
 
         function isDstOccuring() {
-            return this._tz._hasDst && $lib_datetime_isDstOccurringAt(this._tz, this.unixTime);
+            return this._tz._hasDst && $$$('dateTimeIsDstOccurringAt', this._tz, this.unixTime);
         }
 
         function format(template) {
             sections = template.split('%');
-            if (sections.length == 0) return '';
+            if (sections.length == 1) return template;
             valid = true;
-            if (sections[-1] == '%') {
+            if (sections[-1] == '') {
                 valid = false;
             } else {
                 for (i = 1; i < sections.length; ++i) {
@@ -122,7 +122,7 @@ namespace DateTime {
             throw new InvalidArgumentException("Invalid date format: \"" + template + "\"");
         }
 
-        // TODO: put all this into Pastel code. That way it won't bloat the byte code.
+        // TODO: Convert applyStringFormatDirective into a core function
         static field monthShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
         static field monthLong = 'January February March April May Jun July August September October November'.split(' ');
         static field dowShort = 'Sun Mon Tue Wed Thu Fri Sat'.split(' ');

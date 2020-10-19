@@ -1,0 +1,2 @@
+﻿@import("inline/2_arg.pst");
+output = DateTime_getUtcOffsetAt(vm, arg1, arg2);

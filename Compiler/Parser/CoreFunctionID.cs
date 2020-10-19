@@ -57,6 +57,13 @@ namespace Parser
         RESOURCE_GET_TEXT = 51,
         ENVIRONMENT_GET_VARIABLE = 52,
         SRANDOM_POPULATE_QUEUE = 53,
+        DATETIME_GET_UTC_OFFSET_AT = 54,
+        DATETIME_INIT_TIME_ZONE = 55,
+        DATETIME_INIT_TIME_ZONE_LIST = 56,
+        DATETIME_IS_DST_OCCURRING_AT = 57,
+        DATETIME_PARSE_DATE = 58,
+        DATETIME_UNIX_TO_STRUCTURED = 59,
+
     }
 
     internal static class CoreFunctionIDHelper
@@ -118,6 +125,12 @@ namespace Parser
                 case "resourceGetText": return (int)CoreFunctionID.RESOURCE_GET_TEXT;
                 case "environmentGetVariable": return (int)CoreFunctionID.ENVIRONMENT_GET_VARIABLE;
                 case "srandomPopulateQueue": return (int)CoreFunctionID.SRANDOM_POPULATE_QUEUE;
+                case "dateTimeGetUtcOffsetAt":return (int)CoreFunctionID.DATETIME_GET_UTC_OFFSET_AT;
+                case "dateTimeInitTimeZone": return (int)CoreFunctionID.DATETIME_INIT_TIME_ZONE;
+                case "dateTimeInitTimeZoneList": return (int)CoreFunctionID.DATETIME_INIT_TIME_ZONE_LIST;
+                case "dateTimeIsDstOccurringAt": return (int)CoreFunctionID.DATETIME_IS_DST_OCCURRING_AT;
+                case "dateTimeParseDate": return (int)CoreFunctionID.DATETIME_PARSE_DATE;
+                case "dateTimeUnixToStructured": return (int)CoreFunctionID.DATETIME_UNIX_TO_STRUCTURED;
                 default: return -1;
             }
         }

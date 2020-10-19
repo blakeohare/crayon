@@ -36,7 +36,7 @@ namespace DateTime {
         constructor(isLocal, tzList = null, tzListOffset = null) {
             if (isLocal) {
                 this._isLocal = true;
-                d = $lib_datetime_initTimeZone(this, tzList, tzListOffset);
+                d = $$$('dateTimeInitTimeZone', this, tzList, tzListOffset);
                 this._name = d[0];
                 this._offsetFromUtcSec = d[1];
                 this._hasDst = d[2];
@@ -54,7 +54,7 @@ namespace DateTime {
                 TimeZone._allTz = [];
 
                 obj = new Core.Object();
-                count = $lib_datetime_initTimeZoneList(obj);
+                count = $$$('dateTimeInitTimeZoneList', obj);
                 for (i = 0; i < count; ++i) {
                     TimeZone._allTz.add(new TimeZone(true, obj, i));
                 }
@@ -78,7 +78,7 @@ namespace DateTime {
         function getFullDisplayName() { return Moment.now(this).getFormattedOffset() + ' - ' + this.getName(); }
         function getName() { return this._name; }
         function isUtc() { return !this._isLocal; }
-        function isDstHappening() { return this._hasDst && $lib_datetime_isDstOccurringAt(this, Core.currentTime()); }
+        function isDstHappening() { return this._hasDst && $$$('dateTimeIsDstOccurringAt', this, Core.currentTime()); }
         function hasDst() { return this._hasDst; }
     }
 }

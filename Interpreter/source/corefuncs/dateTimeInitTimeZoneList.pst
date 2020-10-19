@@ -1,0 +1,2 @@
+﻿@import("inline/1_arg.pst");
+output = DateTime_initTimeZoneList(vm, arg1);
