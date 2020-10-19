@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using Interpreter.Structs;
+using Interpreter.Vm;
 
 namespace Interpreter.Libraries.Http
 {
@@ -58,7 +59,7 @@ namespace Interpreter.Libraries.Http
             };
             bgWorker.RunWorkerCompleted += (sender, e) =>
             {
-                Interpreter.Vm.CrayonWrapper.runInterpreterWithFunctionPointer(vmContext, callback, new Value[0]);
+                EventLoop.ExecuteFunctionPointer(callback, new Value[0]);
             };
             bgWorker.RunWorkerAsync();
         }
