@@ -1,0 +1,98 @@
+﻿using System;
+using Interpreter.Structs;
+
+namespace Interpreter.Vm
+{
+    public static class EventLoop
+    {
+        private static int startingThreadId = 0;
+        private static int GetThreadId() { return System.Threading.Thread.CurrentThread.ManagedThreadId; }
+
+        public static void EnsureRunningOnStartingThread()
+        {
+            if (GetThreadId() != startingThreadId)
+            {
+                throw new Exception("The VM cannot be invoked on a separate thread.");
+            }
+        }
+
+        public static InterpreterResult StartInterpreter()
+        {
+            if (startingThreadId != 0) throw new Exception();
+            startingThreadId = GetThreadId();
+
+            Debugger.INSTANCE.FlushMessageQueue();
+            return HandleInterpreterStatus(CrayonWrapper.startVm(TranslationHelper.ProgramData));
+        }
+
+        public static InterpreterResult RunInterpreter(int executionContextId)
+        {
+            EnsureRunningOnStartingThread();
+            Debugger.INSTANCE.FlushMessageQueue();
+            return HandleInterpreterStatus(CrayonWrapper.runInterpreter(TranslationHelper.ProgramData, executionContextId));
+        }
+
+        public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
+        {
+            EnsureRunningOnStartingThread();
+            Debugger.INSTANCE.FlushMessageQueue();
+            return HandleInterpreterStatus(CrayonWrapper.runInterpreterWithFunctionPointer(TranslationHelper.ProgramData, functionPointer, args));
+        }
+
+        private static InterpreterResult HandleInterpreterStatus(InterpreterResult result)
+        {
+            while (result.status == 5 || result.status == 6) // REINVOKE || LOAD_ASSEMBLY
+            {
+                if (result.status == 6) // LOAD_ASSEMBLY
+                {
+                    string[] parts = result.loadAssemblyInformation.Split(',');
+                    string name = parts[0];
+                    string version = parts[1];
+                    string startupFunction = parts[2];
+                    TranslationHelper.LibraryRegistry.LoadAssembly(name, version, startupFunction);
+                }
+                else
+                {
+                    double sleepForSeconds = result.reinvokeDelay;
+                    System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
+                }
+                Debugger.INSTANCE.FlushMessageQueue();
+                result = CrayonWrapper.runInterpreter(TranslationHelper.ProgramData, result.executionContextId);
+            }
+            if (result.status == 1) // FINISHED
+            {
+                if (result.isRootContext) Environment.Exit(0);
+                return result;
+            }
+            if (result.status == 2 || result.status == 7) return result; // SUSPEND || BREAKPOINT
+            if (result.status == 3) // FATAL
+            {
+                if (result.isRootContext) Environment.Exit(1);
+                return result;
+            }
+            throw new Exception(); // invalid status
+        }
+
+        private static Func<VmContext, Value[], Value> GetStartupFunction(string name)
+        {
+            object fn = TranslationHelper.GetFunctionPointer(name);
+            if (fn == null) return null;
+            return fn as Func<VmContext, Value[], Value>;
+        }
+
+        public static void runAssemblyStartupFunction(String assemblyName, String startupFunction)
+        {
+            EnsureRunningOnStartingThread();
+            // Invoke the startup function, if present
+            if (startupFunction.Length > 0)
+            {
+                Func<VmContext, Value[], Value> fn = GetStartupFunction(assemblyName + "," + startupFunction);
+                if (fn != null)
+                {
+                    fn(TranslationHelper.ProgramData, new Value[0]);
+                }
+            }
+        }
+
+    }
+}

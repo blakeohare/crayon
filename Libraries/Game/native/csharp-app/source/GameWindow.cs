@@ -353,7 +353,7 @@ namespace Interpreter.Libraries.Game
                 }
             }
 
-            InterpreterResult result = TranslationHelper.RunInterpreter(this.executionContextId);
+            InterpreterResult result = EventLoop.RunInterpreter(this.executionContextId);
             int vmStatus = result.status;
 
             if (vmStatus == 1 || // Finished

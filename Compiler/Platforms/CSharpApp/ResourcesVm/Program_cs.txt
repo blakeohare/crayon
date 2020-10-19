@@ -101,7 +101,7 @@ namespace CrayonRuntime
             vm.environment.showLibStack = showLibStack;
             Debugger.INSTANCE.StartListening();
             TranslationHelper.ProgramData = vm;
-            TranslationHelper.StartInterpreter();
+            EventLoop.StartInterpreter();
         }
 
         private static string Base64Decode(string encodedValue)

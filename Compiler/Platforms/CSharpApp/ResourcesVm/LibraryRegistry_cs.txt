@@ -10,7 +10,7 @@ namespace Interpreter.Vm
         {
             // TODO: load a DLL once they are split out.
 
-            TranslationHelper.runAssemblyStartupFunction(name, startupFunction);
+            EventLoop.runAssemblyStartupFunction(name, startupFunction);
         }
 
         public LibraryRegistry(Dictionary<string, string> libraryVersions)

@@ -22,7 +22,7 @@ namespace Interpreter.Vm
         {
             // TODO: load a DLL once they are split out separately.
 
-            TranslationHelper.runAssemblyStartupFunction(name, startupFunction);
+            EventLoop.runAssemblyStartupFunction(name, startupFunction);
         }
 
         private static void RegisterLibraryMethodResolver(Type libraryType)
