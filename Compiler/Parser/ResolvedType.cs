@@ -30,6 +30,70 @@ namespace Parser
             return "Resolved Type: " + this.Category.ToString();
         }
 
+        public string ToUserString(Localization.Locale locale)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            this.ToUserStringImpl(sb, locale);
+            return sb.ToString();
+        }
+
+        private void ToUserStringImpl(System.Text.StringBuilder sb, Localization.Locale locale) {
+            switch (this.Category)
+            {
+                case ResolvedTypeCategory.BOOLEAN: sb.Append("boolean"); return;
+                case ResolvedTypeCategory.FLOAT: sb.Append("float"); return;
+                case ResolvedTypeCategory.INTEGER: sb.Append("integer"); return;
+                case ResolvedTypeCategory.OBJECT: sb.Append("object"); return;
+                case ResolvedTypeCategory.NULL: sb.Append("null"); return;
+                case ResolvedTypeCategory.STRING: sb.Append("string"); return;
+                case ResolvedTypeCategory.LIST:
+                    sb.Append("List<");
+                    this.Generics[0].ToUserStringImpl(sb, locale);
+                    sb.Append('>');
+                    return;
+                case ResolvedTypeCategory.DICTIONARY:
+                    sb.Append("Dictionary<");
+                    this.Generics[0].ToUserStringImpl(sb, locale);
+                    sb.Append(", ");
+                    this.Generics[1].ToUserStringImpl(sb, locale);
+                    sb.Append('>');
+                    return;
+                case ResolvedTypeCategory.VOID: sb.Append("void"); return;
+                case ResolvedTypeCategory.NULLABLE:
+                    this.Generics[0].ToUserStringImpl(sb, locale);
+                    sb.Append('?');
+                    return;
+                case ResolvedTypeCategory.INSTANCE:
+                    sb.Append(this.ClassTypeOrReference.GetFullyQualifiedLocalizedName(locale));
+                    return;
+                case ResolvedTypeCategory.CLASS_DEFINITION:
+                    sb.Append("Class<");
+                    sb.Append(this.ClassTypeOrReference.GetFullyQualifiedLocalizedName(locale));
+                    sb.Append('>');
+                    return;
+                case ResolvedTypeCategory.ANY:
+                    sb.Append("[ANY]");
+                    return;
+                case ResolvedTypeCategory.FUNCTION_POINTER:
+                    sb.Append("Func<");
+                    for (int i  = 0; i < this.FunctionArgs.Length; ++i)
+                    {
+                        this.FunctionArgs[i].ToUserStringImpl(sb, locale);
+                        sb.Append(", ");
+                    }
+                    this.FunctionReturnType.ToUserStringImpl(sb, locale);
+                    sb.Append('>');
+                    return;
+                default:
+#if DEBUG
+                    throw new System.NotImplementedException(this.ToString());
+#else
+                    sb.Append("<???>");
+                    return;
+#endif
+            }
+        }
+
         public ResolvedTypeCategory Category { get; private set; }
         public ClassDefinition ClassTypeOrReference { get; private set; }
         public ResolvedType[] Generics { get; private set; }
@@ -170,8 +234,16 @@ namespace Parser
         {
             if (!CanAssignToA(targetType))
             {
-                // TODO: implement a formatted string method for ResolvedType. (ToString() is debug-centric)
-                throw new ParserException(throwToken, "Cannot assign this type to this other type.");
+                Localization.Locale en = Localization.Locale.Get("en");
+
+                // TODO: use the correct locale
+                string msg = "Cannot assign a value of type '";
+                msg += this.ToUserString(en);
+                msg += "' to '";
+                msg += targetType.ToUserString(en);
+                msg += "'";
+
+                throw new ParserException(throwToken, msg);
             }
         }
 
