@@ -1,16 +1,18 @@
 
-EXT-TYPE: string CoreFunc_EnvironmentGetVariable(string name);
-EXT-TYPE: bool CoreFunc_NamedPipeIsSupported();
-EXT-TYPE: Array<object> CoreFunc_NamedPipeCreate(string pipeName);
-EXT-TYPE: string CoreFunc_NamedPipeSend(object pipe, string data);
-EXT-TYPE: string CoreFunc_NamedPipeFlush(object pipe);
-EXT-TYPE: object CoreFunc_NamedPipeServerCreate(string name, Value startFn, Value dataFn, Value closeFn);
-EXT-TYPE: string CoreFunc_NamedPipeServerClose(object pipe);
-EXT-TYPE: string CoreFunc_ResourceGetText(string path);
-
 EXT-TYPE: void CoreFunc_DateTimeParseDate(Array<int> intOut, object nativeTz, int year, int month, int day, int hour, int minute, int microseconds);
 EXT-TYPE: bool CoreFunc_DateTimeUnixToStructured(Array<int> intOut, object nativeTz, double unixTimestamp);
 EXT-TYPE: object CoreFunc_DateTimeGetDataForLocalTimeZone(Array<string> strOut, Array<int> intOut);
 EXT-TYPE: int CoreFunc_DateTimeGetUtcOffsetAt(object nativeTimezone, int unixTime);
 EXT-TYPE: bool CoreFunc_DateTimeIsDstOccurringAt(object nativeTz, int unixTimestamp);
 EXT-TYPE: Array<object> CoreFunc_DateTimeInitializeTimeZoneList();
+
+EXT-TYPE: string CoreFunc_EnvironmentGetVariable(string name);
+
+EXT-TYPE: bool CoreFunc_NamedPipeIsSupported();
+EXT-TYPE: Array<object> CoreFunc_NamedPipeCreate(string pipeName);
+EXT-TYPE: string CoreFunc_NamedPipeSend(object pipe, string data);
+EXT-TYPE: string CoreFunc_NamedPipeFlush(object pipe);
+EXT-TYPE: object CoreFunc_NamedPipeServerCreate(string name, Value startFn, Value dataFn, Value closeFn);
+EXT-TYPE: string CoreFunc_NamedPipeServerClose(object pipe);
+
+EXT-TYPE: string CoreFunc_ResourceGetText(string path);
