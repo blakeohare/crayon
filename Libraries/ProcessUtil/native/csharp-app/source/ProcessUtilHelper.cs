@@ -31,7 +31,7 @@ namespace Interpreter.Libraries.ProcessUtil
                 p.Exited += (sender, e) =>
                 {
                     AddStringToBuffer(bridge[4], bridge, 2, p.StandardOutput.ReadToEnd());
-                    Vm.TranslationHelper.RunInterpreter(callbackFp, new Value[0]);
+                    Vm.EventLoop.ExecuteFunctionPointer(callbackFp, new Value[0]);
                 };
                 p.Start();
             }
