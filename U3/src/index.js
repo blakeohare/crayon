@@ -1,5 +1,6 @@
 const { app } = require('electron');
 const namedpipeserver = require('./namedbigpipeserver.js');
+const namedpipeclient = require('./namedpipeclient.js');
 const renderwindow = require('./renderwindow.js');
 const { base64ToText } = require('./util.js');
 
@@ -26,10 +27,16 @@ app.whenReady().then(() => {
         rwindow.send(parts);
     };
     
+    returnpipe = namedpipeclient.runClient('u3return');
+
     namedpipeserver.runServer(
         'u3pipe',
         handlePipeMessage,
         () => { console.log("Now listening"); },
         () => { console.log("Pipe closed"); });
+
+    setTimeout(() => {
+        returnpipe.send("Hello to Crayon from U3");
+    }, 5000)
 });
 
