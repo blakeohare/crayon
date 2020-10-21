@@ -1,7 +1,5 @@
-const createHub = (token) => {
-    throw new Error("Not implemented yet");
-};
+﻿const windowsimpl = require('./windowsimpl.js');
 
-module.exports = {
-    createHub,
-};
+// TODO: implement the others and then switch on the platform.
+
+module.exports  = windowsimpl;

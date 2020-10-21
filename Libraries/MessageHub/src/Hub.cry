@@ -1,13 +1,21 @@
-﻿namespace MessageHub {
+﻿import Random;
+import Json;
+
+namespace MessageHub {
 
     class Hub {
 
         field _appName;
-        field _hubToken;
+        field _token;
         field _impl;
         field _onReadyHandler = null;
         field _onCloseHandler = null;
         field _desktopInitHandler = null;
+        field _isRunning = false;
+
+        static field _idAlloc = 0;
+        field _callbacks = {};
+        field _listeners = {};
 
         constructor(appName = null) {
             this._appName = '' + (appName ?? Core.getProjectId());
@@ -15,19 +23,37 @@
             for (i = 0; i < 30; ++i) {
                 token.add(Core.chr(Core.ord('a') + Random.randomInt(26)));
             }
-            this._hubToken = token.join('');
+            this._token = token.join('');
 
             // TODO: add environment descriptor to Environment library
-            this._impl = new DesktopHub(this._hubToken, this._recvRaw, this._onReady, this._onClose, this._desktopInit);
+            this._impl = new WindowsHub(this._token, this._recvRaw, this._onReady, this._onClose, this._desktopInit);
+        }
+
+        function setDebugOverrideToken(token) {
+            if ($var['CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE'] == null) {
+                throw new Exception();
+            }
+
+            this._token = token;
+            this._impl.token = token;
+            return this;
         }
 
         function start() {
+            this._isRunning = true;
             this._impl.start();
             return this;
         }
 
+        function startBlocking() {
+            this.start();
+            while (this._isRunning) {
+                Core.sleep(.005);
+            }
+        }
+
         function send(type, payload, cb = null) {
-            id = ++Hub.idAlloc;
+            id = ++Hub._idAlloc;
             msg = {
                 "a": this._appName,
                 "t": this._token,
@@ -64,16 +90,11 @@
         }
 
         function _desktopInit() {
-            if (this._desktopInitHandler != null) this._desktopInitHandler(this._hubToken);
+            if (this._desktopInitHandler != null) this._desktopInitHandler(this._token);
         }
 
-        field _idAlloc = 0;
-        field _callbacks = {};
-
-        field _listeners = {};
-
         function _recvRaw(rawString) {
-            data = Json.parse(rawString);
+            data = Json.parseJson(rawString);
             isResponse = data.get('r') == 1;
             payload = data['p'];
             id = data['i'];
@@ -117,6 +138,7 @@
         }
 
         function _onClose() {
+            this._isRunning = false;
             if (this._onCloseHandler != null) this._onCloseHandler();
         }
     }

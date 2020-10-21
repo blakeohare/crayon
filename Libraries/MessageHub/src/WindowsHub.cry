@@ -38,7 +38,7 @@ namespace MessageHub {
 
         function start() {
 
-            this.namedPipeServer = new NamedPipeServer('msghub_' + this._hubToken + '_us')
+            this.namedPipeServer = new NamedPipeServer('msghub_' + this.token + '_us')
                 .setListener(this.receiveData)
                 .setOnClosed(this.receiveClose)
                 .setOnStart(this.start2);
@@ -47,8 +47,8 @@ namespace MessageHub {
         }
 
         function start2() {
-            if (this._desktopInitFn != null) {
-                this._desktopInitFn(this._hubToken);
+            if (this.desktopInit != null) {
+                this.desktopInit(this.token);
             }
         }
 
@@ -56,13 +56,17 @@ namespace MessageHub {
             if (this.waitingForDownstreamReady) {
                 if (data.trim() != 'DOWNSTREAM_READY') throw new Exception(); // did not receive expected response.
                 this.waitingForDownstreamReady = false;
-                this.namedPipeClient = new NamedPipeClient('msghub_' + this._hubToken + '_ds');
+                this.namedPipeClient = new NamedPipeClient('msghub_' + this.token + '_ds');
                 this.onReady();
                 return;
             }
 
             // TODO: parse out length@payload format.
             this.recvRaw(data);
+        }
+
+        function receiveClose() {
+            this.onClose();
         }
 
         function sendString(rawString) {

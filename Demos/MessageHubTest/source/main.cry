@@ -1,0 +1,42 @@
+﻿import MessageHub;
+
+const IS_DEBUG = $var['CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE'] == true;
+
+function main(args) {
+    print("Hello, World!");
+
+    hub = new Hub();
+
+    hub
+        .listen('howAreYou', (req, cb) => {
+            cb("I am doing well, " + req['name'] + ".");
+        })
+        .setOnReady(() => {
+            print("It reports that it is ready.");
+            sendSomeRequests(hub);
+        });
+
+    if (IS_DEBUG) {
+        hub.setDebugOverrideToken('abc123');
+    } else {
+        hub.setDesktopInitializer(token => {
+            throw new NotImplementedException("TODO: use ProcessUtil to start the process with token: '" + token + "'");
+        });
+    }
+
+    hub.startBlocking();
+
+    print("Hub disconnected");
+}
+
+function sendSomeRequests(hub) {
+
+    print("Waiting a few seconds...");
+    Core.sleep(5);
+    print("Sending a weather query...");
+    hub.send('weather', { "zip": 30332 }, result => {
+        print("Received this weather result:");
+        print(result);
+
+    });
+}

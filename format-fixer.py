@@ -89,6 +89,7 @@ PYTHON_STYLE_2_SPACES = FormatStyle().tabs(' ' * 2).newline('\n').noBom()
 PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n').noBom()
 JAVA_STYLE = FormatStyle().tabs(' ' * 2).newline('\n')
 JAVASCRIPT_STYLE = FormatStyle().tabs('\t').newline('\n')
+JAVASCRIPT_NODE_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
 JSON_STYLE = FormatStyle().tabs(' ' * 4).newline('\n').noBom()
 MARKDOWN_STYLE = FormatStyle().tabs(' ' * 2).newline('\n').noBom()
 
@@ -127,6 +128,9 @@ MATCHERS = [
   ('Libraries/*.cry', CRAYON_STYLE),
   ('Libraries/*.acr', ACRYLIC_STYLE),
   ('Libraries/*/manifest.json', JSON_STYLE),
+
+  # MessageHub client libraries
+  ('Libraries/MessageHub/client/nodejs/messagehubclient/*.js', JAVASCRIPT_NODE_STYLE),
 
   # Docs (only whitelist directories where .md occurs otherwise U3's node_modules has lots of false hits)
   ('README.md', MARKDOWN_STYLE),
