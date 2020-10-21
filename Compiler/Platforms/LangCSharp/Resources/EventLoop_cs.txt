@@ -13,6 +13,7 @@ namespace Interpreter.Vm
             public double Timestamp { get; set; }
             public Value FunctionPointer { get; set; }
             public Value[] FunctionPointerArgs { get; set; }
+            public object[] FunctionPointerNativeArgs { get; set; }
             public int ExecutionContextId { get; set; }
         }
 
@@ -32,6 +33,15 @@ namespace Interpreter.Vm
             {
                 FunctionPointer = fp,
                 FunctionPointerArgs = args.ToArray(),
+            });
+        }
+
+        public static void ExecuteFunctionPointerNativeArgs(Value fp, IList<object> args)
+        {
+            AddItemToQueue(new EventLoopInvocation()
+            {
+                FunctionPointer = fp,
+                FunctionPointerNativeArgs = args.ToArray(),
             });
         }
 
@@ -124,7 +134,23 @@ namespace Interpreter.Vm
             }
             else if (invocation.FunctionPointer != null)
             {
-                result = CrayonWrapper.runInterpreterWithFunctionPointer(vm, invocation.FunctionPointer, invocation.FunctionPointerArgs);
+                Value[] args = invocation.FunctionPointerArgs;
+                if (args == null)
+                {
+                    object[] nativeArgs = invocation.FunctionPointerNativeArgs;
+                    args = new Value[nativeArgs.Length];
+                    for (int i = 0; i < args.Length; ++i)
+                    {
+                        object na = nativeArgs[i];
+                        if (na == null) args[i] = vm.globalNull;
+                        else if (na is bool) args[i] = (bool)na ? vm.globalTrue : vm.globalFalse;
+                        else if (na is string) args[i] = CrayonWrapper.buildString(vm.globals, (string)na);
+                        else if (na is int) args[i] = CrayonWrapper.buildInteger(vm.globals, (int)na);
+                        else if (na is double) args[i] = CrayonWrapper.buildFloat(vm.globals, (double)na);
+                        else throw new NotImplementedException("Unsupported type for native arg: " + na.GetType());
+                    }
+                }
+                result = CrayonWrapper.runInterpreterWithFunctionPointer(vm, invocation.FunctionPointer, args);
             }
             else
             {
