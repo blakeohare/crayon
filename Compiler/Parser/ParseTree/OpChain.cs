@@ -102,7 +102,7 @@ namespace Parser.ParseTree
                 return ot.PerformOperation.Invoke(this);
             }
 
-            throw new ParserException(this.OpToken, "This operator is invalid for types: " + leftType + ", " + rightType + ".");
+            throw new ParserException(this.OpToken, "This operator is invalid for types: " + leftType.ToUserString(this.CompilationScope.Locale) + ", " + rightType.ToUserString(this.CompilationScope.Locale) + ".");
         }
 
         private static Expression GenerateMultipliedStringIfNotTooLong(OpChain original, Expression left, Expression right)
