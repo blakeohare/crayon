@@ -1,0 +1,11 @@
+{
+  "name": "messagehub",
+  "version": "1.0.0",
+  "description": "Crayon MessageHub client library for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Blake O'Hare",
+  "license": "ISC"
+}
