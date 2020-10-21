@@ -1,0 +1,74 @@
+﻿import Ipc;
+
+namespace MessageHub {
+
+    /*
+        Windows hub does its steps in the following order:
+        - Create a NamedPipeServer to receive commands (although nothing will come)
+        - Run the desktop initializer function. This will presumably start a process that uses the MessageHub client library.
+        - The MessageHub client library will start a named pipe server to receive messages on its end.
+        - Once that named pipe is done, then it sends a message to the Crayon process that simply says "DOWNSTREAM_READY"
+        - Back in the Crayon process, the "DOWNSTREAM_READY" message is received.
+        - At this point both pipes are fully operational.
+
+        The names of the pipes are:
+        - downstream pipe (to Process): "msghub_{TOKEN}_ds"
+        - upstream pipe (to Crayon): "msghub_{TOKEN}_us"
+    */
+    class WindowsHub {
+
+        field token;
+        field desktopInit;
+        field onReady;
+        field onClose;
+        field recvRaw;
+
+        field namedPipeClient;
+        field namedPipeServer;
+
+        field waitingForDownstreamReady = true;
+
+        constructor(token, recvRaw, onReady, onClose, desktopInit) {
+            this.token = token;
+            this.recvRaw = recvRaw;
+            this.onReady = onReady;
+            this.onClose = onClose;
+            this.desktopInit = desktopInit;
+        }
+
+        function start() {
+
+            this.namedPipeServer = new NamedPipeServer('msghub_' + this._hubToken + '_us')
+                .setListener(this.receiveData)
+                .setOnClosed(this.receiveClose)
+                .setOnStart(this.start2);
+
+            this.namedPipeServer.start();
+        }
+
+        function start2() {
+            if (this._desktopInitFn != null) {
+                this._desktopInitFn(this._hubToken);
+            }
+        }
+
+        function receiveData(data) {
+            if (this.waitingForDownstreamReady) {
+                if (data.trim() != 'DOWNSTREAM_READY') throw new Exception(); // did not receive expected response.
+                this.waitingForDownstreamReady = false;
+                this.namedPipeClient = new NamedPipeClient('msghub_' + this._hubToken + '_ds');
+                this.onReady();
+                return;
+            }
+
+            // TODO: parse out length@payload format.
+            this.recvRaw(data);
+        }
+
+        function sendString(rawString) {
+            // TODO: send in length@payload format.
+            this.namedPipeClient.writeLine(rawString);
+            this.namedPipeClient.flush();
+        }
+    }
+}

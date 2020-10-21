@@ -1,0 +1,6 @@
+{
+    "name": "MessageHub",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/messagehub",
+    "description": "Library to for abstracting out forms of IPC between platforms. Comes with client libraries for other programming languages."
+}

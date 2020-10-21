@@ -1,0 +1,25 @@
+﻿namespace MessageHub {
+
+    class MobileHub {
+
+        field token;
+        field onReady;
+        field onClose;
+        field recvRaw;
+
+        constructor(token, recvRaw, onReady, onClose) {
+            this.token = token;
+            this.recvRaw = recvRaw;
+            this.onReady = onReady;
+            this.onClose = onClose;
+        }
+
+        function start() {
+            throw new NotImplementedException();
+        }
+
+        function sendString(rawString) {
+            throw new NotImplementedException();
+        }
+    }
+}

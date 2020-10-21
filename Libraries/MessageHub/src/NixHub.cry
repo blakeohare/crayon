@@ -1,0 +1,26 @@
+﻿namespace MessageHub {
+
+    class NixHub {
+
+        field token;
+        field desktopInit;
+        field onReady;
+        field onClose;
+        field recvRaw;
+
+        constructor(token, recvRaw, onReady, onClose, desktopInit) {
+            this.token = token;
+            this.recvRaw = recvRaw;
+            this.onReady = onReady;
+            this.onClose = onClose;
+        }
+
+        function start() {
+            throw new NotImplementedException();
+        }
+
+        function sendString(rawString) {
+            throw new NotImplementedException();
+        }
+    }
+}
