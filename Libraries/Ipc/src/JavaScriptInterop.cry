@@ -45,7 +45,7 @@ namespace Ipc {
             The arguments and return value must be primitives, otherwise they'll be
             replaced with null.
         */
-        function registerJSInteropCallback(methodName, callback, returnValue = true) {
+        function registerCallback(methodName, callback, returnValue = true) {
             $$$('jsInteropRegisterCallback', methodName, returnValue == true, (id, argStr) => {
                 o = Json.parseJson(argStr);
                 output = callback.invoke(o['args']);

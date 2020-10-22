@@ -245,10 +245,39 @@ C$interop$invoke = (fnName, argsStr, cbValue) => {
 	return true;
 };
 
-C$interop$registerCallback = (a, b, c) => {
-	throw new Error("Not implemented");
+C$interop$callbacksById = {};
+
+C$interop$registerCallback = (funcName, useReturn, funcValue) => {
+	let ci = C$interop$getInteropObj();
+	if (!ci.INTERNAL_ID_ALLOC) ci.INTERNAL_ID_ALLOC = 0;
+	ci[funcName] = function() {
+		let args = [];
+		for (let i = 0; i < arguments.length; ++i) {
+			args.push(arguments[i]);
+		}
+		let argStr = JSON.stringify({ args });
+		let id = 0;
+		let resolve = null;
+		let p = null;
+		if (useReturn) {
+			p = new Promise(res => {resolve = res; });
+			id = ++ci.INTERNAL_ID_ALLOC;
+			C$interop$callbacksById[id] = resolve;
+		} else {
+			p = Promise.resolve(null);
+		}
+		setTimeout(() => {
+			C$runInterpreterWithFunctionPointerNativeArgs(funcValue, [id, argStr]);
+		}, 0);
+		
+		return p;
+	};
 };
 
 C$interop$callbackReturn = (id, valueStr) => {
-	throw new Error("Not implemented");
+	if (id === 0) return;
+	let fn = C$interop$callbacksById[id];
+	delete C$interop$callbacksById[id];
+	let retVal = JSON.parse(valueStr).value;
+	fn(retVal);
 };
