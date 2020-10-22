@@ -65,6 +65,10 @@ namespace Parser
         DATETIME_UNIX_TO_STRUCTURED = 59,
         IPC_NAMED_PIPE_SERVER_CREATE = 60,
         IPC_NAMED_PIPE_SERVER_CLOSE = 61,
+        JS_INTEROP_SUPPORTED = 62,
+        JS_INTEROP_INVOKE = 63,
+        JS_INTEROP_REGISTER_CALLBACK = 64,
+        JS_INTEROP_CALLBACK_RETURN = 65,
     }
 
     internal static class CoreFunctionIDHelper
@@ -116,7 +120,7 @@ namespace Parser
                 case "addShutdownHandler": return (int)CoreFunctionID.ADD_SHUTDOWN_HANDLER;
                 case "nativeTunnelSend": return (int)CoreFunctionID.NATIVE_TUNNEL_SEND;
                 case "nativeTunnelRecv": return (int)CoreFunctionID.NATIVE_TUNNEL_RECV;
-                case "ipcNamedPipeIsSupported": return (int) CoreFunctionID.IPC_NAMED_PIPE_IS_SUPPORTED;
+                case "ipcNamedPipeIsSupported": return (int)CoreFunctionID.IPC_NAMED_PIPE_IS_SUPPORTED;
                 case "ipcNamedPipeCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_CREATE;
                 case "ipcNamedPipeSend": return (int)CoreFunctionID.IPC_NAMED_PIPE_SEND;
                 case "ipcNamedPipeFlush": return (int)CoreFunctionID.IPC_NAMED_PIPE_FLUSH;
@@ -126,7 +130,7 @@ namespace Parser
                 case "resourceGetText": return (int)CoreFunctionID.RESOURCE_GET_TEXT;
                 case "environmentGetVariable": return (int)CoreFunctionID.ENVIRONMENT_GET_VARIABLE;
                 case "srandomPopulateQueue": return (int)CoreFunctionID.SRANDOM_POPULATE_QUEUE;
-                case "dateTimeGetUtcOffsetAt":return (int)CoreFunctionID.DATETIME_GET_UTC_OFFSET_AT;
+                case "dateTimeGetUtcOffsetAt": return (int)CoreFunctionID.DATETIME_GET_UTC_OFFSET_AT;
                 case "dateTimeInitTimeZone": return (int)CoreFunctionID.DATETIME_INIT_TIME_ZONE;
                 case "dateTimeInitTimeZoneList": return (int)CoreFunctionID.DATETIME_INIT_TIME_ZONE_LIST;
                 case "dateTimeIsDstOccurringAt": return (int)CoreFunctionID.DATETIME_IS_DST_OCCURRING_AT;
@@ -134,6 +138,10 @@ namespace Parser
                 case "dateTimeUnixToStructured": return (int)CoreFunctionID.DATETIME_UNIX_TO_STRUCTURED;
                 case "ipcNamedPipeServerCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_SERVER_CREATE;
                 case "ipcNamedPipeServerClose": return (int)CoreFunctionID.IPC_NAMED_PIPE_SERVER_CLOSE;
+                case "jsInteropSupported": return (int)CoreFunctionID.JS_INTEROP_SUPPORTED;
+                case "jsInteropInvoke": return (int)CoreFunctionID.JS_INTEROP_INVOKE;
+                case "jsInteropRegisterCallback": return (int)CoreFunctionID.JS_INTEROP_REGISTER_CALLBACK;
+                case "jsInteropCallbackReturn": return (int)CoreFunctionID.JS_INTEROP_CALLBACK_RETURN;
                 default: return -1;
             }
         }

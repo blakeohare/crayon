@@ -4387,6 +4387,36 @@ var interpretImpl = function(vm, executionContextId) {
 							output = buildString(globals, string1);
 						}
 						break;
+					case 62:
+						// jsInteropSupported;
+						output = buildBoolean(globals, true);
+						break;
+					case 63:
+						// jsInteropInvoke;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						if ((arg3[0] == 1)) {
+							arg3 = null;
+						}
+						C$interop$invoke(arg1[1], arg2[1], arg3);
+						break;
+					case 64:
+						// jsInteropRegisterCallback;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						C$interop$registerCallback(arg1[1], arg2[1], arg3);
+						break;
+					case 65:
+						// jsInteropCallbackReturn;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						C$interop$callbackReturn(arg1[1], arg2[1]);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

@@ -1,0 +1,12 @@
+﻿if (@ext_boolean("IS_JAVASCRIPT")) {
+    @import("inline/3_arg.pst");
+
+    if (arg3.type == Types.NULL) arg3 = null;
+
+    Extension.JsInterop_Invoke(
+        (string)arg1.internalValue,
+        (string)arg2.internalValue,
+        arg3);
+} else {
+    valueStackSize -= 3;
+}

@@ -1,0 +1,9 @@
+﻿if (@ext_boolean("IS_JAVASCRIPT")) {
+    @import("inline/2_arg.pst");
+
+    Extension.JsInterop_CallbackReturn(
+        (int)arg1.internalValue,
+        (string)arg2.internalValue);
+} else {
+    valueStackSize -= 2;
+}

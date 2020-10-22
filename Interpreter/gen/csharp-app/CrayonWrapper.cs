@@ -5693,6 +5693,22 @@ namespace Interpreter.Vm
                                     output = buildString(globals, string1);
                                 }
                                 break;
+                            case 62:
+                                // jsInteropSupported;
+                                output = buildBoolean(globals, false);
+                                break;
+                            case 63:
+                                // jsInteropInvoke;
+                                valueStackSize -= 3;
+                                break;
+                            case 64:
+                                // jsInteropRegisterCallback;
+                                valueStackSize -= 3;
+                                break;
+                            case 65:
+                                // jsInteropCallbackReturn;
+                                valueStackSize -= 2;
+                                break;
                         }
                         if ((row[1] == 1))
                         {

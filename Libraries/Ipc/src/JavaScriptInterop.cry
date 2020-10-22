@@ -1,0 +1,59 @@
+﻿import Json;
+
+namespace Ipc {
+
+    class JavaScriptInterop {
+
+        constructor() {
+            if (!$$$('jsInteropSupported')) {
+                throw new InvalidOperationException();
+            }
+        }
+
+        static function isSupported() {
+            return $$$('jsInteropSupported');
+        }
+
+        /*
+            This will look for a global object called CrayonInterop. If that object
+            contains a method with a key called {methodName}, it will invoke that method
+            with the given arguments.
+
+            If returnCallback is set, then the result of the function will be sent
+            to that function as an argument. If the return value is a Promise, the result
+            of the promise will be awaited before the callback is invoked.
+
+            The arguments and return value must be primitives, otherwise they'll be
+            replaced with null.
+        */
+        function invokeJSInteropFunction(methodName, args, returnCallback = null) {
+            if (Core.typeof(args) != Type.LIST) args = [args];
+            strArgs = Json.serialize({ "args": args});
+            $$$('jsInteropInvoke', methodName, strArgs, returnCallback == null ? resultStr => {
+                result = Json.parseJson(resultStr);
+                returnCallback(result);
+            });
+            return this;
+        }
+
+        /*
+            This will create an object on the global object called CrayonInterop.
+            A function will be added to this object with a key called {methodName}.
+            When you invoke that function, its args will be passed to this callback.
+
+            The arguments and return value must be primitives, otherwise they'll be
+            replaced with null.
+        */
+        function registerJSInteropCallback(methodName, callback, returnValue = true) {
+            $$$('jsInteropRegisterCallback', methodName, returnValue == true, (id, argStr) => {
+                o = Json.parseJson(argStr);
+                output = callback.invoke(o['args']);
+                if (returnValue) {
+                    strOutput = Json.serialize({ "value:" output });
+                    $$$('jsInteropCallbackReturn', id, strOutput);
+                }
+            });
+            return this;
+        }
+    }
+}

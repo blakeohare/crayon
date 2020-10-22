@@ -1,0 +1,10 @@
+﻿if (@ext_boolean("IS_JAVASCRIPT")) {
+    @import("inline/3_arg.pst");
+
+    Extension.JsInterop_RegisterCallback(
+        (string)arg1.internalValue,
+        (bool)arg2.internalValue,
+        arg3);
+} else {
+    valueStackSize -= 3;
+}

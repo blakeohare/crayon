@@ -43,5 +43,7 @@ namespace Interpreter.Vm
         {
             return DateTime.Now.Ticks / 10000000.0;
         }
+
+        public static void Noop() { }
     }
 }

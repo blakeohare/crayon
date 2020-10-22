@@ -8,6 +8,11 @@ EXT: CoreFunc_DateTimeInitializeTimeZoneList: LIB$datetime$initializeTimeZoneLis
 
 EXT: CoreFunc_EnvironmentGetVariable: null
 
+EXT: JsInterop_CallbackReturn: C$interop$callbackReturn([ARG:1], [ARG:2])
+EXT: JsInterop_Invoke: C$interop$invoke([ARG:1], [ARG:2], [ARG:3])
+EXT: JsInterop_RegisterCallback: C$interop$registerCallback([ARG:1], [ARG:2], [ARG:3])
+EXT: JsInterop_isSupported: true
+
 EXT: CoreFunc_NamedPipeIsSupported: false
 EXT: CoreFunc_NamedPipeCreate: (() => {})()
 EXT: CoreFunc_NamedPipeSend: (() => {})()
