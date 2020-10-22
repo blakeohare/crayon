@@ -108,6 +108,7 @@ namespace Interpreter.Vm
                     }
                     else
                     {
+                        buffer.Append((char)b);
                         stringLength--;
                         if (stringLength == 0)
                         {

@@ -3,13 +3,15 @@
 const IS_DEBUG = $var['CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE'] == true;
 
 function main(args) {
-    print("Hello, World!");
 
     hub = new Hub();
 
     hub
         .listen('howAreYou', (req, cb) => {
-            cb("I am doing well, " + req['name'] + ".");
+            print("<<< Incoming query from '" + req['askerName'] + "' about how I'm doing");
+            msg = "I am doing well. Thanks for asking, " + req['askerName'] + ".";
+            print(">>> " + msg);
+            cb({ "msg": msg });
         })
         .setOnReady(() => {
             print("It reports that it is ready.");
@@ -33,10 +35,9 @@ function sendSomeRequests(hub) {
 
     print("Waiting a few seconds...");
     Core.sleep(5);
-    print("Sending a weather query...");
-    hub.send('weather', { "zip": 30332 }, result => {
-        print("Received this weather result:");
-        print(result);
-
+    zipCode = 30332;
+    print(">>> Weather for " + zipCode + "...");
+    hub.send('weather', { "zip": zipCode }, result => {
+        print("<<< " + result);
     });
 }

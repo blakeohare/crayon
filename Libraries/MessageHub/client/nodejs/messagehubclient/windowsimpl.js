@@ -3,25 +3,23 @@ const namedpipeclient = require('./namedpipeclient.js');
 
 let messageIdAlloc = 0;
 
-const createHub = (token, isDebugMode) => {
+const createHub = (token) => {
 
     let hub = {};
     let client = null;
 
     const onUpstreamReady = (client, onReady) => {
-        console.log("Upstream client created.");
         client.send('DOWNSTREAM_READY');
         onReady(null);
     };
 
     const onDownstreamReady = (token, onReady) => {
-        console.log("I got this far.");
 
         client = namedpipeclient.runClient(
             'msghub_' + token + '_us',
             () => { onUpstreamReady(client, onReady) },
             () => {
-                console.log("Client closed, I guess");
+                // on client closed
             });
     };
 
@@ -75,18 +73,13 @@ const createHub = (token, isDebugMode) => {
             namedbigpipeserver.runServer(
                 'msghub_' + token + '_ds',
                 data => {
-                    console.log("Received downstream data:", data);
                     handleDownstreamData(data);
                 },
                 () => {
-                    console.log("Pipe ready.");
                     onDownstreamReady(token, res);
                 },
                 () => {
-                    console.log("Pipe closed");
-                    if (spinnerId !== null) {
-                        clearInterval(spinnerId);
-                    }
+                    // Pipe closed.
                 });
         });
     };

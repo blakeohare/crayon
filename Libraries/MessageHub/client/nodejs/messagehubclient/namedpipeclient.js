@@ -43,10 +43,10 @@ const runClient = (name, onCreate, onClose) => {
 
         attemptedSocket.on('error', err => {
             let code = err.code;
-            console.log("ERROR CODE: " + code);
             if (code === 'ENOENT') {
                 console.log("Could not connect at the moment. Will retry.");
             } else {
+                console.log("ERROR CODE: " + code);
                 console.log(err);
             }
             resolution(false);

@@ -40,7 +40,6 @@ namespace MessageHub {
         }
 
         function start() {
-            print("Calling .start()");
             this._isRunning = true;
             this._impl.start();
             return this;
@@ -48,7 +47,6 @@ namespace MessageHub {
 
         function startBlocking() {
             this.start();
-            print("Hub is now running a blocking loop");
             while (this._isRunning) {
                 Core.sleep(.005);
             }
