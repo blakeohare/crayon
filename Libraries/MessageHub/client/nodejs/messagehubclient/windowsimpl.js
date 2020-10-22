@@ -1,14 +1,28 @@
 ﻿const namedbigpipeserver = require('./namedbigpipeserver.js');
+const namedpipeclient = require('./namedpipeclient.js');
 
 let messageIdAlloc = 0;
 
 const createHub = (token, isDebugMode) => {
 
     let hub = {};
+    let client = null;
+
+    const onUpstreamReady = (client, onReady) => {
+        console.log("Upstream client created.");
+        client.send('DOWNSTREAM_READY');
+        onReady(null);
+    };
 
     const onDownstreamReady = (token, onReady) => {
         console.log("I got this far.");
-        onReady(null);
+
+        client = namedpipeclient.runClient(
+            'msghub_' + token + '_us',
+            () => { onUpstreamReady(client, onReady) },
+            () => {
+                console.log("Client closed, I guess");
+            });
     };
 
     const listenersByType = {};
@@ -78,7 +92,7 @@ const createHub = (token, isDebugMode) => {
     };
 
     let sendRawString = rawString => {
-        throw new Error("sendRawString: Not implemented yet.");
+        client.send(rawString);
     };
 
     hub.send = (type, obj, optionalCb) => {

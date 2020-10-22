@@ -1,6 +1,6 @@
 ﻿using Interpreter.Structs;
 using System;
-using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace Interpreter.Vm
 {
@@ -61,10 +61,64 @@ namespace Interpreter.Vm
             System.IO.StreamReader reader = new System.IO.StreamReader(namedPipe);
             object[] output = new object[] { namedPipe, reader, startFn, onDataFn, closeFn };
 
-            // TODO: do this in another thread and then fire the startFn
-            namedPipe.WaitForConnection();
+            System.ComponentModel.BackgroundWorker bgWorker = new System.ComponentModel.BackgroundWorker();
+            bgWorker.DoWork += (sender, e) =>
+            {
+                try
+                {
+                    namedPipe.WaitForConnection();
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine(ex.Message);
+                    return;
+                }
 
-            // TODO: EventLoop work to invoke onDataFn on ReadLine.
+                System.Console.WriteLine("Connected, I think.");
+
+                // TODO: this is based on the MessageHub format and needs to be rewritten in a more generic way.
+                // Sending individual characters is probably a bad idea performance-wise, and so some sort of
+                // batching heuristic needs to be made. This "length@payload" format needs to go into the actual
+                // MessageHub code directly.
+                int stringLength = 0;
+                System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+                bool isLengthParsing = true;
+                while (true)
+                {
+                    int b = namedPipe.ReadByte();
+                    if (isLengthParsing)
+                    {
+                        if (b == '@')
+                        {
+                            stringLength = int.Parse(buffer.ToString());
+                            buffer.Clear();
+                            if (stringLength == 0)
+                            {
+                                EventLoop.ExecuteFunctionPointerNativeArgs(onDataFn, new object[] { "" });
+                            }
+                            else
+                            {
+                                isLengthParsing = false;
+                            }
+                        }
+                        else
+                        {
+                            buffer.Append((char)b);
+                        }
+                    }
+                    else
+                    {
+                        stringLength--;
+                        if (stringLength == 0)
+                        {
+                            EventLoop.ExecuteFunctionPointerNativeArgs(onDataFn, new object[] { buffer.ToString() });
+                            buffer.Clear();
+                            isLengthParsing = true;
+                        }
+                    }
+                }
+            };
+            bgWorker.RunWorkerAsync();
 
             return output;
         }

@@ -195,10 +195,14 @@ namespace Interpreter.Vm
             while (true)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
-                if (invocation == null) break;
-
-                RunEventLoopIteration(invocation);
-
+                if (invocation != null)
+                {
+                    RunEventLoopIteration(invocation);
+                }
+                else
+                {
+                    // TODO: Check if root execution context has ended.
+                }
                 System.Threading.Thread.Sleep(1);
             }
         }
