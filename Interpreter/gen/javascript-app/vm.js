@@ -4400,7 +4400,7 @@ var interpretImpl = function(vm, executionContextId) {
 						if ((arg3[0] == 1)) {
 							arg3 = null;
 						}
-						C$interop$invoke(arg1[1], arg2[1], arg3);
+						output = buildBoolean(globals, C$interop$invoke(arg1[1], arg2[1], arg3));
 						break;
 					case 64:
 						// jsInteropRegisterCallback;

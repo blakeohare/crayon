@@ -24,6 +24,31 @@ function C$runInterpreterWithFunctionPointer(fp, args) {
 	return C$handleVmResult(runInterpreterWithFunctionPointer(vm, fp, args));
 }
 
+function C$runInterpreterWithFunctionPointerNativeArgs(fp, args) {
+	let globals = vmGetGlobals(C$common$programData);
+	let valueToNative = value => {
+		if (value === null || value === undefined) return buildNull(globals);
+		if (value === true || value === false) return buildBoolean(globals, value);
+		switch (typeof(value)) {
+			case 'string': return buildString(globals, value);
+			case 'number': return value % 1 === 0 ? buildInteger(globals, value) : buildFloat(globals, value);
+			case 'object':
+				if (Array.isArray(value)) {
+					let arr = [];
+					for (let item of value) {
+						arr.push(valueToNative(item));
+					}
+					return buildList(globals, arr);
+				}
+				let keys = Object.keys(value);
+				let values = keys.map(k => valueToNative(value[k]));
+				return buildStringDictionary(globals, keys, values);
+			default: return buildNull(globals);
+		}
+	};
+	return C$runInterpreterWithFunctionPointer(fp, args.map(valueToNative));
+}
+
 function C$handleVmResult(res) {
 	var vm = C$common$programData;
 	var status = getVmResultStatus(res);
@@ -197,4 +222,33 @@ LIB$datetime$parseDate = function(intOut, nullableTimeZone, year, month, day, ho
 LIB$datetime$getUtcOffsetAt = function(tz, unixTime) {
 	var d = new Date(Math.floor(unixTime * 1000));
 	return -60 * d.getTimezoneOffset();
+};
+
+C$interop$getInteropObj = () => {
+	if (!window.CrayonInterop) window.CrayonInterop = {};
+	return window.CrayonInterop;
+};
+
+C$interop$invoke = (fnName, argsStr, cbValue) => {
+	let fn = C$interop$getInteropObj()[fnName];
+	if (!fn) return false;
+	let args = JSON.parse(argsStr).args;
+	setTimeout(() => {
+		let result = fn.apply(null, args);
+		if (cbValue !== null) {
+			Promise.resolve(result).then(value => {
+				let valueStr = JSON.stringify({ value });
+				C$runInterpreterWithFunctionPointerNativeArgs(cbValue, [valueStr]);
+			});
+		}
+	}, 0);
+	return true;
+};
+
+C$interop$registerCallback = (a, b, c) => {
+	throw new Error("Not implemented");
+};
+
+C$interop$callbackReturn = (id, valueStr) => {
+	throw new Error("Not implemented");
 };

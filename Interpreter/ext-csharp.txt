@@ -9,7 +9,7 @@ EXT: CoreFunc_DateTimeInitializeTimeZoneList: DateTimeHelper.InitializeTimeZoneL
 EXT: CoreFunc_EnvironmentGetVariable: System.Environment.GetEnvironmentVariable([ARG:1])
 
 EXT: JsInterop_CallbackReturn: TranslationHelper.Noop()
-EXT: JsInterop_Invoke: TranslationHelper.Noop()
+EXT: JsInterop_Invoke: TranslationHelper.AlwaysFalse()
 EXT: JsInterop_RegisterCallback: TranslationHelper.Noop()
 EXT: JsInterop_isSupported: false
 

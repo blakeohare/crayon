@@ -9,7 +9,7 @@ EXT-TYPE: Array<object> CoreFunc_DateTimeInitializeTimeZoneList();
 EXT-TYPE: string CoreFunc_EnvironmentGetVariable(string name);
 
 EXT-TYPE: void JsInterop_CallbackReturn(int callbackId, string returnJson);
-EXT-TYPE: void JsInterop_Invoke(string name, string argsJson, Value nullableCallback);
+EXT-TYPE: bool JsInterop_Invoke(string name, string argsJson, Value nullableCallback);
 EXT-TYPE: void JsInterop_RegisterCallback(string name, bool returnsAValue, Value fn);
 EXT-TYPE: bool JsInterop_isSupported();
 

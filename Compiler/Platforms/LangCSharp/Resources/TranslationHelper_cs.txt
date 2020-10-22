@@ -45,5 +45,7 @@ namespace Interpreter.Vm
         }
 
         public static void Noop() { }
+        public static bool AlwaysTrue() { return true; }
+        public static bool AlwaysFalse() { return false; }
     }
 }

@@ -25,15 +25,16 @@ namespace Ipc {
 
             The arguments and return value must be primitives, otherwise they'll be
             replaced with null.
+
+            Returns a boolean for whether or not the invoked function exists.
         */
-        function invokeJSInteropFunction(methodName, args, returnCallback = null) {
+        function invoke(methodName, args, returnCallback = null) {
             if (Core.typeof(args) != Type.LIST) args = [args];
             strArgs = Json.serialize({ "args": args});
-            $$$('jsInteropInvoke', methodName, strArgs, returnCallback == null ? resultStr => {
+            return $$$('jsInteropInvoke', methodName, strArgs, returnCallback == null ? null : resultStr => {
                 result = Json.parseJson(resultStr);
                 returnCallback(result);
             });
-            return this;
         }
 
         /*
@@ -49,7 +50,7 @@ namespace Ipc {
                 o = Json.parseJson(argStr);
                 output = callback.invoke(o['args']);
                 if (returnValue) {
-                    strOutput = Json.serialize({ "value:" output });
+                    strOutput = Json.serialize({ "value": output });
                     $$$('jsInteropCallbackReturn', id, strOutput);
                 }
             });
