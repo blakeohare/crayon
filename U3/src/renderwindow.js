@@ -10,10 +10,17 @@ let createWindow = (title, width, height, initialData) => {
     let rBoundMessageQueue = [];
     
     ipcMain.on('mboundmsg', (event, arg) => {
+        let t = arg.split(' ');
+        let msg = {
+            type: t[0],
+            id: parseInt(t[1]),
+            eventName: t[2],
+            arg: t[3],
+        };
         if (listener === null) {
-            mBoundMessageQueue.push(arg);
+            mBoundMessageQueue.push(msg);
         } else {
-            listener(arg);
+            listener(msg);
         }
     });
     

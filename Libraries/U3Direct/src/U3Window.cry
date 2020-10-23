@@ -1,4 +1,6 @@
-﻿namespace U3Direct {
+﻿import MessageHub;
+
+namespace U3Direct {
 
     enum WindowMode {
         GRAPHICS,
@@ -6,23 +8,50 @@
     }
 
     class U3Window {
-        field _bridge = null;
+        field _hub;
 
-        constructor() { }
+        constructor(eventListener) {
+            this._hub = new Hub();
+            isDebug = $var['CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE'] == true;
+            if (isDebug) {
+                this._hub.setDebugOverrideToken('u3debug');
+            } else {
+                this._hub.setDesktopInitializer(token => {
+                    throw new NotImplementedException();
+                });
+            }
 
-        function show() {
-            this._bridge = new U3Bridge();
-            this._bridge.start();
+            this._hub.listen('u3event', (msg, cb) => {
+                eventType = msg['eventName'];
+                id = msg['id'];
+                arg = msg['arg'];
+                eventListener(eventType, id, arg);
+            });
+        }
+
+        function show(title, width, height, initialData) {
+
+            this._hub.setOnReady(() => {
+                this._hub.send('u3init', {
+                    "title": title,
+                    "width": width,
+                    "height": height,
+                    "initialData": initialData,
+                });
+            });
+
+            this._hub.startBlocking();
             return this;
         }
 
-        function sendMessage(items) {
-            this._bridge.send(items);
+        function sendData(items) {
+            this._hub.send('u3data', { "buffer": items });
             return this;
         }
 
         function close() {
-            this._bridge.close();
+            this._hub.send('u3close', {});
+            return this;
         }
     }
 }

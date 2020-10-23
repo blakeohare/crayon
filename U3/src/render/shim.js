@@ -1,6 +1,6 @@
 
 function platformSpecificHandleEvent(id, eventName, args) {
-	window.sendMessage(['E ', id, eventName, args].join(' '));
+	window.sendMessage(['E', id, eventName, args].join(' '));
 }
 
 function getWindowSize() {

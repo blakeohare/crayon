@@ -34,7 +34,7 @@ namespace U3Nori {
         field _u3window;
 
         constructor() {
-            this._u3window = new U3Window();
+            this._u3window = new U3Window(this.handleUiGeneratedEvent);
             this._handlers['on-render-pass'] = [this._maybeFireOnLoadHandlers, null];
             this._handlers['on-timeout-callback'] = [this._handleTimeout, (args) => { return [Core.parseInt(args)]; }];
             this._internalBorder = this._setContentInternal(new Border());
@@ -160,7 +160,7 @@ namespace U3Nori {
             }
             this._newImageSources.clear();
 
-            this._u3window.sendMessage(renderData);
+            this._u3window.sendData(renderData);
         }
 
         function dispatcherCbComplete() {
@@ -183,27 +183,7 @@ namespace U3Nori {
                 renderData = this._getRenderData();
                 execId = Core.getCurrentExecutionToken();
 
-                this._u3window.show();
-                renderData = ['INIT', NoriUtil.textToBase64(this._title), this._size[0], this._size[1]] + renderData;
-                this._u3window.sendMessage(renderData);
-
-                while (true) {
-                    Core.sleep(2);
-                    print("WHAT TO DO ABOUT THE EVENT LOOP?");
-                }
-
-                // don't register the dispatcher framework until the native frame is ready to go, otherwise a dispatcher
-                // callback that attempts to change the UI tree will cause a crash.
-                //Dispatcher.registerDispatcherFramework(this);
-
-                // This will save the VM state for this context and potentially kick off a
-                // while loop that spins and watches for events. Only one instance of this loop
-                // exists and waits for all active frames to disappear before ending.
-                // If it is already running, then this execution context will simply end and yield
-                // back to the existing loop.
-
-                // TODO: re-think how to do this
-                // $lib_nori_runEventWatcher(this, execId, handleUiGeneratedEvent, postLoadHandler);
+                this._u3window.show(this._title, this._size[0], this._size[1], renderData);
             }
             return this;
         }
@@ -251,7 +231,7 @@ namespace U3Nori {
             this._callbacksById[id] = cb;
 
             // TODO: U3Direct
-            this._u3window.sendMessage(['TO', id, t].join(' '));
+            this._u3window.sendData(['TO', id, t]);
         }
 
         function _handleTimeout(id) {
@@ -261,23 +241,23 @@ namespace U3Nori {
             cb();
             this._flushUpdatesIfNeeded();
         }
+
+        function handleUiGeneratedEvent(type, id, argString) {
+            elementOrFrame = id == -1 ? this : this._elementById.get(id);
+            if (elementOrFrame != null) {
+                handlerAndParser = elementOrFrame._handlers.get(type);
+                if (handlerAndParser != null) {
+                    handler = handlerAndParser[0];
+                    parser = handlerAndParser[1];
+                    args = parser == null ? [] : parser(argString);
+                    handler.invoke(args);
+                    this._flushUpdatesIfNeeded();
+                }
+            }
+        }
     }
 
     function postLoadHandler(frame) {
         frame._maybeFireOnLoadHandlers();
-    }
-
-    function handleUiGeneratedEvent(frame, id, type, argString) {
-        elementOrFrame = id == -1 ? frame : frame._elementById.get(id);
-        if (elementOrFrame != null) {
-            handlerAndParser = elementOrFrame._handlers.get(type);
-            if (handlerAndParser != null) {
-                handler = handlerAndParser[0];
-                parser = handlerAndParser[1];
-                args = parser == null ? [] : parser(argString);
-                handler.invoke(args);
-                frame._flushUpdatesIfNeeded();
-            }
-        }
     }
 }
