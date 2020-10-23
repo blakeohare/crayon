@@ -1,5 +1,6 @@
 ﻿import Random;
 import Json;
+import Ipc;
 
 namespace MessageHub {
 
@@ -25,8 +26,13 @@ namespace MessageHub {
             }
             this._token = token.join('');
 
-            // TODO: add environment descriptor to Environment library
-            this._impl = new WindowsHub(this._token, this._recvRaw, this._onReady, this._onClose, this._desktopInit);
+            if (NamedPipeClient.isSupported()) {
+                this._impl = new WindowsHub(this._token, this._recvRaw, this._onReady, this._onClose, this._desktopInit);
+            } else if (JavaScriptInterop.isSupported()) {
+                this._impl = new WebHub(this._token, this._recvRaw, this._onReady, this._onClose);
+            } else {
+                throw new NotImplementedException();
+            }
         }
 
         function setDebugOverrideToken(token) {

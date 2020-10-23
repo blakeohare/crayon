@@ -131,6 +131,7 @@ MATCHERS = [
 
   # MessageHub client libraries
   ('Libraries/MessageHub/client/nodejs/messagehubclient/*.js', JAVASCRIPT_NODE_STYLE),
+  ('Libraries/MessageHub/client/js/*.js', JAVASCRIPT_STYLE),
 
   # Docs (only whitelist directories where .md occurs otherwise U3's node_modules has lots of false hits)
   ('README.md', MARKDOWN_STYLE),

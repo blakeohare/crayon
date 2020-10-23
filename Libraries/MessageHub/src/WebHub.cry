@@ -1,4 +1,6 @@
-﻿namespace MessageHub {
+﻿import Ipc;
+
+namespace MessageHub {
 
     class WebHub {
 
@@ -7,19 +9,31 @@
         field onClose;
         field recvRaw;
 
+        field js;
+        field funcUs = null;
+        field funcDs = null;
+
         constructor(token, recvRaw, onReady, onClose) {
             this.token = token;
             this.recvRaw = recvRaw;
             this.onReady = onReady;
             this.onClose = onClose;
+
+            this.js = new Ipc.JavaScriptInterop();
         }
 
         function start() {
-            throw new NotImplementedException();
+            this.js.invoke('msghub_newInstance', [this.token], ignore => {
+                if (this.funcUs == null) this.funcUs = 'msghub_' + this.token + '_us';
+                this.js.registerCallback(this.funcUs, this.recvRaw, false);
+                Core.sleep(0.001); // TODO: is this necessary?
+                this.onReady();
+            });
         }
 
         function sendString(rawString) {
-            throw new NotImplementedException();
+            if (this.funcDs == null) this.funcDs = 'msghub_' + this.token + '_ds';
+            this.js.invoke(this.funcDs, [rawString]);
         }
     }
 }
