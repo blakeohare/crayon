@@ -13,6 +13,7 @@ namespace Interpreter
             TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
             VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest);
             TranslationHelper.ProgramData = vm;
+            vm.environment.showLibStack = true;
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
             Debugger.INSTANCE.StartListening();
             EventLoop.StartInterpreter();
