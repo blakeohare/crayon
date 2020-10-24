@@ -1,8 +1,10 @@
-﻿using Common;
+﻿using Build.ImageSheets;
+using Common;
 using CommonUtil.Disk;
 using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Build
 {
@@ -41,6 +43,11 @@ namespace Build
                 }
 
                 resourceDatabase.GenerateResourceMapping();
+
+                using (new PerformanceSection("Program.PreprareResources/ImageStuff2"))
+                {
+                    ImageResourceAllocator.PrepareImageResources(resourceDatabase);
+                }
 
                 return resourceDatabase;
             }

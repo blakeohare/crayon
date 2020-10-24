@@ -257,6 +257,11 @@ namespace CSharpApp
                 output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
             }
 
+            if (resourceDatabase.Image2ResourceManifestFile != null)
+            {
+                output[baseDir + "Resources/Image2Manifest.txt"] = resourceDatabase.Image2ResourceManifestFile;
+            }
+
             foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
             {
                 output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
@@ -265,6 +270,11 @@ namespace CSharpApp
             foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
             {
                 output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
+            }
+
+            foreach (string imageFilePath in resourceDatabase.Image2ResourceFiles.Keys)
+            {
+                output[baseDir + "Resources/" + imageFilePath] = resourceDatabase.Image2ResourceFiles[imageFilePath];
             }
 
             foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))

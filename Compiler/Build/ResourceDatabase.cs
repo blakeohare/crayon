@@ -48,8 +48,10 @@ namespace Build
         //public FileOutput ByteCodeFile { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
         public FileOutput ImageSheetManifestFile { get; set; }
+        public FileOutput Image2ResourceManifestFile { get; set; }
 
         public Dictionary<string, FileOutput> ImageSheetFiles { get; set; }
+        public Dictionary<string, FileOutput> Image2ResourceFiles { get; set; }
 
         public List<FileOutput> AudioResources { get; set; }
         public List<FileOutput> ImageResources { get; set; }
