@@ -7,7 +7,6 @@ namespace Interpreter
 {
     public class UniversalBitmap
     {
-
 #if WINDOWS
         private System.Drawing.Bitmap internalBitmap;
 #elif OSX
@@ -165,6 +164,16 @@ namespace Interpreter
             ctx.ShowText(text);
             session.Flush();
 #endif
+        }
+
+        // Must be in range
+        public void GetPixel(int x, int y, int[] colorOut)
+        {
+            System.Drawing.Color color = this.internalBitmap.GetPixel(x, y);
+            colorOut[0] = color.R;
+            colorOut[1] = color.G;
+            colorOut[2] = color.B;
+            colorOut[3] = color.A;
         }
 
 #if WINDOWS

@@ -34,25 +34,25 @@ int ImageHelper_GetPixel(Array<Value> nums, ObjectInstance bmp, ObjectInstance e
     if (edit != null) e = edit.nativeData;
 
     Extension.CoreFunc_ImageGetPixel(bmp.nativeData[0], e, (int)xv.internalValue, (int)yv.internalValue, arr);
-    if (arr[0] == 0) return 2;
+    if (arr[4] == 0) return 2;
 
     if (@ext_boolean("ARRAY_IS_LIST")) {
         List<Value> c = pOut.list;
         pOut.size = 4;
+        c.Add(nums[arr[0]]);
         c.Add(nums[arr[1]]);
         c.Add(nums[arr[2]]);
         c.Add(nums[arr[3]]);
-        c.Add(nums[arr[4]]);
     } else {
         if (pOut.capacity < 4) {
             pOut.capacity = 4;
             pOut.array = new Array<Value>(4);
         }
         pOut.size = 4;
-        pOut.array[0] = nums[arr[1]];
-        pOut.array[1] = nums[arr[2]];
-        pOut.array[2] = nums[arr[3]];
-        pOut.array[3] = nums[arr[4]];
+        pOut.array[0] = nums[arr[0]];
+        pOut.array[1] = nums[arr[1]];
+        pOut.array[2] = nums[arr[2]];
+        pOut.array[3] = nums[arr[3]];
     }
     return 0;
 }

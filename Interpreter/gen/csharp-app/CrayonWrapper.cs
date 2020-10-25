@@ -1488,7 +1488,7 @@ namespace Interpreter.Vm
                 e = edit.nativeData;
             }
             ImageUtil.GetPixel(bmp.nativeData[0], e, (int)xv.internalValue, (int)yv.internalValue, arr);
-            if ((arr[0] == 0))
+            if ((arr[4] == 0))
             {
                 return 2;
             }
@@ -1498,10 +1498,10 @@ namespace Interpreter.Vm
                 pOut.array = new Value[4];
             }
             pOut.size = 4;
-            pOut.array[0] = nums[arr[1]];
-            pOut.array[1] = nums[arr[2]];
-            pOut.array[2] = nums[arr[3]];
-            pOut.array[3] = nums[arr[4]];
+            pOut.array[0] = nums[arr[0]];
+            pOut.array[1] = nums[arr[1]];
+            pOut.array[2] = nums[arr[2]];
+            pOut.array[3] = nums[arr[3]];
             return 0;
         }
 

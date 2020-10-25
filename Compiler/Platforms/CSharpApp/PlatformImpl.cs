@@ -36,6 +36,11 @@ namespace CSharpApp
                 "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
             };
 
+            if (resDb.Image2ResourceManifestFile != null)
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\Image2Manifest.txt\"/>");
+            }
+
             if (resDb.ImageSheetManifestFile != null)
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\ImageSheetManifest.txt\"/>");
@@ -54,6 +59,11 @@ namespace CSharpApp
             foreach (string imageSheetFileName in resDb.ImageSheetFiles.Keys)
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageSheetFileName + "\"/>");
+            }
+
+            foreach (string imageChunk in resDb.Image2ResourceFiles.Keys)
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageChunk + "\"/>");
             }
 
             foreach (FileOutput textFile in resDb.TextResources.Where(img => img.CanonicalFileName != null))

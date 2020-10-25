@@ -9,8 +9,8 @@
             if (height == null && width == Images.Internal.ImagesHelper.INST) {
                 // This is for the internal loader
             } else {
-                Images.Internal.ImagesHelper.verifyPositiveInt('width', width);
-                Images.Internal.ImagesHelper.verifyPositiveInt('height', height);
+                Images.Internal.ImagesHelper.verifyInt('width', width, true);
+                Images.Internal.ImagesHelper.verifyInt('height', height, true);
                 this.width = width;
                 this.height = height;
                 $$$('imageCreate', this, width, height);
@@ -21,6 +21,7 @@
             // TODO: how to designate a specific module?
             if (path != '') {
                 if (path[0] == '/') path = path[1:];
+                sz = [];
                 bmp = Images.Internal.ResourceManifest.getBitmapCopyBlocking('@', path);
                 if (bmp != null) return bmp;
             }
@@ -37,7 +38,11 @@
         }
 
         function getPixel(x, y) {
-            return $$$('imageGetPixel', this, null, x, y, []);
+            c = [];
+            sc = $$$('imageGetPixel', this, null, x, y, c);
+            if (sc == 0) return c;
+            if (sc == 1) throw new InvalidArgumentException("Coordinates must be integers. Found x: '" + x + "', y: '" + y + "'");
+            if (sc == 2) throw new InvalidArgumentException("Coordinate out of range: (" + x + ', ' + y + ") Size: " + this.width + ' x ' + this.height);
         }
 
         function edit() {
@@ -50,9 +55,9 @@
         }
 
         function scale(newWidth, newHeight) {
-            Images.Internal.ImagesHelper.verifyPositiveInt('width', newWidth);
-            Images.Internal.ImagesHelper.verifyPositiveInt('height', newHeight);
-            b = new Bitmap(null, Images.Internal.ImagesHelper.INST);
+            Images.Internal.ImagesHelper.verifyInt('width', newWidth, true);
+            Images.Internal.ImagesHelper.verifyInt('height', newHeight, true);
+            b = new Bitmap(Images.Internal.ImagesHelper.INST, null);
             b.width = newWidth;
             b.height = newHeight;
             $$$('imageScale', this, b, newWidth, newHeight, 1);

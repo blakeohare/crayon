@@ -56,14 +56,14 @@
 
             if (this._finished) _throwFinished();
             if (!(otherBitmap is Bitmap)) throw new InvalidArgumentException('image drawing requires a Bitmap instance.');
-            Images.Internal.ImagesHelper.verifyPositiveInt('targetX', targetX);
-            Images.Internal.ImagesHelper.verifyPositiveInt('targetY', targetY);
-            Images.Internal.ImagesHelper.verifyPositiveInt('targetWidth', targetWidth);
-            Images.Internal.ImagesHelper.verifyPositiveInt('targetHeight', targetHeight);
-            Images.Internal.ImagesHelper.verifyPositiveInt('regionX', regionX);
-            Images.Internal.ImagesHelper.verifyPositiveInt('regionY', regionY);
-            Images.Internal.ImagesHelper.verifyPositiveInt('regionWidth', regionWidth);
-            Images.Internal.ImagesHelper.verifyPositiveInt('regionHeight', regionHeight);
+            Images.Internal.ImagesHelper.verifyInt('targetX', targetX);
+            Images.Internal.ImagesHelper.verifyInt('targetY', targetY);
+            Images.Internal.ImagesHelper.verifyInt('targetWidth', targetWidth);
+            Images.Internal.ImagesHelper.verifyInt('targetHeight', targetHeight);
+            Images.Internal.ImagesHelper.verifyInt('regionX', regionX);
+            Images.Internal.ImagesHelper.verifyInt('regionY', regionY);
+            Images.Internal.ImagesHelper.verifyInt('regionWidth', regionWidth);
+            Images.Internal.ImagesHelper.verifyInt('regionHeight', regionHeight);
 
             $$$('imageBlit',
                 this, otherBitmap,

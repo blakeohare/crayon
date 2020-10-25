@@ -1211,15 +1211,15 @@ var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
 		e = edit[3];
 	}
 	C$ImageUtil$getPixel(bmp[3][0], e, xv[1], yv[1], arr);
-	if ((arr[0] == 0)) {
+	if ((arr[4] == 0)) {
 		return 2;
 	}
 	var c = pOut[2];
 	pOut[1] = 4;
+	c.push(nums[arr[0]]);
 	c.push(nums[arr[1]]);
 	c.push(nums[arr[2]]);
 	c.push(nums[arr[3]]);
-	c.push(nums[arr[4]]);
 	return 0;
 };
 
