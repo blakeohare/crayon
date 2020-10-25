@@ -1,0 +1,62 @@
+﻿namespace Images {
+
+    class Bitmap {
+
+        field width;
+        field height;
+
+        constructor(width, height) {
+            if (height == null && width == Images.Internal.ImagesHelper.INST) {
+                // This is for the internal loader
+            } else {
+                Images.Internal.ImagesHelper.verifyPositiveInt('width', width);
+                Images.Internal.ImagesHelper.verifyPositiveInt('height', height);
+                this.width = width;
+                this.height = height;
+                $$$('imageCreate', this, width, height);
+            }
+        }
+
+        static function fromResource(path) {
+            // TODO: how to designate a specific module?
+            if (path != '') {
+                if (path[0] == '/') path = path[1:];
+                bmp = Images.Internal.ResourceManifest.getBitmapCopyBlocking('@', path);
+                if (bmp != null) return bmp;
+            }
+            throw new Exception("Resource does not exist: '" + path + "'");
+        }
+
+        // supports PNG or JPEG
+        static function fromFileBytes(bytes) {
+            throw new NotImplementedException();
+        }
+
+        static function fromBase64(str) {
+            throw new NotImplementedException();
+        }
+
+        function getPixel(x, y) {
+            return $$$('imageGetPixel', this, null, x, y, []);
+        }
+
+        function edit() {
+            session = new EditSession(Images.Internal.ImagesHelper.INST, this);
+            return session;
+        }
+
+        function clone() {
+            return this.scale(this.width, this.height);
+        }
+
+        function scale(newWidth, newHeight) {
+            Images.Internal.ImagesHelper.verifyPositiveInt('width', newWidth);
+            Images.Internal.ImagesHelper.verifyPositiveInt('height', newHeight);
+            b = new Bitmap(null, Images.Internal.ImagesHelper.INST);
+            b.width = newWidth;
+            b.height = newHeight;
+            $$$('imageScale', this, b, newWidth, newHeight);
+            return b;
+        }
+    }
+}

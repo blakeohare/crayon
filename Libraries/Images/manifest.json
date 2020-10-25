@@ -1,0 +1,6 @@
+{
+    "name": "Images",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/images",
+    "description": "Library for simple image resource management and manipulation."
+}

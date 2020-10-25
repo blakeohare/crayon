@@ -69,6 +69,16 @@ namespace Parser
         JS_INTEROP_INVOKE = 63,
         JS_INTEROP_REGISTER_CALLBACK = 64,
         JS_INTEROP_CALLBACK_RETURN = 65,
+        IMAGE_CREATE = 66,
+        IMAGE_GET_PIXEL = 67,
+        IMAGE_SET_PIXEL = 68,
+        IMAGE_SCALE = 69,
+        IMAGE_SESSION_START = 70,
+        IMAGE_SESSION_FINISH = 71,
+        IMAGE_BLIT = 72,
+        IMAGE_ATLAS_MANIFEST = 73,
+        IMAGE_LOAD_CHUNK = 74,
+        IMAGE_GET_CHUNK_SYNC = 75,
     }
 
     internal static class CoreFunctionIDHelper
@@ -142,6 +152,16 @@ namespace Parser
                 case "jsInteropInvoke": return (int)CoreFunctionID.JS_INTEROP_INVOKE;
                 case "jsInteropRegisterCallback": return (int)CoreFunctionID.JS_INTEROP_REGISTER_CALLBACK;
                 case "jsInteropCallbackReturn": return (int)CoreFunctionID.JS_INTEROP_CALLBACK_RETURN;
+                case "imageCreate": return (int)CoreFunctionID.IMAGE_CREATE;
+                case "imageGetPixel": return (int)CoreFunctionID.IMAGE_GET_PIXEL;
+                case "imageSetPixel": return (int)CoreFunctionID.IMAGE_SET_PIXEL;
+                case "imageScale": return (int)CoreFunctionID.IMAGE_SCALE;
+                case "imageSessionStart": return (int)CoreFunctionID.IMAGE_SESSION_START;
+                case "imageSessionFinish": return (int)CoreFunctionID.IMAGE_SESSION_FINISH;
+                case "imageBlit": return (int)CoreFunctionID.IMAGE_BLIT;
+                case "imageAtlasManifest": return (int)CoreFunctionID.IMAGE_ATLAS_MANIFEST;
+                case "imageLoadChunk": return (int)CoreFunctionID.IMAGE_LOAD_CHUNK;
+                case "imageGetChunkSync": return (int)CoreFunctionID.IMAGE_GET_CHUNK_SYNC;
                 default: return -1;
             }
         }

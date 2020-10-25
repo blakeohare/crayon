@@ -1,0 +1,41 @@
+﻿namespace Images {
+    class ImageResourceLoader {
+
+        field prefix = null;
+        field filename = null;
+        field module = null;
+
+        field onProgress = null;
+        field onDone = null;
+        field loaded = false;
+
+        constructor() { }
+
+        function setPathPrefix(p) {
+            this.prefix = p;
+            return this;
+        }
+
+        function setOnProgress(fn) {
+            this.onProgress = fn;
+            return this;
+        }
+
+        function setOnComplete(fn) {
+            this.onDone = fn;
+            return this;
+        }
+
+        function load() {
+
+            throw new NotImplementedException();
+        }
+
+        function awaitLoad() {
+            this.load();
+            while (!this.loaded) {
+                Core.sleep(0.002);
+            }
+        }
+    }
+}

@@ -2045,6 +2045,11 @@ namespace Interpreter.Vm
             Value arg3 = null;
             Value arg4 = null;
             Value arg5 = null;
+            Value arg6 = null;
+            Value arg7 = null;
+            Value arg8 = null;
+            Value arg9 = null;
+            Value arg10 = null;
             List<Token> tokenList = null;
             int[] globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
             MagicNumbers magicNumbers = vm.metadata.magicNumbers;
@@ -5708,6 +5713,93 @@ namespace Interpreter.Vm
                             case 65:
                                 // jsInteropCallbackReturn;
                                 valueStackSize -= 2;
+                                break;
+                            case 66:
+                                // imageCreate;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 67:
+                                // imageGetPixel;
+                                valueStackSize -= 5;
+                                arg5 = valueStack[(valueStackSize + 4)];
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 68:
+                                // imageSetPixel;
+                                valueStackSize -= 7;
+                                arg7 = valueStack[(valueStackSize + 6)];
+                                arg6 = valueStack[(valueStackSize + 5)];
+                                arg5 = valueStack[(valueStackSize + 4)];
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 69:
+                                // imageScale;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 70:
+                                // imageSessionStart;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 71:
+                                // imageSessionFinish;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 72:
+                                // imageBlit;
+                                valueStackSize -= 10;
+                                arg10 = valueStack[(valueStackSize + 9)];
+                                arg9 = valueStack[(valueStackSize + 8)];
+                                arg8 = valueStack[(valueStackSize + 7)];
+                                arg7 = valueStack[(valueStackSize + 6)];
+                                arg6 = valueStack[(valueStackSize + 5)];
+                                arg5 = valueStack[(valueStackSize + 4)];
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 73:
+                                // imageAtlasManifest;
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 74:
+                                // imageLoadChunk;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                break;
+                            case 75:
+                                // imageGetChunkSync;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
                                 break;
                         }
                         if ((row[1] == 1))
