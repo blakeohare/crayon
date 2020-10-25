@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Interpreter.Structs;
 
 namespace Interpreter.Vm
 {
@@ -6,45 +8,77 @@ namespace Interpreter.Vm
     {
         public static object NewBitmap(int width, int height)
         {
-            throw new NotImplementedException();
+            return new UniversalBitmap(width, height);
         }
 
-        public static void ChunkLoadAsync(int chunkId, int[] chunkIds, Interpreter.Structs.Value loadedCallback)
+        private static Dictionary<int, UniversalBitmap> loadedChunks = new Dictionary<int, UniversalBitmap>();
+        public static void ChunkLoadAsync(int chunkId, int[] chunkIds, Value loadedCallback)
         {
-            throw new NotImplementedException();
+            loadedChunks[chunkId] = ResourceReader.ReadImageResource("ch_" + chunkId + ".png");
+            int total = chunkIds.Length;
+            int loaded = 0;
+            foreach (int otherChunk in chunkIds)
+            {
+                if (loadedChunks.ContainsKey(otherChunk)) loaded++;
+            }
+            EventLoop.ExecuteFunctionPointerNativeArgs(loadedCallback, new object[] { chunkId, loaded, total });
         }
 
         public static object GetChunk(int chunkId)
         {
-            throw new NotImplementedException();
+            return loadedChunks[chunkId];
         }
 
-        public static object Scale(object original, int newWidth, int newHeight, int algo)
+        public static object Scale(object rawBmp, int newWidth, int newHeight, int algo)
         {
             if (algo != 1) throw new NotImplementedException();
+            UniversalBitmap bmp = (UniversalBitmap)rawBmp;
+            int oldWidth = bmp.Width;
+            int oldHeight = bmp.Height;
+
+            if (oldWidth == newWidth && oldHeight == newHeight)
+            {
+                // Scale is used for 1:1 cloning
+                UniversalBitmap clone = new UniversalBitmap(newWidth, newHeight);
+                clone.GetActiveDrawingSession().Draw(bmp, 0, 0, 0, 0, newWidth, newHeight).Flush();
+                return clone;
+            }
+
             throw new NotImplementedException();
         }
 
-        public static object StartEditSession(object bmp)
+        public static object StartEditSession(object bmpObj)
         {
-            throw new NotImplementedException();
+            UniversalBitmap bmp = (UniversalBitmap)bmpObj;
+            UniversalBitmap.DrawingSession session = bmp.GetActiveDrawingSession();
+            return session;
         }
 
-        public static void EndEditSession(object session, object bmp)
+        public static void EndEditSession(object sessionObj, object bmpObj)
         {
-            throw new NotImplementedException();
+            UniversalBitmap.DrawingSession session = (UniversalBitmap.DrawingSession)sessionObj;
+            session.Flush();
         }
 
-        public static void Blit(object target, object src, int tx, int ty, int tw, int th, int sx, int sy, int sw, int sh)
+        public static void Blit(object targetObj, object srcObj, int tx, int ty, int tw, int th, int sx, int sy, int sw, int sh)
         {
-            throw new NotImplementedException();
+            UniversalBitmap.DrawingSession target = (UniversalBitmap.DrawingSession)targetObj;
+            UniversalBitmap src = (UniversalBitmap)srcObj;
+            if (tw != sw || th != sh) throw new NotImplementedException();
+            target.Draw(src, tx, ty, sx, sy, tw, th);
         }
 
-        public static void GetPixel(object bmp, object nullableEditSession, int x, int y, int[] colorOut)
+        public static void GetPixel(object bmpRaw, object nullableEditSession, int x, int y, int[] colorOut)
         {
-            // colorOut[0] must be set to 0 for out of range and 1 otherwise.
-            colorOut[0] = 1;
-            throw new NotImplementedException();
+            UniversalBitmap bmp = (UniversalBitmap)bmpRaw;
+            if (x < 0 || y < 0 || x >= bmp.Width || y >= bmp.Height)
+            {
+                colorOut[4] = 0;
+                return;
+            }
+            colorOut[4] = 1;
+            bmp.GetPixel(x, y, colorOut);
+            return;
         }
 
         // returns true for out of range

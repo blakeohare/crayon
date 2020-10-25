@@ -4,9 +4,12 @@
         // HACK: this is an insecure hacky way to make things package-private.
         static field INST = new ImagesHelper();
 
-        static function verifyPositiveInt(name, value) {
-            if (Core.typeof(value) != Core.Type.INTEGER || value < 1) {
-                throw new InvalidArgumentException(name + " must be a positive integer.");
+        static function verifyInt(name, value, positiveOnly = false) {
+            if (Core.typeof(value) != Core.Type.INTEGER) {
+                throw new InvalidArgumentException(name + " must be an integer. Found '" + value + "' instead.");
+            }
+            if (positiveOnly && value < 1) {
+                throw new InvalidArgumentException(name + " must be greater than 0. Found '" + value + "' instead.");
             }
         }
     }

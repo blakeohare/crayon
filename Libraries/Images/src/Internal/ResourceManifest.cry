@@ -28,7 +28,7 @@
                         break;
                     case 'C': // active chunk
                         chunk = {
-                            'id': parts[1],
+                            'id': parseInt(parts[1]),
                             'w': parseInt(parts[2]),
                             'h': parseInt(parts[3]),
                             'files': [],
@@ -145,6 +145,8 @@
             if (chunk['bmp'] != null) return;
             b = new Bitmap(Images.Internal.ImagesHelper.INST, null);
             $$$('imageGetChunkSync', b, cid);
+            b.width = chunk['w'];
+            b.height = chunk['h'];
             chunk['bmp'] = b;
 
             for (file : chunk['files']) {
@@ -162,7 +164,9 @@
                 module,
                 prefix,
                 (current, total) => {
-                    onChange(current == total ? 1.0 : (1.0 * current / total));
+                    if (onChange != null) {
+                        onChange(current == total ? 1.0 : (1.0 * current / total));
+                    }
                 },
                 onDone);
         }

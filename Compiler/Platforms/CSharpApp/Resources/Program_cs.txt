@@ -9,9 +9,10 @@ namespace Interpreter
         {
             string byteCode = ResourceReader.ReadTextResource("ByteCode.txt");
             string resourceManifest = ResourceReader.ReadTextResource("ResourceManifest.txt");
+            string imageManifest = ResourceReader.ReadTextResource("Image2Manifest.txt") ?? "";
             TranslationHelper.LibraryRegistry = new LibraryRegistry();
             TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
-            VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest, "");
+            VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest, imageManifest);
             TranslationHelper.ProgramData = vm;
             vm.environment.showLibStack = true;
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
