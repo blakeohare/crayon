@@ -11,7 +11,7 @@ namespace Interpreter
             string resourceManifest = ResourceReader.ReadTextResource("ResourceManifest.txt");
             TranslationHelper.LibraryRegistry = new LibraryRegistry();
             TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
-            VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest);
+            VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest, "");
             TranslationHelper.ProgramData = vm;
             vm.environment.showLibStack = true;
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);

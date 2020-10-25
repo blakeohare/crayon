@@ -1,3 +1,14 @@
 ﻿@import("inline/5_arg.pst");
 
-hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+objInstance1 = null;
+if (arg2.type != Types.NULL) objInstance1 = (ObjectInstance)arg2.internalValue;
+int1 = ImageHelper_GetPixel(
+    globals.positiveIntegers,
+    (ObjectInstance)arg1.internalValue,
+    objInstance1,
+    arg3,
+    arg4,
+    (ListImpl)arg5.internalValue,
+    intBuffer);
+
+output = globals.positiveIntegers[int1];

@@ -55,7 +55,7 @@
             b = new Bitmap(null, Images.Internal.ImagesHelper.INST);
             b.width = newWidth;
             b.height = newHeight;
-            $$$('imageScale', this, b, newWidth, newHeight);
+            $$$('imageScale', this, b, newWidth, newHeight, 1);
             return b;
         }
     }

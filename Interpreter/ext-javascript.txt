@@ -8,6 +8,16 @@ EXT: CoreFunc_DateTimeInitializeTimeZoneList: LIB$datetime$initializeTimeZoneLis
 
 EXT: CoreFunc_EnvironmentGetVariable: null
 
+EXT: CoreFunc_ImageBlit: C$ImageUtil$blit([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
+EXT: CoreFunc_ImageChunkLoadAsync: C$ImageUtil$chunkLoadAsync([ARG:1], [ARG:2], [ARG:3])
+EXT: CoreFunc_ImageEndEditSession: C$ImageUtil$endEditSession([ARG:1], [ARG:2])
+EXT: CoreFunc_ImageGetChunk: C$ImageUtil$getChunk([ARG:1])
+EXT: CoreFunc_ImageGetPixel: C$ImageUtil$getPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: CoreFunc_ImageNewBmp: C$ImageUtil$newBitmap([ARG:1], [ARG:2])
+EXT: CoreFunc_ImageScale: C$ImageUtil$scale([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: CoreFunc_ImageSetPixel: C$ImageUtil$setPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+EXT: CoreFunc_ImageStartEditSession: C$ImageUtil$startEditSession([ARG:1])
+
 EXT: JsInterop_CallbackReturn: C$interop$callbackReturn([ARG:1], [ARG:2])
 EXT: JsInterop_Invoke: C$interop$invoke([ARG:1], [ARG:2], [ARG:3])
 EXT: JsInterop_RegisterCallback: C$interop$registerCallback([ARG:1], [ARG:2], [ARG:3])

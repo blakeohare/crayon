@@ -703,10 +703,10 @@ namespace Interpreter.Vm
             return o;
         }
 
-        public static VmContext createVm(string rawByteCode, string resourceManifest)
+        public static VmContext createVm(string rawByteCode, string resourceManifest, string imageAtlasManifest)
         {
             VmGlobals globals = initializeConstantValues();
-            ResourceDB resources = resourceManagerInitialize(globals, resourceManifest);
+            ResourceDB resources = resourceManagerInitialize(globals, resourceManifest, imageAtlasManifest);
             Code byteCode = initializeByteCode(rawByteCode);
             Value[] localsStack = new Value[10];
             int[] localsStackSet = new int[10];
@@ -1468,6 +1468,132 @@ namespace Interpreter.Vm
         public static int getVmResultStatus(InterpreterResult result)
         {
             return result.status;
+        }
+
+        public static void ImageHelper_GetChunkSync(ObjectInstance o, int cid)
+        {
+            o.nativeData = new object[1];
+            o.nativeData[0] = ImageUtil.GetChunk(cid);
+        }
+
+        public static int ImageHelper_GetPixel(Value[] nums, ObjectInstance bmp, ObjectInstance edit, Value xv, Value yv, ListImpl pOut, int[] arr)
+        {
+            if (((xv.type != 3) || (yv.type != 3)))
+            {
+                return 1;
+            }
+            object e = null;
+            if ((edit != null))
+            {
+                e = edit.nativeData;
+            }
+            ImageUtil.GetPixel(bmp.nativeData[0], e, (int)xv.internalValue, (int)yv.internalValue, arr);
+            if ((arr[0] == 0))
+            {
+                return 2;
+            }
+            if ((pOut.capacity < 4))
+            {
+                pOut.capacity = 4;
+                pOut.array = new Value[4];
+            }
+            pOut.size = 4;
+            pOut.array[0] = nums[arr[1]];
+            pOut.array[1] = nums[arr[2]];
+            pOut.array[2] = nums[arr[3]];
+            pOut.array[3] = nums[arr[4]];
+            return 0;
+        }
+
+        public static void ImageHelper_ImageBlit(ObjectInstance target, ObjectInstance src, int tx, int ty, int tw, int th, int sx, int sy, int sw, int sh)
+        {
+            ImageUtil.Blit(target.nativeData[0], src.nativeData[0], tx, ty, tw, th, sx, sy, sw, sh);
+        }
+
+        public static void ImageHelper_ImageCreate(ObjectInstance o, int w, int h)
+        {
+            o.nativeData = new object[1];
+            o.nativeData[0] = ImageUtil.NewBitmap(w, h);
+        }
+
+        public static void ImageHelper_LoadChunk(int chunkId, ListImpl allChunkIds, Value loadedCallback)
+        {
+            int size = allChunkIds.size;
+            int[] chunkIds = new int[size];
+            int i = 0;
+            while ((i < size))
+            {
+                chunkIds[i] = (int)allChunkIds.array[i].internalValue;
+                ++i;
+            }
+            ImageUtil.ChunkLoadAsync(chunkId, chunkIds, loadedCallback);
+        }
+
+        public static void ImageHelper_Scale(ObjectInstance src, ObjectInstance dest, int newWidth, int newHeight, int algo)
+        {
+            dest.nativeData = new object[1];
+            dest.nativeData[0] = ImageUtil.Scale(src.nativeData[0], newWidth, newHeight, algo);
+        }
+
+        public static void ImageHelper_SessionFinish(ObjectInstance edit, ObjectInstance bmp)
+        {
+            ImageUtil.EndEditSession(edit.nativeData[0], bmp.nativeData[0]);
+        }
+
+        public static void ImageHelper_SessionStart(ObjectInstance edit, ObjectInstance bmp)
+        {
+            edit.nativeData = new object[1];
+            edit.nativeData[0] = ImageUtil.StartEditSession(bmp.nativeData[0]);
+        }
+
+        public static int ImageHelper_SetPixel(ObjectInstance edit, Value xv, Value yv, Value rOrList, Value gv, Value bv, Value av)
+        {
+            if (((xv.type != 3) || (yv.type != 3)))
+            {
+                return 1;
+            }
+            int r = 0;
+            int g = 0;
+            int b = 0;
+            int a = 255;
+            if ((rOrList.type == 6))
+            {
+                ListImpl color = (ListImpl)rOrList.internalValue;
+                r = color.size;
+                if ((r == 4))
+                {
+                    av = color.array[3];
+                }
+                else if ((r != 3))
+                {
+                    return 5;
+                }
+                rOrList = color.array[0];
+                gv = color.array[1];
+                bv = color.array[2];
+            }
+            else if ((rOrList.type != 3))
+            {
+                return 3;
+            }
+            if (((rOrList.type != 3) || (gv.type != 3) || (bv.type != 3) || (av.type != 3)))
+            {
+                return 3;
+            }
+            r = (int)rOrList.internalValue;
+            g = (int)gv.internalValue;
+            b = (int)bv.internalValue;
+            a = (int)av.internalValue;
+            if (((r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (a < 0) || (a > 255)))
+            {
+                return 4;
+            }
+            bool outOfRange = ImageUtil.SetPixel(edit.nativeData[0], (int)xv.internalValue, (int)yv.internalValue, r, g, b, a);
+            if (outOfRange)
+            {
+                return 2;
+            }
+            return 0;
         }
 
         public static void increaseListCapacity(ListImpl list)
@@ -5720,7 +5846,8 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_ImageCreate((ObjectInstance)arg1.internalValue, (int)arg2.internalValue, (int)arg3.internalValue);
+                                output = VALUE_NULL;
                                 break;
                             case 67:
                                 // imageGetPixel;
@@ -5730,7 +5857,13 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                objInstance1 = null;
+                                if ((arg2.type != 1))
+                                {
+                                    objInstance1 = (ObjectInstance)arg2.internalValue;
+                                }
+                                int1 = ImageHelper_GetPixel(globals.positiveIntegers, (ObjectInstance)arg1.internalValue, objInstance1, arg3, arg4, (ListImpl)arg5.internalValue, intBuffer);
+                                output = globals.positiveIntegers[int1];
                                 break;
                             case 68:
                                 // imageSetPixel;
@@ -5742,30 +5875,35 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                int1 = ImageHelper_SetPixel((ObjectInstance)arg1.internalValue, arg2, arg3, arg4, arg5, arg6, arg7);
+                                output = globals.positiveIntegers[int1];
                                 break;
                             case 69:
                                 // imageScale;
-                                valueStackSize -= 4;
+                                valueStackSize -= 5;
+                                arg5 = valueStack[(valueStackSize + 4)];
                                 arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_Scale((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue, (int)arg3.internalValue, (int)arg4.internalValue, (int)arg5.internalValue);
+                                output = VALUE_NULL;
                                 break;
                             case 70:
                                 // imageSessionStart;
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_SessionStart((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue);
+                                output = VALUE_NULL;
                                 break;
                             case 71:
                                 // imageSessionFinish;
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_SessionFinish((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue);
+                                output = VALUE_NULL;
                                 break;
                             case 72:
                                 // imageBlit;
@@ -5780,11 +5918,12 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_ImageBlit((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue, (int)arg3.internalValue, (int)arg4.internalValue, (int)arg5.internalValue, (int)arg6.internalValue, (int)arg7.internalValue, (int)arg8.internalValue, (int)arg9.internalValue, (int)arg10.internalValue);
+                                output = VALUE_NULL;
                                 break;
                             case 73:
                                 // imageAtlasManifest;
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                output = buildString(globals, vm.resourceDatabase.imageAtlasManifest);
                                 break;
                             case 74:
                                 // imageLoadChunk;
@@ -5792,14 +5931,16 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_LoadChunk((int)arg1.internalValue, (ListImpl)arg2.internalValue, arg3);
+                                output = VALUE_NULL;
                                 break;
                             case 75:
                                 // imageGetChunkSync;
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+                                ImageHelper_GetChunkSync((ObjectInstance)arg1.internalValue, (int)arg2.internalValue);
+                                output = VALUE_NULL;
                                 break;
                         }
                         if ((row[1] == 1))
@@ -8276,7 +8417,7 @@ namespace Interpreter.Vm
             return 0;
         }
 
-        public static ResourceDB resourceManagerInitialize(VmGlobals globals, string manifest)
+        public static ResourceDB resourceManagerInitialize(VmGlobals globals, string manifest, string imageAtlasManifest)
         {
             Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
             Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
@@ -8352,7 +8493,7 @@ namespace Interpreter.Vm
                 filesPerDirectorySorted[dir] = dirsSorted;
                 i += 1;
             }
-            return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList);
+            return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList, imageAtlasManifest);
         }
 
         public static void reverseList(ListImpl list)

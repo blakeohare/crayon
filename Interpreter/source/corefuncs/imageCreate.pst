@@ -1,3 +1,8 @@
 ﻿@import("inline/3_arg.pst");
 
-hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+ImageHelper_ImageCreate(
+    (ObjectInstance)arg1.internalValue,
+    (int)arg2.internalValue,
+    (int)arg3.internalValue);
+
+output = VALUE_NULL;

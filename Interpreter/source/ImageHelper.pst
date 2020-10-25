@@ -1,0 +1,137 @@
+﻿void ImageHelper_ImageBlit(
+    ObjectInstance target,
+    ObjectInstance src,
+    int tx, int ty, int tw, int th,
+    int sx, int sy, int sw, int sh) {
+
+    Extension.CoreFunc_ImageBlit(target.nativeData[0], src.nativeData[0], tx, ty, tw, th, sx, sy, sw, sh);
+}
+
+void ImageHelper_ImageCreate(ObjectInstance o, int w, int h) {
+    o.nativeData = new Array<object>(1);
+    o.nativeData[0] = Extension.CoreFunc_ImageNewBmp(w, h);
+}
+
+void ImageHelper_GetChunkSync(ObjectInstance o, int cid) {
+    o.nativeData = new Array<object>(1);
+    o.nativeData[0] = Extension.CoreFunc_ImageGetChunk(cid);
+}
+
+// The type checking for the pixel code is done here instead of in Crayon code so that this can be fast since it may be common to run this in a loop.
+
+/*
+    Errors:
+    0 - OK!
+    1 - (get/set) invalid coordinate type
+    2 - (get/set) invalid coordinate range
+    3 - (set) invalid types for color
+    4 - (set) invalid range for color
+    5 - (set) invalid list length
+*/
+int ImageHelper_GetPixel(Array<Value> nums, ObjectInstance bmp, ObjectInstance edit, Value xv, Value yv, ListImpl pOut, Array<int> arr) {
+    if (xv.type != Types.INTEGER || yv.type != Types.INTEGER) return 1;
+    object e = null;
+    if (edit != null) e = edit.nativeData;
+
+    Extension.CoreFunc_ImageGetPixel(bmp.nativeData[0], e, (int)xv.internalValue, (int)yv.internalValue, arr);
+    if (arr[0] == 0) return 2;
+
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        List<Value> c = pOut.list;
+        pOut.size = 4;
+        c.Add(nums[arr[1]]);
+        c.Add(nums[arr[2]]);
+        c.Add(nums[arr[3]]);
+        c.Add(nums[arr[4]]);
+    } else {
+        if (pOut.capacity < 4) {
+            pOut.capacity = 4;
+            pOut.array = new Array<Value>(4);
+        }
+        pOut.size = 4;
+        pOut.array[0] = nums[arr[1]];
+        pOut.array[1] = nums[arr[2]];
+        pOut.array[2] = nums[arr[3]];
+        pOut.array[3] = nums[arr[4]];
+    }
+    return 0;
+}
+
+int ImageHelper_SetPixel(ObjectInstance edit, Value xv, Value yv, Value rOrList, Value gv, Value bv, Value av) {
+    if (xv.type != Types.INTEGER || yv.type != Types.INTEGER) return 1;
+    int r = 0;
+    int g = 0;
+    int b = 0;
+    int a = 255;
+    if (rOrList.type == Types.LIST) {
+        ListImpl color = (ListImpl)rOrList.internalValue;
+        r = color.size;
+        if (r == 4) {
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                av = color.list[3];
+            } else {
+                av = color.array[3];
+            }
+        } else if (r != 3) return 5;
+
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            rOrList = color.list[0];
+            gv = color.list[1];
+            bv = color.list[2];
+        } else {
+            rOrList = color.array[0];
+            gv = color.array[1];
+            bv = color.array[2];
+        }
+    } else if (rOrList.type != Types.INTEGER) {
+        return 3;
+    }
+
+    if (rOrList.type != Types.INTEGER || gv.type != Types.INTEGER || bv.type != Types.INTEGER || av.type != Types.INTEGER) return 3;
+    r = (int)rOrList.internalValue;
+    g = (int)gv.internalValue;
+    b = (int)bv.internalValue;
+    a = (int)av.internalValue;
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 255) return 4;
+    bool outOfRange = Extension.CoreFunc_ImageSetPixel(edit.nativeData[0], (int)xv.internalValue, (int)yv.internalValue, r, g, b, a);
+    if (outOfRange) return 2;
+    return 0;
+}
+
+/*
+    The loaded callback takes 3 args:
+        - (int) chunk ID that was loaded
+        - (int) number of chunks in the set currently loaded
+        - (int) total number of chunks in set
+*/
+void ImageHelper_LoadChunk(int chunkId, ListImpl allChunkIds, Value loadedCallback) {
+    int size = allChunkIds.size;
+    Array<int> chunkIds = new Array<int>(size);
+    for (int i = 0; i < size; ++i) {
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            chunkIds[i] = (int)allChunkIds.list[i].internalValue;
+        } else {
+            chunkIds[i] = (int)allChunkIds.array[i].internalValue;
+        }
+    }
+    Extension.CoreFunc_ImageChunkLoadAsync(chunkId, chunkIds, loadedCallback);
+}
+
+/*
+    algo values:
+        1 - nearest neighbor
+        nothing else is supported yet!
+*/
+void ImageHelper_Scale(ObjectInstance src, ObjectInstance dest, int newWidth, int newHeight, int algo) {
+    dest.nativeData = new Array<object>(1);
+    dest.nativeData[0] = Extension.CoreFunc_ImageScale(src.nativeData[0], newWidth, newHeight, algo);
+}
+
+void ImageHelper_SessionStart(ObjectInstance edit, ObjectInstance bmp) {
+    edit.nativeData = new Array<object>(1);
+    edit.nativeData[0] = Extension.CoreFunc_ImageStartEditSession(bmp.nativeData[0]);
+}
+
+void ImageHelper_SessionFinish(ObjectInstance edit, ObjectInstance bmp) {
+    Extension.CoreFunc_ImageEndEditSession(edit.nativeData[0], bmp.nativeData[0]);
+}

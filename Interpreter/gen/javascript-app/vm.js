@@ -567,9 +567,9 @@ var createInstanceType = function(classId) {
 	return o;
 };
 
-var createVm = function(rawByteCode, resourceManifest) {
+var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	var globals = initializeConstantValues();
-	var resources = resourceManagerInitialize(globals, resourceManifest);
+	var resources = resourceManagerInitialize(globals, resourceManifest, imageAtlasManifest);
 	var byteCode = initializeByteCode(rawByteCode);
 	var localsStack = PST$createNewArray(10);
 	var localsStackSet = PST$createNewArray(10);
@@ -1195,6 +1195,105 @@ var getVmResultExecId = function(result) {
 
 var getVmResultStatus = function(result) {
 	return result[0];
+};
+
+var ImageHelper_GetChunkSync = function(o, cid) {
+	o[3] = PST$createNewArray(1);
+	o[3][0] = C$ImageUtil$getChunk(cid);
+};
+
+var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
+	if (((xv[0] != 3) || (yv[0] != 3))) {
+		return 1;
+	}
+	var e = null;
+	if ((edit != null)) {
+		e = edit[3];
+	}
+	C$ImageUtil$getPixel(bmp[3][0], e, xv[1], yv[1], arr);
+	if ((arr[0] == 0)) {
+		return 2;
+	}
+	var c = pOut[2];
+	pOut[1] = 4;
+	c.push(nums[arr[1]]);
+	c.push(nums[arr[2]]);
+	c.push(nums[arr[3]]);
+	c.push(nums[arr[4]]);
+	return 0;
+};
+
+var ImageHelper_ImageBlit = function(target, src, tx, ty, tw, th, sx, sy, sw, sh) {
+	C$ImageUtil$blit(target[3][0], src[3][0], tx, ty, tw, th, sx, sy, sw, sh);
+};
+
+var ImageHelper_ImageCreate = function(o, w, h) {
+	o[3] = PST$createNewArray(1);
+	o[3][0] = C$ImageUtil$newBitmap(w, h);
+};
+
+var ImageHelper_LoadChunk = function(chunkId, allChunkIds, loadedCallback) {
+	var size = allChunkIds[1];
+	var chunkIds = PST$createNewArray(size);
+	var i = 0;
+	while ((i < size)) {
+		chunkIds[i] = allChunkIds[2][i][1];
+		++i;
+	}
+	C$ImageUtil$chunkLoadAsync(chunkId, chunkIds, loadedCallback);
+};
+
+var ImageHelper_Scale = function(src, dest, newWidth, newHeight, algo) {
+	dest[3] = PST$createNewArray(1);
+	dest[3][0] = C$ImageUtil$scale(src[3][0], newWidth, newHeight, algo);
+};
+
+var ImageHelper_SessionFinish = function(edit, bmp) {
+	C$ImageUtil$endEditSession(edit[3][0], bmp[3][0]);
+};
+
+var ImageHelper_SessionStart = function(edit, bmp) {
+	edit[3] = PST$createNewArray(1);
+	edit[3][0] = C$ImageUtil$startEditSession(bmp[3][0]);
+};
+
+var ImageHelper_SetPixel = function(edit, xv, yv, rOrList, gv, bv, av) {
+	if (((xv[0] != 3) || (yv[0] != 3))) {
+		return 1;
+	}
+	var r = 0;
+	var g = 0;
+	var b = 0;
+	var a = 255;
+	if ((rOrList[0] == 6)) {
+		var color = rOrList[1];
+		r = color[1];
+		if ((r == 4)) {
+			av = color[2][3];
+		} else if ((r != 3)) {
+			return 5;
+		}
+		rOrList = color[2][0];
+		gv = color[2][1];
+		bv = color[2][2];
+	} else if ((rOrList[0] != 3)) {
+		return 3;
+	}
+	if (((rOrList[0] != 3) || (gv[0] != 3) || (bv[0] != 3) || (av[0] != 3))) {
+		return 3;
+	}
+	r = rOrList[1];
+	g = gv[1];
+	b = bv[1];
+	a = av[1];
+	if (((r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (a < 0) || (a > 255))) {
+		return 4;
+	}
+	var outOfRange = C$ImageUtil$setPixel(edit[3][0], xv[1], yv[1], r, g, b, a);
+	if (outOfRange) {
+		return 2;
+	}
+	return 0;
 };
 
 var increaseListCapacity = function(list) {
@@ -4428,7 +4527,8 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_ImageCreate(arg1[1], arg2[1], arg3[1]);
+						output = VALUE_NULL;
 						break;
 					case 67:
 						// imageGetPixel;
@@ -4438,7 +4538,12 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						objInstance1 = null;
+						if ((arg2[0] != 1)) {
+							objInstance1 = arg2[1];
+						}
+						int1 = ImageHelper_GetPixel(globals[9], arg1[1], objInstance1, arg3, arg4, arg5[1], intBuffer);
+						output = globals[9][int1];
 						break;
 					case 68:
 						// imageSetPixel;
@@ -4450,30 +4555,35 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						int1 = ImageHelper_SetPixel(arg1[1], arg2, arg3, arg4, arg5, arg6, arg7);
+						output = globals[9][int1];
 						break;
 					case 69:
 						// imageScale;
-						valueStackSize -= 4;
+						valueStackSize -= 5;
+						arg5 = valueStack[(valueStackSize + 4)];
 						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_Scale(arg1[1], arg2[1], arg3[1], arg4[1], arg5[1]);
+						output = VALUE_NULL;
 						break;
 					case 70:
 						// imageSessionStart;
 						valueStackSize -= 2;
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_SessionStart(arg1[1], arg2[1]);
+						output = VALUE_NULL;
 						break;
 					case 71:
 						// imageSessionFinish;
 						valueStackSize -= 2;
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_SessionFinish(arg1[1], arg2[1]);
+						output = VALUE_NULL;
 						break;
 					case 72:
 						// imageBlit;
@@ -4488,11 +4598,12 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_ImageBlit(arg1[1], arg2[1], arg3[1], arg4[1], arg5[1], arg6[1], arg7[1], arg8[1], arg9[1], arg10[1]);
+						output = VALUE_NULL;
 						break;
 					case 73:
 						// imageAtlasManifest;
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						output = buildString(globals, vm[9][3]);
 						break;
 					case 74:
 						// imageLoadChunk;
@@ -4500,14 +4611,16 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_LoadChunk(arg1[1], arg2[1], arg3);
+						output = VALUE_NULL;
 						break;
 					case 75:
 						// imageGetChunkSync;
 						valueStackSize -= 2;
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						ImageHelper_GetChunkSync(arg1[1], arg2[1]);
+						output = VALUE_NULL;
 						break;
 				}
 				if ((row[1] == 1)) {
@@ -6433,7 +6546,7 @@ var resource_manager_populate_directory_lookup = function(dirs, path) {
 	return 0;
 };
 
-var resourceManagerInitialize = function(globals, manifest) {
+var resourceManagerInitialize = function(globals, manifest, imageAtlasManifest) {
 	var filesPerDirectoryBuilder = {};
 	var fileInfo = {};
 	var dataList = [];
@@ -6492,7 +6605,7 @@ var resourceManagerInitialize = function(globals, manifest) {
 		filesPerDirectorySorted[dir] = dirsSorted;
 		i += 1;
 	}
-	return [filesPerDirectorySorted, fileInfo, dataList];
+	return [filesPerDirectorySorted, fileInfo, dataList, imageAtlasManifest];
 };
 
 var reverseList = function(list) {

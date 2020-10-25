@@ -1,3 +1,5 @@
 ﻿@import("inline/2_arg.pst");
 
-hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+ImageHelper_SessionFinish((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue);
+
+output = VALUE_NULL;
