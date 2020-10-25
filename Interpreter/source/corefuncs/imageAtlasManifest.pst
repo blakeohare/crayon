@@ -1,1 +1,1 @@
-﻿hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+﻿output = buildString(globals, vm.resourceDatabase.imageAtlasManifest);

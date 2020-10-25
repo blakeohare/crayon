@@ -6,6 +6,7 @@
 @import("CoreFuncsHelper.pst");
 @import("DateTimeHelper.pst");
 @import("Debugger.pst");
+@import("ImageHelper.pst");
 @import("Ipc.pst");
 @import("Interpreter.pst");
 @import("MetadataInitializer.pst");

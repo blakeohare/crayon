@@ -1,7 +1,7 @@
-﻿VmContext createVm(string rawByteCode, string resourceManifest) {
+﻿VmContext createVm(string rawByteCode, string resourceManifest, string imageAtlasManifest) {
 
     VmGlobals globals = initializeConstantValues();
-    ResourceDB resources = resourceManagerInitialize(globals, resourceManifest);
+    ResourceDB resources = resourceManagerInitialize(globals, resourceManifest, imageAtlasManifest);
     Code byteCode = initializeByteCode(rawByteCode);
 
     Array<Value> localsStack = new Array<Value>(10);

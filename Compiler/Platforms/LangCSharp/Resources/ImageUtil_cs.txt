@@ -1,0 +1,56 @@
+﻿using System;
+
+namespace Interpreter.Vm
+{
+    public static class ImageUtil
+    {
+        public static object NewBitmap(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void ChunkLoadAsync(int chunkId, int[] chunkIds, Interpreter.Structs.Value loadedCallback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object GetChunk(int chunkId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static object Scale(object original, int newWidth, int newHeight, int algo)
+        {
+            if (algo != 1) throw new NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        public static object StartEditSession(object bmp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void EndEditSession(object session, object bmp)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Blit(object target, object src, int tx, int ty, int tw, int th, int sx, int sy, int sw, int sh)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void GetPixel(object bmp, object nullableEditSession, int x, int y, int[] colorOut)
+        {
+            // colorOut[0] must be set to 0 for out of range and 1 otherwise.
+            colorOut[0] = 1;
+            throw new NotImplementedException();
+        }
+
+        // returns true for out of range
+        public static bool SetPixel(object session, int x, int y, int r, int g, int b, int a)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

@@ -1,3 +1,4 @@
-﻿@import("inline/4_arg.pst");
+﻿@import("inline/5_arg.pst");
 
-hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+ImageHelper_Scale((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue, (int)arg3.internalValue, (int)arg4.internalValue, (int)arg5.internalValue);
+output = VALUE_NULL;

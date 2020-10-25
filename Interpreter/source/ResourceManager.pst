@@ -1,4 +1,4 @@
-﻿ResourceDB resourceManagerInitialize(VmGlobals globals, string manifest) {
+﻿ResourceDB resourceManagerInitialize(VmGlobals globals, string manifest, string imageAtlasManifest) {
 
     Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
     Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
@@ -66,7 +66,7 @@
         filesPerDirectorySorted[dir] = dirsSorted;
     }
 
-    return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList);
+    return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList, imageAtlasManifest);
 }
 
 int resource_manager_populate_directory_lookup(

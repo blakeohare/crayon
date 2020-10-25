@@ -1,3 +1,7 @@
 ﻿@import("inline/7_arg.pst");
 
-hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+int1 = ImageHelper_SetPixel(
+    (ObjectInstance)arg1.internalValue,
+    arg2, arg3, arg4, arg5, arg6, arg7);
+
+output = globals.positiveIntegers[int1];

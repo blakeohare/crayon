@@ -2,7 +2,7 @@
 
     class ResourceManifest {
 
-        static field files = {};
+        static field files = null;
         static field filePaths = [];
         static field chunkById = {};
         static field allModules = [];
@@ -10,7 +10,12 @@
         static field cachedBitmapsByFilename = {};
         static field cachedChunkBitmapsByChunkId = {};
 
-        static constructor() {
+        // TODO: there is some sort of stack corruption bug in static constructors.
+        // Turn this into a static constructor and remove all references to init() to repro.
+        static function init() {
+            if (ResourceManifest.files != null) return;
+            ResourceManifest.files = {};
+
             manifest = $$$('imageAtlasManifest');
             module = null;
             chunk = null;
@@ -95,6 +100,8 @@
         }
 
         static function getBitmapCopyBlocking(module, name) {
+            ResourceManifest.init();
+
             fullpath = module + ':' + name;
             bmp = ResourceManifest.cachedBitmapsByFilename.get(fullpath);
             if (bmp == null) {
@@ -150,6 +157,7 @@
         }
 
         static function ensurePrefixLoaded(module, prefix, onChange, onDone) {
+            ResourceManifest.init();
             return ResourceManifest.ensurePrefixChunksLoaded(
                 module,
                 prefix,

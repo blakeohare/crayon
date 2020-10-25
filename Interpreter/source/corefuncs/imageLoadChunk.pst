@@ -1,3 +1,5 @@
 ﻿@import("inline/3_arg.pst");
 
-hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+ImageHelper_LoadChunk((int)arg1.internalValue, (ListImpl)arg2.internalValue, arg3);
+
+output = VALUE_NULL;
