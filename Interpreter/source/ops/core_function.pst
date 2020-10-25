@@ -65,6 +65,16 @@
     case 63: Core.EmitComment("jsInteropInvoke"); @import("corefuncs/jsInteropInvoke.pst"); break;
     case 64: Core.EmitComment("jsInteropRegisterCallback"); @import("corefuncs/jsInteropRegisterCallback.pst"); break;
     case 65: Core.EmitComment("jsInteropCallbackReturn"); @import("corefuncs/jsInteropCallbackReturn.pst"); break;
+    case 66: Core.EmitComment("imageCreate"); @import("corefuncs/imageCreate.pst"); break;
+    case 67: Core.EmitComment("imageGetPixel"); @import("corefuncs/imageGetPixel.pst"); break;
+    case 68: Core.EmitComment("imageSetPixel"); @import("corefuncs/imageSetPixel.pst"); break;
+    case 69: Core.EmitComment("imageScale"); @import("corefuncs/imageScale.pst"); break;
+    case 70: Core.EmitComment("imageSessionStart"); @import("corefuncs/imageSessionStart.pst"); break;
+    case 71: Core.EmitComment("imageSessionFinish"); @import("corefuncs/imageSessionFinish.pst"); break;
+    case 72: Core.EmitComment("imageBlit"); @import("corefuncs/imageBlit.pst"); break;
+    case 73: Core.EmitComment("imageAtlasManifest"); @import("corefuncs/imageAtlasManifest.pst"); break;
+    case 74: Core.EmitComment("imageLoadChunk"); @import("corefuncs/imageLoadChunk.pst"); break;
+    case 75: Core.EmitComment("imageGetChunkSync"); @import("corefuncs/imageGetChunkSync.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

@@ -1,0 +1,162 @@
+﻿namespace Images.Internal {
+
+    class ResourceManifest {
+
+        static field files = {};
+        static field filePaths = [];
+        static field chunkById = {};
+        static field allModules = [];
+
+        static field cachedBitmapsByFilename = {};
+        static field cachedChunkBitmapsByChunkId = {};
+
+        static constructor() {
+            manifest = $$$('imageAtlasManifest');
+            module = null;
+            chunk = null;
+            for (line : manifest.split('\n')) {
+                parts = line.trim().split(',');
+                switch (parts[0]) {
+                    case 'M': // module
+                        module = parts[1];
+                        ResourceManifest.allModules.add(module);
+                        break;
+                    case 'C': // active chunk
+                        chunk = {
+                            'id': parts[1],
+                            'w': parseInt(parts[2]),
+                            'h': parseInt(parts[3]),
+                            'files': [],
+                            'loaded': false,
+                            'bmp': null,
+                        };
+                        ResourceManifest.chunkById[chunk['id']] = chunk;
+                        break;
+                    case 'F': // file
+                        path = parts[5:].join(',');
+                        file = {
+                            'x': parseInt(parts[1]),
+                            'y': parseInt(parts[2]),
+                            'w': parseInt(parts[3]),
+                            'h': parseInt(parts[4]),
+                            'path': path,
+                            'module': module,
+                            'cid': chunk['id'],
+                            'bmp': null,
+                        };
+                        chunk['files'].add(file);
+                        fullpath = module + ':' + path;
+                        ResourceManifest.files[fullpath] = file;
+                        ResourceManifest.filePaths.add(fullpath);
+                        break;
+                }
+            }
+
+            ResourceManifest.filePaths.sort();
+        }
+
+        static function ensurePrefixChunksLoadedImpl(module, prefix, statusChanged) {
+
+            chunkIdsNeeded = {};
+            allFullPaths = ResourceManifest.filePaths;
+            if (module != null) {
+                t = [];
+                mp = module + ':';
+                for (fullpath : allFullPaths) {
+                    if (fullpath.startsWith(mp)) t.add(fullpath);
+                }
+                allFullPaths = t;
+            }
+
+            for (fullpath : allFullPaths) {
+                path = fullpath.split(':')[1];
+                if (path.startsWith(prefix)) {
+                    chunkIdsNeeded[ResourceManifest.files[fullpath]['cid']] = true;
+                }
+            }
+
+            if (chunkIdsNeeded.length == 0) {
+                statusChanged(null, 0, 0);
+                return true;
+            }
+
+            allChunkIds = chunkIdsNeeded.keys();
+            for (chunkId : allChunkIds) {
+                chunk = ResourceManifest.chunkById[chunkId];
+                if (!chunk['loaded']) {
+                    // The native implementation will not double-load things and just
+                    // call the tickle function when it updates even if it didn't directly
+                    // trigger the load.
+                    $$$('imageLoadChunk', chunkId, allChunkIds, statusChanged);
+                }
+            }
+
+            return false;
+        }
+
+        static function getBitmapCopyBlocking(module, name) {
+            fullpath = module + ':' + name;
+            bmp = ResourceManifest.cachedBitmapsByFilename.get(fullpath);
+            if (bmp == null) {
+                fileinfo = ResourceManifest.files.get(fullpath);
+                if (fileinfo == null) return null;
+                ready = ResourceManifest.ensurePrefixLoaded(module, name, null, () => {
+                    ready = true;
+                });
+                while (!ready) {
+                    Core.sleep(0.001);
+                }
+                bmp = ResourceManifest.cachedBitmapsByFilename[fullpath];
+            }
+
+            return bmp.clone();
+        }
+
+        static function ensurePrefixChunksLoaded(module, prefix, onChange, onDone) {
+            total = null;
+            current = 0;
+
+            return ResourceManifest.ensurePrefixChunksLoadedImpl(module, prefix, (cid, loaded, _total) => {
+                if (total == null) {
+                    total = _total;
+                }
+                current = loaded;
+
+                if (cid != null) {
+                    ResourceManifest.prepareChunkBitmapSync(cid);
+                }
+
+                if (onChange != null) onChange(current, total);
+                if (current == total && onDone != null) {
+                    onDone();
+                }
+            });
+        }
+
+        static function prepareChunkBitmapSync(cid) {
+            chunk = ResourceManifest.chunkById[cid];
+            if (chunk['bmp'] != null) return;
+            b = new Bitmap(Images.Internal.ImagesHelper.INST, null);
+            $$$('imageGetChunkSync', b, cid);
+            chunk['bmp'] = b;
+
+            for (file : chunk['files']) {
+                file['bmp'] = new Bitmap(file['w'], file['h']);
+                s = file['bmp'].edit();
+                s.drawImage(b, -file['x'], -file['y']);
+                s.finish();
+                ResourceManifest.cachedBitmapsByFilename[file['module'] + ':' + file['path']] = file['bmp'];
+            }
+        }
+
+        static function ensurePrefixLoaded(module, prefix, onChange, onDone) {
+            return ResourceManifest.ensurePrefixChunksLoaded(
+                module,
+                prefix,
+                (current, total) => {
+                    onChange(current == total ? 1.0 : (1.0 * current / total));
+                },
+                onDone);
+        }
+    }
+}

@@ -204,6 +204,11 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     Value arg3 = null;
     Value arg4 = null;
     Value arg5 = null;
+    Value arg6 = null;
+    Value arg7 = null;
+    Value arg8 = null;
+    Value arg9 = null;
+    Value arg10 = null;
     List<Token> tokenList = null;
     Array<int> globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
     MagicNumbers magicNumbers = vm.metadata.magicNumbers;

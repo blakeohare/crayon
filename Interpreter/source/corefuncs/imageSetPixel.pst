@@ -1,0 +1,3 @@
+﻿@import("inline/7_arg.pst");
+
+hasInterrupt = EX_AssertionFailed(ec, "Not implemented");

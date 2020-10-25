@@ -1674,6 +1674,11 @@ var interpretImpl = function(vm, executionContextId) {
 	var arg3 = null;
 	var arg4 = null;
 	var arg5 = null;
+	var arg6 = null;
+	var arg7 = null;
+	var arg8 = null;
+	var arg9 = null;
+	var arg10 = null;
 	var tokenList = null;
 	var globalNameIdToPrimitiveMethodName = vm[4][12];
 	var magicNumbers = vm[4][19];
@@ -4416,6 +4421,93 @@ var interpretImpl = function(vm, executionContextId) {
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
 						C$interop$callbackReturn(arg1[1], arg2[1]);
+						break;
+					case 66:
+						// imageCreate;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 67:
+						// imageGetPixel;
+						valueStackSize -= 5;
+						arg5 = valueStack[(valueStackSize + 4)];
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 68:
+						// imageSetPixel;
+						valueStackSize -= 7;
+						arg7 = valueStack[(valueStackSize + 6)];
+						arg6 = valueStack[(valueStackSize + 5)];
+						arg5 = valueStack[(valueStackSize + 4)];
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 69:
+						// imageScale;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 70:
+						// imageSessionStart;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 71:
+						// imageSessionFinish;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 72:
+						// imageBlit;
+						valueStackSize -= 10;
+						arg10 = valueStack[(valueStackSize + 9)];
+						arg9 = valueStack[(valueStackSize + 8)];
+						arg8 = valueStack[(valueStackSize + 7)];
+						arg7 = valueStack[(valueStackSize + 6)];
+						arg6 = valueStack[(valueStackSize + 5)];
+						arg5 = valueStack[(valueStackSize + 4)];
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 73:
+						// imageAtlasManifest;
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 74:
+						// imageLoadChunk;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
+						break;
+					case 75:
+						// imageGetChunkSync;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						hasInterrupt = EX_AssertionFailed(ec, "Not implemented");
 						break;
 				}
 				if ((row[1] == 1)) {

@@ -1,0 +1,13 @@
+﻿namespace Images.Internal {
+
+    class ImagesHelper {
+        // HACK: this is an insecure hacky way to make things package-private.
+        static field INST = new ImagesHelper();
+
+        static function verifyPositiveInt(name, value) {
+            if (Core.typeof(value) != Core.Type.INTEGER || value < 1) {
+                throw new InvalidArgumentException(name + " must be a positive integer.");
+            }
+        }
+    }
+}
