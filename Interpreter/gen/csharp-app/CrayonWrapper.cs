@@ -257,6 +257,22 @@ namespace Interpreter.Vm
             return new Value(7, d);
         }
 
+        public static int byteObjToList(Value[] nums, ObjectInstance obj, ListImpl emptyList)
+        {
+            int[] bytes = (int[])obj.nativeData[0];
+            int size = bytes.Length;
+            emptyList.capacity = size;
+            emptyList.size = size;
+            Value[] arr = new Value[size];
+            int i = 0;
+            while ((i < size))
+            {
+                arr[i] = nums[bytes[i]];
+                ++i;
+            }
+            return 0;
+        }
+
         public static bool canAssignGenericToGeneric(VmContext vm, int[] gen1, int gen1Index, int[] gen2, int gen2Index, int[] newIndexOut)
         {
             if ((gen2 == null))
@@ -5942,6 +5958,54 @@ namespace Interpreter.Vm
                                 ImageHelper_GetChunkSync((ObjectInstance)arg1.internalValue, (int)arg2.internalValue);
                                 output = VALUE_NULL;
                                 break;
+                            case 76:
+                                // makeByteList;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = buildBoolean(globals, makeByteListNativeData((ObjectInstance)arg1.internalValue, arg2));
+                                break;
+                            case 77:
+                                // bytesObjToList;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                byteObjToList(globals.positiveIntegers, (ObjectInstance)arg1.internalValue, (ListImpl)arg2.internalValue);
+                                output = VALUE_NULL;
+                                break;
+                            case 78:
+                                // httpSend;
+                                valueStackSize -= 8;
+                                arg8 = valueStack[(valueStackSize + 7)];
+                                arg7 = valueStack[(valueStackSize + 6)];
+                                arg6 = valueStack[(valueStackSize + 5)];
+                                arg5 = valueStack[(valueStackSize + 4)];
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                intArray1 = null;
+                                string1 = null;
+                                int1 = (int)arg5.internalValue;
+                                if ((int1 == 1))
+                                {
+                                    string1 = (string)arg7.internalValue;
+                                }
+                                else if ((int1 == 2))
+                                {
+                                    intArray1 = (int[])((ObjectInstance)arg7.internalValue).nativeData[0];
+                                }
+                                list1 = (ListImpl)arg8.internalValue;
+                                stringList = new string[list1.size];
+                                i = 0;
+                                while ((i < list1.size))
+                                {
+                                    stringList[i] = (string)list1.array[i].internalValue;
+                                    i += 1;
+                                }
+                                CoreFunctions.HttpSend(arg1, arg2, (string)arg3.internalValue, (string)arg4.internalValue, (string)arg6.internalValue, intArray1, string1, stringList);
+                                output = VALUE_NULL;
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -7430,6 +7494,39 @@ namespace Interpreter.Vm
         public static bool isVmResultRootExecContext(InterpreterResult result)
         {
             return result.isRootContext;
+        }
+
+        public static bool makeByteListNativeData(ObjectInstance obj, Value vList)
+        {
+            if ((vList.type != 6))
+            {
+                return false;
+            }
+            ListImpl list = (ListImpl)vList.internalValue;
+            int size = list.size;
+            int[] bytes = new int[size];
+            Value nv = null;
+            int n = 0;
+            Value[] values = list.array;
+            int i = 0;
+            while ((i < size))
+            {
+                nv = values[i];
+                if ((nv.type != 3))
+                {
+                    return false;
+                }
+                n = (int)nv.internalValue;
+                if (((n < 0) || (n > 255)))
+                {
+                    return false;
+                }
+                bytes[i] = n;
+                ++i;
+            }
+            obj.nativeData = new object[1];
+            obj.nativeData[0] = bytes;
+            return true;
         }
 
         public static ListImpl makeEmptyList(int[] type, int capacity)

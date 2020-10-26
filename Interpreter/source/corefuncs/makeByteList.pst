@@ -1,0 +1,3 @@
+﻿@import("inline/2_arg.pst");
+
+output = buildBoolean(globals, makeByteListNativeData((ObjectInstance)arg1.internalValue, arg2));

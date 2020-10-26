@@ -1,0 +1,42 @@
+﻿namespace Http2.Internal {
+
+    const DEFAULT_USER_AGENT = "Crayon/v" + Core.CRAYON_VERSION + "; Have a nice day.";
+
+    enum ReqField {
+        URL,
+        METHOD,
+        CONTENT_FORMAT,
+        CONTENT_TYPE,
+        CONTENT,
+        HEADERS,
+    }
+
+    enum ResField {
+        STATUS_CODE,
+        STATUS_MESSAGE,
+        CONTENT_TYPE,
+        CONTENT_BYTES,
+        CONTENT_TEXT,
+        HEADERS = ReqField.HEADERS,
+    }
+
+    function set(req, f, value) {
+        req._fields[f] = value;
+        return req;
+    }
+
+    function get(req, f) {
+        return req._fields.get(f);
+    }
+
+    function getBucket(r, name) {
+        h = r._fields[ReqField.HEADERS];
+        key = name.lower();
+        bucket = h.get(key);
+        if (bucket == null) {
+            bucket = [];
+            h[key] = bucket;
+        }
+        return bucket;
+    }
+}

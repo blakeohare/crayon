@@ -1,0 +1,6 @@
+{
+    "name": "Http2",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/http",
+    "description": "Library for sending HTTP requests."
+}

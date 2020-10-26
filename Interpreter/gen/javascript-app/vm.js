@@ -222,6 +222,19 @@ var buildStringDictionary = function(globals, stringKeys, values) {
 	return [7, d];
 };
 
+var byteObjToList = function(nums, obj, emptyList) {
+	var bytes = obj[3][0];
+	var size = bytes.length;
+	emptyList[1] = size;
+	var list = emptyList[2];
+	var i = 0;
+	while ((i < size)) {
+		list.push(nums[bytes[i]]);
+		++i;
+	}
+	return 0;
+};
+
 var canAssignGenericToGeneric = function(vm, gen1, gen1Index, gen2, gen2Index, newIndexOut) {
 	if ((gen2 == null)) {
 		return true;
@@ -4622,6 +4635,50 @@ var interpretImpl = function(vm, executionContextId) {
 						ImageHelper_GetChunkSync(arg1[1], arg2[1]);
 						output = VALUE_NULL;
 						break;
+					case 76:
+						// makeByteList;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = buildBoolean(globals, makeByteListNativeData(arg1[1], arg2));
+						break;
+					case 77:
+						// bytesObjToList;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						byteObjToList(globals[9], arg1[1], arg2[1]);
+						output = VALUE_NULL;
+						break;
+					case 78:
+						// httpSend;
+						valueStackSize -= 8;
+						arg8 = valueStack[(valueStackSize + 7)];
+						arg7 = valueStack[(valueStackSize + 6)];
+						arg6 = valueStack[(valueStackSize + 5)];
+						arg5 = valueStack[(valueStackSize + 4)];
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						intArray1 = null;
+						string1 = null;
+						int1 = arg5[1];
+						if ((int1 == 1)) {
+							string1 = arg7[1];
+						} else if ((int1 == 2)) {
+							intArray1 = (arg7[1])[3][0];
+						}
+						list1 = arg8[1];
+						stringList = PST$createNewArray(list1[1]);
+						i = 0;
+						while ((i < list1[1])) {
+							stringList[i] = list1[2][i][1];
+							i += 1;
+						}
+						C$http$send(arg1, arg2, arg3[1], arg4[1], arg6[1], intArray1, string1, stringList);
+						output = VALUE_NULL;
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -5785,6 +5842,34 @@ var isStringEqual = function(a, b) {
 
 var isVmResultRootExecContext = function(result) {
 	return result[4];
+};
+
+var makeByteListNativeData = function(obj, vList) {
+	if ((vList[0] != 6)) {
+		return false;
+	}
+	var list = vList[1];
+	var size = list[1];
+	var bytes = PST$createNewArray(size);
+	var nv = null;
+	var n = 0;
+	var values = list[2];
+	var i = 0;
+	while ((i < size)) {
+		nv = values[i];
+		if ((nv[0] != 3)) {
+			return false;
+		}
+		n = nv[1];
+		if (((n < 0) || (n > 255))) {
+			return false;
+		}
+		bytes[i] = n;
+		++i;
+	}
+	obj[3] = PST$createNewArray(1);
+	obj[3][0] = bytes;
+	return true;
 };
 
 var makeEmptyList = function(type, capacity) {

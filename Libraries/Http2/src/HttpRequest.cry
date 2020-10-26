@@ -1,0 +1,123 @@
+﻿import Json;
+import Http2.Internal;
+
+namespace Http2 {
+
+    class HttpRequest {
+
+        field _fields = {};
+
+        constructor(url) {
+            set(this, ReqField.URL, url + '');
+            set(this, ReqField.HEADERS, {});
+        }
+
+        function setMethod(method) {
+            return set(this, ReqField.METHOD, method + '');
+        }
+
+        function setBinaryContent(bytes, contentType = 'application/octet-stream') {
+            set(this, ReqField.CONTENT_TYPE, contentType);
+            set(this, ReqField.CONTENT_FORMAT, 2);
+            o = new Object();
+            if (!$$$('makeByteList', o, bytes)) throw new InvalidArgumentException("bytes argument must be a list of integers between 0 through 255.");
+            return Internal.set(this, ReqField.CONTENT, o);
+        }
+
+        function setTextContent(str, contentType = 'text/plain') {
+            set(this, ReqField.CONTENT_TYPE, contentType);
+            set(this, ReqField.CONTENT_FORMAT, 1);
+            return Internal.set(this, ReqField.CONTENT, str);
+        }
+
+        function setJsonContent(obj, contentType = 'application/json') {
+            set(this, ReqField.CONTENT_TYPE, contentType);
+            set(this, ReqField.CONTENT_FORMAT, 1);
+            return set(this, ReqField.CONTENT, Json.serialize(obj));
+        }
+
+        function addHeader(name, value) {
+            getBucket(this, name).add(name, value + '');
+            return this;
+        }
+
+        function clearHeader(name) {
+            getBucket(this, name).clear();
+            return this;
+        }
+
+        function setHeader(name, value) {
+            return this.clearHeader(name).addHeader(name, value);
+        }
+
+        function send(cb, failCb = null) {
+            b = getBucket(this, 'User-Agent');
+            if (b.length == 0) { b.add('User-Agent', Http2.Internal.DEFAULT_USER_AGENT); }
+            format = this._fields.get(ReqField.CONTENT_FORMAT, 0);
+            h = this._fields[ReqField.HEADERS];
+            hFlat = [];
+            names = h.keys();
+            names.sort();
+            for (name : names) {
+                if (format == 0 || name != 'content-type') {
+                    hFlat.concat(h[name]);
+                }
+            }
+
+            responseCallback = (sc, status, contentType, headersFlat, bytesObj, str) => {
+                cb(HttpResponse._construct(sc, status, contentType, headersFlat, bytesObj, str));
+            };
+
+            m = this._fields.get(ReqField.METHOD, 'GET');
+            if ((m == 'GET' || m == 'HEAD') && format != 0) {
+                throw new InvalidArgumentException("Cannot send a '" + m + "' HTTP request with content.");
+            }
+
+            url = this._fields[ReqField.URL];
+            protocol = url.split(':')[0].lower();
+            if (protocol != 'http' && protocol != 'https') {
+                if (protocol[-2:] == '//') throw new InvalidArgumentException("Only the http:// and https:// protocols are supported.");
+                throw new InvalidArgumentException("The URL must begin with 'http://' or 'https://'");
+            }
+
+            for (c : ' \r\n\t,') {
+                if (m.indexOf(c) != -1) {
+                    throw new InvalidArgumentException("HTTP Method name contains an invalid character.");
+                }
+            }
+
+            err = $$$('httpSend',
+                responseCallback,
+                failCb,
+                url,
+                m,
+                format,
+                this._fields.get(ReqField.CONTENT_TYPE, '') + '',
+                this._fields.get(ReqField.CONTENT),
+                hFlat);
+            if (err != null) {
+                throw new InvalidArgumentException(err);
+            }
+
+            return this;
+        }
+
+        function awaitSend() {
+            failed = false;
+            resp = null;
+            this.send(r => {
+                resp = r;
+            },
+            () => {
+                failed = true;
+            });
+
+            while (!failed && resp == null) {
+                Core.sleep(0.01);
+            }
+
+            if (failed) throw new NoConnectionException();
+            return resp;
+        }
+    }
+}
