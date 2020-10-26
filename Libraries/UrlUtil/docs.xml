@@ -1,0 +1,22 @@
+<library name="UrlUtil">
+	<description>Library for parsing and creating URLs.</description>
+	<namespace name="UrlUtil">
+		<function name="urlEncode">
+			<arg name="value" type="string" description="A string to percent-encode."/>
+			<returns type="string" description="The percent-encoded string."/>
+			<description>
+				Encodes a string using the percent-encoding system to make it URL safe.
+			</description>
+		</function>
+		
+		<function name="urlDecode">
+			<arg name="value" type="string" description="A string that is percent-encoded."/>
+			<returns type="string" description="The original string value"/>
+			<description>
+				Decodes a string that has been percent encoded. 
+				If the string is not a valid percent encoding format, then an InvalidArgumentException is thrown.
+				If the string is in the correct format but the byte values are not valid UTF8, a TextEncoder.TextEncodingException is thrown.
+			</description>
+		</function>
+	</namespace>
+</library>
