@@ -813,6 +813,7 @@ int byteObjToList(Array<Value> nums, ObjectInstance obj, ListImpl emptyList) {
         for (int i = 0; i < size; ++i) {
             list.Add(nums[bytes[i]]);
         }
+        emptyList.list = list;
     } else {
         emptyList.capacity = size;
         emptyList.size = size;
@@ -820,6 +821,7 @@ int byteObjToList(Array<Value> nums, ObjectInstance obj, ListImpl emptyList) {
         for (int i = 0; i < size; ++i) {
             arr[i] = nums[bytes[i]];
         }
+        emptyList.array = arr;
     }
     return 0;
 }

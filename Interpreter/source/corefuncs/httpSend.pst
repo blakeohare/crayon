@@ -1,4 +1,4 @@
-﻿@import("inline/8_arg.pst");
+﻿@import("inline/9_arg.pst");
 
 intArray1 = null;
 string1 = null;
@@ -19,6 +19,9 @@ for (i = 0; i < list1.size; i += 1) {
     }
 }
 
+objInstance1 = (ObjectInstance)arg9.internalValue;
+objInstance1.nativeData = new Array<object>(1);
+
 Extension.CoreFunc_HttpSend(
     arg1, // callback
     arg2, // fail callback
@@ -27,6 +30,8 @@ Extension.CoreFunc_HttpSend(
     (string)arg6.internalValue, // content type
     intArray1,
     string1,
-    stringList); // headers (string pairs in a flattened list i.e. name: 2n + 0, value: 2n + 1)
+    stringList, // headers (string pairs in a flattened list i.e. name: 2n + 0, value: 2n + 1)
+    arg9, // bytes object
+    objInstance1.nativeData); // bytes object's nativeData
 
 output = VALUE_NULL;
