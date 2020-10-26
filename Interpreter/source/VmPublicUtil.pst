@@ -8,3 +8,7 @@ double getVmReinvokeDelay(InterpreterResult result) { return result.reinvokeDela
 int getVmResultExecId(InterpreterResult result) { return result.executionContextId; }
 bool isVmResultRootExecContext(InterpreterResult result) { return result.isRootContext; }
 VmGlobals vmGetGlobals(VmContext vm) { return vm.globals; }
+
+void vmEnableLibStackTrace(VmContext vm) {
+    vm.environment.showLibStack = true;
+}

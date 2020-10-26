@@ -9390,6 +9390,11 @@ namespace Interpreter.Vm
             return vm_suspend_for_context(getExecutionContext(vm, execId), status);
         }
 
+        public static void vmEnableLibStackTrace(VmContext vm)
+        {
+            vm.environment.showLibStack = true;
+        }
+
         public static void vmEnvSetCommandLineArgs(VmContext vm, string[] args)
         {
             vm.environment.commandLineArgs = args;
