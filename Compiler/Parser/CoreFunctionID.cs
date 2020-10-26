@@ -79,6 +79,9 @@ namespace Parser
         IMAGE_ATLAS_MANIFEST = 73,
         IMAGE_LOAD_CHUNK = 74,
         IMAGE_GET_CHUNK_SYNC = 75,
+        MAKE_BYTE_LIST = 76,
+        BYTES_OBJ_TO_LIST = 77,
+        HTTP_SEND = 78,
     }
 
     internal static class CoreFunctionIDHelper
@@ -162,6 +165,9 @@ namespace Parser
                 case "imageAtlasManifest": return (int)CoreFunctionID.IMAGE_ATLAS_MANIFEST;
                 case "imageLoadChunk": return (int)CoreFunctionID.IMAGE_LOAD_CHUNK;
                 case "imageGetChunkSync": return (int)CoreFunctionID.IMAGE_GET_CHUNK_SYNC;
+                case "makeByteList": return (int)CoreFunctionID.MAKE_BYTE_LIST;
+                case "bytesObjToList": return (int)CoreFunctionID.BYTES_OBJ_TO_LIST;
+                case "httpSend": return (int)CoreFunctionID.HTTP_SEND;
                 default: return -1;
             }
         }

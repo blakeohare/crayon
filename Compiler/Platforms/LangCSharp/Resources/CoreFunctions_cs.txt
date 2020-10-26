@@ -131,5 +131,10 @@ namespace Interpreter.Vm
             namedPipe.Close();
             return null;
         }
+
+        public static void HttpSend(Value cb, Value failCb, string url, string method, string contentType, int[] binaryContent, string textContent, string[] headerKvp)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

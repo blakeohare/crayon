@@ -75,6 +75,9 @@
     case 73: Core.EmitComment("imageAtlasManifest"); @import("corefuncs/imageAtlasManifest.pst"); break;
     case 74: Core.EmitComment("imageLoadChunk"); @import("corefuncs/imageLoadChunk.pst"); break;
     case 75: Core.EmitComment("imageGetChunkSync"); @import("corefuncs/imageGetChunkSync.pst"); break;
+    case 76: Core.EmitComment("makeByteList"); @import("corefuncs/makeByteList.pst"); break;
+    case 77: Core.EmitComment("bytesObjToList"); @import("corefuncs/bytesObjToList.pst"); break;
+    case 78: Core.EmitComment("httpSend"); @import("corefuncs/httpSend.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

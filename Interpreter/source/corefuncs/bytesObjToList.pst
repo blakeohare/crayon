@@ -1,0 +1,5 @@
+﻿@import("inline/2_arg.pst");
+
+byteObjToList(globals.positiveIntegers, (ObjectInstance)arg1.internalValue, (ListImpl)arg2.internalValue);
+
+output = VALUE_NULL;

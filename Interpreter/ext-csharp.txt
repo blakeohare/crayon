@@ -8,6 +8,8 @@ EXT: CoreFunc_DateTimeInitializeTimeZoneList: DateTimeHelper.InitializeTimeZoneL
 
 EXT: CoreFunc_EnvironmentGetVariable: System.Environment.GetEnvironmentVariable([ARG:1])
 
+EXT: CoreFunc_HttpSend: CoreFunctions.HttpSend([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+
 EXT: CoreFunc_ImageBlit: ImageUtil.Blit([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
 EXT: CoreFunc_ImageChunkLoadAsync: ImageUtil.ChunkLoadAsync([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_ImageEndEditSession: ImageUtil.EndEditSession([ARG:1], [ARG:2])

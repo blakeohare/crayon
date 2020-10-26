@@ -8,6 +8,8 @@ EXT-TYPE: Array<object> CoreFunc_DateTimeInitializeTimeZoneList();
 
 EXT-TYPE: string CoreFunc_EnvironmentGetVariable(string name);
 
+EXT-TYPE: void CoreFunc_HttpSend(Value callback, Value failCallback, string url, string method, string contentType, Array<int> contentBinary, string contentText, Array<string> headerKvp);
+
 EXT-TYPE: void CoreFunc_ImageBlit(object bmpTarget, object bmpSource, int targetX, int targetY, int targetWidth, int targetHeight, int sourceX, int sourceY, int sourceWidth, int sourceHeight);
 EXT-TYPE: void CoreFunc_ImageChunkLoadAsync(int chunkId, Array<int> chunkIds, Value callback);
 EXT-TYPE: void CoreFunc_ImageEndEditSession(object edit, object bmp); 
