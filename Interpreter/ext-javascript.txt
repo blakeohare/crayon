@@ -13,6 +13,7 @@ EXT: CoreFunc_HttpSend: C$http$send([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5],
 EXT: CoreFunc_ImageBlit: C$ImageUtil$blit([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
 EXT: CoreFunc_ImageChunkLoadAsync: C$ImageUtil$chunkLoadAsync([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_ImageEndEditSession: C$ImageUtil$endEditSession([ARG:1], [ARG:2])
+EXT: CoreFunc_ImageFromBytes: C$ImageUtil$fromBytes([ARG:1], [ARG:2])
 EXT: CoreFunc_ImageGetChunk: C$ImageUtil$getChunk([ARG:1])
 EXT: CoreFunc_ImageGetPixel: C$ImageUtil$getPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: CoreFunc_ImageNewBmp: C$ImageUtil$newBitmap([ARG:1], [ARG:2])

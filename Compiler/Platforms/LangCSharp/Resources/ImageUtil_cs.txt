@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Interpreter.Structs;
 
 namespace Interpreter.Vm
@@ -85,6 +86,14 @@ namespace Interpreter.Vm
         public static bool SetPixel(object session, int x, int y, int r, int g, int b, int a)
         {
             throw new NotImplementedException();
+        }
+
+        public static object FromBytes(int[] bytesAsInts, int[] sizeOut)
+        {
+            UniversalBitmap bmp = new UniversalBitmap(bytesAsInts.Select(b => (byte)b).ToArray());
+            sizeOut[0] = bmp.Width;
+            sizeOut[1] = bmp.Height;
+            return bmp;
         }
     }
 }

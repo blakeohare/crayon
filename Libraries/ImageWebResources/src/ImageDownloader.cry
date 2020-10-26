@@ -1,113 +1,44 @@
 ﻿import Http;
-import ImageResources;
+import Images;
 
 namespace ImageWebResources {
-    /*
-        For JavaScript, this will have the following nativeData...
 
-        nativeData[0] -> is done
-        nativeData[1] -> is successful?
-        nativeData[2] -> output object (canvas)
-        nativeData[3] -> width
-        nativeData[4] -> height
-
-        Other platforms will not use nativeData.
-
-    */
-    class ImageDownloader {
-
-        // For JavaScript, this is just the URL.
-        // For all other platforms, this is an HTTP request.
-        field _request;
-
-        field _sent = false;
-        field _img = null;
-        field _isDone = false;
-
-        constructor(url) {
-            if ($$$('isJavaScript')) {
-                this._request = url;
-            } else {
-                this._request = new HttpRequest(url).setMode(Http.RequestMode.BINARY);
+    function downloadImage(url, callback, errCallback = null) {
+        new HttpRequest(url).send(response => {
+            if (response.getStatusCode() >= 300) {
+                errCallback('REQUEST_ERR');
+                return;
             }
-        }
-
-        function download() {
-            Core.assert(!this._sent, "Request already sent.");
-            this._sent = true;
-
-            if ($$$('isJavaScript')) {
-                $lib_imagewebresources_jsDownload(this._request, this);
-                while (!this.isDone()) {
-                    Core.sleep(0.001);
-                }
-            } else {
-                this._request.send();
+            data = response.getBinaryContent();
+            img = null;
+            //try {
+                img = Bitmap.fromBytes(data);
+            //} catch (Exception) {
+            //	errCallback('IMG_ERR');
+            //	return;
+            //}
+            callback(img);
+        },
+        () => {
+            if (errCallback != null) {
+                errCallback('CONNECTION_ERR');
             }
+        });
+    }
 
-            this._isDone = true;
-            return this.getImage();
+    function awaitDownloadImage(url) {
+        image = null;
+        error = null;
+        downloadImage(
+            url,
+            _image => { image = _image; },
+            (e) => { error = e; });
+        while (error == null && image == null) {
+            Core.sleep(0.005);
         }
-
-        function downloadAsync() {
-            Core.assert(!this._sent, "Request already sent.");
-            this._sent = true;
-
-            if ($$$('isJavaScript')) {
-                $lib_imagewebresources_jsDownload(this._request, this);
-            } else {
-                this._request.sendAsync();
-            }
+        if (error != null) {
+            throw new Exception("Download image failed: " + error);
         }
-
-        // If the user is polling isDone() in a loop, then insert thread sleeps.
-        field _jsIsDoneCounter = 0;
-
-        function isDone() {
-            if (this._isDone) return true;
-            if ($$$('isJavaScript')) {
-                if (this._jsIsDoneCounter++ > 10) {
-                    Core.sleep(0.001);
-                    this._jsIsDoneCounter = 0;
-                }
-                this._isDone = $lib_imagewebresources_jsPoll(this);
-            } else {
-                this._isDone = this._request.isDone();
-            }
-            return this._isDone;
-        }
-
-        function getImage() {
-            if (this._img != null) return this._img;
-            Core.assert(this.isDone());
-
-            nativeImage = new ImageResources.NativeImageData(ImageResources.NativeImageDataConstructionType.BLANK, null);
-
-            // Common output vector between the next two implementations of the fetcher.
-            imgdata = [
-                nativeImage, // populate the native data
-                0, // width
-                0, // height
-            ];
-
-            // TODO: throw exceptions once exception support is available.
-
-            if ($$$('isJavaScript')) {
-                success = $lib_imagewebresources_jsGetImage(this, imgdata);
-            } else {
-                response = this._request.getResponse();
-                success = $lib_imagewebresources_bytesToImage(response, imgdata);
-            }
-
-            Core.assert(success, "Could not download image.");
-
-            nativeImage.width = imgdata[1];
-            nativeImage.height = imgdata[2];
-
-            this._img = new ImageResources.ImageResource(nativeImage.width, nativeImage.height, false);
-            this._img._nativeResource = nativeImage;
-
-            return this._img;
-        }
+        return image;
     }
 }
