@@ -7340,6 +7340,10 @@ var vm_suspend_with_status_by_id = function(vm, execId, status) {
 	return vm_suspend_for_context(getExecutionContext(vm, execId), status);
 };
 
+var vmEnableLibStackTrace = function(vm) {
+	vm[11][1] = true;
+};
+
 var vmEnvSetCommandLineArgs = function(vm, args) {
 	vm[11][0] = args;
 };

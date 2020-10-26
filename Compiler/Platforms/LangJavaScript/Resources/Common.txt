@@ -11,6 +11,7 @@ C$common$globalOptions['fullscreen'] = false;
 
 function main() {
 	C$common$programData = createVm(C$bytecode, C$common$resourceManifest);
+	vmEnableLibStackTrace(C$common$programData);
 	C$handleVmResult(startVm(C$common$programData));
 }
 
@@ -24,29 +25,30 @@ function C$runInterpreterWithFunctionPointer(fp, args) {
 	return C$handleVmResult(runInterpreterWithFunctionPointer(vm, fp, args));
 }
 
-function C$runInterpreterWithFunctionPointerNativeArgs(fp, args) {
+let C$convertNativeArgToValue = value => {
 	let globals = vmGetGlobals(C$common$programData);
-	let valueToNative = value => {
-		if (value === null || value === undefined) return buildNull(globals);
-		if (value === true || value === false) return buildBoolean(globals, value);
-		switch (typeof(value)) {
-			case 'string': return buildString(globals, value);
-			case 'number': return value % 1 === 0 ? buildInteger(globals, value) : buildFloat(globals, value);
-			case 'object':
-				if (Array.isArray(value)) {
-					let arr = [];
-					for (let item of value) {
-						arr.push(valueToNative(item));
-					}
-					return buildList(globals, arr);
+	if (value === null || value === undefined) return buildNull(globals);
+	if (value === true || value === false) return buildBoolean(globals, value);
+	switch (typeof(value)) {
+		case 'string': return buildString(globals, value);
+		case 'number': return value % 1 === 0 ? buildInteger(globals, value) : buildFloat(globals, value);
+		case 'object':
+			if (Array.isArray(value)) {
+				let arr = [];
+				for (let item of value) {
+					arr.push(C$convertNativeArgToValue(item));
 				}
-				let keys = Object.keys(value);
-				let values = keys.map(k => valueToNative(value[k]));
-				return buildStringDictionary(globals, keys, values);
-			default: return buildNull(globals);
-		}
-	};
-	return C$runInterpreterWithFunctionPointer(fp, args.map(valueToNative));
+				return buildList(arr);
+			}
+			let keys = Object.keys(value);
+			let values = keys.map(k => C$convertNativeArgToValue(value[k]));
+			return buildStringDictionary(globals, keys, values);
+		default: return buildNull(globals);
+	}
+};
+
+function C$runInterpreterWithFunctionPointerNativeArgs(fp, args) {
+	return C$runInterpreterWithFunctionPointer(fp, args.map(C$convertNativeArgToValue));
 }
 
 function C$handleVmResult(res) {
@@ -280,4 +282,75 @@ C$interop$callbackReturn = (id, valueStr) => {
 	delete C$interop$callbacksById[id];
 	let retVal = JSON.parse(valueStr).value;
 	fn(retVal);
+};
+
+C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent, headersKvp, bytesObj, bytesObjNativeData) => {
+	let req = new XMLHttpRequest();
+	
+	req.onload = (e, e2) => {
+		let headers = [];
+		let ct = '';
+		for (let rawHeader of req.getAllResponseHeaders().trim().split('\r\n')) {
+			let t = rawHeader.split(':', 2);
+			let name = t[0].trim();
+			let value = t.length > 1 ? t[1].trim() : '';
+			headers.push(name);
+			headers.push(value);
+			if (name.toLowerCase() == 'content-type') ct = value;
+		}
+		
+		req.response.arrayBuffer().then(buf => {
+			let nd = [];
+			let arr = new Uint8Array(buf);
+			let bl = arr.length;
+			for (let i = 0; i < bl; ++i) {
+				nd.push(arr[i]);
+			}
+			bytesObjNativeData[0] = nd;
+			
+			let text = null;
+			try {
+				text = new TextDecoder().decode(arr);
+			} catch (_) { }
+			
+			C$runInterpreterWithFunctionPointer(cb, [
+				C$convertNativeArgToValue(req.status),
+				C$convertNativeArgToValue(req.statusText),
+				C$convertNativeArgToValue(ct),
+				C$convertNativeArgToValue(headers),
+				bytesObj,
+				C$convertNativeArgToValue(text)
+			]);
+		});
+	};
+	
+	req.onerror = (e1, e2) => {
+		C$runInterpreterWithFunctionPointer(failCb, []);
+	};
+	
+	req.open(method, url, true);
+	req.responseType = 'blob';
+	
+	for (let i = 0; i < headersKvp.length; i += 2) {
+		let n = headersKvp[i];
+		let v = headersKvp[i + 1];
+		switch (n.toLowerCase()) {
+			// These are forbidden by the browser.
+			case 'content-type':
+			case 'content-length':
+			case 'user-agent':
+				break;
+			default:
+				req.setRequestHeader(n, v);
+				break;
+		}
+	}
+	
+	if (textContent !== null) {
+		req.send(textContent);
+	} else if (binaryContent !== null) {
+		req.send(Int8Array.from(binaryContent));
+	} else {
+		req.send(null);
+	}
 };
