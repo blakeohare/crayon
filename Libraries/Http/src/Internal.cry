@@ -1,4 +1,4 @@
-﻿namespace Http2.Internal {
+﻿namespace Http.Internal {
 
     const DEFAULT_USER_AGENT = "Crayon/v" + Core.CRAYON_VERSION + "; Have a nice day.";
 

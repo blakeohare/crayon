@@ -1,4 +1,4 @@
-﻿namespace Http2 {
+﻿namespace Http {
     class NoConnectionException : Exception {
         constructor() : base("Connection timed out.") { }
     }
