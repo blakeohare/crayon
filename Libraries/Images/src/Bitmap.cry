@@ -1,5 +1,9 @@
 ﻿namespace Images {
 
+    class ImageFormatException : Exception {
+        constructor() : base("The file is not a valid PNG or JPEG image.") { }
+    }
+
     class Bitmap {
 
         field width;
@@ -29,8 +33,17 @@
         }
 
         // supports PNG or JPEG
-        static function fromFileBytes(bytes) {
-            throw new NotImplementedException();
+        static function fromBytes(bytes) {
+            sz = [];
+            bmp = new Bitmap(Images.Internal.ImagesHelper.INST, null);
+            sc = $$$('imageFromBytes', bmp, bytes, sz);
+            if (sc == 0) {
+                bmp.width = sz[0];
+                bmp.height = sz[1];
+                return bmp;
+            }
+            if (sc == 1) throw new InvalidArgumentException("Argument must a list of integers from 0-255");
+            throw new ImageFormatException();
         }
 
         static function fromBase64(str) {

@@ -135,3 +135,37 @@ void ImageHelper_SessionStart(ObjectInstance edit, ObjectInstance bmp) {
 void ImageHelper_SessionFinish(ObjectInstance edit, ObjectInstance bmp) {
     Extension.CoreFunc_ImageEndEditSession(edit.nativeData[0], bmp.nativeData[0]);
 }
+
+/*
+    status codes:
+    0 - success
+    1 - not a proper byte list
+    2 - format invalid
+*/
+int ImageHelper_fromBytes(VmGlobals globals, ObjectInstance bmp, Value unverifiedByteList, ListImpl sizeOut) {
+    if (unverifiedByteList.type != Types.LIST) return 1;
+    ListImpl byteValues = (ListImpl)unverifiedByteList.internalValue;
+    int blen = byteValues.size;
+    Array<int> bytes = new Array<int>(blen);
+    Value v = null;
+    int b = 0;
+    for (int i = 0; i < blen; i += 1) {
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            v = byteValues.list[i];
+        } else {
+            v = byteValues.array[i];
+        }
+        if (v.type != Types.INTEGER) return 1;
+        b = (int)v.internalValue;
+        if (b < 0 || b > 255) return 1;
+        bytes[i] = b;
+    }
+    Array<int> sizeOutInt = new Array<int>(2);
+    object img = Extension.CoreFunc_ImageFromBytes(bytes, sizeOutInt);
+    if (img == null) return 2;
+    bmp.nativeData = new Array<object>(1);
+    bmp.nativeData[0] = img;
+    addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
+    addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
+    return 0;
+}

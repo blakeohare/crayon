@@ -82,6 +82,7 @@ namespace Parser
         MAKE_BYTE_LIST = 76,
         BYTES_OBJ_TO_LIST = 77,
         HTTP_SEND = 78,
+        IMAGE_FROM_BYTES = 79,
     }
 
     internal static class CoreFunctionIDHelper
@@ -168,6 +169,7 @@ namespace Parser
                 case "makeByteList": return (int)CoreFunctionID.MAKE_BYTE_LIST;
                 case "bytesObjToList": return (int)CoreFunctionID.BYTES_OBJ_TO_LIST;
                 case "httpSend": return (int)CoreFunctionID.HTTP_SEND;
+                case "imageFromBytes": return (int)CoreFunctionID.IMAGE_FROM_BYTES;
                 default: return -1;
             }
         }

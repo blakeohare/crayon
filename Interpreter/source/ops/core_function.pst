@@ -78,6 +78,7 @@
     case 76: Core.EmitComment("makeByteList"); @import("corefuncs/makeByteList.pst"); break;
     case 77: Core.EmitComment("bytesObjToList"); @import("corefuncs/bytesObjToList.pst"); break;
     case 78: Core.EmitComment("httpSend"); @import("corefuncs/httpSend.pst"); break;
+    case 79: Core.EmitComment("imageFromBytes"); @import("corefuncs/imageFromBytes.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

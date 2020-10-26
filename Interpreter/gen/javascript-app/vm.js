@@ -1211,6 +1211,40 @@ var getVmResultStatus = function(result) {
 	return result[0];
 };
 
+var ImageHelper_fromBytes = function(globals, bmp, unverifiedByteList, sizeOut) {
+	if ((unverifiedByteList[0] != 6)) {
+		return 1;
+	}
+	var byteValues = unverifiedByteList[1];
+	var blen = byteValues[1];
+	var bytes = PST$createNewArray(blen);
+	var v = null;
+	var b = 0;
+	var i = 0;
+	while ((i < blen)) {
+		v = byteValues[2][i];
+		if ((v[0] != 3)) {
+			return 1;
+		}
+		b = v[1];
+		if (((b < 0) || (b > 255))) {
+			return 1;
+		}
+		bytes[i] = b;
+		i += 1;
+	}
+	var sizeOutInt = PST$createNewArray(2);
+	var img = C$ImageUtil$fromBytes(bytes, sizeOutInt);
+	if ((img == null)) {
+		return 2;
+	}
+	bmp[3] = PST$createNewArray(1);
+	bmp[3][0] = img;
+	addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
+	addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
+	return 0;
+};
+
 var ImageHelper_GetChunkSync = function(o, cid) {
 	o[3] = PST$createNewArray(1);
 	o[3][0] = C$ImageUtil$getChunk(cid);
@@ -4682,6 +4716,14 @@ var interpretImpl = function(vm, executionContextId) {
 						objInstance1[3] = PST$createNewArray(1);
 						C$http$send(arg1, arg2, arg3[1], arg4[1], arg6[1], intArray1, string1, stringList, arg9, objInstance1[3]);
 						output = VALUE_NULL;
+						break;
+					case 79:
+						// imageFromBytes;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = buildInteger(globals, ImageHelper_fromBytes(globals, arg1[1], arg2, arg3[1]));
 						break;
 				}
 				if ((row[1] == 1)) {

@@ -1487,6 +1487,46 @@ namespace Interpreter.Vm
             return result.status;
         }
 
+        public static int ImageHelper_fromBytes(VmGlobals globals, ObjectInstance bmp, Value unverifiedByteList, ListImpl sizeOut)
+        {
+            if ((unverifiedByteList.type != 6))
+            {
+                return 1;
+            }
+            ListImpl byteValues = (ListImpl)unverifiedByteList.internalValue;
+            int blen = byteValues.size;
+            int[] bytes = new int[blen];
+            Value v = null;
+            int b = 0;
+            int i = 0;
+            while ((i < blen))
+            {
+                v = byteValues.array[i];
+                if ((v.type != 3))
+                {
+                    return 1;
+                }
+                b = (int)v.internalValue;
+                if (((b < 0) || (b > 255)))
+                {
+                    return 1;
+                }
+                bytes[i] = b;
+                i += 1;
+            }
+            int[] sizeOutInt = new int[2];
+            object img = ImageUtil.FromBytes(bytes, sizeOutInt);
+            if ((img == null))
+            {
+                return 2;
+            }
+            bmp.nativeData = new object[1];
+            bmp.nativeData[0] = img;
+            addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
+            addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
+            return 0;
+        }
+
         public static void ImageHelper_GetChunkSync(ObjectInstance o, int cid)
         {
             o.nativeData = new object[1];
@@ -6009,6 +6049,14 @@ namespace Interpreter.Vm
                                 objInstance1.nativeData = new object[1];
                                 CoreFunctions.HttpSend(arg1, arg2, (string)arg3.internalValue, (string)arg4.internalValue, (string)arg6.internalValue, intArray1, string1, stringList, arg9, objInstance1.nativeData);
                                 output = VALUE_NULL;
+                                break;
+                            case 79:
+                                // imageFromBytes;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = buildInteger(globals, ImageHelper_fromBytes(globals, (ObjectInstance)arg1.internalValue, arg2, (ListImpl)arg3.internalValue));
                                 break;
                         }
                         if ((row[1] == 1))

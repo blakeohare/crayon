@@ -56,11 +56,7 @@ namespace Http {
         function getBinaryContent() {
             o = this._fields[ResField.CONTENT_BYTES];
             b = [];
-            print("This ran");
             $$$('bytesObjToList', o, b);
-            print("So did this");
-            print("Test: " + b.length + ' ' + b[0]);
-            print("And this");
             return b;
         }
 
