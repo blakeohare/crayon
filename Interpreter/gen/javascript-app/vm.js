@@ -232,6 +232,7 @@ var byteObjToList = function(nums, obj, emptyList) {
 		list.push(nums[bytes[i]]);
 		++i;
 	}
+	emptyList[2] = list;
 	return 0;
 };
 
@@ -4652,7 +4653,8 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 78:
 						// httpSend;
-						valueStackSize -= 8;
+						valueStackSize -= 9;
+						arg9 = valueStack[(valueStackSize + 8)];
 						arg8 = valueStack[(valueStackSize + 7)];
 						arg7 = valueStack[(valueStackSize + 6)];
 						arg6 = valueStack[(valueStackSize + 5)];
@@ -4676,7 +4678,9 @@ var interpretImpl = function(vm, executionContextId) {
 							stringList[i] = list1[2][i][1];
 							i += 1;
 						}
-						C$http$send(arg1, arg2, arg3[1], arg4[1], arg6[1], intArray1, string1, stringList);
+						objInstance1 = arg9[1];
+						objInstance1[3] = PST$createNewArray(1);
+						C$http$send(arg1, arg2, arg3[1], arg4[1], arg6[1], intArray1, string1, stringList, arg9, objInstance1[3]);
 						output = VALUE_NULL;
 						break;
 				}

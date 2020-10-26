@@ -270,6 +270,7 @@ namespace Interpreter.Vm
                 arr[i] = nums[bytes[i]];
                 ++i;
             }
+            emptyList.array = arr;
             return 0;
         }
 
@@ -5975,7 +5976,8 @@ namespace Interpreter.Vm
                                 break;
                             case 78:
                                 // httpSend;
-                                valueStackSize -= 8;
+                                valueStackSize -= 9;
+                                arg9 = valueStack[(valueStackSize + 8)];
                                 arg8 = valueStack[(valueStackSize + 7)];
                                 arg7 = valueStack[(valueStackSize + 6)];
                                 arg6 = valueStack[(valueStackSize + 5)];
@@ -6003,7 +6005,9 @@ namespace Interpreter.Vm
                                     stringList[i] = (string)list1.array[i].internalValue;
                                     i += 1;
                                 }
-                                CoreFunctions.HttpSend(arg1, arg2, (string)arg3.internalValue, (string)arg4.internalValue, (string)arg6.internalValue, intArray1, string1, stringList);
+                                objInstance1 = (ObjectInstance)arg9.internalValue;
+                                objInstance1.nativeData = new object[1];
+                                CoreFunctions.HttpSend(arg1, arg2, (string)arg3.internalValue, (string)arg4.internalValue, (string)arg6.internalValue, intArray1, string1, stringList, arg9, objInstance1.nativeData);
                                 output = VALUE_NULL;
                                 break;
                         }

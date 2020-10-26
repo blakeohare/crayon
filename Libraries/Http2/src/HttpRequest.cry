@@ -94,7 +94,8 @@ namespace Http2 {
                 format,
                 this._fields.get(ReqField.CONTENT_TYPE, '') + '',
                 this._fields.get(ReqField.CONTENT),
-                hFlat);
+                hFlat,
+                new Object());
             if (err != null) {
                 throw new InvalidArgumentException(err);
             }

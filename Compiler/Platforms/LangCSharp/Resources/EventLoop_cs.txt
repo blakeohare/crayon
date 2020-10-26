@@ -118,6 +118,24 @@ namespace Interpreter.Vm
             RunEventLoop();
         }
 
+        private static Value ConvertNativeArg(VmContext vm, object na)
+        {
+            if (na == null) return vm.globalNull;
+            if (na is Value) return (Value)na; // allow mixed native/Value
+            if (na is bool) return (bool)na ? vm.globalTrue : vm.globalFalse;
+            if (na is string) return CrayonWrapper.buildString(vm.globals, (string)na);
+            if (na is int) return CrayonWrapper.buildInteger(vm.globals, (int)na);
+            if (na is double) return CrayonWrapper.buildFloat(vm.globals, (double)na);
+            if (na is float) return CrayonWrapper.buildFloat(vm.globals, (float)na);
+            if (na is object[])
+            {
+                List<Value> list = new List<Value>(((object[])na).Select(a => ConvertNativeArg(vm, a)));
+                return CrayonWrapper.buildList(list);
+            }
+
+            throw new NotImplementedException("Unsupported type for native arg: " + na.GetType());
+        }
+
         private static void RunEventLoopIteration(EventLoopInvocation invocation)
         {
             VmContext vm = TranslationHelper.ProgramData;
@@ -141,13 +159,7 @@ namespace Interpreter.Vm
                     args = new Value[nativeArgs.Length];
                     for (int i = 0; i < args.Length; ++i)
                     {
-                        object na = nativeArgs[i];
-                        if (na == null) args[i] = vm.globalNull;
-                        else if (na is bool) args[i] = (bool)na ? vm.globalTrue : vm.globalFalse;
-                        else if (na is string) args[i] = CrayonWrapper.buildString(vm.globals, (string)na);
-                        else if (na is int) args[i] = CrayonWrapper.buildInteger(vm.globals, (int)na);
-                        else if (na is double) args[i] = CrayonWrapper.buildFloat(vm.globals, (double)na);
-                        else throw new NotImplementedException("Unsupported type for native arg: " + na.GetType());
+                        args[i] = ConvertNativeArg(vm, nativeArgs[i]);
                     }
                 }
                 result = CrayonWrapper.runInterpreterWithFunctionPointer(vm, invocation.FunctionPointer, args);
