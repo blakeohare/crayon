@@ -62,5 +62,42 @@ namespace Images.Internal {
                 ][sc];
             throw new InvalidArgumentException(err);
         }
+
+        static function toFile(format, bmp, isB64, bg = null) {
+            if (format != ImageFormat.PNG && format != ImageFormat.JPEG) {
+                throw new InvalidArgumentException("Format must be a value from the Images.ImageFormat enum.");
+            }
+
+            if (bg != null || format == ImageFormat.JPEG) {
+                bg = bg ?? [0, 0, 0];
+                t = false;
+                if (Core.typeof(bg) == Type.LIST && bg.length == 3) {
+                    t = true;
+                    for (c : bg) {
+                        if (c < 0 || c > 255) t = false;
+                    }
+                }
+                if (!t) throw new InvalidArgumentException("Background color for opaque encoding must be a list of 3 integers from 0 to 255.");
+
+                opaque = new Bitmap(bmp.width, bmp.height);
+                opaque
+                    .edit()
+                    .fill(bg[0], bg[1], bg[2])
+                    .drawImage(bmp, 0, 0)
+                    .finish();
+                bmp = opaque;
+            }
+
+            o = $$$('imageEncode', bmp, format);
+            res = o[1];
+            if (o[0] != isB64) {
+                if (isB64) {
+                    return Base64.bytesToBase64(res);
+                } else {
+                    return Base64.base64ToBytes(res);
+                }
+            }
+            return res;
+        }
     }
 }

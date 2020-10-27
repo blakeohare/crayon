@@ -4,6 +4,11 @@
         constructor() : base("The file is not a valid PNG or JPEG image.") { }
     }
 
+    enum ImageFormat {
+        PNG = 1,
+        JPEG = 2,
+    }
+
     class Bitmap {
 
         field width;
@@ -64,6 +69,14 @@
             b.height = newHeight;
             $$$('imageScale', this, b, newWidth, newHeight, 1);
             return b;
+        }
+
+        function toBytes(format, bgColor = null) {
+            return Images.Internal.ImagesHelper.toFile(format, this, false, bgColor);
+        }
+
+        function toBase64(format, bgColor = null) {
+            return Images.Internal.ImagesHelper.toFile(format, this, true, bgColor);
         }
     }
 }

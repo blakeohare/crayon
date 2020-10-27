@@ -13,6 +13,7 @@ EXT-TYPE: void CoreFunc_HttpSend(Value callback, Value failCallback, string url,
 EXT-TYPE: bool CoreFunc_ImageB64BytesPreferred();
 EXT-TYPE: void CoreFunc_ImageBlit(object bmpTarget, object bmpSource, int targetX, int targetY, int targetWidth, int targetHeight, int sourceX, int sourceY, int sourceWidth, int sourceHeight);
 EXT-TYPE: void CoreFunc_ImageChunkLoadAsync(int chunkId, Array<int> chunkIds, Value callback);
+EXT-TYPE: object CoreFunc_ImageEncode(object bmp, int format, Array<bool> formatOut);
 EXT-TYPE: void CoreFunc_ImageEndEditSession(object edit, object bmp);
 EXT-TYPE: bool CoreFunc_ImageFromBytes(object byteArrayOrB64String, Array<int> sizeOut, Array<object> bmpNativeDataOut, Value callback);
 EXT-TYPE: object CoreFunc_ImageGetChunk(int chunkId);

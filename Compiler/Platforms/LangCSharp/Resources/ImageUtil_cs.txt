@@ -83,9 +83,19 @@ namespace Interpreter.Vm
         }
 
         // returns true for out of range
-        public static bool SetPixel(object session, int x, int y, int r, int g, int b, int a)
+        public static bool SetPixel(object sessionObj, int x, int y, int r, int g, int b, int a)
         {
-            throw new NotImplementedException();
+            // TODO: this is a HACK and WRONG. This should not flush the whole image to the original bitmap.
+            // Since most people will just open the session, make changes, and then flush it, this will
+            // be functionally correct under 90% of normal use cases.
+            // I'm going to leave this for now and worry about it later when I migrate to .NET Core and
+            // switch to using the SixLabors image library.
+            UniversalBitmap.DrawingSession session = (UniversalBitmap.DrawingSession)sessionObj;
+            if (x < 0 || y < 0 || x >= session.Bitmap.Width || y >= session.Bitmap.Height) return true;
+            session.Flush();
+            session.Bitmap.SetPixel(x, y, r, g, b, a);
+            session.ReInitializeHack();
+            return false;
         }
 
         public static bool FromBytes(int[] bytesAsInts, int[] sizeOut, object[] nativeDataOut)
@@ -102,6 +112,20 @@ namespace Interpreter.Vm
                 nativeDataOut[0] = bmp;
             }
             return true;
+        }
+
+        public static object Encode(object bmpObj, int format, bool[] formatOut)
+        {
+            UniversalBitmap bmp = (UniversalBitmap)bmpObj;
+            byte[] bytes;
+            switch (format)
+            {
+                case 1: bytes = bmp.GetBytesAsPng(); break;
+                case 2: bytes = bmp.GetBytesAsJpeg(); break;
+                default: throw new Exception();
+            }
+            formatOut[0] = false;
+            return bytes.Select(b => (int)b).ToArray();
         }
     }
 }

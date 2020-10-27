@@ -30,6 +30,24 @@
             Images.Internal.ImagesHelper.pixelError(sc, x, y, this._bitmap.width, this._bitmap.height);
         }
 
+        function fill(r, g, b, a = 255) {
+            if (this._finished) _throwFinished();
+            // TODO: change this once the Drawing library is implemented.
+
+            // it looks silly but it's faster in the VM...
+            ys = [];
+            xs = [];
+            for (x = this._bitmap.width - 1; x >= 0; --x) xs.add(x);
+            for (y = this._bitmap.height - 1; y >= 0; --y) ys.add(y);
+
+            for (y : ys) {
+                for (x : xs) {
+                    $$$('imageSetPixel', this, x, y, r, g, b, a);
+                }
+            }
+            return this;
+        }
+
         function drawImage(otherBitmap, x, y) {
             w = otherBitmap.width;
             h = otherBitmap.height;

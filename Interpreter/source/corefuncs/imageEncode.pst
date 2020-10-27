@@ -1,0 +1,10 @@
+﻿@import("inline/2_arg.pst");
+
+value = ImageHelper_ImageEncode(
+    globals,
+    Core.ForceParens((ObjectInstance)arg1.internalValue).nativeData[0],
+    (int)arg2.internalValue); // format
+valueList1 = new List<Value>();
+valueList1.Add(buildBoolean(globals, value.type == Types.STRING));
+valueList1.Add(value);
+output = buildList(valueList1);

@@ -274,6 +274,20 @@ namespace Interpreter.Vm
             return 0;
         }
 
+        public static Value bytesToListValue(VmGlobals globals, int[] bytes)
+        {
+            List<Value> b = new List<Value>();
+            int length = bytes.Length;
+            Value[] nums = globals.positiveIntegers;
+            int i = 0;
+            while ((i < length))
+            {
+                b.Add(nums[bytes[i]]);
+                i += 1;
+            }
+            return buildList(b);
+        }
+
         public static bool canAssignGenericToGeneric(VmContext vm, int[] gen1, int gen1Index, int[] gen2, int gen2Index, int[] newIndexOut)
         {
             if ((gen2 == null))
@@ -1570,6 +1584,17 @@ namespace Interpreter.Vm
         {
             o.nativeData = new object[1];
             o.nativeData[0] = ImageUtil.NewBitmap(w, h);
+        }
+
+        public static Value ImageHelper_ImageEncode(VmGlobals globals, object bmp, int format)
+        {
+            bool[] o = new bool[1];
+            object result = ImageUtil.Encode(bmp, format, o);
+            if (o[0])
+            {
+                return buildString(globals, (string)result);
+            }
+            return bytesToListValue(globals, (int[])result);
         }
 
         public static void ImageHelper_LoadChunk(int chunkId, ListImpl allChunkIds, Value loadedCallback)
@@ -6061,6 +6086,17 @@ namespace Interpreter.Vm
                             case 80:
                                 // imageB64BytesPreferred;
                                 output = buildBoolean(globals, false);
+                                break;
+                            case 81:
+                                // imageEncode;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                value = ImageHelper_ImageEncode(globals, ((ObjectInstance)arg1.internalValue).nativeData[0], (int)arg2.internalValue);
+                                valueList1 = new List<Value>();
+                                valueList1.Add(buildBoolean(globals, (value.type == 5)));
+                                valueList1.Add(value);
+                                output = buildList(valueList1);
                                 break;
                         }
                         if ((row[1] == 1))
