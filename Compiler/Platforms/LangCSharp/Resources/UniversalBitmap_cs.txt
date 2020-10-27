@@ -297,6 +297,11 @@ namespace Interpreter
             return output.ToString();
         }
 
+        public void SetPixel(int x, int y, int r, int g, int b, int a)
+        {
+            this.internalBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(a, r, g, b));
+        }
+
         public class BitLockSession
         {
             private UniversalBitmap bmp;
@@ -355,7 +360,7 @@ namespace Interpreter
         {
             private static int activeSessions = 0;
 
-            private UniversalBitmap bmp;
+            public UniversalBitmap Bitmap { get; private set; }
 
 #if WINDOWS
             private System.Drawing.Graphics internalSession;
@@ -377,14 +382,8 @@ namespace Interpreter
 
             public DrawingSession(UniversalBitmap bmp)
             {
-                activeSessions++;
-
-                this.bmp = bmp;
-#if WINDOWS
-                this.internalSession = System.Drawing.Graphics.FromImage((System.Drawing.Bitmap)bmp.internalBitmap);
-#elif OSX
-                this.context = new Cairo.Context(bmp.internalBitmap);
-#endif
+                this.Bitmap = bmp;
+                this.ReInitializeHack();
             }
 
             public DrawingSession Draw(UniversalBitmap bmp, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
@@ -413,9 +412,19 @@ namespace Interpreter
 #if WINDOWS
                 this.internalSession.Flush();
                 this.internalSession.Dispose();
-                this.bmp.activeDrawingSession = null;
+                this.Bitmap.activeDrawingSession = null;
 #elif OSX
                 this.context.Dispose();
+#endif
+            }
+
+            public void ReInitializeHack()
+            {
+                activeSessions++;
+#if WINDOWS
+                this.internalSession = System.Drawing.Graphics.FromImage(this.Bitmap.internalBitmap);
+#elif OSX
+                this.context = new Cairo.Context(bmp.internalBitmap);
 #endif
             }
 

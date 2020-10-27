@@ -470,3 +470,10 @@ C$ImageUtil$endEditSession = (session, bmp) => {
 	session.canvas = null;
 	session.ctx = null;
 };
+
+C$ImageUtil$encode = (bmp, format, formatOut) => {
+	let d = bmp.canvas.toDataURL(format == 1 ? 'image/png' : 'image/jpeg');
+	let b64 = d.split(',')[1];
+	formatOut[0] = true;
+	return b64;
+};

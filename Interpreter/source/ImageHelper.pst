@@ -173,3 +173,12 @@ int ImageHelper_fromBytes(
 
     return 3;
 }
+
+Value ImageHelper_ImageEncode(VmGlobals globals, object bmp, int format) {
+    Array<bool> o = new Array<bool>(1);
+    object result = Extension.CoreFunc_ImageEncode(bmp, format, o);
+    if (o[0]) {
+        return buildString(globals, (string) result);
+    }
+    return bytesToListValue(globals, (Array<int>) result);
+}

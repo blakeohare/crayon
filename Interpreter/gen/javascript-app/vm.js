@@ -236,6 +236,18 @@ var byteObjToList = function(nums, obj, emptyList) {
 	return 0;
 };
 
+var bytesToListValue = function(globals, bytes) {
+	var b = [];
+	var length = bytes.length;
+	var nums = globals[9];
+	var i = 0;
+	while ((i < length)) {
+		b.push(nums[bytes[i]]);
+		i += 1;
+	}
+	return buildList(b);
+};
+
 var canAssignGenericToGeneric = function(vm, gen1, gen1Index, gen2, gen2Index, newIndexOut) {
 	if ((gen2 == null)) {
 		return true;
@@ -1274,6 +1286,15 @@ var ImageHelper_ImageBlit = function(target, src, tx, ty, tw, th, sx, sy, sw, sh
 var ImageHelper_ImageCreate = function(o, w, h) {
 	o[3] = PST$createNewArray(1);
 	o[3][0] = C$ImageUtil$newBitmap(w, h);
+};
+
+var ImageHelper_ImageEncode = function(globals, bmp, format) {
+	var o = PST$createNewArray(1);
+	var result = C$ImageUtil$encode(bmp, format, o);
+	if (o[0]) {
+		return buildString(globals, result);
+	}
+	return bytesToListValue(globals, result);
 };
 
 var ImageHelper_LoadChunk = function(chunkId, allChunkIds, loadedCallback) {
@@ -4725,6 +4746,17 @@ var interpretImpl = function(vm, executionContextId) {
 					case 80:
 						// imageB64BytesPreferred;
 						output = buildBoolean(globals, true);
+						break;
+					case 81:
+						// imageEncode;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						value = ImageHelper_ImageEncode(globals, (arg1[1])[3][0], arg2[1]);
+						valueList1 = [];
+						valueList1.push(buildBoolean(globals, (value[0] == 5)));
+						valueList1.push(value);
+						output = buildList(valueList1);
 						break;
 				}
 				if ((row[1] == 1)) {
