@@ -355,6 +355,17 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 	}
 };
 
+C$ImageUtil$newBitmap = (w, h) => {
+	let cnv = document.createElement('canvas');
+	cnv.width = w;
+	cnv.height = h;
+	return {
+		canvas: cnv,
+		ctx: cnv.getContext('2d'),
+		b64: null,
+	}
+};
+
 C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
 	if (data.length < 2) return null;
 	let isPng = data.substr(0, 2) == 'iV';
@@ -378,4 +389,84 @@ C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
 	};
 	loader.src = ('data:image/' + (isPng ? 'png' : 'jpeg') + ';base64,') + data;
 	return false;
+};
+
+C$ImageUtil$getPixel = (bmp, optEdit, x, y, cOut) => {
+	let img = bmp;
+	if (optEdit !== null) {
+		img = optEdit;
+		if (img.imageData !== null) C$ImageUtil$flushImageData(img);
+	}
+	let c = img.canvas;
+	let w = c.width;
+	let h = c.height;
+	if (x < 0 || y < 0 || x >= w || y >= h) {
+		cOut[4] = 0;
+		return;
+	}
+	cOut[4] = 1;
+	let px = bmp.ctx.getImageData(x, y, 1, 1).data;
+	cOut[0] = px[0];
+	cOut[1] = px[1];
+	cOut[2] = px[2];
+	cOut[3] = px[3];
+};
+
+C$ImageUtil$pixelImageData = null;
+C$hexLookup = (() => {
+	let o = [];
+	let H = '0123456789abcdef'.split('');
+	for (let a of H) for (let b of H) {
+		o.push(a + b);
+	}
+	return o;
+})();
+C$hexLookupHash = C$hexLookup.map(_ => '#' + _);
+
+C$ImageUtil$setPixel = (session, x, y, r, g, b, a) => {
+	let w = session.width;
+	let h = session.height;
+	if (x < 0 || y < 0 || x >= w || y >= h) return true;
+	let ctx = session.ctx;
+	if (a == 255) {
+		ctx.fillStyle = C$hexLookupHash[r] + C$hexLookup[g] + C$hexLookup[b];
+		ctx.fillRect(x, y, 1, 1);
+	} else {
+		if (C$ImageUtil$pixelImageData === null) {
+			C$ImageUtil$pixelImageData = session.ctx.getImageData(x, y, 1, 1);
+		}
+		let d = C$ImageUtil$pixelImageData.data;
+		d[0] = r;
+		d[1] = g;
+		d[2] = b;
+		d[3] = a;
+		session.ctx.putImageData(C$ImageUtil$pixelImageData, x, y);
+	}
+	let WAT = ctx.getImageData(x, y, 1, 1).data;
+	
+	return false;
+};
+
+C$ImageUtil$startEditSession = bmp => {
+	let canvas = document.createElement('canvas');
+	canvas.width = bmp.canvas.width;
+	canvas.height = bmp.canvas.height;
+	let ctx = canvas.getContext('2d');
+	ctx.drawImage(bmp.canvas, 0, 0);
+	return {
+		width: canvas.width,
+		height: canvas.height,
+		canvas,
+		ctx,
+		parent: bmp,
+		imageData: null,
+	};
+};
+
+C$ImageUtil$endEditSession = (session, bmp) => {
+	bmp.canvas = session.canvas;
+	bmp.ctx = session.ctx;
+	bmp.b64 = null;
+	session.canvas = null;
+	session.ctx = null;
 };
