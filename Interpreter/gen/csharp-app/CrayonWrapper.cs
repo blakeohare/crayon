@@ -1575,9 +1575,9 @@ namespace Interpreter.Vm
             return 0;
         }
 
-        public static void ImageHelper_ImageBlit(ObjectInstance target, ObjectInstance src, int tx, int ty, int tw, int th, int sx, int sy, int sw, int sh)
+        public static void ImageHelper_ImageBlit(ObjectInstance target, ObjectInstance src, int sx, int sy, int sw, int sh, int tx, int ty, int tw, int th)
         {
-            ImageUtil.Blit(target.nativeData[0], src.nativeData[0], tx, ty, tw, th, sx, sy, sw, sh);
+            ImageUtil.Blit(target.nativeData[0], src.nativeData[0], sx, sy, sw, sh, tx, ty, tw, th);
         }
 
         public static void ImageHelper_ImageCreate(ObjectInstance o, int w, int h)

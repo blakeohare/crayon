@@ -1,3 +1,0 @@
-SOURCE: src/main.pst
-
-EXT-TYPE: int _lib_imageencoder_encodeImage(object nativeBitmap, int imageFormat, List<VM.Value> byteOutputList, Array<VM.Value> integerCache);

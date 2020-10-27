@@ -61,7 +61,7 @@ namespace Interpreter.Vm
             session.Flush();
         }
 
-        public static void Blit(object targetObj, object srcObj, int tx, int ty, int tw, int th, int sx, int sy, int sw, int sh)
+        public static void Blit(object targetObj, object srcObj, int sx, int sy, int sw, int sh, int tx, int ty, int tw, int th)
         {
             UniversalBitmap.DrawingSession target = (UniversalBitmap.DrawingSession)targetObj;
             UniversalBitmap src = (UniversalBitmap)srcObj;

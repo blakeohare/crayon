@@ -1,9 +1,0 @@
-﻿namespace ImageEncoder {
-
-    enum ImageFormat {
-        PNG = 1,
-        JPEG = 2,
-        // 3 and 4 are reserved for GIF and BMP
-        ICO = 5,
-    }
-}
