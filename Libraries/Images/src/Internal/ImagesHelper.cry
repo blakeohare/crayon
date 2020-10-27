@@ -51,5 +51,16 @@ namespace Images.Internal {
             if (sc == 2) throw new ImageFormatException();
             throw new Exception(); // this shouldn't happen.
         }
+
+        static function pixelError(sc, x, y, width, height) {
+            err = ['',
+                "Coordinates must be integers. Found x: '" + x + "', y: '" + y + "'",
+                "Coordinate out of range: (" + x + ', ' + y + ") Size: " + width + ' x ' + height,
+                "Color values must be integers.",
+                "Color values are out of range. RGBA values must be between 0 and 255.",
+                "An unknown error occurred.", // But I'm pretty sure it was your fault.
+                ][sc];
+            throw new InvalidArgumentException(err);
+        }
     }
 }

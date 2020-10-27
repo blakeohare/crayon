@@ -44,8 +44,7 @@
             c = [];
             sc = $$$('imageGetPixel', this, null, x, y, c);
             if (sc == 0) return c;
-            if (sc == 1) throw new InvalidArgumentException("Coordinates must be integers. Found x: '" + x + "', y: '" + y + "'");
-            if (sc == 2) throw new InvalidArgumentException("Coordinate out of range: (" + x + ', ' + y + ") Size: " + this.width + ' x ' + this.height);
+            Images.Internal.ImagesHelper.pixelError(sc, x, y, this.width, this.height);
         }
 
         function edit() {
