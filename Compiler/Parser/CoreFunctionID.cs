@@ -83,6 +83,7 @@ namespace Parser
         BYTES_OBJ_TO_LIST = 77,
         HTTP_SEND = 78,
         IMAGE_FROM_BYTES = 79,
+        IMAGE_B64_BYTES_PREFERRED = 80,
     }
 
     internal static class CoreFunctionIDHelper
@@ -170,6 +171,7 @@ namespace Parser
                 case "bytesObjToList": return (int)CoreFunctionID.BYTES_OBJ_TO_LIST;
                 case "httpSend": return (int)CoreFunctionID.HTTP_SEND;
                 case "imageFromBytes": return (int)CoreFunctionID.IMAGE_FROM_BYTES;
+                case "imageB64BytesPreferred": return (int)CoreFunctionID.IMAGE_B64_BYTES_PREFERRED;
                 default: return -1;
             }
         }

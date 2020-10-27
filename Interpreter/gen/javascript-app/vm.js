@@ -1211,38 +1211,34 @@ var getVmResultStatus = function(result) {
 	return result[0];
 };
 
-var ImageHelper_fromBytes = function(globals, bmp, unverifiedByteList, sizeOut) {
-	if ((unverifiedByteList[0] != 6)) {
-		return 1;
-	}
-	var byteValues = unverifiedByteList[1];
-	var blen = byteValues[1];
-	var bytes = PST$createNewArray(blen);
-	var v = null;
-	var b = 0;
-	var i = 0;
-	while ((i < blen)) {
-		v = byteValues[2][i];
-		if ((v[0] != 3)) {
+var ImageHelper_fromBytes = function(globals, bmp, isB64, rawData, sizeOut, callback) {
+	var data = null;
+	if (isB64) {
+		if ((rawData[0] != 5)) {
 			return 1;
 		}
-		b = v[1];
-		if (((b < 0) || (b > 255))) {
+		data = rawData[1];
+	} else {
+		if ((rawData[0] != 6)) {
 			return 1;
 		}
-		bytes[i] = b;
-		i += 1;
+		data = listImplToBytes(rawData[1]);
+		if ((data == null)) {
+			return 1;
+		}
 	}
 	var sizeOutInt = PST$createNewArray(2);
-	var img = C$ImageUtil$fromBytes(bytes, sizeOutInt);
-	if ((img == null)) {
-		return 2;
-	}
 	bmp[3] = PST$createNewArray(1);
-	bmp[3][0] = img;
-	addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
-	addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
-	return 0;
+	var isSync = C$ImageUtil$fromBytes(data, sizeOutInt, bmp[3], callback);
+	if (isSync) {
+		if ((bmp[3][0] == null)) {
+			return 2;
+		}
+		addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
+		addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
+		return 0;
+	}
+	return 3;
 };
 
 var ImageHelper_GetChunkSync = function(o, cid) {
@@ -4719,11 +4715,16 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 79:
 						// imageFromBytes;
-						valueStackSize -= 3;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						output = buildInteger(globals, ImageHelper_fromBytes(globals, arg1[1], arg2, arg3[1]));
+						output = buildInteger(globals, ImageHelper_fromBytes(globals, arg1[1], true, arg2, arg3[1], arg4));
+						break;
+					case 80:
+						// imageB64BytesPreferred;
+						output = buildBoolean(globals, true);
 						break;
 				}
 				if ((row[1] == 1)) {
@@ -5890,11 +5891,7 @@ var isVmResultRootExecContext = function(result) {
 	return result[4];
 };
 
-var makeByteListNativeData = function(obj, vList) {
-	if ((vList[0] != 6)) {
-		return false;
-	}
-	var list = vList[1];
+var listImplToBytes = function(list) {
 	var size = list[1];
 	var bytes = PST$createNewArray(size);
 	var nv = null;
@@ -5904,14 +5901,26 @@ var makeByteListNativeData = function(obj, vList) {
 	while ((i < size)) {
 		nv = values[i];
 		if ((nv[0] != 3)) {
-			return false;
+			return null;
 		}
 		n = nv[1];
 		if (((n < 0) || (n > 255))) {
-			return false;
+			return null;
 		}
 		bytes[i] = n;
 		++i;
+	}
+	return bytes;
+};
+
+var makeByteListNativeData = function(obj, vList) {
+	if ((vList[0] != 6)) {
+		return false;
+	}
+	var list = vList[1];
+	var bytes = listImplToBytes(list);
+	if ((bytes == null)) {
+		return false;
 	}
 	obj[3] = PST$createNewArray(1);
 	obj[3][0] = bytes;

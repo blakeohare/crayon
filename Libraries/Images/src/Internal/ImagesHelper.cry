@@ -1,4 +1,9 @@
-﻿namespace Images.Internal {
+﻿import Base64;
+
+namespace Images.Internal {
+
+    const INVALID_ARG_BYTES = "Argument must be a list of integers from 0-255.";
+    const INVALID_ARG_B64 = "Argument must be a valid base64 string.";
 
     class ImagesHelper {
         // HACK: this is an insecure hacky way to make things package-private.
@@ -11,6 +16,40 @@
             if (positiveOnly && value < 1) {
                 throw new InvalidArgumentException(name + " must be greater than 0. Found '" + value + "' instead.");
             }
+        }
+
+        static function createImageFromBytes(intList, b64Str) {
+            err = intList == null ? INVALID_ARG_B64 : INVALID_ARG_BYTES;
+            try {
+                if ($$$('imageB64BytesPreferred')) {
+                    data = b64Str ?? Base64.bytesToBase64(intList);
+                } else {
+                    data = intList ?? Base64.base64ToBytes(b64Str);
+                }
+            } catch (Exception e) {
+                throw new InvalidArgumentException(err);
+            }
+
+            sz = [];
+            bmp = new Bitmap(Images.Internal.ImagesHelper.INST, null);
+            sc = -1;
+            handleResult = (_sc, w, h) => {
+                sc = _sc;
+                sz = [w, h];
+            };
+            sc = $$$('imageFromBytes', bmp, data, sz, handleResult);
+            while (sc == 3) {
+                Core.sleep(0.001);
+            }
+
+            if (sc == 0) {
+                bmp.width = sz[0];
+                bmp.height = sz[1];
+                return bmp;
+            }
+            if (sc == 1) throw new InvalidArgumentException(err);
+            if (sc == 2) throw new ImageFormatException();
+            throw new Exception(); // this shouldn't happen.
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿@import("inline/3_arg.pst");
+﻿@import("inline/4_arg.pst");
 
 output = buildInteger(globals, ImageHelper_fromBytes(
     globals,
     (ObjectInstance)arg1.internalValue,
+    Extension.CoreFunc_ImageB64BytesPreferred(),
     arg2,
-    (ListImpl)arg3.internalValue));
+    (ListImpl)arg3.internalValue,
+    arg4));
