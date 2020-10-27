@@ -772,9 +772,7 @@ bool isStringEqual(string a, string b) {
     return false;
 }
 
-bool makeByteListNativeData(ObjectInstance obj, Value vList) {
-    if (vList.type != Types.LIST) return false;
-    ListImpl list = (ListImpl)vList.internalValue;
+Array<int> listImplToBytes(ListImpl list) {
     int size = list.size;
     Array<int> bytes = new Array<int>(size);
     Value nv = null;
@@ -784,21 +782,29 @@ bool makeByteListNativeData(ObjectInstance obj, Value vList) {
         List<Value> values = list.list;
         for (int i = 0; i < size; ++i) {
             nv = values[i];
-            if (nv.type != Types.INTEGER) return false;
+            if (nv.type != Types.INTEGER) return null;
             n = (int)nv.internalValue;
-            if (n < 0 || n > 255) return false;
+            if (n < 0 || n > 255) return null;
             bytes[i] = n;
         }
     } else {
         Array<Value> values = list.array;
         for (int i = 0; i < size; ++i) {
             nv = values[i];
-            if (nv.type != Types.INTEGER) return false;
+            if (nv.type != Types.INTEGER) return null;
             n = (int)nv.internalValue;
-            if (n < 0 || n > 255) return false;
+            if (n < 0 || n > 255) return null;
             bytes[i] = n;
         }
     }
+    return bytes;
+}
+
+bool makeByteListNativeData(ObjectInstance obj, Value vList) {
+    if (vList.type != Types.LIST) return false;
+    ListImpl list = (ListImpl)vList.internalValue;
+    Array<int> bytes = listImplToBytes(list);
+    if (bytes == null) return false;
     obj.nativeData = new Array<object>(1);
     obj.nativeData[0] = bytes;
     return true;

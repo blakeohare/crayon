@@ -354,3 +354,28 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 		req.send(null);
 	}
 };
+
+C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
+	if (data.length < 2) return null;
+	let isPng = data.substr(0, 2) == 'iV';
+	let loader = new Image();
+	loader.onload = () => {
+		let cnv = document.createElement('canvas');
+		let [w, h] = [loader.width, loader.height];
+		cnv.width = w;
+		cnv.height = h;
+		let ctx = cnv.getContext('2d');
+		ctx.drawImage(loader, 0, 0);
+		ndOut[0] = {
+			canvas: cnv,
+			ctx,
+			b64: data,
+		};
+		C$runInterpreterWithFunctionPointerNativeArgs(cb, [0, w, h]);
+	};
+	loader.onerror = () => {
+		C$runInterpreterWithFunctionPointerNativeArgs(cb, [2, 0, 0]);
+	};
+	loader.src = ('data:image/' + (isPng ? 'png' : 'jpeg') + ';base64,') + data + 'poo';
+	return false;
+};

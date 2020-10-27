@@ -88,12 +88,20 @@ namespace Interpreter.Vm
             throw new NotImplementedException();
         }
 
-        public static object FromBytes(int[] bytesAsInts, int[] sizeOut)
+        public static bool FromBytes(int[] bytesAsInts, int[] sizeOut, object[] nativeDataOut)
         {
             UniversalBitmap bmp = new UniversalBitmap(bytesAsInts.Select(b => (byte)b).ToArray());
-            sizeOut[0] = bmp.Width;
-            sizeOut[1] = bmp.Height;
-            return bmp;
+            if (!bmp.IsValid)
+            {
+                nativeDataOut[0] = null;
+            }
+            else
+            {
+                sizeOut[0] = bmp.Width;
+                sizeOut[1] = bmp.Height;
+                nativeDataOut[0] = bmp;
+            }
+            return true;
         }
     }
 }

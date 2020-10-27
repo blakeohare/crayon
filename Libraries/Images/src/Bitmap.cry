@@ -32,22 +32,12 @@
             throw new Exception("Resource does not exist: '" + path + "'");
         }
 
-        // supports PNG or JPEG
         static function fromBytes(bytes) {
-            sz = [];
-            bmp = new Bitmap(Images.Internal.ImagesHelper.INST, null);
-            sc = $$$('imageFromBytes', bmp, bytes, sz);
-            if (sc == 0) {
-                bmp.width = sz[0];
-                bmp.height = sz[1];
-                return bmp;
-            }
-            if (sc == 1) throw new InvalidArgumentException("Argument must a list of integers from 0-255");
-            throw new ImageFormatException();
+            return Images.Internal.ImagesHelper.createImageFromBytes(bytes, null);
         }
 
         static function fromBase64(str) {
-            throw new NotImplementedException();
+            return Images.Internal.ImagesHelper.createImageFromBytes(null, str);
         }
 
         function getPixel(x, y) {

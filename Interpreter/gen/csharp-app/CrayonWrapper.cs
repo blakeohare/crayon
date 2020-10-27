@@ -1487,44 +1487,43 @@ namespace Interpreter.Vm
             return result.status;
         }
 
-        public static int ImageHelper_fromBytes(VmGlobals globals, ObjectInstance bmp, Value unverifiedByteList, ListImpl sizeOut)
+        public static int ImageHelper_fromBytes(VmGlobals globals, ObjectInstance bmp, bool isB64, Value rawData, ListImpl sizeOut, Value callback)
         {
-            if ((unverifiedByteList.type != 6))
+            object data = null;
+            if (isB64)
             {
-                return 1;
+                if ((rawData.type != 5))
+                {
+                    return 1;
+                }
+                data = rawData.internalValue;
             }
-            ListImpl byteValues = (ListImpl)unverifiedByteList.internalValue;
-            int blen = byteValues.size;
-            int[] bytes = new int[blen];
-            Value v = null;
-            int b = 0;
-            int i = 0;
-            while ((i < blen))
+            else
             {
-                v = byteValues.array[i];
-                if ((v.type != 3))
+                if ((rawData.type != 6))
                 {
                     return 1;
                 }
-                b = (int)v.internalValue;
-                if (((b < 0) || (b > 255)))
+                data = listImplToBytes((ListImpl)rawData.internalValue);
+                if ((data == null))
                 {
                     return 1;
                 }
-                bytes[i] = b;
-                i += 1;
             }
             int[] sizeOutInt = new int[2];
-            object img = ImageUtil.FromBytes(bytes, sizeOutInt);
-            if ((img == null))
-            {
-                return 2;
-            }
             bmp.nativeData = new object[1];
-            bmp.nativeData[0] = img;
-            addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
-            addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
-            return 0;
+            bool isSync = ImageUtil.FromBytes((int[])data, sizeOutInt, bmp.nativeData);
+            if (isSync)
+            {
+                if ((bmp.nativeData[0] == null))
+                {
+                    return 2;
+                }
+                addToList(sizeOut, buildInteger(globals, sizeOutInt[0]));
+                addToList(sizeOut, buildInteger(globals, sizeOutInt[1]));
+                return 0;
+            }
+            return 3;
         }
 
         public static void ImageHelper_GetChunkSync(ObjectInstance o, int cid)
@@ -6052,11 +6051,16 @@ namespace Interpreter.Vm
                                 break;
                             case 79:
                                 // imageFromBytes;
-                                valueStackSize -= 3;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                output = buildInteger(globals, ImageHelper_fromBytes(globals, (ObjectInstance)arg1.internalValue, arg2, (ListImpl)arg3.internalValue));
+                                output = buildInteger(globals, ImageHelper_fromBytes(globals, (ObjectInstance)arg1.internalValue, false, arg2, (ListImpl)arg3.internalValue, arg4));
+                                break;
+                            case 80:
+                                // imageB64BytesPreferred;
+                                output = buildBoolean(globals, false);
                                 break;
                         }
                         if ((row[1] == 1))
@@ -7548,13 +7552,8 @@ namespace Interpreter.Vm
             return result.isRootContext;
         }
 
-        public static bool makeByteListNativeData(ObjectInstance obj, Value vList)
+        public static int[] listImplToBytes(ListImpl list)
         {
-            if ((vList.type != 6))
-            {
-                return false;
-            }
-            ListImpl list = (ListImpl)vList.internalValue;
             int size = list.size;
             int[] bytes = new int[size];
             Value nv = null;
@@ -7566,15 +7565,30 @@ namespace Interpreter.Vm
                 nv = values[i];
                 if ((nv.type != 3))
                 {
-                    return false;
+                    return null;
                 }
                 n = (int)nv.internalValue;
                 if (((n < 0) || (n > 255)))
                 {
-                    return false;
+                    return null;
                 }
                 bytes[i] = n;
                 ++i;
+            }
+            return bytes;
+        }
+
+        public static bool makeByteListNativeData(ObjectInstance obj, Value vList)
+        {
+            if ((vList.type != 6))
+            {
+                return false;
+            }
+            ListImpl list = (ListImpl)vList.internalValue;
+            int[] bytes = listImplToBytes(list);
+            if ((bytes == null))
+            {
+                return false;
             }
             obj.nativeData = new object[1];
             obj.nativeData[0] = bytes;
