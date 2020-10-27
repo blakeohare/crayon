@@ -1279,8 +1279,8 @@ var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
 	return 0;
 };
 
-var ImageHelper_ImageBlit = function(target, src, tx, ty, tw, th, sx, sy, sw, sh) {
-	C$ImageUtil$blit(target[3][0], src[3][0], tx, ty, tw, th, sx, sy, sw, sh);
+var ImageHelper_ImageBlit = function(target, src, sx, sy, sw, sh, tx, ty, tw, th) {
+	C$ImageUtil$blit(target[3][0], src[3][0], sx, sy, sw, sh, tx, ty, tw, th);
 };
 
 var ImageHelper_ImageCreate = function(o, w, h) {

@@ -2,42 +2,6 @@
 	<description>Library for converting ImageResource objects into various file format encodings.</description>
 	<namespace name="ImageEncoder">
 
-		<class name="PngEncoder">
-			<description>
-				Encodes an ImageResource into a list of bytes using the PNG format.
-			</description>
-
-			<function name="(constructor)">
-				<arg name="image" type="ImageResources.ImageResource" description="Image resource to encode."/>
-				<description>Creates a new PNG encoder</description>
-			</function>
-
-			<function name="encode">
-				<description>
-					Emits the PNG file as a byte array.
-				</description>
-				<returns type="list-of-int" description="List of bytes representing a PNG file"/>
-			</function>
-		</class>
-
-		<class name="JpegEncoder">
-			<description>
-				Encodes an ImageResource into a list of bytes using the JPEG format.
-			</description>
-
-			<function name="(constructor)">
-				<arg name="image" type="ImageResources.ImageResource" description="Image resource to encode."/>
-				<description>Creates a new PNG encoder</description>
-			</function>
-
-			<function name="encode">
-				<description>
-					Emits the JPEG file as a byte array.
-				</description>
-				<returns type="list-of-int" description="List of bytes representing a JPEG file"/>
-			</function>
-		</class>
-
 		<class name="IconEncoder">
 			<description>
 				Encodes an ImageResource or a series of ImageResources into a list of bytes using the ICO format.

@@ -1,19 +1,19 @@
-﻿import ImageResources;
+﻿import Images;
 import Math;
 
 namespace ImageEncoder {
 
-    class IconEncoder : AbstractImageEncoder {
+    class IconBuilder {
 
         field imagesBySize = {};
 
-        constructor() : base(null, ImageEncoder.ImageFormat.ICO) { }
+        constructor() { }
 
         function addImage(imageResource) {
-            width = imageResource.getWidth();
-            height = imageResource.getHeight();
+            width = imageResource.width;
+            height = imageResource.height;
             largest = Math.max(width, height);
-            if (width > 256 || height > 256) throw new Core.InvalidOperationException("Icon images must fit in a 256x256 space.");
+            if (width > 256 || height > 256) throw new InvalidOperationException("Icon images must fit in a 256x256 space.");
             for (size : [256, 128, 64, 32]) {
                 if (largest > size / 2) {
                     this.imagesBySize[size] = imageResource;
@@ -29,7 +29,9 @@ namespace ImageEncoder {
             // https://en.wikipedia.org/wiki/ICO_(file_format)#Icon_resource_structure
 
             sizes = this.imagesBySize.keys();
-            if (sizes.length == 0) Core.fail("Cannot encode an icon with no images.");
+            if (sizes.length == 0) {
+                throw new InvalidArgumentException("Cannot encode an icon with no images.");
+            }
             sizes.sort();
             imageBytes = [];
             startingPositions = [];
@@ -44,17 +46,14 @@ namespace ImageEncoder {
 
             for (size : sizes) {
                 originalImage = this.imagesBySize[size];
-                width = originalImage.getWidth();
-                height = originalImage.getHeight();
+                width = originalImage.width;
+                height = originalImage.height;
                 x = (size - width) / 2;
                 y = (size - height) / 2;
-                resource = new ImageResource(size, size);
-                nr = resource._nativeResource;
-                nr.lock();
-                nr.blit(originalImage, x, y);
-                nr.unlock();
+                resource = new Bitmap(size, size);
+                resource.edit().drawImage(originalImage, x, y).finish();
 
-                pngBytes = new PngEncoder(resource).encode();
+                pngBytes = resource.toBytes(ImageFormat.PNG);
                 pngPayloads.concat(pngBytes);
 
                 this._toLittleEndian(size == 256 ? 0 : size, 1, pngHeaders);
