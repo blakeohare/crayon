@@ -1,0 +1,6 @@
+{
+    "name": "IconEncoder",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/iconencoder",
+    "description": "Library for encoding Bitmaps into icon files using the .ico format."
+}

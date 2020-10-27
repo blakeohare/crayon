@@ -1,6 +1,0 @@
-{
-    "name": "ImageEncoder",
-    "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.9.0/imageencoder",
-    "description": "Library for encoding ImageResources to file formats."
-}
