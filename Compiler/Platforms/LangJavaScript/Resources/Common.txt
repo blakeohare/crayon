@@ -376,6 +376,6 @@ C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
 	loader.onerror = () => {
 		C$runInterpreterWithFunctionPointerNativeArgs(cb, [2, 0, 0]);
 	};
-	loader.src = ('data:image/' + (isPng ? 'png' : 'jpeg') + ';base64,') + data + 'poo';
+	loader.src = ('data:image/' + (isPng ? 'png' : 'jpeg') + ';base64,') + data;
 	return false;
 };
