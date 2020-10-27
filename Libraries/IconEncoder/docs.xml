@@ -1,10 +1,10 @@
-<library name="ImageEncoder">
-	<description>Library for converting ImageResource objects into various file format encodings.</description>
-	<namespace name="ImageEncoder">
+<library name="IconEncoder">
+	<description>Library for building icon files.</description>
+	<namespace name="IconBuilder">
 
-		<class name="IconEncoder">
+		<class name="IconBuilder">
 			<description>
-				Encodes an ImageResource or a series of ImageResources into a list of bytes using the ICO format.
+				Encodes a Bitmap instance or a series of Bitmaps into a list of bytes using the ICO format.
 			</description>
 
 			<function name="(constructor)">
@@ -15,7 +15,7 @@
 			</function>
 
 			<function name="addImage">
-				<arg name="imageResource" type="ImageResources.ImageResource" description="Image resource to add to the icon's images."/>
+				<arg name="imageResource" type="Images.Bitmap" description="Bitmap to add to the icon's images."/>
 				<description>
 					Adds an image to the icon file.
 					The image will be padded and/or resized to fit the most appropriate resolution for .ico formats.
@@ -27,7 +27,7 @@
 				</description>
 			</function>
 
-			<function name="encode">
+			<function name="toBytes">
 				<description>
 					Emits the ICO file as a byte array.
 					Throws a Core.InvalidState exception if the IconEncoder instance contains no images.

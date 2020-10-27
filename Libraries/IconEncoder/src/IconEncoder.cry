@@ -1,7 +1,7 @@
 ﻿import Images;
 import Math;
 
-namespace ImageEncoder {
+namespace IconEncoder {
 
     class IconBuilder {
 
@@ -24,7 +24,7 @@ namespace ImageEncoder {
             return this;
         }
 
-        function encode() {
+        function toBytes() {
 
             // https://en.wikipedia.org/wiki/ICO_(file_format)#Icon_resource_structure
 
