@@ -1,0 +1,21 @@
+﻿_len = (int)valueStack[valueStackSize - 1].internalValue;
+
+int1 = valueStackSize - _len - 1;
+int2 = (int)valueStack[int1 - 1].internalValue; // Max
+int3 = (int)valueStack[int1 - 2].internalValue; // Min
+valueStackSize = int1 - 3;
+
+bool1 = false;
+for (i = 0; i < _len; i += 1) {
+    value = valueStack[int1 + i];
+    if (value.type != Types.INTEGER) {
+        bool1 = true;
+    } else {
+        j = (int)value.internalValue;
+        if (j < int2 || j > int3) {
+            bool1 = true;
+        }
+    }
+}
+
+if (bool1) hasInterrupt = EX_InvalidArgument(ec, (string)valueStack[valueStackSize].internalValue);

@@ -4758,6 +4758,47 @@ var interpretImpl = function(vm, executionContextId) {
 						valueList1.push(value);
 						output = buildList(valueList1);
 						break;
+					case 82:
+						// argVerifyIntRange;
+						_len = valueStack[(valueStackSize - 1)][1];
+						int1 = (valueStackSize - _len - 1);
+						int2 = valueStack[(int1 - 1)][1];
+						int3 = valueStack[(int1 - 2)][1];
+						valueStackSize = (int1 - 3);
+						bool1 = false;
+						i = 0;
+						while ((i < _len)) {
+							value = valueStack[(int1 + i)];
+							if ((value[0] != 3)) {
+								bool1 = true;
+							} else {
+								j = value[1];
+								if (((j < int2) || (j > int3))) {
+									bool1 = true;
+								}
+							}
+							i += 1;
+						}
+						if (bool1) {
+							hasInterrupt = EX_InvalidArgument(ec, valueStack[valueStackSize][1]);
+						}
+						break;
+					case 83:
+						// argVerifyNums;
+						arg1 = valueStack[--valueStackSize];
+						_len = arg1[1];
+						int1 = (valueStackSize - _len);
+						valueStackSize = (int1 - 1);
+						i = 0;
+						while ((i < _len)) {
+							value = valueStack[(int1 + i)];
+							if (((value[0] != 3) && (value[0] != 4))) {
+								i += _len;
+								hasInterrupt = EX_InvalidArgument(ec, valueStack[valueStackSize][1]);
+							}
+							i += 1;
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
