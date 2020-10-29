@@ -72,6 +72,7 @@ namespace Parser.ParseTree
             this.ResolvedType = this.VarId.ResolvedType;
             if (this.ResolvedType == null)
             {
+                // TODO: actually check to see if it's in a loop before suggesting the loop hint.
                 string msg = "The variable '" + this.Name + "' is used, but has not been assigned to before this point in code. Even if this is in a loop, ensure that the variable is assigned a value before the loop starts.";
                 throw new ParserException(this, msg);
             }

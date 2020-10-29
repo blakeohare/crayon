@@ -85,6 +85,8 @@ namespace Parser
         IMAGE_FROM_BYTES = 79,
         IMAGE_B64_BYTES_PREFERRED = 80,
         IMAGE_ENCODE = 81,
+        ARG_VERIFY_INT_RANGE = 82,
+        ARG_VERIFY_NUMS = 83,
     }
 
     internal static class CoreFunctionIDHelper
@@ -174,6 +176,8 @@ namespace Parser
                 case "imageFromBytes": return (int)CoreFunctionID.IMAGE_FROM_BYTES;
                 case "imageB64BytesPreferred": return (int)CoreFunctionID.IMAGE_B64_BYTES_PREFERRED;
                 case "imageEncode": return (int)CoreFunctionID.IMAGE_ENCODE;
+                case "argVerifyIntRange": return (int)CoreFunctionID.ARG_VERIFY_INT_RANGE;
+                case "argVerifyNums": return (int)CoreFunctionID.ARG_VERIFY_NUMS;
                 default: return -1;
             }
         }

@@ -81,6 +81,8 @@
     case 79: Core.EmitComment("imageFromBytes"); @import("corefuncs/imageFromBytes.pst"); break;
     case 80: Core.EmitComment("imageB64BytesPreferred"); @import("corefuncs/imageB64BytesPreferred.pst"); break;
     case 81: Core.EmitComment("imageEncode"); @import("corefuncs/imageEncode.pst"); break;
+    case 82: Core.EmitComment("argVerifyIntRange"); @import("corefuncs/argVerifyIntRange.pst"); break;
+    case 83: Core.EmitComment("argVerifyNums"); @import("corefuncs/argVerifyNums.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

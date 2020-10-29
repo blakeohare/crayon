@@ -6098,6 +6098,55 @@ namespace Interpreter.Vm
                                 valueList1.Add(value);
                                 output = buildList(valueList1);
                                 break;
+                            case 82:
+                                // argVerifyIntRange;
+                                _len = (int)valueStack[(valueStackSize - 1)].internalValue;
+                                int1 = (valueStackSize - _len - 1);
+                                int2 = (int)valueStack[(int1 - 1)].internalValue;
+                                int3 = (int)valueStack[(int1 - 2)].internalValue;
+                                valueStackSize = (int1 - 3);
+                                bool1 = false;
+                                i = 0;
+                                while ((i < _len))
+                                {
+                                    value = valueStack[(int1 + i)];
+                                    if ((value.type != 3))
+                                    {
+                                        bool1 = true;
+                                    }
+                                    else
+                                    {
+                                        j = (int)value.internalValue;
+                                        if (((j < int2) || (j > int3)))
+                                        {
+                                            bool1 = true;
+                                        }
+                                    }
+                                    i += 1;
+                                }
+                                if (bool1)
+                                {
+                                    hasInterrupt = EX_InvalidArgument(ec, (string)valueStack[valueStackSize].internalValue);
+                                }
+                                break;
+                            case 83:
+                                // argVerifyNums;
+                                arg1 = valueStack[--valueStackSize];
+                                _len = (int)arg1.internalValue;
+                                int1 = (valueStackSize - _len);
+                                valueStackSize = (int1 - 1);
+                                i = 0;
+                                while ((i < _len))
+                                {
+                                    value = valueStack[(int1 + i)];
+                                    if (((value.type != 3) && (value.type != 4)))
+                                    {
+                                        i += _len;
+                                        hasInterrupt = EX_InvalidArgument(ec, (string)valueStack[valueStackSize].internalValue);
+                                    }
+                                    i += 1;
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {

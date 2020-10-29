@@ -1,0 +1,14 @@
+﻿@import("inline/1_arg.pst");
+
+_len = (int)arg1.internalValue;
+
+int1 = valueStackSize - _len;
+valueStackSize = int1 - 1;
+
+for (i = 0; i < _len; i += 1) {
+    value = valueStack[int1 + i];
+    if (value.type != Types.INTEGER && value.type != Types.FLOAT) {
+        i += _len;
+        hasInterrupt = EX_InvalidArgument(ec, (string)valueStack[valueStackSize].internalValue);
+    }
+}
