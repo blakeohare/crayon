@@ -49,6 +49,10 @@ namespace U3Direct {
             return this;
         }
 
+        function sendCanvasData(id, items) {
+            return this.sendData(['CV', id, items.length] + items);
+        }
+
         function close() {
             this._hub.send('u3close', {});
             return this;

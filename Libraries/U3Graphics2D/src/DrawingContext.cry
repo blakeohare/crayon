@@ -1,0 +1,78 @@
+﻿namespace U3Graphics2D {
+
+    const INVALID_COLOR_ERR = "Color values must be integers from 0 to 255.";
+
+    function createGraphicsContext(canvas) {
+        return new DrawingContext(canvas, DrawingContext.UNDOCUMENTED_DO_NOT_USE);
+    }
+
+    class DrawingContext {
+
+        field _canvas;
+        field u3window = null; // lazily initialized when flushing the buffer.
+        field _buffer = [];
+        field _bufferContainsFlush = false;
+
+        static field UNDOCUMENTED_DO_NOT_USE = new Object();
+
+        constructor(canvas, hack) {
+            this._canvas = canvas;
+            if (hack != DrawingContext.UNDOCUMENTED_DO_NOT_USE) throw new Exception();
+        }
+
+        function fill(r, g, b) {
+            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, 3);
+            this._buffer.clear();
+            this._buffer.add('F', r, g, b);
+            this._bufferContainsFlush = true;
+            return this;
+        }
+
+        function rectangle(x, y, w, h, r, g, b, a = 255) {
+            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, a, 4);
+            $$$('argVerifyNums', "Rectangle coordinates must be numbers.", x, y, w, h, 4);
+            this._buffer.add('R', r, g, b, a, x, y, w, h);
+            return this;
+        }
+
+        function ellipse(x, y, w, h, r, g, b, a = 255) {
+            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, a, 4);
+            $$$('argVerifyNums', "Ellipse coordinates must be numbers.", x, y, w, h, 4);
+            this._buffer.add('E', r, g, b, a, x, y, w, h);
+            return this;
+        }
+
+        function line(x1, y1, x2, y2, w, r, g, b, a = 255) {
+            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, a, 4);
+            $$$('argVerifyNums', "Line coordinates must be numbers.", x1, y1, x2, y2, 4);
+            $$$('argVerifyNums', "Line width must be a number.", w, 1);
+            this._buffer.add('L', r, g, b, a, x1, y1, x2, y2, w);
+            return this;
+        }
+
+        // TODO: move this into an internals helper class
+        function _getU3Window() {
+            if (this._canvas == null) return null;
+            f = this._canvas._frame;
+            if (f == null) return null;
+            // TODO: also check if the window is open. If not, return null.
+            return f._u3window;
+        }
+
+        function flush() {
+            win = this._getU3Window();
+
+            if (win == null) {
+                resetBackBuffer = this._bufferContainsFlush; // as opposed to appending to it.
+                this._canvas._modifyBackBuffer(this._buffer, this._bufferContainsFlush);
+
+                // TODO: copy the data to a back buffer which gets copied to the Nori Canvas instance.
+                // If the back buffer has information in it and the Canvas gets added to the UI tree, it gets flushed at that time.
+                throw new NotImplementedException("Cannot flush drawing context buffer if the canvas isn't in an open window. This is not a design decision, just a current gap in the implementation.");
+            } else {
+                win.sendCanvasData(this._canvas._id, this._buffer);
+            }
+            return this;
+        }
+    }
+}

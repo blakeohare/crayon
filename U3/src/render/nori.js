@@ -109,6 +109,7 @@ function createElement(id, type) {
 			inner.innerHTML = 'Button';
 			break;
 		
+		case 'Canvas':
 		case 'Image':
 			inner = document.createElement('canvas');
 			s = inner.style;
@@ -206,6 +207,9 @@ function setProperty(e, key, value) {
 		case 'border.rightthickness': e.NORI_borders[2] = value; e.firstChild.style.borderRightThickness = value + 'px'; e.firstChild.style.borderRightStyle = value > 0 ? 'solid' : 'none'; break;
 		case 'border.bottomthickness': e.NORI_borders[3] = value; e.firstChild.style.borderBottomThickness = value + 'px'; e.firstChild.style.borderBottomStyle = value > 0 ? 'solid' : 'none'; break;
 		
+		case 'cv.height': e.firstChild.height = value; break;
+		case 'cv.width': e.firstChild.width = value; break;
+
 		case 'btn.text': e.firstChild.innerHTML = escapeHtml(value); break;
 		case 'btn.onclick': e.firstChild.onclick = buildEventHandler(value, e, key, ''); break;
 		
@@ -542,6 +546,13 @@ function flushUpdates(data) {
 				
 				break;
 			
+			case 'CV':
+				j = items[i++];
+				element = elementById[id];
+				handleCanvasData(element.firstChild, items, i, j);
+				i += j;
+				break;
+
 			default:
 				throw "Unknown command";
 		}
@@ -549,6 +560,89 @@ function flushUpdates(data) {
 	
 	doLayoutPass();
 	platformSpecificHandleEvent(-1, 'on-render-pass', '');
+}
+
+let TO_HEX = (() => {
+	let h = '0123456789abcdef'.split('');
+	let arr = [];
+	for (let a of h) {
+		for (let b of h) {
+			arr.push(a + b);
+		}
+	}
+	return arr;
+})();
+let TO_HEX_HASH = TO_HEX.map(t => '#' + t);
+
+function handleCanvasData(canvas, buffer, start, len) {
+	let ctx = canvas.getContext('2d');
+	let cvWidth = canvas.width;
+	let cvHeight = canvas.height;
+	let end = start + len;
+	let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex;
+	let i = start;
+	while (i < end) {
+		r = buffer[i + 1];
+		g = buffer[i + 2];
+		b = buffer[i + 3];
+		hex = TO_HEX_HASH[r] + TO_HEX[g] + TO_HEX[b];
+		switch (buffer[i]) {
+			case 'F':
+				i += 4;
+				ctx.fillStyle = hex;
+				ctx.fillRect(0, 0, cvWidth, cvHeight);
+				break;
+			
+			case 'R':
+				a = buffer[i + 4];
+				x = buffer[i + 5];
+				y = buffer[i + 6];
+				w = buffer[i + 7];
+				h = buffer[i + 8];
+				i += 9;
+				if (a !== 255) {
+					ctx.globalAlpha = a / 255;
+					ctx.fillStyle = hex;
+					ctx.fillRect(x, y, w, h);
+					ctx.globalAlpha = 1;
+				} else {
+					ctx.fillStyle = hex;
+					ctx.fillRect(x, y, w, h);
+				}
+				break;
+			
+			case 'E':
+				r = buffer[i + 1];
+				g = buffer[i + 2];
+				b = buffer[i + 3];
+				a = buffer[i + 4];
+				x = buffer[i + 5];
+				y = buffer[i + 6];
+				w = buffer[i + 7];
+				h = buffer[i + 8];
+				i += 9;
+				// TODO: this
+				break;
+			
+			case 'L':
+				r = buffer[i + 1];
+				g = buffer[i + 2];
+				b = buffer[i + 3];
+				a = buffer[i + 4];
+				x = buffer[i + 5];
+				y = buffer[i + 6];
+				x2 = buffer[i + 7];
+				y2 = buffer[i + 8];
+				lineWidth = buffer[i + 9];
+				i += 10;
+				// TODO: this
+				break;
+			
+			default:
+				throw new Error("Unknown draw instruction: " + buffer[i]);
+		}
+	}
+	throw new Error();
 }
 
 function queueTimeout(id, millis) {
