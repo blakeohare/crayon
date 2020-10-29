@@ -6102,8 +6102,8 @@ namespace Interpreter.Vm
                                 // argVerifyIntRange;
                                 _len = (int)valueStack[(valueStackSize - 1)].internalValue;
                                 int1 = (valueStackSize - _len - 1);
-                                int2 = (int)valueStack[(int1 - 1)].internalValue;
-                                int3 = (int)valueStack[(int1 - 2)].internalValue;
+                                int2 = (int)valueStack[(int1 - 2)].internalValue;
+                                int3 = (int)valueStack[(int1 - 1)].internalValue;
                                 valueStackSize = (int1 - 3);
                                 bool1 = false;
                                 i = 0;
