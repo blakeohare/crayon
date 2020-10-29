@@ -4762,8 +4762,8 @@ var interpretImpl = function(vm, executionContextId) {
 						// argVerifyIntRange;
 						_len = valueStack[(valueStackSize - 1)][1];
 						int1 = (valueStackSize - _len - 1);
-						int2 = valueStack[(int1 - 1)][1];
-						int3 = valueStack[(int1 - 2)][1];
+						int2 = valueStack[(int1 - 2)][1];
+						int3 = valueStack[(int1 - 1)][1];
 						valueStackSize = (int1 - 3);
 						bool1 = false;
 						i = 0;
