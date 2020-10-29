@@ -1,0 +1,21 @@
+﻿namespace U3Nori {
+
+    const Canvas_Width = 'cv.width';
+    const Canvas_Height = 'cv.height';
+
+    class Canvas : Element {
+
+        field _u3canvas = null;
+
+        constructor() : base('Canvas') {
+
+        }
+
+        function setCanvasWidth(value) {
+            return this._setIntProperty(Canvas_Width, value);
+        }
+        function setCanvasHeight(value) {
+            return this._setIntProperty(Canvas_Height, value);
+        }
+    }
+}
