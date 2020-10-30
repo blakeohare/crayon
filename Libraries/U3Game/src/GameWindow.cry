@@ -17,9 +17,15 @@ namespace U3Game {
             'sh': null,
             'bg': [0, 0, 0],
             'open': false,
+            'b': false,
+            'un': 0.0,
         };
 
         constructor() { }
+
+        function getDrawingContext() {
+            return this._fields.get('draw');
+        }
 
         function setTitle(title) {
             this._fields['t'] = title + '';
@@ -60,24 +66,43 @@ namespace U3Game {
             return this;
         }
 
-        function show() {
+        function show(block = true) {
+            if (this._fields['open']) throw new Exception("GameWindow is already open.");
+            this._fields['b'] = block == true;
             this._fields['open'] = true;
-            canvas = null;
-            canvas = new Canvas()
+            canvas = new Canvas();
+            this._fields['draw'] = U3Graphics2D.createGraphicsContext(canvas);
+            canvas
                 .setWidth(this._fields['w'])
                 .setHeight(this._fields['h'])
                 .setLoadHandler(() => {
-                    U3Game.Internal.doGameLoop(this, U3Graphics2D.createGraphicsContext(canvas));
+                    if (block) {
+                        U3Game.Internal.doGameLoop(this);
+                    }
                 });
 
-            this._fields['win'] = new Frame()
+            frame = new Frame();
+            this._fields['win'] = frame;
+            frame
                 .setTitle(this._fields['t'])
                 .setWidth(this._fields['sw'] ?? this._fields['w'])
                 .setHeight(this._fields['sh'] ?? this._fields['h'])
-                .setContent(canvas)
-                .show();
+                .setContent(canvas);
+
+            frame.show(block);
 
             return this;
+        }
+
+        function pumpEvents() {
+            if (this._fields['b']) throw new Exception("Cannot call pumpEvents() in a blocking window.");
+            return U3Game.Internal.doPumpEvents(this);
+        }
+
+        function clockTick() {
+            if (this._fields['b']) throw new Exception("Cannot call clockTick() in a blocking window.");
+            return U3Game.Internal.doClockTick(this, this._fields.get('draw'));
+
         }
 
         function close() {

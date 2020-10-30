@@ -29,18 +29,28 @@ namespace U3Direct {
             });
         }
 
-        function show(title, width, height, initialData) {
+        function show(title, width, height, initialData, isBlocking) {
 
+            setupComplete = false;
             this._hub.setOnReady(() => {
                 this._hub.send('u3init', {
                     "title": title,
                     "width": width,
                     "height": height,
                     "initialData": initialData,
+                }, (_) => {
+                    setupComplete = true;
                 });
             });
 
-            this._hub.startBlocking();
+            if (isBlocking) {
+                this._hub.startBlocking();
+            } else {
+                this._hub.start();
+                while (!setupComplete && this._hub._isRunning) {
+                    Core.sleep(0.005);
+                }
+            }
             return this;
         }
 

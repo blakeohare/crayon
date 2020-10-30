@@ -8,7 +8,7 @@ app.whenReady().then(() => {
 
     const hub = createHub('u3debug');
 
-    hub.addListener('u3init', msg => {
+    hub.addListener('u3init', (msg, cb) => {
         let { title, width, height, initialData } = msg;
         rwindow = renderwindow.createWindow(title, width, height, initialData.length === 0 ? null : initialData);
         rwindow.setListener(winMsg => {
@@ -20,6 +20,7 @@ app.whenReady().then(() => {
                     throw new Error("Unknown message type: '" + winMsg.type + "'");
             }
         })
+        if (cb) cb(true);
     });
 
     hub.addListener('u3data', msg => {

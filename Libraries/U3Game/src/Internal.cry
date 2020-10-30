@@ -4,30 +4,50 @@ namespace U3Game {
 
     static class Internal {
 
-        static function doGameLoop(window, drawingContext) {
+        static function doPumpEvents(window) {
+            return [];
+        }
+
+        static function doClockTick(window, drawingContext) {
+            drawingContext.flush();
+            Internal.fillBg(window);
+            f = window._fields;
+            if (!f.get('open')) return;
+            start = f.get('un') ?? Core.currentTime();
+            now = Core.currentTime();
+            diff = now - start;
+            target = 1.0 / f['f'];
+            delay = Math.max(0, target - diff);
+            Core.sleep(delay);
+            f['un'] = Core.currentTime();
+            return window;
+        }
+
+        static function fillBg(window) {
+            draw = window._fields.get('draw');
+            if (draw == null) return;
+            c = window._fields['bg'];
+            draw.fill(c[0], c[1], c[2]);
+        }
+
+        static function doGameLoop(window) {
+            drawingContext = window._fields['draw'];
             while (window._fields['open']) {
 
-                startTime = Core.currentTime();
+                events = Internal.doPumpEvents(window);
 
                 updater = window._fields.get('u');
                 if (updater != null) {
                     updater(null); // TODO: inputManager
                 }
 
-                c = window._fields['bg'];
-                drawingContext.fill(c[0], c[1], c[2]);
+                Internal.fillBg(window);
                 renderer = window._fields.get('r');
                 if (renderer != null) {
                     renderer(drawingContext);
-                    drawingContext.flush();
                 }
 
-                endTime = Core.currentTime();
-
-                diff = endTime - startTime;
-                target = 1.0 / window._fields['f'];
-                delay = Math.max(0, target - diff);
-                Core.sleep(delay);
+                Internal.doClockTick(window, drawingContext);
             }
         }
     }
