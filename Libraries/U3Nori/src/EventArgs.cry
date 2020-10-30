@@ -1,0 +1,29 @@
+﻿namespace U3Nori {
+
+    class MouseEventArg {
+
+        field x;
+        field y;
+        field ratioX;
+        field ratioY;
+        field isLeftButton;
+        field isRightButton;
+        field isAuxiliaryButton;
+
+        constructor() { }
+
+        static function parseFromArg(s) {
+            t = s.split('|');
+            e = new MouseEventArg();
+            e.x = parseInt(t[0]);
+            e.y = parseInt(t[1]);
+            e.ratioX = parseFloat(t[2]);
+            e.ratioY = parseFloat(t[3]);
+            b = t[4];
+            e.isLeftButton = b == 'primary';
+            e.isRightButton = b == 'secondary';
+            e.isAuxiliaryButton = b == 'aux';
+            return [e];
+        }
+    }
+}

@@ -11,14 +11,8 @@ app.whenReady().then(() => {
     hub.addListener('u3init', (msg, cb) => {
         let { title, width, height, initialData } = msg;
         rwindow = renderwindow.createWindow(title, width, height, initialData.length === 0 ? null : initialData);
-        rwindow.setListener(winMsg => {
-            switch (winMsg.type) {
-                case 'E':
-                    hub.send('u3event', winMsg);
-                    break;
-                default:
-                    throw new Error("Unknown message type: '" + winMsg.type + "'");
-            }
+        rwindow.setListener(winMsgs => {
+            hub.send('u3events', winMsgs);
         })
         if (cb) cb(true);
     });
