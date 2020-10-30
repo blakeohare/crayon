@@ -50,5 +50,11 @@ namespace U3Game {
                 Internal.doClockTick(window, drawingContext);
             }
         }
+
+        static function parseMouseCoord(e, win) {
+            x = Math.floor(e.ratioX * win._fields['w'] + .5);
+            y = Math.floor(e.ratioY * win._fields['h'] + .5);
+            return [x, y];
+        }
     }
 }

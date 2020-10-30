@@ -21,11 +21,13 @@ namespace U3Direct {
                 });
             }
 
-            this._hub.listen('u3event', (msg, cb) => {
-                eventType = msg['eventName'];
-                id = msg['id'];
-                arg = msg['arg'];
-                eventListener(eventType, id, arg);
+            this._hub.listen('u3events', (msgs, cb) => {
+                for (msg : msgs) {
+                    eventType = msg['eventName'];
+                    id = msg['id'];
+                    arg = msg['arg'];
+                    eventListener(eventType, id, arg);
+                }
             });
         }
 

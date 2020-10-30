@@ -10,17 +10,23 @@ let createWindow = (title, width, height, initialData) => {
     let rBoundMessageQueue = [];
     
     ipcMain.on('mboundmsg', (event, arg) => {
-        let t = arg.split(' ');
-        let msg = {
-            type: t[0],
-            id: parseInt(t[1]),
-            eventName: t[2],
-            arg: t[3],
-        };
+        let eventArgs = arg.split(' ');
+        let msgs = [];
+        for (let i = 0; i < eventArgs.length; i += 4) {
+            let msg = {
+                type: eventArgs[i],
+                id: parseInt(eventArgs[i + 1]),
+                eventName: eventArgs[i + 2],
+                arg: eventArgs[i + 3],
+            };
+            msgs.push(msg);
+        }
         if (listener === null) {
-            mBoundMessageQueue.push(msg);
+            for (let msg of msgs) {
+                mBoundMessageQueue.push(msg);
+            }
         } else {
-            listener(msg);
+            listener(msgs);
         }
     });
     
@@ -65,9 +71,7 @@ let createWindow = (title, width, height, initialData) => {
             let flushQueue = listener === null;
             listener = newListener;
             if (flushQueue) {
-                for (let item of mBoundMessageQueue) {
-                    listener(item);
-                }
+                listener(mBoundMessageQueue);
                 mBoundMessageQueue = [];
             }
         },

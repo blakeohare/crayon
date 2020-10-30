@@ -166,10 +166,11 @@ function createElement(id, type) {
 
 function noopFn() { }
 
-function buildEventHandler(value, e, eventName, args) {
+function buildEventHandler(value, e, eventName, argsOrFunc) {
 	if (value === 0) return noopFn;
-	
-	return function() {
+	let isFunc = typeof argsOrFunc === 'function';
+	return function(ev) {
+		let args = isFunc ? argsOrFunc(ev) : argsOrFunc;
 		platformSpecificHandleEvent(e.NORI_id, eventName, args);
 	};
 }
@@ -186,6 +187,28 @@ function setProperty(e, key, value) {
 		case 'el.rightmargin': e.NORI_margin[2] = value; break;
 		case 'el.bottommargin': e.NORI_margin[3] = value; break;
 		case 'el.dock': e.NORI_dock = 'WNES'.charAt(value); break;
+
+		case 'el.onmousedown':
+		case 'el.onmouseup':
+		case 'el.onmousemove':
+			// TODO: this may be inaccurate for certain types of elements. Need to thoroughly test this
+			// on various element types.
+			e.firstChild[key.split('.')[1]] = buildEventHandler(value, e, key, ev => {
+				let r = e.getBoundingClientRect();
+				let x = ev.clientX - r.left;
+				let y = ev.clientY - r.top;
+				let btn = '';
+				if (key !== 'el.onmousemove') {
+					switch (ev.button) {
+						case 0: btn = 'primary'; break;
+						case 1: btn = 'aux'; break;
+						case 2: btn = 'secondary'; break;
+						default: btn = '?'; break;
+					}
+				}
+				return x + '|' + y + '|' + (x / r.width) + '|' + (y / r.height) + '|' + btn;
+			});
+			break;
 		
 		case 'el.bgcolor':
 			switch (e.NORI_type) {
@@ -558,8 +581,13 @@ function flushUpdates(data) {
 		}
 	}
 	
-	doLayoutPass();
-	platformSpecificHandleEvent(-1, 'on-render-pass', '');
+	// Canvas renderings will never affect layout.
+	let skipLayout = (items[0] === 'CV' && items.length === items[2] + 3);
+
+	if (!skipLayout) {
+		doLayoutPass();
+		platformSpecificHandleEvent(-1, 'on-render-pass', '');
+	}
 }
 
 let TO_HEX = (() => {
