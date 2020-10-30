@@ -1,0 +1,34 @@
+﻿import Math;
+
+namespace U3Game {
+
+    static class Internal {
+
+        static function doGameLoop(window, drawingContext) {
+            while (window._fields['open']) {
+
+                startTime = Core.currentTime();
+
+                updater = window._fields.get('u');
+                if (updater != null) {
+                    updater(null); // TODO: inputManager
+                }
+
+                c = window._fields['bg'];
+                drawingContext.fill(c[0], c[1], c[2]);
+                renderer = window._fields.get('r');
+                if (renderer != null) {
+                    renderer(drawingContext);
+                    drawingContext.flush();
+                }
+
+                endTime = Core.currentTime();
+
+                diff = endTime - startTime;
+                target = 1.0 / window._fields['f'];
+                delay = Math.max(0, target - diff);
+                Core.sleep(delay);
+            }
+        }
+    }
+}
