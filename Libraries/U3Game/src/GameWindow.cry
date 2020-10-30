@@ -1,0 +1,88 @@
+﻿import U3Nori; // Temporary. Use U3Direct.
+import U3Graphics2D;
+
+namespace U3Game {
+
+    // TODO: Nori needs to support a frame.showWithoutBlocking() function.
+    // I want to also offer the classical option of just managing the game loop yourself
+    // which will also make porting old code pretty easy.
+
+    class GameWindow {
+        field _fields = {
+            't': "Untitled Window",
+            'f': 60,
+            'w': 800,
+            'h': 600,
+            'sw': null,
+            'sh': null,
+            'bg': [0, 0, 0],
+            'open': false,
+        };
+
+        constructor() { }
+
+        function setTitle(title) {
+            this._fields['t'] = title + '';
+            return this;
+        }
+
+        function setFps(fps) {
+            this._fields['f'] = fps;
+            return this;
+        }
+
+        function setWindowSize(width, height) {
+            this._fields['sw'] = width;
+            this._fields['sh'] = height;
+            return this;
+        }
+
+        function setGameSize(width, height) {
+            this._fields['w'] = width;
+            this._fields['h'] = height;
+            return this;
+        }
+
+        function setBackgroundColor(r, g, b) {
+            this._fields['bg'] = [r, g, b];
+            return this;
+        }
+
+        function setRenderer(fn) {
+            // TODO: $$$('argVerifyFuncArgCount', fn, 1, 1);
+            this._fields['r'] = fn;
+            return this;
+        }
+
+        function setUpdater(fn) {
+            // TODO: $$$('argVerifyFuncArgCount', fn, 1, 1);
+            this._fields['u'] = fn;
+            return this;
+        }
+
+        function show() {
+            this._fields['open'] = true;
+            canvas = null;
+            canvas = new Canvas()
+                .setWidth(this._fields['w'])
+                .setHeight(this._fields['h'])
+                .setLoadHandler(() => {
+                    U3Game.Internal.doGameLoop(this, U3Graphics2D.createGraphicsContext(canvas));
+                });
+
+            this._fields['win'] = new Frame()
+                .setTitle(this._fields['t'])
+                .setWidth(this._fields['sw'] ?? this._fields['w'])
+                .setHeight(this._fields['sh'] ?? this._fields['h'])
+                .setContent(canvas)
+                .show();
+
+            return this;
+        }
+
+        function close() {
+            this._fields['open'] = false;
+            return this;
+        }
+    }
+}
