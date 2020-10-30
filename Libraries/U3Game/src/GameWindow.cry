@@ -73,8 +73,8 @@ namespace U3Game {
             canvas = new Canvas();
             this._fields['draw'] = U3Graphics2D.createGraphicsContext(canvas);
             canvas
-                .setWidth(this._fields['w'])
-                .setHeight(this._fields['h'])
+                .setCanvasWidth(this._fields['w'])
+                .setCanvasHeight(this._fields['h'])
                 .setLoadHandler(() => {
                     if (block) {
                         U3Game.Internal.doGameLoop(this);
