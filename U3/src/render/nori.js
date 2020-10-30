@@ -540,7 +540,7 @@ function flushUpdates(data) {
 							break;
 							
 						default:
-							
+							break;
 					}
 				}
 				
@@ -642,7 +642,6 @@ function handleCanvasData(canvas, buffer, start, len) {
 				throw new Error("Unknown draw instruction: " + buffer[i]);
 		}
 	}
-	throw new Error();
 }
 
 function queueTimeout(id, millis) {
