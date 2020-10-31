@@ -9,6 +9,8 @@ namespace Images.Internal {
         // HACK: this is an insecure hacky way to make things package-private.
         static field INST = new ImagesHelper();
 
+        static field resourceIdAlloc = 0;
+
         static function verifyInt(name, value, positiveOnly = false) {
             if (Core.typeof(value) != Core.Type.INTEGER) {
                 throw new InvalidArgumentException(name + " must be an integer. Found '" + value + "' instead.");
@@ -90,11 +92,13 @@ namespace Images.Internal {
 
             o = $$$('imageEncode', bmp, format);
             res = o[1];
+            if (format == ImageFormat.PNG && o[0]) bmp._lastPng = res;
             if (o[0] != isB64) {
                 if (isB64) {
-                    return Base64.bytesToBase64(res);
+                    res = Base64.bytesToBase64(res);
+                    if (format == ImageFormat.PNG) bmp._lastPng = res;
                 } else {
-                    return Base64.base64ToBytes(res);
+                    res = Base64.base64ToBytes(res);
                 }
             }
             return res;

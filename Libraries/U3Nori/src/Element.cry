@@ -291,7 +291,6 @@ namespace U3Nori {
         }
 
         function _flushVisualProperties(q, full) {
-            hasImageSource = false;
             if (full) {
                 if (this._newProperties.length > 0) this._flattenProperties();
                 q.add('PF', this._id, this._type, this._properties.length);
@@ -302,9 +301,6 @@ namespace U3Nori {
                     value = this._properties[key];
                     if (Element.STRING_PROPERTIES.get(key, false)) {
                         value = Frame.escapeStringToHex(value);
-                        if (key == Image_Source) {
-                            hasImageSource = true;
-                        }
                     }
                     q.add(value);
                 }
@@ -325,9 +321,6 @@ namespace U3Nori {
                         setKeys.add(k);
                         if (Element.STRING_PROPERTIES.get(k, false)) {
                             v = Frame.escapeStringToHex(v);
-                            if (k == Image_Source) {
-                                hasImageSource = true;
-                            }
                         }
                         setValues.add(v);
                     }
@@ -339,10 +332,6 @@ namespace U3Nori {
                 q.concat(setValues);
             }
             this._isClean = true;
-
-            if (hasImageSource) {
-                this._frame._newImageSources.add(this);
-            }
         }
 
         function _flattenProperties() {

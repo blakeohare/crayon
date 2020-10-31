@@ -97,6 +97,8 @@
         function finish() {
             this._finished = true;
             $$$('imageSessionFinish', this, this._bitmap);
+            this._bitmap._versionId++;
+            this._bitmap._lastPng = null;
         }
     }
 }
