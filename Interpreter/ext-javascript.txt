@@ -20,7 +20,7 @@ EXT: CoreFunc_ImageGetChunk: C$ImageUtil$getChunk([ARG:1])
 EXT: CoreFunc_ImageGetPixel: C$ImageUtil$getPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: CoreFunc_ImageNewBmp: C$ImageUtil$newBitmap([ARG:1], [ARG:2])
 EXT: CoreFunc_ImageScale: C$ImageUtil$scale([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-EXT: CoreFunc_ImageSetPixel: C$ImageUtil$setPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+EXT: CoreFunc_ImageSetPixel: C$ImageUtil$setPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
 EXT: CoreFunc_ImageStartEditSession: C$ImageUtil$startEditSession([ARG:1])
 
 EXT: JsInterop_CallbackReturn: C$interop$callbackReturn([ARG:1], [ARG:2])

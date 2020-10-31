@@ -83,7 +83,7 @@ namespace Interpreter.Vm
         }
 
         // returns true for out of range
-        public static bool SetPixel(object sessionObj, int x, int y, int r, int g, int b, int a)
+        public static bool SetPixel(object sessionObj, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
         {
             // TODO: this is a HACK and WRONG. This should not flush the whole image to the original bitmap.
             // Since most people will just open the session, make changes, and then flush it, this will
@@ -91,9 +91,44 @@ namespace Interpreter.Vm
             // I'm going to leave this for now and worry about it later when I migrate to .NET Core and
             // switch to using the SixLabors image library.
             UniversalBitmap.DrawingSession session = (UniversalBitmap.DrawingSession)sessionObj;
-            if (x < 0 || y < 0 || x >= session.Bitmap.Width || y >= session.Bitmap.Height) return true;
+            if (x1 < 0 || y1 < 0 || x1 >= session.Bitmap.Width || y1 >= session.Bitmap.Height) return true;
+            if (x2 < 0 || y2 < 0 || x2 >= session.Bitmap.Width || y2 >= session.Bitmap.Height) return true;
             session.Flush();
-            session.Bitmap.SetPixel(x, y, r, g, b, a);
+            if (x1 == x2 && y1 == y2)
+            {
+                session.Bitmap.SetPixel(x1, y1, r, g, b, a);
+            }
+            else
+            {
+                int xdiff = x2 - x1;
+                int ydiff = y2 - y1;
+                double progress;
+                int step, xStart, xEnd, yStart, yEnd, x, y;
+                if (Math.Abs(xdiff) > Math.Abs(ydiff))
+                {
+                    // draw horizontally
+                    step = xdiff > 0 ? 1 : -1;
+                    xEnd = x2 + step;
+                    for (x = x1; x != xEnd; x += step)
+                    {
+                        progress = 1.0 * (x - x1) / (x2 - x1);
+                        y = (int)(progress * ydiff + .5) + y1;
+                        session.Bitmap.SetPixel(x, y, r, g, b, a);
+                    }
+                }
+                else
+                {
+                    // draw vertically
+                    step = ydiff > 0 ? 1 : -1;
+                    yEnd = y2 + step;
+                    for (y = y1; y != yEnd; y += step)
+                    {
+                        progress = 1.0 * (y - y1) / (y2 - y1);
+                        x = (int)(progress * xdiff + .5) + x1;
+                        session.Bitmap.SetPixel(x, y, r, g, b, a);
+                    }
+                }
+            }
             session.ReInitializeHack();
             return false;
         }

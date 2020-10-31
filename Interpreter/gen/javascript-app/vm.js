@@ -1322,8 +1322,11 @@ var ImageHelper_SessionStart = function(edit, bmp) {
 	edit[3][0] = C$ImageUtil$startEditSession(bmp[3][0]);
 };
 
-var ImageHelper_SetPixel = function(edit, xv, yv, rOrList, gv, bv, av) {
-	if (((xv[0] != 3) || (yv[0] != 3))) {
+var ImageHelper_SetPixel = function(edit, xv1, yv1, xv2, yv2, rOrList, gv, bv, av) {
+	if (((xv1[0] != 3) || (yv1[0] != 3))) {
+		return 1;
+	}
+	if (((xv2[0] != 3) || (yv2[0] != 3))) {
 		return 1;
 	}
 	var r = 0;
@@ -1354,7 +1357,7 @@ var ImageHelper_SetPixel = function(edit, xv, yv, rOrList, gv, bv, av) {
 	if (((r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (a < 0) || (a > 255))) {
 		return 4;
 	}
-	var outOfRange = C$ImageUtil$setPixel(edit[3][0], xv[1], yv[1], r, g, b, a);
+	var outOfRange = C$ImageUtil$setPixel(edit[3][0], xv1[1], yv1[1], xv2[1], yv2[1], r, g, b, a);
 	if (outOfRange) {
 		return 2;
 	}
@@ -4612,7 +4615,9 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 68:
 						// imageSetPixel;
-						valueStackSize -= 7;
+						valueStackSize -= 9;
+						arg9 = valueStack[(valueStackSize + 8)];
+						arg8 = valueStack[(valueStackSize + 7)];
 						arg7 = valueStack[(valueStackSize + 6)];
 						arg6 = valueStack[(valueStackSize + 5)];
 						arg5 = valueStack[(valueStackSize + 4)];
@@ -4620,7 +4625,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						int1 = ImageHelper_SetPixel(arg1[1], arg2, arg3, arg4, arg5, arg6, arg7);
+						int1 = ImageHelper_SetPixel(arg1[1], arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 						output = globals[9][int1];
 						break;
 					case 69:

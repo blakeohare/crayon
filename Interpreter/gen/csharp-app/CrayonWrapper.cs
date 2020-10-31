@@ -1627,9 +1627,13 @@ namespace Interpreter.Vm
             edit.nativeData[0] = ImageUtil.StartEditSession(bmp.nativeData[0]);
         }
 
-        public static int ImageHelper_SetPixel(ObjectInstance edit, Value xv, Value yv, Value rOrList, Value gv, Value bv, Value av)
+        public static int ImageHelper_SetPixel(ObjectInstance edit, Value xv1, Value yv1, Value xv2, Value yv2, Value rOrList, Value gv, Value bv, Value av)
         {
-            if (((xv.type != 3) || (yv.type != 3)))
+            if (((xv1.type != 3) || (yv1.type != 3)))
+            {
+                return 1;
+            }
+            if (((xv2.type != 3) || (yv2.type != 3)))
             {
                 return 1;
             }
@@ -1669,7 +1673,7 @@ namespace Interpreter.Vm
             {
                 return 4;
             }
-            bool outOfRange = ImageUtil.SetPixel(edit.nativeData[0], (int)xv.internalValue, (int)yv.internalValue, r, g, b, a);
+            bool outOfRange = ImageUtil.SetPixel(edit.nativeData[0], (int)xv1.internalValue, (int)yv1.internalValue, (int)xv2.internalValue, (int)yv2.internalValue, r, g, b, a);
             if (outOfRange)
             {
                 return 2;
@@ -5948,7 +5952,9 @@ namespace Interpreter.Vm
                                 break;
                             case 68:
                                 // imageSetPixel;
-                                valueStackSize -= 7;
+                                valueStackSize -= 9;
+                                arg9 = valueStack[(valueStackSize + 8)];
+                                arg8 = valueStack[(valueStackSize + 7)];
                                 arg7 = valueStack[(valueStackSize + 6)];
                                 arg6 = valueStack[(valueStackSize + 5)];
                                 arg5 = valueStack[(valueStackSize + 4)];
@@ -5956,7 +5962,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                int1 = ImageHelper_SetPixel((ObjectInstance)arg1.internalValue, arg2, arg3, arg4, arg5, arg6, arg7);
+                                int1 = ImageHelper_SetPixel((ObjectInstance)arg1.internalValue, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
                                 output = globals.positiveIntegers[int1];
                                 break;
                             case 69:

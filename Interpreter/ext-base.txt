@@ -20,7 +20,7 @@ EXT-TYPE: object CoreFunc_ImageGetChunk(int chunkId);
 EXT-TYPE: void CoreFunc_ImageGetPixel(object bmp, object nullableEditSession, int x, int y, Array<int> statusAndColorOut);
 EXT-TYPE: object CoreFunc_ImageNewBmp(int width, int height);
 EXT-TYPE: object CoreFunc_ImageScale(object bmp, int newWidth, int newHeight, int algo);
-EXT-TYPE: bool CoreFunc_ImageSetPixel(object editSession, int x, int y, int r, int g, int b, int a);
+EXT-TYPE: bool CoreFunc_ImageSetPixel(object editSession, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
 EXT-TYPE: object CoreFunc_ImageStartEditSession(object bmp);
 
 EXT-TYPE: void JsInterop_CallbackReturn(int callbackId, string returnJson);

@@ -423,10 +423,14 @@ C$hexLookup = (() => {
 })();
 C$hexLookupHash = C$hexLookup.map(_ => '#' + _);
 
-C$ImageUtil$setPixel = (session, x, y, r, g, b, a) => {
+C$ImageUtil$setPixel = (session, x1, y1, x2, y2, r, g, b, a) => {
 	let w = session.width;
 	let h = session.height;
-	if (x < 0 || y < 0 || x >= w || y >= h) return true;
+	if (x1 < 0 || y1 < 0 || x1 >= w || y1 >= h ||
+		x2 < 0 || y2 < 0 || x2 >= w || y2 >= h) return true;
+
+	if (x1 != x2 || y1 != y2) throw new Error("Not Implemented Yet");
+
 	let ctx = session.ctx;
 	if (a == 255) {
 		ctx.fillStyle = C$hexLookupHash[r] + C$hexLookup[g] + C$hexLookup[b];
