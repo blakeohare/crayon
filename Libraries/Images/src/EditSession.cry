@@ -25,25 +25,32 @@
 
         function setPixel(x, y, rOrColor, g = null, b = null, a = 255) {
             if (this._finished) _throwFinished();
-            sc = $$$('imageSetPixel', this, x, y, rOrColor, g, b, a);
+            sc = $$$('imageSetPixel', this, x, y, x, y, rOrColor, g, b, a);
             if (sc == 0) return this;
+            Images.Internal.ImagesHelper.pixelError(sc, x, y, this._bitmap.width, this._bitmap.height);
+        }
+
+        function drawLine(x1, y1, x2, y2, rOrColor, g = null, b = null, a = 255) {
+            if (this._finished) _throwFinished();
+            sc = $$$('imageSetPixel', this, x1, y1, x2, y2, rOrColor, g, b, a);
+            if (sc == 0) return this;
+            if (x1 < 0 || y1 < 0 || x1 >= this._bitmap.width || y1 >= this._bitmap.height) {
+                x = x1;
+                y = y1;
+            } else {
+                x = x2;
+                y = y2;
+            }
             Images.Internal.ImagesHelper.pixelError(sc, x, y, this._bitmap.width, this._bitmap.height);
         }
 
         function fill(r, g, b, a = 255) {
             if (this._finished) _throwFinished();
-            // TODO: change this once the Drawing library is implemented.
-
-            // it looks silly but it's faster in the VM...
-            ys = [];
-            xs = [];
-            for (x = this._bitmap.width - 1; x >= 0; --x) xs.add(x);
-            for (y = this._bitmap.height - 1; y >= 0; --y) ys.add(y);
-
-            for (y : ys) {
-                for (x : xs) {
-                    $$$('imageSetPixel', this, x, y, r, g, b, a);
-                }
+            // TODO: change this once the Drawing library is fully implemented.
+            maxX = this._bitmap.width - 1;
+            height = this._bitmap.height;
+            for (y = 0; y < height; ++y) {
+                $$$('imageSetPixel', this, 0, y, maxX, y, r, g, b, a);
             }
             return this;
         }

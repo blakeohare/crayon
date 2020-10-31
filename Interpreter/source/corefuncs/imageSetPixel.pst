@@ -1,7 +1,7 @@
-﻿@import("inline/7_arg.pst");
+﻿@import("inline/9_arg.pst");
 
 int1 = ImageHelper_SetPixel(
     (ObjectInstance)arg1.internalValue,
-    arg2, arg3, arg4, arg5, arg6, arg7);
+    arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 
 output = globals.positiveIntegers[int1];

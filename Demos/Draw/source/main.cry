@@ -25,14 +25,19 @@ function main(args) {
     drawArea = content.findElement('drawArea');
     drawArea.setSource(image);
 
+    lastXY = null;
     drawPixel = (rx, ry) => {
         w = image.width;
         h = image.height;
         px = Math.max(0, Math.min(w - 1, Math.floor(rx * w)));
         py = Math.max(0, Math.min(h - 1, Math.floor(ry * h)));
+        currentXY = [px, py];
+        prevXY = lastXY ?? currentXY;
 
-        image.edit().setPixel(px, py, activeColor[0], activeColor[1], activeColor[2]).finish();
+        image.edit().drawLine(px, py, prevXY[0], prevXY[1], activeColor[0], activeColor[1], activeColor[2]).finish();
         drawArea.refreshImage();
+
+        lastXY = currentXY;
     };
 
     isDrag = false;
@@ -42,6 +47,7 @@ function main(args) {
     });
     drawArea.setMouseUpHandler(e => {
         isDrag = false;
+        lastXY = null;
     });
     drawArea.setMouseMoveHandler(e => {
         if (isDrag) {

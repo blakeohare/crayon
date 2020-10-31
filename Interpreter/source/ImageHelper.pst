@@ -57,8 +57,9 @@ int ImageHelper_GetPixel(Array<Value> nums, ObjectInstance bmp, ObjectInstance e
     return 0;
 }
 
-int ImageHelper_SetPixel(ObjectInstance edit, Value xv, Value yv, Value rOrList, Value gv, Value bv, Value av) {
-    if (xv.type != Types.INTEGER || yv.type != Types.INTEGER) return 1;
+int ImageHelper_SetPixel(ObjectInstance edit, Value xv1, Value yv1, Value xv2, Value yv2, Value rOrList, Value gv, Value bv, Value av) {
+    if (xv1.type != Types.INTEGER || yv1.type != Types.INTEGER) return 1;
+    if (xv2.type != Types.INTEGER || yv2.type != Types.INTEGER) return 1;
     int r = 0;
     int g = 0;
     int b = 0;
@@ -93,7 +94,11 @@ int ImageHelper_SetPixel(ObjectInstance edit, Value xv, Value yv, Value rOrList,
     b = (int)bv.internalValue;
     a = (int)av.internalValue;
     if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 255) return 4;
-    bool outOfRange = Extension.CoreFunc_ImageSetPixel(edit.nativeData[0], (int)xv.internalValue, (int)yv.internalValue, r, g, b, a);
+    bool outOfRange = Extension.CoreFunc_ImageSetPixel(
+        edit.nativeData[0],
+        (int)xv1.internalValue, (int)yv1.internalValue,
+        (int)xv2.internalValue, (int)yv2.internalValue,
+        r, g, b, a);
     if (outOfRange) return 2;
     return 0;
 }
