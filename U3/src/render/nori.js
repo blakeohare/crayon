@@ -323,22 +323,15 @@ function unsetProperty(e, key) {
 }
 
 function setImageSource(e, rawValue) {
-	var id = parseInt(rawValue.split(':')[1]);
-	var img = getImageInHoldingArea(id);
-	var domCanvas = e.firstChild;
-	domCanvas.width = img.width;
-	domCanvas.height = img.height;
-	// Some platforms cannot transmit the image data synchronously.
-	// However, in those cases, the canvas width and height will be set properly so layout can occur.
-	if (img.NORI_canvas_needs_loading) {
-		img.NORI_canvas_load_callback_here = function () {
-			var ctxA = domCanvas.getContext('2d');
-			ctxA.drawImage(img, 0, 0);
-		};
-	} else {
-		var ctx = domCanvas.getContext('2d');
-		ctx.drawImage(img, 0, 0);
-	}
+	let canvas = e.firstChild;
+	let imgObj = new Image();
+	imgObj.onload = () => {
+		canvas.width = imgObj.width;
+		canvas.height = imgObj.height;
+		let ctx = canvas.getContext('2d');
+		ctx.drawImage(imgObj, 0, 0);
+	};
+	imgObj.src = "data:image/png;base64," + rawValue;
 }
 
 function syncChildIds(e, childIds, startIndex, endIndex) {

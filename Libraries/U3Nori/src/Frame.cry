@@ -17,7 +17,6 @@ namespace U3Nori {
         field _fullFlushElements = {};
         field _partialFlushElements = {};
         field _dirtyPanels = {};
-        field _newImageSources = [];
         field _queuedCommandsWireData = [];
 
         field _elementById = {};
@@ -153,12 +152,6 @@ namespace U3Nori {
 
         function flushUpdates() {
             renderData = this._getRenderData();
-
-            for (img : this._newImageSources) {
-                t = img._vmImageResourceData;
-                // $lib_nori_prepImageResource(this, t[0], t[1], t[2], t[3], t[4], t[5]);
-            }
-            this._newImageSources.clear();
 
             this._u3window.sendData(renderData);
         }
