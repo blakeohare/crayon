@@ -1,0 +1,85 @@
+﻿import Math;
+import U3Nori;
+import U3NoriXml;
+import Resources;
+import Images;
+
+function configureColorSwatch(content, btn, color, activeColorChangeCb) {
+    b = content.findElement('clr' + btn);
+    b.setText('');
+    b.setBackgroundColor(color[0], color[1], color[2]);
+    b.setClickHandler(() => {
+        activeColorChangeCb(color);
+    });
+}
+
+function main(args) {
+    content = U3NoriXml.build(Resources.readText('main.xml'));
+
+    frame = new Frame();
+    activeColor = [0, 0, 0];
+
+    image = new Bitmap(300, 300);
+    image.edit().fill(255, 255, 255).finish();
+
+    drawArea = content.findElement('drawArea');
+    drawArea.setSource(image);
+
+    drawPixel = (rx, ry) => {
+        w = image.width;
+        h = image.height;
+        px = Math.max(0, Math.min(w - 1, Math.floor(rx * w)));
+        py = Math.max(0, Math.min(h - 1, Math.floor(ry * h)));
+
+        image.edit().setPixel(px, py, activeColor[0], activeColor[1], activeColor[2]).finish();
+        drawArea.refreshImage();
+    };
+
+    isDrag = false;
+    drawArea.setMouseDownHandler(e => {
+        isDrag = true;
+        drawPixel(e.ratioX, e.ratioY);
+    });
+    drawArea.setMouseUpHandler(e => {
+        isDrag = false;
+    });
+    drawArea.setMouseMoveHandler(e => {
+        if (isDrag) {
+            drawPixel(e.ratioX, e.ratioY);
+        }
+    });
+
+    activeColorImage = new Bitmap(100, 100);
+    activeColorImage.edit().fill(0, 0, 0).finish();
+    content.findElement('currentColor').setSource(activeColorImage);
+    activeColorChangeCb = (newColor) => {
+        activeColor = newColor;
+        activeColorImage.edit().fill(newColor[0], newColor[1], newColor[2]).finish();
+        content.findElement('currentColor').refreshImage();
+    };
+
+    colors = [
+        [0, 0, 0], [255, 255, 255],
+        [128, 128, 128], [192, 192, 192],
+        [32, 32, 32], [64, 64, 64],
+        [128, 0, 0], [255, 0, 0],
+        [128, 64, 0], [255, 128, 0],
+        [128, 128, 0], [255, 255, 0],
+        [0, 128, 0], [0, 255, 0],
+        [0, 128, 128], [0, 255, 255],
+        [0, 0, 128], [0, 0, 255],
+        [128, 0, 128], [255, 0, 255],
+    ];
+
+    for (i = 1; i <= 10; i++) {
+        configureColorSwatch(content, 10 + i, colors[2 * i - 2], activeColorChangeCb);
+        configureColorSwatch(content, i, colors[2 * i - 1], activeColorChangeCb);
+    }
+
+    frame
+        .setTitle("Crayon Draw")
+        .setContent(content)
+        .setWidth(800)
+        .setHeight(600)
+        .show();
+}
