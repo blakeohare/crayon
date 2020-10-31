@@ -1,0 +1,41 @@
+{
+    "id": "Draw",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "title": "Draw",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
+    "version": "1.0",
+    "iosBundlePrefix": "com.yourname.Draw,%VERSION%",
+    "guidSeed": "com.yourname.Draw,v1,%TARGET_NAME%",
+
+    "imageSheets": [
+        { "id": "everything", "prefix": "*" }
+    ],
+
+    "vars": [
+        { "name": "CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE", "value": true }
+    ],
+
+    "targets": [
+        {
+            "name": "android",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "platform": "javascript-app-ios"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "jsFilePrefix": "/website/relative/path/from/domain/root"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}

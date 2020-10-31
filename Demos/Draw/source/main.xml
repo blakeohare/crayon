@@ -1,0 +1,35 @@
+<DockPanel>
+	<DockPanel dock="south" height="100">
+		<Image dock="west" id="currentColor" width="100"/>
+		<DockPanel>
+			<FlowPanel dock="north" height="50">
+				<Button width="50" height="50" id="clr1"></Button>
+				<Button width="50" height="50" id="clr2"></Button>
+				<Button width="50" height="50" id="clr3"></Button>
+				<Button width="50" height="50" id="clr4"></Button>
+				<Button width="50" height="50" id="clr5"></Button>
+				<Button width="50" height="50" id="clr6"></Button>
+				<Button width="50" height="50" id="clr7"></Button>
+				<Button width="50" height="50" id="clr8"></Button>
+				<Button width="50" height="50" id="clr9"></Button>
+				<Button width="50" height="50" id="clr10"></Button>
+				
+			</FlowPanel>
+			<FlowPanel height="50">
+				<Button width="50" height="50" id="clr11"></Button>
+				<Button width="50" height="50" id="clr12"></Button>
+				<Button width="50" height="50" id="clr13"></Button>
+				<Button width="50" height="50" id="clr14"></Button>
+				<Button width="50" height="50" id="clr15"></Button>
+				<Button width="50" height="50" id="clr16"></Button>
+				<Button width="50" height="50" id="clr17"></Button>
+				<Button width="50" height="50" id="clr18"></Button>
+				<Button width="50" height="50" id="clr19"></Button>
+				<Button width="50" height="50" id="clr20"></Button>
+			</FlowPanel>
+		</DockPanel>
+	</DockPanel>
+	
+	<Button dock="west" width="100">TODO: Tools</Button>
+	<Image id="drawArea"/>
+</DockPanel>
