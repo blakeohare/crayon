@@ -26,4 +26,40 @@
             return [e];
         }
     }
+
+    class KeyboardEventArg {
+        field isKeyDown;
+        field isKeyUp;
+        field keyName; // TODO: this should be an enum
+        field charValue = null; // This is a string or null. This takes into consideration shift, capslock, etc.
+        field altPressed = false;
+        field shiftPressed = false;
+        field ctrlPressed = false;
+
+        constructor() { }
+
+        static function parseKeyDown(s, jkItsUp = false) {
+            t = s.split('|');
+            e = new KeyboardEventArg();
+            e.isKeyUp = jkItsUp;
+            e.isKeyDown = !e.isKeyUp;
+            e.keyName = t[0];
+            c = t[1] == '' ? null : t[1];
+            if (c == 'PIPE') c = '|';
+            if (c == 'SPACE') c = ' ';
+            e.charValue = c;
+            for (i = 2; i < t.length; ++i) {
+                switch (t[i]) {
+                    case 'a': altPressed = true; break;
+                    case 'c': ctrlPressed = true; break;
+                    case 's': shiftPressed = true; break;
+                }
+            }
+            return [e];
+        }
+
+        static function parseKeyUp(s) {
+            return KeyboardEventArg.parseKeyDown(s, true);
+        }
+    }
 }
