@@ -5,6 +5,8 @@ import U3Direct;
 namespace U3Nori {
 
     const Frame_OnResize = 'frame.onresize';
+    const Frame_OnKeyDown = 'frame.keydown';
+    const Frame_OnKeyUp = 'frame.keyup';
 
     /*
         Represents a window-like UI object.
@@ -25,6 +27,7 @@ namespace U3Nori {
         field _rootElementChanged = false;
         field _handlers = {};
         field _loadQueue = [];
+        field _dirtyFrameAttributes = {};
 
         field _size = [400, 300];
 
@@ -70,6 +73,18 @@ namespace U3Nori {
 
         function clearResizeHandler() {
             this._handlers[Frame_OnResize] = null;
+            return this;
+        }
+
+        function setKeyDownHandler(fn) {
+            this._handlers[Frame_OnKeyDown] = [fn, KeyboardEventArg.parseKeyDown];
+            this._dirtyFrameAttributes[Frame_OnKeyDown] = 1;
+            return this;
+        }
+
+        function setKeyUpHandler(fn) {
+            this._handlers[Frame_OnKeyUp] = [fn, KeyboardEventArg.parseKeyUp];
+            this._dirtyFrameAttributes[Frame_OnKeyUp] = 1;
             return this;
         }
 
@@ -136,6 +151,13 @@ namespace U3Nori {
             if (this._rootElementChanged) {
                 wireData.add('RE', this._rootElementId);
                 this._rootElementChanged = false;
+            }
+
+            if (this._dirtyFrameAttributes.length > 0) {
+                for (attr : this._dirtyFrameAttributes.keys()) {
+                    wireData.add('FA', 0, attr, this._dirtyFrameAttributes[attr]);
+                }
+                this._dirtyFrameAttributes.clear();
             }
 
             return wireData;
