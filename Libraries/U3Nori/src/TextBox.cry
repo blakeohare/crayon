@@ -18,6 +18,16 @@
 
         function setOnTextChangedHandler(fn) { return this._setValueChangedHandler(fn); }
         function clearOnTextChangedHandler() { return this._setValueChangedHandler(null); }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case '<content>':
+                case 'text':
+                    return this.setText(strValue);
+
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
     }
 
     class TextBox : AbstractTextBox {
