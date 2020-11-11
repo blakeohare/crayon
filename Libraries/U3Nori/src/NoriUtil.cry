@@ -76,9 +76,16 @@ namespace U3Nori {
             if (v.length == 0) return NoriUtil.BLACK;
             if (v.contains(',')) {
                 parts = v.split(',');
-                if (parts.length < 3 || parts.length > 4) NoriUtil._parseColorHex('zz', 0, v);
-                c = [Math.floor(parts[0]), Math.floor(parts[1]), Math.floor(parts[2]), 255];
-                if (parts.length == 4) c[3] = Math.floor(parts[3]);
+                if (parts.length < 3 || parts.length > 4) {
+                    throw new InvalidArgumentException("Invalid color format: " + v);
+                }
+                c = [];
+                for (i = 0; i < parts.length; ++i) {
+                    t = Core.parseInt(parts[i]);
+                    if (t == null || t < 0 || t > 255) throw new InvalidArgumentException("Invalid color format: " + v);
+                    c.add(t);
+                }
+                if (c.length == 3) c.add(255);
                 return c;
             }
             hex = v[0] == '#' ? v[1:] : v;
