@@ -1,10 +1,10 @@
 ﻿import Math;
-import U3Nori;
-import U3NoriXml;
+import Nori;
+import NoriXml;
 
 function main() {
 
-    content = U3NoriXml.build(
+    content = NoriXml.build(
     '<DockPanel>
         <TextBlock id="display" dock="North" height="10%" size="18" margin="12" horizontalAlignment="right">0</TextBlock>
         <DockPanel id="button_panel">
@@ -69,7 +69,7 @@ function main() {
     content.findElement('clear').setClickHandler(logic.pushClear);
 
     frame = new Frame()
-        .setTitle("U3-based Calculator")
+        .setTitle("Calculator")
         .setContent(content)
         .setWidth(400)
         .setHeight(600)

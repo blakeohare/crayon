@@ -1,6 +1,6 @@
 ﻿import Math;
 
-namespace Nori {
+namespace U3Nori {
 
     const Border_LeftThickness = 'border.leftthickness';
     const Border_TopThickness = 'border.topthickness';

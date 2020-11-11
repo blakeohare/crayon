@@ -1,6 +1,6 @@
 ﻿import Math;
-import U3Nori;
-import U3NoriXml;
+import Nori;
+import NoriXml;
 import Resources;
 import Images;
 
@@ -14,9 +14,17 @@ function configureColorSwatch(content, btn, color, activeColorChangeCb) {
 }
 
 function main(args) {
-    content = U3NoriXml.build(Resources.readText('main.xml'));
+    content = NoriXml.build(Resources.readText('main.xml'));
 
     frame = new Frame();
+    frame.setKeyDownHandler(e => {
+        print("DOWN: " + e.keyName);
+        print("Typing: " + e.charValue);
+    });
+    frame.setKeyUpHandler(e => {
+        print("UP: " + e.keyName);
+    });
+
     activeColor = [0, 0, 0];
 
     image = new Bitmap(300, 300);

@@ -1,4 +1,4 @@
-﻿namespace Nori {
+﻿namespace U3Nori {
 
     class StackPanel : Panel {
         constructor() : base('StackPanel', false) { }

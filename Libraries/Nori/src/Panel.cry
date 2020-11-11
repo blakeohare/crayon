@@ -1,4 +1,4 @@
-﻿namespace Nori {
+﻿namespace U3Nori {
 
     class Panel : Element {
 
@@ -29,7 +29,7 @@
             }
 
             if (this._singleChild && this._children.length == 1) {
-                throw new Exception("This panel can only support one child element.");
+                throw new Exception(this._type + " can only support one child element.");
             }
 
             e._parent = this;

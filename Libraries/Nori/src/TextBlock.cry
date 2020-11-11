@@ -1,6 +1,6 @@
 ﻿import Math;
 
-namespace Nori {
+namespace U3Nori {
 
     const TextBlock_Text = 'txtblk.text';
     const TextBlock_Wrap = 'txtblk.wrap';

@@ -1,4 +1,6 @@
-﻿namespace Nori {
+﻿import Images;
+
+namespace U3Nori {
 
     const Image_Source = 'img.src';
 
@@ -6,15 +8,36 @@
 
         static field globalImageIdAlloc = 1;
 
-        field _vmImageResourceData = null;
+        field _imageData = {
+            'v': 0,
+            'bmp': null,
+            'b64': '',
+        };
 
         constructor() : base('Image') { }
 
-        function setSource(imageResource) {
-            id = Image.globalImageIdAlloc++;
-            nr = imageResource._nativeResource;
-            this._vmImageResourceData = [id, nr, imageResource._x, imageResource._y, imageResource._width, imageResource._height];
-            return this._setStringProperty(Image_Source, "res:" + id);
+        function setSource(bitmap) {
+            d = this._imageData;
+            oldBmp = d['bmp'];
+            if (bitmap == null) {
+                if (oldBmp != null) {
+                    d['v'] = 0;
+                    d['bmp'] = null;
+                    d['b64'] = '';
+                }
+                return this._clearProperty(Image_Source);
+            } else if (oldBmp != bitmap || oldBmp == null || bitmap._versionId != d['v']) {
+                d['v'] = bitmap._versionId;
+                d['bmp'] = bitmap;
+                d['b64'] = bitmap._lastPng ?? bitmap.toBase64(Images.ImageFormat.PNG);
+
+                return this._setStringProperty(Image_Source, d['b64']);
+            }
+            return this;
+        }
+
+        function refreshImage() {
+            return this.setSource(this._imageData['bmp']);
         }
     }
 }
