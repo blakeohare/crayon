@@ -1,7 +1,0 @@
-﻿namespace U3Nori {
-
-    class FlowPanel : Panel {
-        constructor() : base('FlowPanel', false) { }
-    }
-
-}

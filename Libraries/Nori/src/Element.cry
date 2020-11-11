@@ -1,6 +1,6 @@
 ﻿import Math;
 
-namespace Nori {
+namespace U3Nori {
 
     // TODO: convert the property set/get/clear and related juggling into Pastel code.
 
@@ -17,6 +17,9 @@ namespace Nori {
     const Element_MarginBottom = 'el.bottommargin';
     const Element_BackgroundColor = 'el.bgcolor';
     const Element_OnLoad = 'el.onload';
+    const Element_MouseDown = 'el.onmousedown';
+    const Element_MouseUp = 'el.onmouseup';
+    const Element_MouseMove = 'el.onmousemove';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -264,6 +267,10 @@ namespace Nori {
         function getBackgroundColor() { return this._getColorProperty(Element_BackgroundColor); }
         function setBackgroundColor(r, g, b, a = 255) { return this._setColorProperty(Element_BackgroundColor, r, g, b, a); }
 
+        function setMouseDownHandler(fn) { return this._setEventHandler(Element_MouseDown, fn, MouseEventArg.parseFromArg); }
+        function setMouseUpHandler(fn) { return this._setEventHandler(Element_MouseUp, fn, MouseEventArg.parseFromArg); }
+        function setMouseMoveHandler(fn) { return this._setEventHandler(Element_MouseMove, fn, MouseEventArg.parseFromArg); }
+
         static function _ensureCallback(fn) {
             oops = "Did you accidentally call the function when you passed it as a callback?";
             if (fn == null) throw new InvalidArgumentException("Event handler was null. " + oops);
@@ -284,7 +291,6 @@ namespace Nori {
         }
 
         function _flushVisualProperties(q, full) {
-            hasImageSource = false;
             if (full) {
                 if (this._newProperties.length > 0) this._flattenProperties();
                 q.add('PF', this._id, this._type, this._properties.length);
@@ -295,9 +301,6 @@ namespace Nori {
                     value = this._properties[key];
                     if (Element.STRING_PROPERTIES.get(key, false)) {
                         value = Frame.escapeStringToHex(value);
-                        if (key == Image_Source) {
-                            hasImageSource = true;
-                        }
                     }
                     q.add(value);
                 }
@@ -318,9 +321,6 @@ namespace Nori {
                         setKeys.add(k);
                         if (Element.STRING_PROPERTIES.get(k, false)) {
                             v = Frame.escapeStringToHex(v);
-                            if (k == Image_Source) {
-                                hasImageSource = true;
-                            }
                         }
                         setValues.add(v);
                     }
@@ -332,10 +332,6 @@ namespace Nori {
                 q.concat(setValues);
             }
             this._isClean = true;
-
-            if (hasImageSource) {
-                this._frame._newImageSources.add(this);
-            }
         }
 
         function _flattenProperties() {

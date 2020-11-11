@@ -1,4 +1,4 @@
-﻿import U3Nori; // Temporary. Use U3Direct.
+﻿import Nori; // Temporary. Use U3Direct.
 import U3Graphics2D;
 
 namespace U3Game {

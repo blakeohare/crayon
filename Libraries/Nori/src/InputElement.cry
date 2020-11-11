@@ -1,4 +1,4 @@
-﻿namespace Nori {
+﻿namespace U3Nori {
 
     const InputElement_Value = 'input.value';
     const InputElement_OnValueChanged = 'input.changed';
