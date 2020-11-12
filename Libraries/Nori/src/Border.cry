@@ -10,6 +10,7 @@ namespace Nori {
     const Border_TopColor = 'border.topcolor';
     const Border_RightColor = 'border.rightcolor';
     const Border_BottomColor = 'border.bottomcolor';
+    const Border_Radius = 'border.radius';
 
     class Border : Panel {
         constructor() : base('Border', true) { }
@@ -18,6 +19,8 @@ namespace Nori {
             if (this._children.length > 0) throw new InvalidArgumentException("Cannot add multiple elements to a border.");
             return base.addChild(e);
         }
+
+        function getRadius() { return this._getIntProperty(Border_Radius); }
 
         function getLeftColor() { return this._getColorProperty(Border_LeftColor); }
         function getTopColor() { return this._getColorProperty(Border_TopColor); }
@@ -45,6 +48,8 @@ namespace Nori {
             return this._setIntProperty(Border_BottomThickness, value);
         }
 
+        function setRadius(sz) { return this._setIntProperty(Border_Radius, sz); }
+
         function setLeftColor(r, g, b, a = 255) { return this._setColorProperty(Border_LeftColor, r, g, b, a); }
         function setTopColor(r, g, b, a = 255) { return this._setColorProperty(Border_TopColor, r, g, b, a); }
         function setRightColor(r, g, b, a = 255) { return this._setColorProperty(Border_RightColor, r, g, b, a); }
@@ -57,6 +62,7 @@ namespace Nori {
 
         function setAttributeWithString(name, strValue) {
             switch (name) {
+                case 'radius': return this._setIntProperty(Border_Radius, Core.parseInt(strValue));
                 case 'color':
                     c = NoriUtil._parseColor(strValue);
                     return this.setColor(c[0], c[1], c[2], c[3]);
