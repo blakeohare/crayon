@@ -1,4 +1,4 @@
-﻿namespace U3Nori {
+﻿namespace Nori {
 
     const Canvas_Width = 'cv.width';
     const Canvas_Height = 'cv.height';

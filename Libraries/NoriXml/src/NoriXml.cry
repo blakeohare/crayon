@@ -1,7 +1,7 @@
-﻿import U3Nori;
+﻿import Nori;
 import Xml;
 
-namespace U3NoriXml {
+namespace NoriXml {
 
     static class NXUtil {
 
@@ -12,14 +12,14 @@ namespace U3NoriXml {
             doNotUse = {};
             // TODO: use abstract classes.
             for (cls : [
-                U3Nori.Element.class,
-                U3Nori.Panel.class,
-                U3Nori.AbstractTextBox.class,
-                U3Nori.InputElement.class,
+                Nori.Element.class,
+                Nori.Panel.class,
+                Nori.AbstractTextBox.class,
+                Nori.InputElement.class,
             ]) {
                 doNotUse[cls.getName().split('.')[-1]] = true;
             }
-            for (cls : Core.Reflection.getClasses(U3Nori.Element.class)) {
+            for (cls : Core.Reflection.getClasses(Nori.Element.class)) {
                 name = cls.getName().split('.')[-1];
                 if (doNotUse.get(name) != true) {
                     NXUtil.classesByName[name] = cls;
@@ -43,7 +43,7 @@ namespace U3NoriXml {
                 e.setAttributeWithString(k, attr[k]);
             }
 
-            if (e is U3Nori.Panel) {
+            if (e is Nori.Panel) {
                 for (child : element.children) {
                     if (child.type == NodeType.TEXT) {
                         if (child.value.trim().length > 0) {

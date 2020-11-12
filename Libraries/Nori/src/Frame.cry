@@ -2,7 +2,7 @@
 import Math;
 import U3Direct;
 
-namespace U3Nori {
+namespace Nori {
 
     const Frame_OnResize = 'frame.onresize';
     const Frame_OnKeyDown = 'frame.keydown';
