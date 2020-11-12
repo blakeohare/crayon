@@ -17,6 +17,7 @@ var ctx = {
 		'border.rightcolor': true,
 		'border.bottomcolor': true,
 		'el.bgcolor': true,
+		'el.fontcolor': true,
 		'img.src': true,
 		'input.value': true
 	},
@@ -305,6 +306,9 @@ function setProperty(e, key, value) {
 			});
 			break;
 		
+		case 'el.bold': e.style.fontWeight = value ? 'bold' : 'normal'; break;
+		case 'el.italic': e.style.fontStyle = value ? 'italic' : 'normal'; break;
+		case 'el.fontcolor': e.firstChild.style.color = value; break;
 		case 'el.bgcolor':
 			switch (e.NORI_type) {
 				case 'Button':
@@ -316,7 +320,7 @@ function setProperty(e, key, value) {
 			}
 			break;
 		
-		case 'border.radius': e.firstChild.style.borderRadius = value + 'px'; break;
+		case 'border.radius': e.style.borderRadius = value + 'px'; e.firstChild.style.borderRadius = value + 'px'; break;
 		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
 		case 'border.rightcolor': e.firstChild.style.borderRightColor = value; break;
