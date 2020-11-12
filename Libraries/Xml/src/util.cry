@@ -1,0 +1,16 @@
+﻿namespace Xml {
+
+    function escapeXmlChars(s) {
+        o = [];
+        lookup = {
+            '"': '&quot;',
+            "'": '&apos;',
+            '<': '&lt;',
+            '>': '&gt;',
+        };
+        for (c : s) {
+            o.add(lookup.get(c, c));
+        }
+        return o.join('');
+    }
+}
