@@ -20,6 +20,9 @@ namespace Nori {
     const Element_MouseDown = 'el.onmousedown';
     const Element_MouseUp = 'el.onmouseup';
     const Element_MouseMove = 'el.onmousemove';
+    const Element_Bold = 'el.bold';
+    const Element_Italic = 'el.italic';
+    const Element_FontColor = 'el.fontcolor';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -47,6 +50,7 @@ namespace Nori {
             Border_RightColor: true,
             Border_BottomColor: true,
             Element_BackgroundColor: true,
+            Element_FontColor: true,
             Image_Source: true,
             InputElement_Value: true,
         };
@@ -206,10 +210,18 @@ namespace Nori {
                 case 'marginTop': return this.setMarginTop(parseInt(strValue));
                 case 'marginRight': return this.setMarginRight(parseInt(strValue));
                 case 'marginBottom': return this.setMarginBottom(parseInt(strValue));
+                case 'fontColor': return this._setColorWithString(Element_FontColor, strValue);
                 case 'backgroundColor': return this._setColorWithString(Element_BackgroundColor, strValue);
+                case 'bold': return this._setBooleanAsString(Element_Bold, strValue);
+                case 'italic': return this._setBooleanAsString(Element_Italic, strValue);
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
+
+        function isBold() { return this._getBoolProperty(Element_Bold); }
+        function isItalic() { return this._getBoolProperty(Element_Italic); }
+        function setBold(value) { return this._setBoolProperty(Element_Bold, value); }
+        function setItalic(value) { return this._setBoolProperty(Element_Italic, value); }
 
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }
@@ -264,7 +276,9 @@ namespace Nori {
         function setMarginRight(value) { return this._setIntProperty(Element_MarginRight, value); }
         function setMarginBottom(value) { return this._setIntProperty(Element_MarginBottom, value); }
 
+        function getFontColor() { return this._getColorProperty(Element_FontColor); }
         function getBackgroundColor() { return this._getColorProperty(Element_BackgroundColor); }
+        function setFontColor(r, g, b, a = 255) { return this._setColorProperty(Element_FontColor, r, g, b, a); }
         function setBackgroundColor(r, g, b, a = 255) { return this._setColorProperty(Element_BackgroundColor, r, g, b, a); }
 
         function setMouseDownHandler(fn) { return this._setEventHandler(Element_MouseDown, fn, MouseEventArg.parseFromArg); }
