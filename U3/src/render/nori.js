@@ -316,6 +316,7 @@ function setProperty(e, key, value) {
 			}
 			break;
 		
+		case 'border.radius': e.firstChild.style.borderRadius = value + 'px'; break;
 		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
 		case 'border.rightcolor': e.firstChild.style.borderRightColor = value; break;
