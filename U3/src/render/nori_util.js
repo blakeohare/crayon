@@ -3,10 +3,10 @@ const NoriUtil = (() => {
     let noopFn = () => { };
 
     function escapeHtml(text) {
-        var o = [];
-        var len = text.length;
-        var c;
-        for (var i = 0; i < len; ++i) {
+        let o = [];
+        let len = text.length;
+        let c;
+        for (let i = 0; i < len; ++i) {
             c = text.charAt(i);
             switch (c) {
                 case '<': c ='&lt;'; break;
@@ -33,21 +33,21 @@ const NoriUtil = (() => {
     
     let encodeHex = (r, g, b) => TO_HEX_HASH[r] + TO_HEX[g] + TO_HEX[b];
 
-    var HEX_LOOKUP = {};
-    for (var i = 0; i < 10; ++i) {
+    let HEX_LOOKUP = {};
+    for (let i = 0; i < 10; ++i) {
         HEX_LOOKUP[i + ''] = i;
     }
-    for (var i = 0; i < 6; ++i) {
+    for (let i = 0; i < 6; ++i) {
         HEX_LOOKUP['abcdef'.charAt(i)] = i + 10;
         HEX_LOOKUP['ABCDEF'.charAt(i)] = i + 10;
     }
 
     let decodeHex = (s) => {
-        var o = [];
-        var len = s.length;
-        var a;
-        var b;
-        for (var i = 0; i < len; i += 2) {
+        let o = [];
+        let len = s.length;
+        let a;
+        let b;
+        for (let i = 0; i < len; i += 2) {
             a = HEX_LOOKUP[s.charAt(i)];
             b = HEX_LOOKUP[s.charAt(i + 1)];
             o.push(String.fromCharCode(a * 16 + b));

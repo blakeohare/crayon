@@ -20,7 +20,7 @@ function setFrameRoot(root) {
 
 function setFrameSize(width, height) {
 	ctx.frameSize = [width, height];
-	var s = ctx.uiRoot.style;
+	let s = ctx.uiRoot.style;
 	s.width = width + 'px';
 	s.height = height + 'px';
 	s = ctx.noriHostDiv.style;
@@ -29,7 +29,7 @@ function setFrameSize(width, height) {
 }
 
 function createElement(id, type) {
-	var wrapper = document.createElement('div');
+	let wrapper = document.createElement('div');
 	wrapper.NORI_id = id;
 	wrapper.NORI_type = type;
 	wrapper.NORI_childrenIdList = [];
@@ -46,8 +46,8 @@ function createElement(id, type) {
 	wrapper.NORI_align = ['L', 'T']; // [{ L | C | R | S }, { T | C | B | S }]
 	wrapper.NORI_dock = 'N'; // { N | S | E | W }
 	
-	var inner;
-	var s;
+	let inner;
+	let s;
 	if (wrapper.NORI_isPanel) {
 		
 		inner = document.createElement('div');
@@ -131,7 +131,7 @@ function setProperty(e, key, value) {
 		case 'el.height': e.NORI_size[1] = value; break;
 		case 'el.halign': e.NORI_align[0] = 'SLCR'.charAt(value); break;
 		case 'el.valign': e.NORI_align[1] = 'STCB'.charAt(value); break;
-		case 'el.margin': for (var i = 0; i < 4; ++i) e.NORI_margin[i] = value; break;
+		case 'el.margin': for (let i = 0; i < 4; ++i) e.NORI_margin[i] = value; break;
 		case 'el.leftmargin': e.NORI_margin[0] = value; break;
 		case 'el.topmargin': e.NORI_margin[1] = value; break;
 		case 'el.rightmargin': e.NORI_margin[2] = value; break;
@@ -216,12 +216,12 @@ function setProperty(e, key, value) {
 		
 		case 'input.changed':
 		
-			var eh;
+			let eh;
 			if (value === 0) eh = NoriUtil.noopFn;
 			else {
 				eh = function() {
-					var input = e.firstChild;
-					var inputValue;
+					let input = e.firstChild;
+					let inputValue;
 					switch (e.NORI_type) {
 						case 'PasswordBox':
 						case 'TextBox':
@@ -289,11 +289,11 @@ function setImageSource(e, rawValue) {
 }
 
 function syncChildIds(e, childIds, startIndex, endIndex) {
-	var host = e.firstChild;
-	var length = host.children.length;
-	var i;
-	var id;
-	var newId;
+	let host = e.firstChild;
+	let length = host.children.length;
+	let i;
+	let id;
+	let newId;
 	if (length == 0) {
 		for (i = startIndex; i < endIndex; ++i) {
 			id = childIds[i];
@@ -301,16 +301,16 @@ function syncChildIds(e, childIds, startIndex, endIndex) {
 			e.NORI_childrenIdList.push(id);
 		}
 	} else {
-		var preExistingIds = {};
+		let preExistingIds = {};
 		for (i = 0; i < length; ++i) {
 			preExistingIds[host.children[i].NORI_id] = true;
 		}
-		var j = 0; // walks along the DOM
-		var preExistingElement;
-		var preExistingElementId;
+		let j = 0; // walks along the DOM
+		let preExistingElement;
+		let preExistingElementId;
 		e.NORI_childrenIdList = [];
-		var childIndex = 0;
-		var childrenLength = endIndex - startIndex;
+		let childIndex = 0;
+		let childrenLength = endIndex - startIndex;
 		for (i = 0; i < childrenLength; ++i) {
 			childIndex = startIndex + i;
 			newId = childIds[childIndex];
@@ -348,15 +348,15 @@ function syncChildIds(e, childIds, startIndex, endIndex) {
 }
 
 function appendChild(e, childId) {
-	var host = e.firstChild;
+	let host = e.firstChild;
 	host.appendChild(ctx.elementById[childId]);
 	e.NORI_childrenIdList.push(childId);
 }
 
 function removeChildrenFromEnd(e, n) {
-	var host = e.firstChild;
+	let host = e.firstChild;
 	while (n --> 0) {
-		var removedElement = host.lastChild;
+		let removedElement = host.lastChild;
 		host.removeChild(removedElement);
 		gcElement(removedElement);
 		e.NORI_childrenIdList.pop();
@@ -364,32 +364,32 @@ function removeChildrenFromEnd(e, n) {
 }
 
 function gcElement(e) {
-	var lookup = ctx.elementById;
+	let lookup = ctx.elementById;
 	delete lookup[e.NORI_id];
-	var childIds = e.NORI_childrenIdList;
-	for (var i = 0; i < childIds.length; ++i) {
+	let childIds = e.NORI_childrenIdList;
+	for (let i = 0; i < childIds.length; ++i) {
 		gcElement(ctx.elementById[childIds[i]]);
 	}
 }
 
 function flushUpdates(data) {
-	var items = data;
-	var len = items.length;
-	var instruction;
-	var id;
-	var type;
-	var amount;
-	var direction;
-	var propertyCount;
-	var propertyDeletionCount;
-	var propertyKey;
-	var propertyValue;
-	var childrenCount;
-	var childId;
-	var j;
-	var isTextProperty = ctx.isTextProperty;
-	var elementById = ctx.elementById;
-	var i = 0;
+	let items = data;
+	let len = items.length;
+	let instruction;
+	let id;
+	let type;
+	let amount;
+	let direction;
+	let propertyCount;
+	let propertyDeletionCount;
+	let propertyKey;
+	let propertyValue;
+	let childrenCount;
+	let childId;
+	let j;
+	let isTextProperty = ctx.isTextProperty;
+	let elementById = ctx.elementById;
+	let i = 0;
 	while (i < len) {
 		instruction = items[i++];
 		id = parseInt(items[i++]);

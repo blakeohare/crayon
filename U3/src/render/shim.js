@@ -28,18 +28,18 @@ function flushMessageQueue() {
 }
 
 function getWindowSize() {
-	var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+	let width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	let height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 	return [width, height];
 }
 
 function shimInit(uiData) {
-	var noriRoot = document.getElementById('html_render_host');
+	let noriRoot = document.getElementById('html_render_host');
 	setFrameRoot(noriRoot);
-	var sz = getWindowSize();
+	let sz = getWindowSize();
 	setFrameSize(sz[0], sz[1]);
 	window.onresize = function() {
-		var newSize = getWindowSize();
+		let newSize = getWindowSize();
 		setFrameSize(newSize[0], newSize[1]);
 		platformSpecificHandleEvent(-1, 'frame.onresize', newSize[0] + ',' + newSize[1]);
 		flushUpdates(['NO', 0]);
