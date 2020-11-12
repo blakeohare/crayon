@@ -1,4 +1,4 @@
-window.init = () => {
+window.addEventListener('load', () => {
 
     let initialized = false;
     let handleMessageBuffer = buffer => {
@@ -9,6 +9,7 @@ window.init = () => {
             flushUpdates(buffer);
         }
     };
+    
     registerMessageListener(data => {
         if (data.buffer) {
             handleMessageBuffer(data.buffer);
@@ -20,5 +21,4 @@ window.init = () => {
             throw new Error("Empty message!");
         }
     });
-    
-};
+});
