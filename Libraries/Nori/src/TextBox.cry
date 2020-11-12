@@ -1,4 +1,4 @@
-﻿namespace U3Nori {
+﻿namespace Nori {
 
     class AbstractTextBox : InputElement {
 

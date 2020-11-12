@@ -2,7 +2,7 @@
 import Math;
 import TextEncoding;
 
-namespace U3Nori {
+namespace Nori {
 
     // TODO: implement native functions for some of the hex color stuff you're doing in here.
 
