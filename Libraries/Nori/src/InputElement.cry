@@ -48,7 +48,12 @@
             if (this._newProperties.get(InputElement_Value) != null) {
                 this._newProperties.remove(InputElement_Value);
             }
+            this._nori_input_element_value = value;
 
+            // TODO: remove this dead code in a few weeks. It was causing problems
+            // and didn't seem necessary but I'm too afraid I'll have an "ohhhhh that's why that
+            // was there" moment at some point in the near future.
+            /*
             // If the value is different than the current value, fire the onchange callback, if one is set.
             if (this._nori_input_element_value != value) {
                 this._setValue(value);
@@ -56,6 +61,7 @@
                     this._nori_input_change_callback(value);
                 }
             }
+            //*/
         }
     }
 }
