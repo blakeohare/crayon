@@ -18,8 +18,9 @@ const ctx = {
 		'border.bottomcolor': true,
 		'el.bgcolor': true,
 		'el.fontcolor': true,
+		'el.font': true,
 		'img.src': true,
-		'input.value': true
+		'input.value': true,
 	},
 	isPanelType: {
 		'Border': true,

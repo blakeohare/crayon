@@ -10,7 +10,6 @@ function setFrameRoot(root) {
 	sizer.style.height = 'auto';
 	sizer.style.whiteSpace = 'nowrap';
 	sizer.style.textAlign = 'left';
-	sizer.style.fontFamily = 'Arial,sans-serif';
 	content.style.position = 'absolute';
 	content.style.width = '100%';
 	content.style.height = '100%';
@@ -84,7 +83,6 @@ function createElement(id, type) {
 			s.width = '100%';
 			s.height = '100%';
 			s.textAlign = 'left';
-			s.fontFamily = 'Arial,sans-serif';
 			break;
 		
 		case 'PasswordBox':
@@ -127,6 +125,7 @@ function createElement(id, type) {
 }
 
 function setProperty(e, key, value) {
+	let t;
 	switch (key) {
 		case 'el.width': e.NORI_size[0] = value; break;
 		case 'el.height': e.NORI_size[1] = value; break;
@@ -176,8 +175,14 @@ function setProperty(e, key, value) {
 			e.NORI_font = e.NORI_font || {};
 			e.NORI_font.color = value;
 			break;
+		case 'el.font':
+			t = '"' + value + '",sans-serif';
+			e.firstChild.style.fontFamily = t;
+			e.NORI_font = e.NORI_font || {};
+			e.NORI_font.face = t;
+			break;
 		case 'txtblk.sz':
-			let t = (value / 1000) + 'pt';
+			t = (value / 1000) + 'pt';
 			e.firstChild.style.fontSize = t;
 			e.NORI_font = e.NORI_font || {};
 			e.NORI_font.size = t;
@@ -441,6 +446,11 @@ function flushUpdates(data) {
 				}
 				break;
 			
+			case 'FR': // Font resource
+				propertyValue = items[i++];
+				document.getElementById('font_loader').innerHTML += "\n@import url('" + propertyValue + "');"
+				break;
+
 			case 'PF': // property full state
 				type = items[i++];
 				element = elementById[id];

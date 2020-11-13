@@ -23,6 +23,7 @@ namespace Nori {
     const Element_Bold = 'el.bold';
     const Element_Italic = 'el.italic';
     const Element_FontColor = 'el.fontcolor';
+    const Element_Font = 'el.font';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -51,6 +52,7 @@ namespace Nori {
             Border_BottomColor: true,
             Element_BackgroundColor: true,
             Element_FontColor: true,
+            Element_Font: true,
             Image_Source: true,
             InputElement_Value: true,
         };
@@ -214,6 +216,7 @@ namespace Nori {
                 case 'backgroundColor': return this._setColorWithString(Element_BackgroundColor, strValue);
                 case 'bold': return this._setBooleanAsString(Element_Bold, strValue);
                 case 'italic': return this._setBooleanAsString(Element_Italic, strValue);
+                case 'font': return this._setStringProperty(Element_Font, strValue);
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
@@ -222,6 +225,8 @@ namespace Nori {
         function isItalic() { return this._getBoolProperty(Element_Italic); }
         function setBold(value) { return this._setBoolProperty(Element_Bold, value); }
         function setItalic(value) { return this._setBoolProperty(Element_Italic, value); }
+        function getFont() { return this._getStringProperty(Element_Font); }
+        function setFont(value) { return this._setStringProperty(Element_Font, value); }
 
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }

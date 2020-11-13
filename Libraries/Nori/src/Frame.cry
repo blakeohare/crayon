@@ -35,6 +35,8 @@ namespace Nori {
 
         field _u3window;
 
+        field _fontResourceLinks = [];
+
         constructor() {
             this._u3window = new U3Window(this.handleUiGeneratedEvent);
             this._handlers['on-render-pass'] = [this._maybeFireOnLoadHandlers, null];
@@ -53,6 +55,11 @@ namespace Nori {
         function setTitle(title) {
             // TODO: if it's already shown, then need to send a message.
             this._title = title + '';
+            return this;
+        }
+
+        function addFontResourceLink(url) {
+            this._fontResourceLinks.add(url);
             return this;
         }
 
@@ -158,6 +165,13 @@ namespace Nori {
                     wireData.add('FA', 0, attr, this._dirtyFrameAttributes[attr]);
                 }
                 this._dirtyFrameAttributes.clear();
+            }
+
+            if (this._fontResourceLinks.length > 0) {
+                for (f : this._fontResourceLinks) {
+                    wireData.add('FR', 0, f);
+                }
+                this._fontResourceLinks.clear();
             }
 
             return wireData;
