@@ -91,6 +91,7 @@ function createElement(id, type) {
 		case 'TextBox':
 			inner = document.createElement('input');
 			inner.type = type == 'TextBox' ? 'text' : 'password';
+			inner.spellcheck = false;
 			s = inner.style;
 			s.width = '100%';
 			s.height = '100%';
@@ -180,7 +181,6 @@ function setProperty(e, key, value) {
 			e.firstChild.style.fontSize = t;
 			e.NORI_font = e.NORI_font || {};
 			e.NORI_font.size = t;
-			console.log("This is set: " + t);
 			break;
 
 		case 'el.bgcolor':
@@ -233,6 +233,10 @@ function setProperty(e, key, value) {
 			}
 			break;
 		
+		case 'tb.border':
+			e.firstChild.style.borderWidth = value ? '' : '0px';
+			break;
+
 		case 'input.changed':
 		
 			let eh;
