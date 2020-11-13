@@ -132,7 +132,19 @@ const NoriLayout = (() => {
         s.height = height + 'px';
         s.left = x + 'px';
         s.top = y + 'px';
-        
+
+        let borders = e.NORI_borders;
+        if (borders) {
+            let child = e.firstChild;
+            if (borders[0] != 0 || borders[1] != 0 || borders[2] != 0 || borders[3] != 0) {
+                child.style.width = width - borders[0] - borders[2] + 'px';
+                child.style.height = height - borders[1] - borders[3] + 'px';
+            } else {
+                child.style.width = '100%';
+                child.style.height = '100%';
+            }
+        }
+
         e.NORI_allocatedSize[0] = width;
         e.NORI_allocatedSize[1] = height;
         
