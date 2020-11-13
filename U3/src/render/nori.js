@@ -160,9 +160,29 @@ function setProperty(e, key, value) {
 			});
 			break;
 		
-		case 'el.bold': e.style.fontWeight = value ? 'bold' : 'normal'; break;
-		case 'el.italic': e.style.fontStyle = value ? 'italic' : 'normal'; break;
-		case 'el.fontcolor': e.firstChild.style.color = value; break;
+		case 'el.bold': 
+			e.style.fontWeight = value ? 'bold' : 'normal';
+			e.NORI_font = e.NORI_font || {};
+			e.NORI_font.bold = e.style.fontWeight;
+			break;
+		case 'el.italic': 
+			e.style.fontStyle = value ? 'italic' : 'normal';
+			e.NORI_font = e.NORI_font || {};
+			e.NORI_font.italic = e.style.fontStyle;
+			break;
+		case 'el.fontcolor': 
+			e.firstChild.style.color = value;
+			e.NORI_font = e.NORI_font || {};
+			e.NORI_font.color = value;
+			break;
+		case 'txtblk.sz':
+			let t = (value / 1000) + 'pt';
+			e.firstChild.style.fontSize = t;
+			e.NORI_font = e.NORI_font || {};
+			e.NORI_font.size = t;
+			console.log("This is set: " + t);
+			break;
+
 		case 'el.bgcolor':
 			switch (e.NORI_type) {
 				case 'Button':
@@ -192,7 +212,6 @@ function setProperty(e, key, value) {
 		
 		case 'txtblk.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
 		case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
-		case 'txtblk.sz': e.firstChild.style.fontSize = (value / 1000) + 'pt'; break;
 		
 		case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
 		case 'scroll.y': e.NORI_scrollpanel[1] = ctx.scrollEnumLookup[value]; break;
@@ -486,7 +505,20 @@ function flushUpdates(data) {
 			case 'RE': // Root element change
 				
 				ctx.rootElementId = id;
-				ctx.rootElement = ctx.elementById[id];
+				let re = ctx.elementById[id];
+				let f = {
+					bold: 'normal',
+					italic: 'normal',
+					size: '10pt',
+					face: '"Arial",sans-serif',
+				};
+				ctx.rootElement = re;
+				re.NORI_font = f;
+				re.style.fontWeight = f.bold;
+				re.style.fontStyle = f.italic;
+				re.style.fontFamily = f.face;
+				re.style.fontSize = f.size;
+
 				while (ctx.uiRoot.lastChild) {
 					gcElement(ctx.uiRoot.lastChild);
 					ctx.uiRoot.remove(ctx.uiRoot.lastChild);

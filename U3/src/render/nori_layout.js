@@ -64,10 +64,10 @@ const NoriLayout = (() => {
             let text = e.firstChild.innerHTML;
             if (e.NORI_flexibleText == '%') {
                 let percentWidth = Math.floor(usableWidth * ratioX);
-                sz = calculateTextSize(text, percentWidth);
+                sz = calculateTextSize(text, e, percentWidth);
                 sz[0] = percentWidth; // even if you don't wrap and don't reach the end, this is the logical width of the element.
             } else {
-                sz = calculateTextSize(text, usableWidth);
+                sz = calculateTextSize(text, e, usableWidth);
                 // if it doesn't reach the end, don't use the full width.
             }
             
@@ -345,7 +345,7 @@ const NoriLayout = (() => {
             switch (e.NORI_type) {
                 case 'Button':
                     if (w == null || h == null) {
-                        sz = calculateTextSize(e.firstChild.innerHTML, null);
+                        sz = calculateTextSize(e.firstChild.innerHTML, e, null);
                         if (w == null) w = 15 + sz[0];
                         if (h == null) h = 6 + sz[1];
                     }
@@ -355,10 +355,10 @@ const NoriLayout = (() => {
                     t = e.firstChild.innerHTML;
                     e.NORI_flexibleText = false;
                     if (!e.NORI_wrap) {
-                        sz = calculateTextSize(t, null);
+                        sz = calculateTextSize(t, e, null);
                     } else if (w != null) {
                         if (w > 0) {
-                            sz = calculateTextSize(t, w);
+                            sz = calculateTextSize(t, e, w);
                         } else {
                             // the element has a fixed width, but this is based on a percent
                             // and can only be determined at spaceAllocation time.
@@ -387,17 +387,34 @@ const NoriLayout = (() => {
         }
     };
 
-    let calculateTextSize = (html, width) => {
+    let calculateTextSize = (html, element, width) => {
+        let font = {};
+        let fieldCount = 0;
+        while (element && fieldCount != 4) {
+            if (element.NORI_font) {
+                let props = element.NORI_font;
+                if (props.bold && !font.bold) { fieldCount++; font.bold = props.bold; }
+                if (props.italic && !font.italic) { fieldCount++; font.italic = props.italic; }
+                if (props.size && !font.size) { fieldCount++; font.size = props.size; }
+                if (props.face && !font.face) { fieldCount++; font.face = props.face; }
+            }
+            element = element.parentNode;
+        }
         let sizer = ctx.textSizer;
+        let style = sizer.style;
+        style.fontSize = font.size || '10pt';
+        style.fontWeight = font.bold || 'normal';
+        style.fontStyle = font.italic || 'normal';
+        style.fontFamily = font.face || 'Arial';
         if (width === null) {
-            sizer.style.whiteSpace = 'nowrap';
-            sizer.style.width = 'auto';
+            style.whiteSpace = 'nowrap';
+            style.width = 'auto';
         } else {
-            sizer.style.whiteSpace = 'normal';
-            sizer.style.width = width + 'px';
+            style.whiteSpace = 'normal';
+            style.width = width + 'px';
         }
         sizer.innerHTML = html;
-        let sz = [Math.max(1, sizer.clientWidth), Math.max(1, sizer.clientHeight)];
+        let sz = [Math.max(1, sizer.clientWidth) + 1, Math.max(1, sizer.clientHeight) + 1];
         sizer.innerHTML = '';
         return sz;
     };
