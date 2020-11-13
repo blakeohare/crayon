@@ -2,6 +2,8 @@
 
     const InputElement_Value = 'input.value';
     const InputElement_OnValueChanged = 'input.changed';
+    const InputElement_OnFocus = 'input.onfocus';
+    const InputElement_OnBlur = 'input.onblur';
 
     class InputElement : Element {
 
@@ -29,6 +31,9 @@
         }
 
         static function noopPassthrough(s) { return [s]; }
+
+        function setFocusHandler(fn) { return this._setEventHandler(InputElement_OnFocus, fn); }
+        function setBlurHandler(fn) { return this._setEventHandler(InputElement_OnBlur, fn); }
 
         function _setValueChangedHandler(fn) {
             this._nori_input_change_callback = fn;

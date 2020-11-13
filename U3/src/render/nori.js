@@ -186,6 +186,8 @@ function setProperty(e, key, value) {
 		case 'el.bgcolor':
 			switch (e.NORI_type) {
 				case 'Button':
+				case 'TextBox':
+				case 'PasswordBox':
 					e.firstChild.style.backgroundColor = value;
 					break;
 				default:
@@ -235,6 +237,11 @@ function setProperty(e, key, value) {
 		
 		case 'tb.border':
 			e.firstChild.style.borderWidth = value ? '' : '0px';
+			break;
+
+		case 'input.onfocus':
+		case 'input.onblur':
+			e.firstChild[key == 'input.onfocus' ? 'onfocus' : 'onblur'] = NoriEvents.buildEventHandler(value, e, key, '');
 			break;
 
 		case 'input.changed':
