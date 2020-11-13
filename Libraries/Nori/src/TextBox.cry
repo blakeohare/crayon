@@ -1,5 +1,7 @@
 ﻿namespace Nori {
 
+    const TextBox_HasBorder = 'tb.border';
+
     class AbstractTextBox : InputElement {
 
         field _isPassword;
@@ -16,6 +18,9 @@
             return this._setValue(text);
         }
 
+        function getShowBorder() { return this._getBoolProperty(TextBox_HasBorder); }
+        function setShowBorder(value) { return this._setBoolProperty(TextBox_HasBorder, value); }
+
         function setOnTextChangedHandler(fn) { return this._setValueChangedHandler(fn); }
         function clearOnTextChangedHandler() { return this._setValueChangedHandler(null); }
 
@@ -24,7 +29,7 @@
                 case '<content>':
                 case 'text':
                     return this.setText(strValue);
-
+                case 'showBorder': return this._setBooleanAsString(TextBox_HasBorder, strValue);
                 default: return base.setAttributeWithString(name, strValue);
             }
         }
