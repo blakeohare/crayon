@@ -15,7 +15,7 @@ namespace Interpreter.Libraries.Json
 		{
 			public int Value;
 		}
-		
+
 		public static Value ParseJsonIntoValue(VmGlobals globals, string rawValue)
 		{
 			try
@@ -59,15 +59,15 @@ namespace Interpreter.Libraries.Json
 			}
 			else if (PopIfPresent(rawValue, length, i, "true"))
 			{
-                value = globals.boolTrue;
+				value = globals.boolTrue;
 			}
 			else if (PopIfPresent(rawValue, length, i, "false"))
 			{
-                value = globals.boolFalse;
+				value = globals.boolFalse;
 			}
 			else if (PopIfPresent(rawValue, length, i, "null"))
 			{
-                value = globals.valueNull;
+				value = globals.valueNull;
 			}
 			else
 			{
@@ -78,13 +78,13 @@ namespace Interpreter.Libraries.Json
 
 		private static Value ParseJsonNumber(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
-            int sign = 1;
-            char c = rawValue[i.Value];
-            if (c == '-')
-            {
-                sign = -1;
-                i.Value++;
-            }
+			int sign = 1;
+			char c = rawValue[i.Value];
+			if (c == '-')
+			{
+				sign = -1;
+				i.Value++;
+			}
 			StringBuilder sb = new StringBuilder();
 			while (i.Value < length)
 			{
@@ -133,22 +133,57 @@ namespace Interpreter.Libraries.Json
 				{
 					switch (rawValue[i.Value++])
 					{
-						case '\\': c = '\\'; break;
-						case '"': c = '"'; break;
-						case '\'': c = '\''; break;
-						case 'n': c = '\n'; break;
-						case 't': c = '\t'; break;
-						case 'r': c = '\r'; break;
-						case '0': c = '\0'; break;
-						default: throw new JsonParserException();
+						case '\\': sb.Append('\\'); break;
+						case '"': sb.Append('"'); break;
+						case '\'': sb.Append('\''); break;
+						case 'n': sb.Append('\n'); break;
+						case 't': sb.Append('\t'); break;
+						case 'r': sb.Append('\r'); break;
+						case '0': sb.Append('\0'); break;
+						case 'u':
+							if (i.Value + 4 < length)
+							{
+								char u1 = rawValue[i.Value];
+								char u2 = rawValue[i.Value + 1];
+								char u3 = rawValue[i.Value + 2];
+								char u4 = rawValue[i.Value + 3];
+								i.Value += 4;
+								string strValue = UnicodeToString("" + u1 + u2 + u3 + u4);
+								sb.Append(strValue);
+							}
+							else
+							{
+								throw new JsonParserException();
+							}
+							break;
+						default:
+							throw new JsonParserException();
 					}
 				}
-				sb.Append(c);
+				else
+				{
+					sb.Append(c);
+				}
 			}
 
 			if (i.Value >= length) throw new JsonParserException();
 			i.Value++; // closing quote
 			return CrayonWrapper.buildString(globals, sb.ToString());
+		}
+
+		private static byte[] buffer = new byte[4];
+		private static string UnicodeToString(string code)
+		{
+			int value;
+			if (!int.TryParse(code, System.Globalization.NumberStyles.HexNumber, null, out value))
+			{
+				throw new JsonParserException();
+			}
+			buffer[3] = (byte)((value >> 24) & 255);
+			buffer[2] = (byte)((value >> 16) & 255);
+			buffer[1] = (byte)((value >> 8) & 255);
+			buffer[0] = (byte)((value >> 0) & 255);
+			return System.Text.Encoding.UTF32.GetString(buffer);
 		}
 
 		private static Value ParseJsonList(VmGlobals globals, char[] rawValue, int length, Index i)
@@ -176,7 +211,7 @@ namespace Interpreter.Libraries.Json
 
 		private static Value ParseJsonDictionary(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
-            int stringTypeId = globals.stringEmpty.type;
+			int stringTypeId = globals.stringEmpty.type;
 
 			i.Value++; // '{'
 			SkipWhitespace(rawValue, length, i);
@@ -197,7 +232,7 @@ namespace Interpreter.Libraries.Json
 				SkipWhitespace(rawValue, length, i);
 				Value value = ParseJsonThing(globals, rawValue, length, i);
 				SkipWhitespace(rawValue, length, i);
-                keys.Add((string)key.internalValue);
+				keys.Add((string)key.internalValue);
 				values.Add(value);
 			}
 
@@ -212,7 +247,7 @@ namespace Interpreter.Libraries.Json
 
 			return CrayonWrapper.buildStringDictionary(globals, keys.ToArray(), values.ToArray());
 		}
-        
+
 		private static void PopExpected(char[] rawValue, int length, Index index, string value)
 		{
 			if (!PopIfPresent(rawValue, length, index, value))
