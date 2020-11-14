@@ -4,7 +4,6 @@ namespace Nori {
 
     const TextBlock_Text = 'txtblk.text';
     const TextBlock_Wrap = 'txtblk.wrap';
-    const TextBlock_FontSize = 'txtblk.sz';
 
     class TextBlock : Element {
 
@@ -14,9 +13,6 @@ namespace Nori {
 
         function setText(value) { return this._setStringProperty(TextBlock_Text, value); }
         function getText() { return this._getStringProperty(TextBlock_Text); }
-
-        function setFontSize(value) { return this._setIntProperty(TextBlock_FontSize, Math.floor(value * 1000)); }
-        function getFontSize() { return this._getIntProperty(TextBlock_FontSize) / 1000.0; }
 
         function setWrap(value) { return this._setBoolProperty(TextBlock_Wrap, value); }
         function getWrap(value) { return this._getBoolProperty(TextBlock_Wrap); }
@@ -28,12 +24,10 @@ namespace Nori {
                 case '<content>':
                 case 'text':
                     return this.setText(strValue);
-
+                case 'size': // TODO: remove this alias.
+                    return this.setFontSize(strValue);
                 case 'wrap':
                     return this._setBooleanAsString(TextBlock_Wrap, strValue);
-
-                case 'size':
-                    return this.setFontSize(Core.parseFloat(strValue));
 
                 default: return base.setAttributeWithString(name, strValue);
             }

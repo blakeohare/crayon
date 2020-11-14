@@ -24,6 +24,7 @@ namespace Nori {
     const Element_Italic = 'el.italic';
     const Element_FontColor = 'el.fontcolor';
     const Element_Font = 'el.font';
+    const TextBlock_FontSize = 'txtblk.sz';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -213,6 +214,7 @@ namespace Nori {
                 case 'marginRight': return this.setMarginRight(parseInt(strValue));
                 case 'marginBottom': return this.setMarginBottom(parseInt(strValue));
                 case 'fontColor': return this._setColorWithString(Element_FontColor, strValue);
+                case 'fontSize': return this.setFontSize(Core.parseFloat(strValue));
                 case 'backgroundColor': return this._setColorWithString(Element_BackgroundColor, strValue);
                 case 'bold': return this._setBooleanAsString(Element_Bold, strValue);
                 case 'italic': return this._setBooleanAsString(Element_Italic, strValue);
@@ -227,6 +229,8 @@ namespace Nori {
         function setItalic(value) { return this._setBoolProperty(Element_Italic, value); }
         function getFont() { return this._getStringProperty(Element_Font); }
         function setFont(value) { return this._setStringProperty(Element_Font, value); }
+        function setFontSize(value) { return this._setIntProperty(TextBlock_FontSize, Math.floor(value * 1000)); }
+        function getFontSize() { return this._getIntProperty(TextBlock_FontSize) / 1000.0; }
 
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }
