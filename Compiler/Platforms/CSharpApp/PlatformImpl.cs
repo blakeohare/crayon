@@ -340,6 +340,12 @@ namespace CSharpApp
                 if (isRunningFromSource)
                 {
                     u3FromFile = System.IO.Path.Combine(crayonSourceDir, "U3", "dist", u3ExecName);
+#if DEBUG
+                    if (!System.IO.File.Exists(u3FromFile))
+                    {
+                        throw new System.Exception("Exporting a bundled C# VM requires building U3 first. You can do this by running Scripts/u3packager.py.");
+                    }
+#endif
                 }
                 else
                 {
