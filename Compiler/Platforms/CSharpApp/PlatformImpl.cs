@@ -238,6 +238,7 @@ namespace CSharpApp
             Options options)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
+            bool usesU3 = libraries.Where(lib => lib.Name == "U3Direct").Any();
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
@@ -324,6 +325,33 @@ namespace CSharpApp
             }
 
             this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
+
+            if (usesU3)
+            {
+                // TODO: these need to be OS specific
+                string u3ExecName = "win-u3window.exe";
+                string u3ExecToName = "u3window.exe";
+
+                string u3FromFile;
+                string u3ToFile = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), baseDir, u3ExecToName);
+
+                string crayonSourceDir = Common.SourceDirectoryFinder.CrayonSourceDirectory;
+                bool isRunningFromSource = crayonSourceDir != null;
+                if (isRunningFromSource)
+                {
+                    u3FromFile = System.IO.Path.Combine(crayonSourceDir, "U3", "dist", u3ExecName);
+                }
+                else
+                {
+                    u3FromFile = System.IO.Path.Combine(CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME"), u3ExecName);
+                }
+
+                output[baseDir + '/' + u3ExecToName] = new FileOutput()
+                {
+                    Type = FileOutputType.Copy,
+                    AbsoluteInputPath = u3FromFile,
+                };
+            }
         }
 
         private void CopyTemplatedFiles(string baseDir, Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, bool isStandaloneVm)
