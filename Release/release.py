@@ -25,12 +25,15 @@ LIBRARIES = [
 	'Graphics2D',
 	'Graphics2DText',
 	'Http',
-	'ImageEncoder',
+	'IconEncoder',
 	'ImageResources',
+	'Images',
 	'ImageWebResources',
+	'Ipc',
 	'Json',
 	'Math',
 	'Matrices',
+	'MessageHub',
 	'NativeTunnel',
 	'Nori',
 	'NoriXml',
@@ -39,9 +42,14 @@ LIBRARIES = [
 	'Resources',
 	'SRandom',
 	'TextEncoding',
+	'U3Direct',
+	'U3Game',
+	'U3Graphics2D',
+	'UrlUtil',
 	'UserData',
 	'Web',
 	'Xml',
+	# 'Zip',
 ]
 
 import shutil
@@ -57,6 +65,16 @@ def canonicalize_sep(path):
 	return path.replace('/', os.sep).replace('\\', os.sep)
 def canonicalize_newline(text, lineEnding):
 	return text.replace("\r\n", "\n").replace("\r", "\n").replace("\n", lineEnding)
+
+def copy_file(from_path, to_path):
+	f = canonicalize_sep(from_path)
+	t = canonicalize_sep(to_path)
+	if os.path.exists(to_path):
+		if os.path.isdir(to_path):
+			shutil.rmtree(to_path)
+		else:
+			os.remove(to_path)
+	shutil.copyfile(from_path, to_path)
 
 def copyDirectory(source, target, ext_filter = None, recursive = True):
 	source = canonicalize_sep(source)
@@ -162,6 +180,13 @@ def buildRelease(args):
 	log("create new output directory")
 	os.makedirs(copyToDir)
 
+	if isWindows:
+		u3win_exe = os.path.join('..', 'U3', 'dist', 'win-u3window.exe')
+		if not os.path.exists(u3win_exe):
+			print("*** ERROR! ***")
+			print("win-u3window.exe is missing. Run Scripts/u3packager.py first.")
+			return
+	
 	# Compile the compiler bits in the source tree to their usual bin directory
 
 	if isMono:
@@ -272,6 +297,9 @@ def buildRelease(args):
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.dll')
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.exe')
 
+	# Copy U3 window
+	if isWindows:
+		copy_file(u3win_exe, copyToDir + '/u3window.exe')
 
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
