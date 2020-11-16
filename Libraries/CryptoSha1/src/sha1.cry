@@ -9,7 +9,7 @@ namespace CryptoSha1 {
         }
 
         function digestImpl() {
-            return $lib_cryptosha1_digest(this, []);
+            return $$$('cryptoDigest', this._bytes, 2);
         }
     }
 }

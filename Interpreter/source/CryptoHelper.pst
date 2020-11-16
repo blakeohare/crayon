@@ -6,8 +6,8 @@
         byteList.Add(byteArray[i]);
     }
 
-    if (algo == 1) return crypto_md5_digestMd5(globals, byteList);
-    if (algo == 2) return globals.valueNull;
+    if (algo == 1) return crypto_md5_digest(globals, byteList);
+    if (algo == 2) return crypto_sha1_digest(globals, byteList);
 
     return globals.valueNull;
 }
@@ -15,7 +15,7 @@
 // Sources:
 // * https://tools.ietf.org/html/rfc1321
 // * https://en.wikipedia.org/wiki/MD5#Pseudocode
-Value crypto_md5_digestMd5(VmGlobals globals, List<int> inputBytes) {
+Value crypto_md5_digest(VmGlobals globals, List<int> inputBytes) {
 
     // Length is measured in bits, not bytes.
     int originalLength = inputBytes.Size() * 8;
@@ -198,6 +198,137 @@ Value crypto_md5_digestMd5(VmGlobals globals, List<int> inputBytes) {
     return buildList(output);
 }
 
+// Source:
+// * https://en.wikipedia.org/wiki/SHA-1#SHA-1_pseudocode
+Value crypto_sha1_digest(VmGlobals globals, List<int> inputBytes) {
+
+    // Length is measured in bits, not bytes.
+    int originalLength = inputBytes.Size() * 8;
+
+    int h0 = uint32Hack(0x6745, 0x2301);
+    int h1 = uint32Hack(0xEFCD, 0xAB89);
+    int h2 = uint32Hack(0x98BA, 0xDCFE);
+    int h3 = uint32Hack(0x1032, 0x5476);
+    int h4 = uint32Hack(0xC3D2, 0xE1F0);
+
+    // Add a single 1 bit to the end of the current message.
+    // Since the message deals with bytes and we'll be rounding this out with 0's, add a full byte of 0's
+    // except the first digit is a 1: 10000000, aka 128
+    inputBytes.Add(128);
+
+    // The idea is to create a series of 64 byte blocks, but there needs to be 8 bytes of space for the
+    // length of the original stream which will be added at the end as a 64 bit (8 byte) integer.
+    while (inputBytes.Size() % 64 != 56) {
+        inputBytes.Add(0);
+    }
+
+    // Add the length as a 64 bit integer indicating how many BITS the original length is.
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add((originalLength >> 24) & 255);
+    inputBytes.Add((originalLength >> 16) & 255);
+    inputBytes.Add((originalLength >> 8) & 255);
+    inputBytes.Add((originalLength >> 0) & 255);
+
+    Array<int> mWords = new Array<int>(80);
+
+    // TODO: each iteration of this function can happen every time 512 bits of data have been added to the message
+    // and then stored without processing the whole hash. That way more than 4 GB of data can be hashed without
+    // having it all in memory.
+
+    int mask32 = uint32Hack(0xffff, 0xffff); // Extra cross-platform insurance to make sure values don't grow wildly on Python/JS.
+
+    int f = 0;
+    int temp = 0;
+    int k = 0;
+    Array<int> kValues = new Array<int>(4);
+    kValues[0] = uint32Hack(0x5A82, 0x7999);
+    kValues[1] = uint32Hack(0x6ED9, 0xEBA1);
+    kValues[2] = uint32Hack(0x8F1B, 0xBCDC);
+    kValues[3] = uint32Hack(0xCA62, 0xC1D6);
+
+    for (int chunkIndex = 0; chunkIndex < inputBytes.Size(); chunkIndex += 64) {
+
+        // Copy the bytes into 16 32-bit words, leaving slots 17 through 80 empty
+        crypto_sha1_createWordsForBlock(chunkIndex, inputBytes, mWords);
+
+        // Fill in the remaining words using a xor'd combination of the first 16.
+        for (int i = 16; i < 80; i += 1) {
+            mWords[i] = crypto_leftRotate(mWords[i - 3] ^ mWords[i - 8] ^ mWords[i - 14] ^ mWords[i - 16], 1);
+        }
+
+        // make a copy of the hash as it currently stands
+        int a = h0;
+        int b = h1;
+        int c = h2;
+        int d = h3;
+        int e =	h4;
+
+        for (int j = 0; j < 80; j += 1) {
+            if (j < 20) {
+                f = Core.ForceParens(b & c) | Core.ForceParens(crypto_bitwiseNot(b) & d);
+                k = kValues[0];
+            } else if (j < 40) {
+                f = b ^ c ^ d;
+                k = kValues[1];
+            } else if (j < 60) {
+                f = Core.ForceParens(b & c) | Core.ForceParens(b & d) | Core.ForceParens(c & d);
+                k = kValues[2];
+            } else {
+                f = b ^ c ^ d;
+                k = kValues[3];
+            }
+
+            temp = crypto_leftRotate(a, 5) + f + e + k + mWords[j];
+
+            e = d;
+            d = c;
+            c = crypto_leftRotate(b, 30);
+            b = a;
+            a = temp & mask32;
+        }
+
+        // Add the new hash values to the previous hash values from the previous 64 byte block.
+        // Also ensure they don't overflow into weird values when transpiled to JS/Python.
+        h0 = Core.ForceParens(h0 + a) & mask32;
+        h1 = Core.ForceParens(h1 + b) & mask32;
+        h2 = Core.ForceParens(h2 + c) & mask32;
+        h3 = Core.ForceParens(h3 + d) & mask32;
+        h4 = Core.ForceParens(h4 + e) & mask32;
+    }
+
+    // Convert the 5 32-bit integers into 20 8-bit integers.
+    List<Value> output = new List<Value>();
+    output.Add(buildInteger(globals, (h0 >> 24) & 255));
+    output.Add(buildInteger(globals, (h0 >> 16) & 255));
+    output.Add(buildInteger(globals, (h0 >> 8) & 255));
+    output.Add(buildInteger(globals, h0 & 255));
+
+    output.Add(buildInteger(globals, (h1 >> 24) & 255));
+    output.Add(buildInteger(globals, (h1 >> 16) & 255));
+    output.Add(buildInteger(globals, (h1 >> 8) & 255));
+    output.Add(buildInteger(globals, h1 & 255));
+
+    output.Add(buildInteger(globals, (h2 >> 24) & 255));
+    output.Add(buildInteger(globals, (h2 >> 16) & 255));
+    output.Add(buildInteger(globals, (h2 >> 8) & 255));
+    output.Add(buildInteger(globals, h2 & 255));
+
+    output.Add(buildInteger(globals, (h3 >> 24) & 255));
+    output.Add(buildInteger(globals, (h3 >> 16) & 255));
+    output.Add(buildInteger(globals, (h3 >> 8) & 255));
+    output.Add(buildInteger(globals, h3 & 255));
+
+    output.Add(buildInteger(globals, (h4 >> 24) & 255));
+    output.Add(buildInteger(globals, (h4 >> 16) & 255));
+    output.Add(buildInteger(globals, (h4 >> 8) & 255));
+    output.Add(buildInteger(globals, h4 & 255));
+
+    return buildList(output);
+}
+
 int crypto_md5_createWordsForBlock(int startIndex, List<int> byteList, Array<int> mWords) {
     // Convert the chunk into 16 32-bit integer words (Little Endian).
     for (int i = 0; i < 64; i += 4) {
@@ -205,6 +336,17 @@ int crypto_md5_createWordsForBlock(int startIndex, List<int> byteList, Array<int
             Core.ForceParens(byteList[startIndex + i + 1] << 8) |
             Core.ForceParens(byteList[startIndex + i + 2] << 16) |
             Core.ForceParens(byteList[startIndex + i + 3] << 24);
+    }
+    return 0;
+}
+
+int crypto_sha1_createWordsForBlock(int startIndex, List<int> byteList, Array<int> mWords) {
+    // Convert the chunk into 16 32-bit integer words (Little Endian).
+    for (int i = 0; i < 64; i += 4) {
+        mWords[i >> 2] = Core.ForceParens(byteList[startIndex + i] << 24) |
+            Core.ForceParens(byteList[startIndex + i + 1] << 16) |
+            Core.ForceParens(byteList[startIndex + i + 2] << 8) |
+            Core.ForceParens(byteList[startIndex + i + 3]);
     }
     return 0;
 }
@@ -226,34 +368,34 @@ int crypto_md5_magicShuffle(
     int sineValue = sineValues[counter];
     int mWord = 0;
     if (roundNumber == 0) {
-        t = Core.ForceParens(b & c) | Core.ForceParens(crypto_md5_bitwiseNot(b) & d);
+        t = Core.ForceParens(b & c) | Core.ForceParens(crypto_bitwiseNot(b) & d);
         mWord = mWords[counter];
     } else if (roundNumber == 1) {
-        t = Core.ForceParens(b & d) | Core.ForceParens(c & crypto_md5_bitwiseNot(d));
+        t = Core.ForceParens(b & d) | Core.ForceParens(c & crypto_bitwiseNot(d));
         mWord = mWords[Core.ForceParens(5 * counter + 1) & 15];
     } else if (roundNumber == 2) {
         t = b ^ c ^ d;
         mWord = mWords[Core.ForceParens(3 * counter + 5) & 15];
     } else {
-        t = c ^ Core.ForceParens(b | crypto_md5_bitwiseNot(d));
+        t = c ^ Core.ForceParens(b | crypto_bitwiseNot(d));
         mWord = mWords[Core.ForceParens(7 * counter) & 15];
     }
 
     t = Core.ForceParens(a + t + mWord + sineValue) & mask32;
-    t = b + crypto_md5_leftRotate(t, shiftAmount);
+    t = b + crypto_leftRotate(t, shiftAmount);
     return t & mask32;
 }
 
-int crypto_md5_leftRotate(int value, int amt) {
+int crypto_leftRotate(int value, int amt) {
     if (amt == 0) return value;
     int a = value << amt;
-    int b = crypto_md5_bitShiftRight(value, 32 - amt);
+    int b = crypto_bitShiftRight(value, 32 - amt);
     int result = a | b;
     return result;
 }
 
 // the lack of the distinction with >>> on some platforms makes this necessary when the result isn't explicitly masked.
-int crypto_md5_bitShiftRight(int value, int amount) {
+int crypto_bitShiftRight(int value, int amount) {
     if (amount == 0) return value;
     value = value & uint32Hack(65535, 65535);
     int mask = 0x7fffffff;
@@ -268,6 +410,6 @@ int uint32Hack(int left, int right) {
 }
 
 // TODO: implement this in Pastel
-int crypto_md5_bitwiseNot(int x) {
+int crypto_bitwiseNot(int x) {
     return -x - 1;
 }
