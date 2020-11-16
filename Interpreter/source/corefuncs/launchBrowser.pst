@@ -1,0 +1,5 @@
+﻿@import("inline/1_arg.pst");
+
+Extension.CoreFunc_LaunchBrowser((string) arg1.internalValue);
+
+output = vm.globalNull;

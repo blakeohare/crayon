@@ -84,6 +84,7 @@
     case 82: Core.EmitComment("argVerifyIntRange"); @import("corefuncs/argVerifyIntRange.pst"); break;
     case 83: Core.EmitComment("argVerifyNums"); @import("corefuncs/argVerifyNums.pst"); break;
     case 84: Core.EmitComment("xmlParse"); @import("corefuncs/xmlParse.pst"); break;
+    case 85: Core.EmitComment("launchBrowser"); @import("corefuncs/launchBrowser.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

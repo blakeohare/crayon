@@ -88,6 +88,7 @@ namespace Parser
         ARG_VERIFY_INT_RANGE = 82,
         ARG_VERIFY_NUMS = 83,
         XML_PARSE = 84,
+        LAUNCH_BROWSER = 85,
     }
 
     internal static class CoreFunctionIDHelper
@@ -180,6 +181,7 @@ namespace Parser
                 case "argVerifyIntRange": return (int)CoreFunctionID.ARG_VERIFY_INT_RANGE;
                 case "argVerifyNums": return (int)CoreFunctionID.ARG_VERIFY_NUMS;
                 case "xmlParse": return (int)CoreFunctionID.XML_PARSE;
+                case "launchBrowser": return (int)CoreFunctionID.LAUNCH_BROWSER;
                 default: return -1;
             }
         }

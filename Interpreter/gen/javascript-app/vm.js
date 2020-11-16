@@ -4811,6 +4811,12 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						output = xml_parse(vm, arg1[1]);
 						break;
+					case 85:
+						// launchBrowser;
+						arg1 = valueStack[--valueStackSize];
+						window.open(arg1[1]);
+						output = vm[14];
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
