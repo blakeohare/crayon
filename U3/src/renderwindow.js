@@ -39,6 +39,8 @@ let createWindow = (title, width, height, initialData) => {
         }
     });
 
+    win.setMenu(null);
+
     const close = () => { win.close(); };
 
     const sendToRenderer = data => {
