@@ -616,24 +616,7 @@ var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	return vm;
 };
 
-var crypto_digest = function(globals, bytes, algo) {
-	var byteArray = listImplToBytes(bytes);
-	var byteList = [];
-	var i = 0;
-	while ((i < byteArray.length)) {
-		byteList.push(byteArray[i]);
-		i += 1;
-	}
-	if ((algo == 1)) {
-		return crypto_md5_digestMd5(globals, byteList);
-	}
-	if ((algo == 2)) {
-		return globals[0];
-	}
-	return globals[0];
-};
-
-var crypto_md5_bitShiftRight = function(value, amount) {
+var crypto_bitShiftRight = function(value, amount) {
 	if ((amount == 0)) {
 		return value;
 	}
@@ -645,8 +628,35 @@ var crypto_md5_bitShiftRight = function(value, amount) {
 	return (((value >> amount)) & ((mask >> ((amount - 1)))));
 };
 
-var crypto_md5_bitwiseNot = function(x) {
+var crypto_bitwiseNot = function(x) {
 	return (-x - 1);
+};
+
+var crypto_digest = function(globals, bytes, algo) {
+	var byteArray = listImplToBytes(bytes);
+	var byteList = [];
+	var i = 0;
+	while ((i < byteArray.length)) {
+		byteList.push(byteArray[i]);
+		i += 1;
+	}
+	if ((algo == 1)) {
+		return crypto_md5_digest(globals, byteList);
+	}
+	if ((algo == 2)) {
+		return crypto_sha1_digest(globals, byteList);
+	}
+	return globals[0];
+};
+
+var crypto_leftRotate = function(value, amt) {
+	if ((amt == 0)) {
+		return value;
+	}
+	var a = (value << amt);
+	var b = crypto_bitShiftRight(value, (32 - amt));
+	var result = (a | b);
+	return result;
 };
 
 var crypto_md5_createWordsForBlock = function(startIndex, byteList, mWords) {
@@ -658,7 +668,7 @@ var crypto_md5_createWordsForBlock = function(startIndex, byteList, mWords) {
 	return 0;
 };
 
-var crypto_md5_digestMd5 = function(globals, inputBytes) {
+var crypto_md5_digest = function(globals, inputBytes) {
 	var originalLength = (inputBytes.length * 8);
 	var shiftTable = PST$createNewArray(64);
 	var K = PST$createNewArray(64);
@@ -805,16 +815,6 @@ var crypto_md5_digestMd5 = function(globals, inputBytes) {
 	return buildList(output);
 };
 
-var crypto_md5_leftRotate = function(value, amt) {
-	if ((amt == 0)) {
-		return value;
-	}
-	var a = (value << amt);
-	var b = crypto_md5_bitShiftRight(value, (32 - amt));
-	var result = (a | b);
-	return result;
-};
-
 var crypto_md5_magicShuffle = function(mWords, sineValues, shiftValues, mask32, a, b, c, d, counter) {
 	var roundNumber = (counter >> 4);
 	var t = 0;
@@ -822,21 +822,126 @@ var crypto_md5_magicShuffle = function(mWords, sineValues, shiftValues, mask32, 
 	var sineValue = sineValues[counter];
 	var mWord = 0;
 	if ((roundNumber == 0)) {
-		t = (((b & c)) | ((crypto_md5_bitwiseNot(b) & d)));
+		t = (((b & c)) | ((crypto_bitwiseNot(b) & d)));
 		mWord = mWords[counter];
 	} else if ((roundNumber == 1)) {
-		t = (((b & d)) | ((c & crypto_md5_bitwiseNot(d))));
+		t = (((b & d)) | ((c & crypto_bitwiseNot(d))));
 		mWord = mWords[((((5 * counter) + 1)) & 15)];
 	} else if ((roundNumber == 2)) {
 		t = (b ^ c ^ d);
 		mWord = mWords[((((3 * counter) + 5)) & 15)];
 	} else {
-		t = (c ^ ((b | crypto_md5_bitwiseNot(d))));
+		t = (c ^ ((b | crypto_bitwiseNot(d))));
 		mWord = mWords[(((7 * counter)) & 15)];
 	}
 	t = (((a + t + mWord + sineValue)) & mask32);
-	t = (b + crypto_md5_leftRotate(t, shiftAmount));
+	t = (b + crypto_leftRotate(t, shiftAmount));
 	return (t & mask32);
+};
+
+var crypto_sha1_createWordsForBlock = function(startIndex, byteList, mWords) {
+	var i = 0;
+	while ((i < 64)) {
+		mWords[(i >> 2)] = (((byteList[(startIndex + i)] << 24)) | ((byteList[(startIndex + i + 1)] << 16)) | ((byteList[(startIndex + i + 2)] << 8)) | (byteList[(startIndex + i + 3)]));
+		i += 4;
+	}
+	return 0;
+};
+
+var crypto_sha1_digest = function(globals, inputBytes) {
+	var originalLength = (inputBytes.length * 8);
+	var h0 = uint32Hack(26437, 8961);
+	var h1 = uint32Hack(61389, 43913);
+	var h2 = uint32Hack(39098, 56574);
+	var h3 = uint32Hack(4146, 21622);
+	var h4 = uint32Hack(50130, 57840);
+	inputBytes.push(128);
+	while (((inputBytes.length % 64) != 56)) {
+		inputBytes.push(0);
+	}
+	inputBytes.push(0);
+	inputBytes.push(0);
+	inputBytes.push(0);
+	inputBytes.push(0);
+	inputBytes.push(((originalLength >> 24) & 255));
+	inputBytes.push(((originalLength >> 16) & 255));
+	inputBytes.push(((originalLength >> 8) & 255));
+	inputBytes.push(((originalLength >> 0) & 255));
+	var mWords = PST$createNewArray(80);
+	var mask32 = uint32Hack(65535, 65535);
+	var f = 0;
+	var temp = 0;
+	var k = 0;
+	var kValues = PST$createNewArray(4);
+	kValues[0] = uint32Hack(23170, 31129);
+	kValues[1] = uint32Hack(28377, 60321);
+	kValues[2] = uint32Hack(36635, 48348);
+	kValues[3] = uint32Hack(51810, 49622);
+	var chunkIndex = 0;
+	while ((chunkIndex < inputBytes.length)) {
+		crypto_sha1_createWordsForBlock(chunkIndex, inputBytes, mWords);
+		var i = 16;
+		while ((i < 80)) {
+			mWords[i] = crypto_leftRotate((mWords[(i - 3)] ^ mWords[(i - 8)] ^ mWords[(i - 14)] ^ mWords[(i - 16)]), 1);
+			i += 1;
+		}
+		var a = h0;
+		var b = h1;
+		var c = h2;
+		var d = h3;
+		var e = h4;
+		var j = 0;
+		while ((j < 80)) {
+			if ((j < 20)) {
+				f = (((b & c)) | ((crypto_bitwiseNot(b) & d)));
+				k = kValues[0];
+			} else if ((j < 40)) {
+				f = (b ^ c ^ d);
+				k = kValues[1];
+			} else if ((j < 60)) {
+				f = (((b & c)) | ((b & d)) | ((c & d)));
+				k = kValues[2];
+			} else {
+				f = (b ^ c ^ d);
+				k = kValues[3];
+			}
+			temp = (crypto_leftRotate(a, 5) + f + e + k + mWords[j]);
+			e = d;
+			d = c;
+			c = crypto_leftRotate(b, 30);
+			b = a;
+			a = (temp & mask32);
+			j += 1;
+		}
+		h0 = (((h0 + a)) & mask32);
+		h1 = (((h1 + b)) & mask32);
+		h2 = (((h2 + c)) & mask32);
+		h3 = (((h3 + d)) & mask32);
+		h4 = (((h4 + e)) & mask32);
+		chunkIndex += 64;
+	}
+	var output = [];
+	output.push(buildInteger(globals, ((h0 >> 24) & 255)));
+	output.push(buildInteger(globals, ((h0 >> 16) & 255)));
+	output.push(buildInteger(globals, ((h0 >> 8) & 255)));
+	output.push(buildInteger(globals, (h0 & 255)));
+	output.push(buildInteger(globals, ((h1 >> 24) & 255)));
+	output.push(buildInteger(globals, ((h1 >> 16) & 255)));
+	output.push(buildInteger(globals, ((h1 >> 8) & 255)));
+	output.push(buildInteger(globals, (h1 & 255)));
+	output.push(buildInteger(globals, ((h2 >> 24) & 255)));
+	output.push(buildInteger(globals, ((h2 >> 16) & 255)));
+	output.push(buildInteger(globals, ((h2 >> 8) & 255)));
+	output.push(buildInteger(globals, (h2 & 255)));
+	output.push(buildInteger(globals, ((h3 >> 24) & 255)));
+	output.push(buildInteger(globals, ((h3 >> 16) & 255)));
+	output.push(buildInteger(globals, ((h3 >> 8) & 255)));
+	output.push(buildInteger(globals, (h3 & 255)));
+	output.push(buildInteger(globals, ((h4 >> 24) & 255)));
+	output.push(buildInteger(globals, ((h4 >> 16) & 255)));
+	output.push(buildInteger(globals, ((h4 >> 8) & 255)));
+	output.push(buildInteger(globals, (h4 & 255)));
+	return buildList(output);
 };
 
 var DateTime_getNativeTimezone = function(value) {
