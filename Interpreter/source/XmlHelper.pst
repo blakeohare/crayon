@@ -1,63 +1,99 @@
-﻿string lib_xml_parseImpl(
-    VM.VmContext vm,
+﻿/*
+    arg 1: string to parse
+    arg 2: output list
+    arg 3: dummy object instance with nativeData, (although if it doesn't, this function must initialize it)
+        nativeData[0] -> Dictionary<string, string> maps XML entity codes to their string instances.
+        nativeData[1] -> Dictionary<int, int> keys are a set of character codes that end unquoted attribute values. Value is ignored.
+
+    output is the error encountered or null.
+
+    The output list is an empty list that data is added to in a simple format...
+
+    element: [
+        (bool) true,
+        (string) name,
+        (string list) attribute names,
+        (string list) attribute values,
+        (list of lists) children in order. can be other elements or text elements
+    ]
+
+    text element: [
+        (bool) false,
+        (string) value
+    ]
+*/
+Value xml_parse(VmContext vm, string xml) {
+
+    Dictionary<string, string> entityLookup = new Dictionary<string, string>();
+    entityLookup["amp"] = "&";
+    entityLookup["lt"] = "<";
+    entityLookup["gt"] = ">";
+    entityLookup["quot"] = "\"";
+    entityLookup["apos"] = "'";
+
+    Dictionary<int, int> stringEnders = new Dictionary<int, int>();
+    stringEnders[Core.Ord(' ')] = 1;
+    stringEnders[Core.Ord('"')] = 1;
+    stringEnders[Core.Ord('\'')] = 1;
+    stringEnders[Core.Ord('<')] = 1;
+    stringEnders[Core.Ord('>')] = 1;
+    stringEnders[Core.Ord('\t')] = 1;
+    stringEnders[Core.Ord('\r')] = 1;
+    stringEnders[Core.Ord('\n')] = 1;
+    stringEnders[Core.Ord('/')] = 1;
+
+    List<Value> output = new List<Value>();
+
+    string errMsg = xml_parseImpl(
+        vm,
+        xml,
+        new Array<int>(1),
+        output,
+        entityLookup,
+        stringEnders);
+
+    if (errMsg != null) {
+        return buildString(vm.globals, errMsg);
+    }
+
+    return buildList(output);
+}
+
+string xml_parseImpl(
+    VmContext vm,
     string input,
     Array<int> indexPtr,
-    List<VM.Value> output,
+    List<Value> output,
     Dictionary<string, string> entityLookup,
     Dictionary<int, int> stringEnders) {
 
-    if (entityLookup.Size() == 0) {
-        entityLookup["amp"] = "&";
-        entityLookup["lt"] = "<";
-        entityLookup["gt"] = ">";
-        entityLookup["quot"] = "\"";
-        entityLookup["apos"] = "'";
-        // TODO: consider having two lookups, this one and another for character code entities whose
-        // lifetime is bound to the life of this function call. Otherwise using one cache could potentially
-        // be a huge memory leak.
-        // For documents containing foreign text, this could be a very good performance boost as opposed to
-        // parsing each code each time.
-    }
-
-    if (stringEnders.Size() == 0) {
-        stringEnders[Core.Ord(' ')] = 1;
-        stringEnders[Core.Ord('"')] = 1;
-        stringEnders[Core.Ord('\'')] = 1;
-        stringEnders[Core.Ord('<')] = 1;
-        stringEnders[Core.Ord('>')] = 1;
-        stringEnders[Core.Ord('\t')] = 1;
-        stringEnders[Core.Ord('\r')] = 1;
-        stringEnders[Core.Ord('\n')] = 1;
-        stringEnders[Core.Ord('/')] = 1;
-    }
-
     indexPtr[0] = 0;
-    lib_xml_skipWhitespace(input, indexPtr);
+    xml_skipWhitespace(input, indexPtr);
     // Skip the XML declaration if present. Non-Standalone is not supported and the encoding is already changed to UTF-8 if it is a Crayon string.
     // This naive implementation feels silly though. I should parse the attributes out and verify them.
-    if (lib_xml_popIfPresent(input, indexPtr, "<?xml")) {
+    if (xml_popIfPresent(input, indexPtr, "<?xml")) {
         int newBegin = input.IndexOf("?>");
         if (newBegin == -1) {
-            return lib_xml_error(input, indexPtr[0] - 5, "XML Declaration is not closed.");
+            return xml_error(input, indexPtr[0] - 5, "XML Declaration is not closed.");
         }
-        indexPtr[0] = (newBegin + 2);
+        indexPtr[0] = newBegin + 2;
     }
-    string error = lib_xml_skipStuff(input, indexPtr);
+    string error = xml_skipStuff(input, indexPtr);
     if (error != null) {
         return error;
     }
-    error = lib_xml_parseElement(vm, input, indexPtr, output, entityLookup, stringEnders);
+    error = xml_parseElement(vm, input, indexPtr, output, entityLookup, stringEnders);
     if (error != null) {
         return error;
     }
-    lib_xml_skipStuff(input, indexPtr);
+    xml_skipStuff(input, indexPtr);
     if (indexPtr[0] != input.Size()) {
-        return lib_xml_error(input, indexPtr[0], "Unexpected text.");
+        return xml_error(input, indexPtr[0], "Unexpected text.");
     }
     return null;
 }
 
-string lib_xml_error(string xml, int index, string msg) {
+string xml_error(string xml, int index, string msg) {
     string loc = "";
     if (index < xml.Size()) {
         int line = 1;
@@ -77,12 +113,12 @@ string lib_xml_error(string xml, int index, string msg) {
     return Core.StringConcatAll("XML parse error", loc, ": ", msg);
 }
 
-string lib_xml_skipStuff(string xml, Array<int> indexPtr) {
+string xml_skipStuff(string xml, Array<int> indexPtr) {
     int index = indexPtr[0] - 1;
     while (index < indexPtr[0]) {
         index = indexPtr[0];
-        lib_xml_skipWhitespace(xml, indexPtr);
-        string error = lib_xml_skipComment(xml, indexPtr);
+        xml_skipWhitespace(xml, indexPtr);
+        string error = xml_skipComment(xml, indexPtr);
         if (error != null) {
             return error;
         }
@@ -90,7 +126,7 @@ string lib_xml_skipStuff(string xml, Array<int> indexPtr) {
     return null;
 }
 
-int lib_xml_skipWhitespace(string xml, Array<int> indexPtr) {
+int xml_skipWhitespace(string xml, Array<int> indexPtr) {
     int length = xml.Size();
     for (int i = indexPtr[0]; i < length; i += 1) {
         char c = xml[i];
@@ -103,22 +139,22 @@ int lib_xml_skipWhitespace(string xml, Array<int> indexPtr) {
     return 0;
 }
 
-string lib_xml_skipComment(string xml, Array<int> indexPtr) {
-    if (lib_xml_popIfPresent(xml, indexPtr, "<!--")) {
+string xml_skipComment(string xml, Array<int> indexPtr) {
+    if (xml_popIfPresent(xml, indexPtr, "<!--")) {
         int i = xml.IndexOf("-->", indexPtr[0]);
         if (i == -1) {
-            return lib_xml_error(xml, indexPtr[0] - 4, "Unclosed comment.");
+            return xml_error(xml, indexPtr[0] - 4, "Unclosed comment.");
         }
         indexPtr[0] = (i + 3);
     }
     return null;
 }
 
-bool lib_xml_isNext(string xml, Array<int> indexPtr, string value) {
+bool xml_isNext(string xml, Array<int> indexPtr, string value) {
     return xml.SubStringIsEqualTo(indexPtr[0], value);
 }
 
-bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
+bool xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
     if (xml.SubStringIsEqualTo(indexPtr[0], s)) {
         indexPtr[0] = (indexPtr[0] + s.Size());
         return true;
@@ -126,71 +162,71 @@ bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
     return false;
 }
 
-string lib_xml_parseElement(
-    VM.VmContext vm,
+string xml_parseElement(
+    VmContext vm,
     string xml,
     Array<int> indexPtr,
-    List<VM.Value> output,
+    List<Value> output,
     Dictionary<string, string> entityLookup,
     Dictionary<int, int> stringEnders) {
 
     int length = xml.Size();
-    List<VM.Value> attributeKeys = new List<VM.Value>();
-    List<VM.Value> attributeValues = new List<VM.Value>();
-    List<VM.Value> children = new List<VM.Value>();
-    List<VM.Value> element = new List<VM.Value>();
+    List<Value> attributeKeys = new List<Value>();
+    List<Value> attributeValues = new List<Value>();
+    List<Value> children = new List<Value>();
+    List<Value> element = new List<Value>();
     string error = null;
-    if (!lib_xml_popIfPresent(xml, indexPtr, "<")) {
-        return lib_xml_error(xml, indexPtr[0], "Expected: '<'");
+    if (!xml_popIfPresent(xml, indexPtr, "<")) {
+        return xml_error(xml, indexPtr[0], "Expected: '<'");
     }
-    string name = lib_xml_popName(xml, indexPtr);
-    lib_xml_skipWhitespace(xml, indexPtr);
+    string name = xml_popName(xml, indexPtr);
+    xml_skipWhitespace(xml, indexPtr);
     bool hasClosingTag = true;
     while (true) {
         if (indexPtr[0] >= length) {
-            return lib_xml_error(xml, length, "Unexpected EOF");
+            return xml_error(xml, length, "Unexpected EOF");
         }
-        if (lib_xml_popIfPresent(xml, indexPtr, ">")) {
+        if (xml_popIfPresent(xml, indexPtr, ">")) {
             break;
         }
-        if (lib_xml_popIfPresent(xml, indexPtr, "/>")) {
+        if (xml_popIfPresent(xml, indexPtr, "/>")) {
             hasClosingTag = false;
             break;
         }
-        string key = lib_xml_popName(xml, indexPtr);
+        string key = xml_popName(xml, indexPtr);
         if (key.Size() == 0) {
-            return lib_xml_error(xml, indexPtr[0], "Expected attribute name.");
+            return xml_error(xml, indexPtr[0], "Expected attribute name.");
         }
-        attributeKeys.Add(VM.buildString(vm.globals, key));
-        lib_xml_skipWhitespace(xml, indexPtr);
-        if (!lib_xml_popIfPresent(xml, indexPtr, "=")) {
-            return lib_xml_error(xml, indexPtr[0], "Expected: '='");
+        attributeKeys.Add(buildString(vm.globals, key));
+        xml_skipWhitespace(xml, indexPtr);
+        if (!xml_popIfPresent(xml, indexPtr, "=")) {
+            return xml_error(xml, indexPtr[0], "Expected: '='");
         }
-        lib_xml_skipWhitespace(xml, indexPtr);
-        error = lib_xml_popString(vm, xml, indexPtr, attributeValues, entityLookup, stringEnders);
+        xml_skipWhitespace(xml, indexPtr);
+        error = xml_popString(vm, xml, indexPtr, attributeValues, entityLookup, stringEnders);
         if (error != null) {
             return error;
         }
-        lib_xml_skipWhitespace(xml, indexPtr);
+        xml_skipWhitespace(xml, indexPtr);
     }
     if (hasClosingTag) {
         string close = Core.StringConcatAll("</", name, ">");
-        while (!lib_xml_popIfPresent(xml, indexPtr, close)) {
-            if (lib_xml_isNext(xml, indexPtr, "</")) {
-                error = lib_xml_error(xml, indexPtr[0] - 2, "Unexpected close tag.");
+        while (!xml_popIfPresent(xml, indexPtr, close)) {
+            if (xml_isNext(xml, indexPtr, "</")) {
+                error = xml_error(xml, indexPtr[0] - 2, "Unexpected close tag.");
             } else {
-                if (lib_xml_isNext(xml, indexPtr, "<!--")) {
-                    error = lib_xml_skipComment(xml, indexPtr);
+                if (xml_isNext(xml, indexPtr, "<!--")) {
+                    error = xml_skipComment(xml, indexPtr);
                 } else {
-                    if (lib_xml_isNext(xml, indexPtr, "<")) {
-                        error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
+                    if (xml_isNext(xml, indexPtr, "<")) {
+                        error = xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
                     } else {
-                        error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
+                        error = xml_parseText(vm, xml, indexPtr, children, entityLookup);
                     }
                 }
             }
             if ((error == null) && (indexPtr[0] >= length)) {
-                error = lib_xml_error(xml, length, "Unexpected EOF. Unclosed tag.");
+                error = xml_error(xml, length, "Unexpected EOF. Unclosed tag.");
             }
             if (error != null) {
                 return error;
@@ -198,15 +234,15 @@ string lib_xml_parseElement(
         }
     }
     element.Add(vm.globalTrue);
-    element.Add(VM.buildString(vm.globals, name));
-    element.Add(VM.buildList(attributeKeys));
-    element.Add(VM.buildList(attributeValues));
-    element.Add(VM.buildList(children));
-    output.Add(VM.buildList(element));
+    element.Add(buildString(vm.globals, name));
+    element.Add(buildList(attributeKeys));
+    element.Add(buildList(attributeValues));
+    element.Add(buildList(children));
+    output.Add(buildList(element));
     return null;
 }
 
-string lib_xml_parseText(VM.VmContext vm, string xml, Array<int> indexPtr, List<VM.Value> output, Dictionary<string, string> entityLookup) {
+string xml_parseText(VmContext vm, string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup) {
     int length = xml.Size();
     int start = indexPtr[0];
     int i = start;
@@ -225,17 +261,17 @@ string lib_xml_parseText(VM.VmContext vm, string xml, Array<int> indexPtr, List<
         indexPtr[0] = i;
         string textValue = xml.SubString(start, (i - start));
         if (ampFound) {
-            textValue = lib_xml_ampUnescape(textValue, entityLookup);
+            textValue = xml_ampUnescape(textValue, entityLookup);
         }
-        List<VM.Value> textElement = new List<VM.Value>();
+        List<Value> textElement = new List<Value>();
         textElement.Add(vm.globalFalse);
-        textElement.Add(VM.buildString(vm.globals, textValue));
-        output.Add(VM.buildList(textElement));
+        textElement.Add(buildString(vm.globals, textValue));
+        output.Add(buildList(textElement));
     }
     return null;
 }
 
-string lib_xml_popName(string xml, Array<int> indexPtr) {
+string xml_popName(string xml, Array<int> indexPtr) {
     int length = xml.Size();
     int i = indexPtr[0];
     int start = i;
@@ -261,11 +297,11 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
     return output;
 }
 
-string lib_xml_popString(
-    VM.VmContext vm,
+string xml_popString(
+    VmContext vm,
     string xml,
     Array<int> indexPtr,
-    List<VM.Value> attributeValueOut,
+    List<Value> attributeValueOut,
     Dictionary<string, string> entityLookup,
     Dictionary<int, int> stringEnders) {
 
@@ -309,13 +345,13 @@ string lib_xml_popString(
     indexPtr[0] = i;
     string output = xml.SubString(start, end - start);
     if (ampFound) {
-        output = lib_xml_ampUnescape(output, entityLookup);
+        output = xml_ampUnescape(output, entityLookup);
     }
-    attributeValueOut.Add(VM.buildString(vm.globals, output));
+    attributeValueOut.Add(buildString(vm.globals, output));
     return null;
 }
 
-string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup) {
+string xml_ampUnescape(string value, Dictionary<string, string> entityLookup) {
     Array<string> ampParts = value.Split("&");
 
     for (int i = 1; i < ampParts.Size(); i += 1) {
@@ -325,7 +361,7 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
         // TODO: Pass in a boolean for strict mode, maybe? Or maybe that's too puritanical?
         if (semicolon != -1) {
             string entityCode = component.SubString(0, semicolon);
-            string entityValue = lib_xml_getEntity(entityCode, entityLookup);
+            string entityValue = xml_getEntity(entityCode, entityLookup);
             if (entityValue == null) {
                 // put the & back and just move on.
                 entityValue = "&";
@@ -340,7 +376,7 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
     return ampParts.Join("");
 }
 
-string lib_xml_getEntity(string code, Dictionary<string, string> entityLookup) {
+string xml_getEntity(string code, Dictionary<string, string> entityLookup) {
     if (entityLookup.Contains(code)) {
         return entityLookup[code];
     }

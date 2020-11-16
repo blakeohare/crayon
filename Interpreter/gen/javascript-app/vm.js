@@ -93,6 +93,8 @@ PST$sortedCopyOfArray = function(n) {
 	return a;
 };
 
+PST$checksubstring = function(s, index, lookfor) { return s.substring(index, index + lookfor.length) === lookfor; };
+
 PST$extCallbacks = {};
 
 PST$registerExtensibleCallback = (name, fn) => { PST$extCallbacks[name] = fn; };
@@ -4804,6 +4806,11 @@ var interpretImpl = function(vm, executionContextId) {
 							i += 1;
 						}
 						break;
+					case 84:
+						// xmlParse;
+						arg1 = valueStack[--valueStackSize];
+						output = xml_parse(vm, arg1[1]);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -7479,4 +7486,313 @@ var vmEnvSetCommandLineArgs = function(vm, args) {
 
 var vmGetGlobals = function(vm) {
 	return vm[13];
+};
+
+var xml_ampUnescape = function(value, entityLookup) {
+	var ampParts = value.split("&");
+	var i = 1;
+	while ((i < ampParts.length)) {
+		var component = ampParts[i];
+		var semicolon = component.indexOf(";");
+		if ((semicolon != -1)) {
+			var entityCode = component.substring(0, 0 + semicolon);
+			var entityValue = xml_getEntity(entityCode, entityLookup);
+			if ((entityValue == null)) {
+				entityValue = "&";
+			} else {
+				component = component.substring((semicolon + 1), (semicolon + 1) + ((component.length - semicolon - 1)));
+			}
+			ampParts[i] = entityValue + component;
+		}
+		i += 1;
+	}
+	return ampParts.join("");
+};
+
+var xml_error = function(xml, index, msg) {
+	var loc = "";
+	if ((index < xml.length)) {
+		var line = 1;
+		var col = 0;
+		var i = 0;
+		while ((i <= index)) {
+			if ((xml.charAt(i) == "\n")) {
+				line += 1;
+				col = 0;
+			} else {
+				col += 1;
+			}
+			i += 1;
+		}
+		loc = [" on line ", ('' + line), ", col ", ('' + col)].join('');
+	}
+	return ["XML parse error", loc, ": ", msg].join('');
+};
+
+var xml_getEntity = function(code, entityLookup) {
+	if ((entityLookup[code] !== undefined)) {
+		return entityLookup[code];
+	}
+	return null;
+};
+
+var xml_isNext = function(xml, indexPtr, value) {
+	return PST$checksubstring(xml, indexPtr[0], value);
+};
+
+var xml_parse = function(vm, xml) {
+	var entityLookup = {};
+	entityLookup["amp"] = "&";
+	entityLookup["lt"] = "<";
+	entityLookup["gt"] = ">";
+	entityLookup["quot"] = "\"";
+	entityLookup["apos"] = "'";
+	var stringEnders = {};
+	stringEnders[(" ").charCodeAt(0)] = 1;
+	stringEnders[("\"").charCodeAt(0)] = 1;
+	stringEnders[("'").charCodeAt(0)] = 1;
+	stringEnders[("<").charCodeAt(0)] = 1;
+	stringEnders[(">").charCodeAt(0)] = 1;
+	stringEnders[("\t").charCodeAt(0)] = 1;
+	stringEnders[("\r").charCodeAt(0)] = 1;
+	stringEnders[("\n").charCodeAt(0)] = 1;
+	stringEnders[("/").charCodeAt(0)] = 1;
+	var output = [];
+	var errMsg = xml_parseImpl(vm, xml, PST$createNewArray(1), output, entityLookup, stringEnders);
+	if ((errMsg != null)) {
+		return buildString(vm[13], errMsg);
+	}
+	return buildList(output);
+};
+
+var xml_parseElement = function(vm, xml, indexPtr, output, entityLookup, stringEnders) {
+	var length = xml.length;
+	var attributeKeys = [];
+	var attributeValues = [];
+	var children = [];
+	var element = [];
+	var error = null;
+	if (!xml_popIfPresent(xml, indexPtr, "<")) {
+		return xml_error(xml, indexPtr[0], "Expected: '<'");
+	}
+	var name = xml_popName(xml, indexPtr);
+	xml_skipWhitespace(xml, indexPtr);
+	var hasClosingTag = true;
+	while (true) {
+		if ((indexPtr[0] >= length)) {
+			return xml_error(xml, length, "Unexpected EOF");
+		}
+		if (xml_popIfPresent(xml, indexPtr, ">")) {
+			break;
+		}
+		if (xml_popIfPresent(xml, indexPtr, "/>")) {
+			hasClosingTag = false;
+			break;
+		}
+		var key = xml_popName(xml, indexPtr);
+		if ((key.length == 0)) {
+			return xml_error(xml, indexPtr[0], "Expected attribute name.");
+		}
+		attributeKeys.push(buildString(vm[13], key));
+		xml_skipWhitespace(xml, indexPtr);
+		if (!xml_popIfPresent(xml, indexPtr, "=")) {
+			return xml_error(xml, indexPtr[0], "Expected: '='");
+		}
+		xml_skipWhitespace(xml, indexPtr);
+		error = xml_popString(vm, xml, indexPtr, attributeValues, entityLookup, stringEnders);
+		if ((error != null)) {
+			return error;
+		}
+		xml_skipWhitespace(xml, indexPtr);
+	}
+	if (hasClosingTag) {
+		var close = ["</", name, ">"].join('');
+		while (!xml_popIfPresent(xml, indexPtr, close)) {
+			if (xml_isNext(xml, indexPtr, "</")) {
+				error = xml_error(xml, (indexPtr[0] - 2), "Unexpected close tag.");
+			} else if (xml_isNext(xml, indexPtr, "<!--")) {
+				error = xml_skipComment(xml, indexPtr);
+			} else if (xml_isNext(xml, indexPtr, "<")) {
+				error = xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
+			} else {
+				error = xml_parseText(vm, xml, indexPtr, children, entityLookup);
+			}
+			if (((error == null) && (indexPtr[0] >= length))) {
+				error = xml_error(xml, length, "Unexpected EOF. Unclosed tag.");
+			}
+			if ((error != null)) {
+				return error;
+			}
+		}
+	}
+	element.push(vm[15]);
+	element.push(buildString(vm[13], name));
+	element.push(buildList(attributeKeys));
+	element.push(buildList(attributeValues));
+	element.push(buildList(children));
+	output.push(buildList(element));
+	return null;
+};
+
+var xml_parseImpl = function(vm, input, indexPtr, output, entityLookup, stringEnders) {
+	indexPtr[0] = 0;
+	xml_skipWhitespace(input, indexPtr);
+	if (xml_popIfPresent(input, indexPtr, "<?xml")) {
+		var newBegin = input.indexOf("?>");
+		if ((newBegin == -1)) {
+			return xml_error(input, (indexPtr[0] - 5), "XML Declaration is not closed.");
+		}
+		indexPtr[0] = (newBegin + 2);
+	}
+	var error = xml_skipStuff(input, indexPtr);
+	if ((error != null)) {
+		return error;
+	}
+	error = xml_parseElement(vm, input, indexPtr, output, entityLookup, stringEnders);
+	if ((error != null)) {
+		return error;
+	}
+	xml_skipStuff(input, indexPtr);
+	if ((indexPtr[0] != input.length)) {
+		return xml_error(input, indexPtr[0], "Unexpected text.");
+	}
+	return null;
+};
+
+var xml_parseText = function(vm, xml, indexPtr, output, entityLookup) {
+	var length = xml.length;
+	var start = indexPtr[0];
+	var i = start;
+	var ampFound = false;
+	var c = " ";
+	while ((i < length)) {
+		c = xml.charAt(i);
+		if ((c == "<")) {
+			break;
+		} else if ((c == "&")) {
+			ampFound = true;
+		}
+		i += 1;
+	}
+	if ((i > start)) {
+		indexPtr[0] = i;
+		var textValue = xml.substring(start, start + (i - start));
+		if (ampFound) {
+			textValue = xml_ampUnescape(textValue, entityLookup);
+		}
+		var textElement = [];
+		textElement.push(vm[16]);
+		textElement.push(buildString(vm[13], textValue));
+		output.push(buildList(textElement));
+	}
+	return null;
+};
+
+var xml_popIfPresent = function(xml, indexPtr, s) {
+	if (PST$checksubstring(xml, indexPtr[0], s)) {
+		indexPtr[0] = (indexPtr[0] + s.length);
+		return true;
+	}
+	return false;
+};
+
+var xml_popName = function(xml, indexPtr) {
+	var length = xml.length;
+	var i = indexPtr[0];
+	var start = i;
+	var c = " ";
+	while ((i < length)) {
+		c = xml.charAt(i);
+		if ((((c >= "a") && (c <= "z")) || ((c >= "A") && (c <= "Z")) || ((c >= "0") && (c <= "9")) || (c == "_") || (c == ".") || (c == ":") || (c == "-"))) {
+		} else {
+			break;
+		}
+		i += 1;
+	}
+	var output = xml.substring(start, start + (i - start));
+	indexPtr[0] = i;
+	return output;
+};
+
+var xml_popString = function(vm, xml, indexPtr, attributeValueOut, entityLookup, stringEnders) {
+	var length = xml.length;
+	var start = indexPtr[0];
+	var end = length;
+	var i = start;
+	var stringType = xml.charCodeAt(i);
+	var unwrapped = ((stringType != ("\"").charCodeAt(0)) && (stringType != ("'").charCodeAt(0)));
+	var ampFound = false;
+	var c = (" ").charCodeAt(0);
+	if (unwrapped) {
+		while ((i < length)) {
+			c = xml.charCodeAt(i);
+			if ((stringEnders[c] !== undefined)) {
+				end = i;
+				break;
+			} else if ((c == ("&").charCodeAt(0))) {
+				ampFound = true;
+			}
+			i += 1;
+		}
+	} else {
+		i += 1;
+		start = i;
+		while ((i < length)) {
+			c = xml.charCodeAt(i);
+			if ((c == stringType)) {
+				end = i;
+				i += 1;
+				break;
+			} else if ((c == ("&").charCodeAt(0))) {
+				ampFound = true;
+			}
+			i += 1;
+		}
+	}
+	indexPtr[0] = i;
+	var output = xml.substring(start, start + (end - start));
+	if (ampFound) {
+		output = xml_ampUnescape(output, entityLookup);
+	}
+	attributeValueOut.push(buildString(vm[13], output));
+	return null;
+};
+
+var xml_skipComment = function(xml, indexPtr) {
+	if (xml_popIfPresent(xml, indexPtr, "<!--")) {
+		var i = xml.indexOf("-->", indexPtr[0]);
+		if ((i == -1)) {
+			return xml_error(xml, (indexPtr[0] - 4), "Unclosed comment.");
+		}
+		indexPtr[0] = (i + 3);
+	}
+	return null;
+};
+
+var xml_skipStuff = function(xml, indexPtr) {
+	var index = (indexPtr[0] - 1);
+	while ((index < indexPtr[0])) {
+		index = indexPtr[0];
+		xml_skipWhitespace(xml, indexPtr);
+		var error = xml_skipComment(xml, indexPtr);
+		if ((error != null)) {
+			return error;
+		}
+	}
+	return null;
+};
+
+var xml_skipWhitespace = function(xml, indexPtr) {
+	var length = xml.length;
+	var i = indexPtr[0];
+	while ((i < length)) {
+		var c = xml.charAt(i);
+		if (((c != " ") && (c != "\t") && (c != "\n") && (c != "\r"))) {
+			indexPtr[0] = i;
+			return 0;
+		}
+		i += 1;
+	}
+	indexPtr[0] = i;
+	return 0;
 };

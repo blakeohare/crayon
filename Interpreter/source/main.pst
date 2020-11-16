@@ -20,3 +20,4 @@
 @import("TypesUtil.pst");
 @import("ValueUtil.pst");
 @import("VmPublicUtil.pst");
+@import("XmlHelper.pst");

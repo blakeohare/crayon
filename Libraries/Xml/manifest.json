@@ -2,9 +2,5 @@
     "name": "Xml",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/xml",
-    "description": "Library for parsing simple XML.",
-
-    "cni": [
-        { "name": "lib_xml_parse", "argc": 3 }
-    ]
+    "description": "Library for parsing simple XML."
 }
