@@ -1,13 +1,12 @@
 ﻿namespace Xml {
 
     function parse(string, options = 0) {
-        output = [];
-        error = $lib_xml_parse(string, output, XmlElement._DUMMY);
-        if (error != null) {
+        errorOrList = $$$('xmlParse', string);
+        if (Core.typeof(errorOrList) == Core.Type.STRING) {
             if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
-            throw new Exception(error);
+            throw new Exception(errorOrList);
         }
-        root = Xml._objGen(output[0], {}, options);
+        root = Xml._objGen(errorOrList[0], {}, options);
 
         if ((options & Xml.XmlOption.NAMESPACES) != 0) {
             return Xml._convertToNamespaces(root);

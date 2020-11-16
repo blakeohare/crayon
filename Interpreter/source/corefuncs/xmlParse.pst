@@ -1,0 +1,3 @@
+﻿@import("inline/1_arg.pst");
+
+output = xml_parse(vm, (string) arg1.internalValue);
