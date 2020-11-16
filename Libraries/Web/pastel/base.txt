@@ -1,3 +1,0 @@
-SOURCE: src/main.pst
-
-EXT-TYPE: void _lib_web_launchBrowser(string url);

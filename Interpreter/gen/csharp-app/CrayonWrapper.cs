@@ -6172,6 +6172,12 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[--valueStackSize];
                                 output = xml_parse(vm, (string)arg1.internalValue);
                                 break;
+                            case 85:
+                                // launchBrowser;
+                                arg1 = valueStack[--valueStackSize];
+                                System.Diagnostics.Process.Start((string)arg1.internalValue);
+                                output = vm.globalNull;
+                                break;
                         }
                         if ((row[1] == 1))
                         {
