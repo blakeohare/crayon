@@ -16,11 +16,13 @@ namespace Exporter
             string byteCode,
             IList<AssemblyMetadata> assemblies,
             string resourceManifest,
-            string imageSheetManifest)
+            string imageSheetManifest,
+            string imageManifest2Text)
         {
             byte[] cbxFileBytes = GenerateCbxBinaryData(
                 resourceManifest,
                 imageSheetManifest,
+                imageManifest2Text,
                 assemblies,
                 byteCode);
 
@@ -47,6 +49,7 @@ namespace Exporter
         private static byte[] GenerateCbxBinaryData(
             string resourceManifestText,
             string imageSheetManifestText,
+            string imageManifest2Text,
             IList<AssemblyMetadata> assemblies,
             string byteCode)
         {
@@ -84,6 +87,14 @@ namespace Exporter
                 cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
                 cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
                 cbxOutput.AddRange(imageSheetManifest);
+            }
+
+            if (imageManifest2Text != null)
+            {
+                byte[] imageManifest = StringUtil.ToUtf8Bytes(imageManifest2Text);
+                cbxOutput.AddRange("IMGS".ToCharArray().Select(c => (byte)c));
+                cbxOutput.AddRange(GetBigEndian4Byte(imageManifest.Length));
+                cbxOutput.AddRange(imageManifest);
             }
 
             return cbxOutput.ToArray();
