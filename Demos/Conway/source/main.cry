@@ -1,5 +1,5 @@
-﻿import Game;
-import Graphics2D;
+﻿import U3Game;
+import U3Graphics2D;
 import Math;
 import Random;
 
@@ -19,7 +19,13 @@ function getRandomColor() {
 }
 
 function main() {
-    window = new GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+    window = new GameWindow()
+        .setTitle("Conway's Game of Life")
+        .setFps(FPS)
+        .setGameSize(SCREEN_WIDTH, SCREEN_HEIGHT)
+        .show(false);
+
+    Draw = window.getDrawingContext();
 
     totalCells = WIDTH * HEIGHT;
 
@@ -78,6 +84,7 @@ function main() {
 
     while (true) {
         for (event : window.pumpEvents()) {
+            /*
             switch (event.type) {
                 case EventType.QUIT:
                     return;
@@ -98,6 +105,7 @@ function main() {
                     mousePressed = false;
                     break;
             }
+            */
         }
 
         if (lastPosition >= 0) {
