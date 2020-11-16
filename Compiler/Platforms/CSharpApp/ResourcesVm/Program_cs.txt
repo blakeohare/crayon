@@ -94,7 +94,7 @@ namespace CrayonRuntime
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ImageSheetManifest = cbxDecoder.ImageSheetManifest;
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
-            Interpreter.Structs.VmContext vm = CrayonWrapper.createVm(byteCode, cbxDecoder.ResourceManifest, ""); // TODO: add this last parameter to CBX
+            Interpreter.Structs.VmContext vm = CrayonWrapper.createVm(byteCode, cbxDecoder.ResourceManifest, cbxDecoder.ImageManifest);
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
             vm.environment.stdoutPrefix = usePrefixes ? "STDOUT" : null;
             vm.environment.stacktracePrefix = usePrefixes ? "STACKTRACE" : null;
