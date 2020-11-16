@@ -1,4 +1,6 @@
 ﻿import MessageHub;
+import ProcessUtil;
+import Environment;
 
 namespace U3Direct {
 
@@ -17,7 +19,18 @@ namespace U3Direct {
                 this._hub.setDebugOverrideToken('u3debug');
             } else {
                 this._hub.setDesktopInitializer(token => {
-                    throw new NotImplementedException();
+                    currentProcessId = 0; // TODO: include the current process ID as an arg
+                    cryHome = Environment.getEnvironmentVariable('CRAYON_HOME');
+                    if (cryHome == null) throw new Exception("CRAYON_HOME not set.");
+                    u3Executable = cryHome + '\\u3\\u3window.exe'; // TODO: check platform first
+                    args = [
+                        '--u3:token', token,
+                        '--u3:pid', currentProcessId + ''
+                    ];
+                    p = new Process()
+                        .setExecutable(Environment.replaceEnvironmentVariables(u3Executable))
+                        .setArgs(args);
+                    p.launchAsync(_ => {});
                 });
             }
 

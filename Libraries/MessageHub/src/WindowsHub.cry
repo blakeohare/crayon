@@ -42,13 +42,15 @@ namespace MessageHub {
                 .setOnClosed(this.receiveClose)
                 .setOnStart(this.start2);
 
+            if (this.desktopInit != null) {
+                this.desktopInit();
+            }
+
             this.namedPipeServer.start();
         }
 
         function start2() {
-            if (this.desktopInit != null) {
-                this.desktopInit(this.token);
-            }
+            // TODO: remove this function.
         }
 
         function receiveData(data) {
