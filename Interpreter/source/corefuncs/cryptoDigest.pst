@@ -1,0 +1,3 @@
+﻿@import("inline/2_arg.pst");
+
+output = crypto_digest(globals, (ListImpl)arg1.internalValue, (int) arg2.internalValue);

@@ -4,38 +4,40 @@ namespace CryptoCommon {
 
     class AbstractHash {
 
-        constructor() {
-            $lib_cryptocommon_initHash(this);
-        }
+        field _result = null;
+        field _bytes = [];
+
+        constructor() { }
 
         function showWarning(name, userOverride) {
             if (userOverride != 'unsafe') {
                 print(
                     name + " is not cryptographically secure and should be avoided " +
-                    "if possible. See http://crayonlang.org/cryptowarning for " +
+                    "if possible. See https://crayonlang.org/cryptowarning for " +
                     "more information and how to disable this message.");
             }
         }
 
         function addText(value, textEncoding = TextEncoding.TextFormat.UTF8) {
+            this._result = null;
             bytes = TextEncoding.convertTextToBytes(value, textEncoding);
-            $lib_cryptocommon_addBytes(this, bytes);
+            this._bytes.concat(bytes);
             return this;
         }
 
         function addInteger(value) {
-            bytes = [
+            this._result = null;
+            this._bytes.add(
                 value & 255,
                 (value >> 8) & 255,
                 (value >> 16) & 255,
-                (value >> 24) & 255];
-            $lib_cryptocommon_addBytes(this, bytes);
+                (value >> 24) & 255);
             return this;
         }
 
-
         function addByte(value) {
-            $lib_cryptocommon_addBytes(this, [value & 255]);
+            this._result = null;
+            this._bytes.add(value & 255);
             return this;
         }
 
@@ -44,11 +46,12 @@ namespace CryptoCommon {
         }
 
         function digestByteList() {
-            return this.digestImpl();
+            this._result = this._result ?? this.digestImpl();
+            return this._result.clone();
         }
 
         function digestHex() {
-            bytes = this.digestImpl();
+            bytes = this.digestByteList();
             sb = [];
             h = '0123456789abcdef';
             for (b : bytes) {

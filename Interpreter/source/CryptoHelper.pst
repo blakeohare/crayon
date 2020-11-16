@@ -1,0 +1,273 @@
+﻿Value crypto_digest(VmGlobals globals, ListImpl bytes, int algo) {
+
+    Array<int> byteArray = listImplToBytes(bytes);
+    List<int> byteList = new List<int>();
+    for (int i = 0; i < byteArray.Size(); i += 1) {
+        byteList.Add(byteArray[i]);
+    }
+
+    if (algo == 1) return crypto_md5_digestMd5(globals, byteList);
+    if (algo == 2) return globals.valueNull;
+
+    return globals.valueNull;
+}
+
+// Sources:
+// * https://tools.ietf.org/html/rfc1321
+// * https://en.wikipedia.org/wiki/MD5#Pseudocode
+Value crypto_md5_digestMd5(VmGlobals globals, List<int> inputBytes) {
+
+    // Length is measured in bits, not bytes.
+    int originalLength = inputBytes.Size() * 8;
+
+    Array<int> shiftTable = new Array<int>(64);
+    Array<int> K = new Array<int>(64);
+
+    for (int i = 0; i < 16; i += 4) {
+        shiftTable[i] = 7;
+        shiftTable[i + 1] = 12;
+        shiftTable[i + 2] = 17;
+        shiftTable[i + 3] = 22;
+
+        shiftTable[i + 16] = 5;
+        shiftTable[i + 17] = 9;
+        shiftTable[i + 18] = 14;
+        shiftTable[i + 19] = 20;
+
+        shiftTable[i + 32] = 4;
+        shiftTable[i + 33] = 11;
+        shiftTable[i + 34] = 16;
+        shiftTable[i + 35] = 23;
+
+        shiftTable[i + 48] = 6;
+        shiftTable[i + 49] = 10;
+        shiftTable[i + 50] = 15;
+        shiftTable[i + 51] = 21;
+    }
+
+    K[0] = uint32Hack(0xd76a, 0xa478);
+    K[1] = uint32Hack(0xe8c7, 0xb756);
+    K[2] = uint32Hack(0x2420, 0x70db);
+    K[3] = uint32Hack(0xc1bd, 0xceee);
+    K[4] = uint32Hack(0xf57c, 0x0faf);
+    K[5] = uint32Hack(0x4787, 0xc62a);
+    K[6] = uint32Hack(0xa830, 0x4613);
+    K[7] = uint32Hack(0xfd46, 0x9501);
+    K[8] = uint32Hack(0x6980, 0x98d8);
+    K[9] = uint32Hack(0x8b44, 0xf7af);
+    K[10] = uint32Hack(0xffff, 0x5bb1);
+    K[11] = uint32Hack(0x895c, 0xd7be);
+    K[12] = uint32Hack(0x6b90, 0x1122);
+    K[13] = uint32Hack(0xfd98, 0x7193);
+    K[14] = uint32Hack(0xa679, 0x438e);
+    K[15] = uint32Hack(0x49b4, 0x0821);
+    K[16] = uint32Hack(0xf61e, 0x2562);
+    K[17] = uint32Hack(0xc040, 0xb340);
+    K[18] = uint32Hack(0x265e, 0x5a51);
+    K[19] = uint32Hack(0xe9b6, 0xc7aa);
+    K[20] = uint32Hack(0xd62f, 0x105d);
+    K[21] = uint32Hack(0x0244, 0x1453);
+    K[22] = uint32Hack(0xd8a1, 0xe681);
+    K[23] = uint32Hack(0xe7d3, 0xfbc8);
+    K[24] = uint32Hack(0x21e1, 0xcde6);
+    K[25] = uint32Hack(0xc337, 0x07d6);
+    K[26] = uint32Hack(0xf4d5, 0x0d87);
+    K[27] = uint32Hack(0x455a, 0x14ed);
+    K[28] = uint32Hack(0xa9e3, 0xe905);
+    K[29] = uint32Hack(0xfcef, 0xa3f8);
+    K[30] = uint32Hack(0x676f, 0x02d9);
+    K[31] = uint32Hack(0x8d2a, 0x4c8a);
+    K[32] = uint32Hack(0xfffa, 0x3942);
+    K[33] = uint32Hack(0x8771, 0xf681);
+    K[34] = uint32Hack(0x6d9d, 0x6122);
+    K[35] = uint32Hack(0xfde5, 0x380c);
+    K[36] = uint32Hack(0xa4be, 0xea44);
+    K[37] = uint32Hack(0x4bde, 0xcfa9);
+    K[38] = uint32Hack(0xf6bb, 0x4b60);
+    K[39] = uint32Hack(0xbebf, 0xbc70);
+    K[40] = uint32Hack(0x289b, 0x7ec6);
+    K[41] = uint32Hack(0xeaa1, 0x27fa);
+    K[42] = uint32Hack(0xd4ef, 0x3085);
+    K[43] = uint32Hack(0x0488, 0x1d05);
+    K[44] = uint32Hack(0xd9d4, 0xd039);
+    K[45] = uint32Hack(0xe6db, 0x99e5);
+    K[46] = uint32Hack(0x1fa2, 0x7cf8);
+    K[47] = uint32Hack(0xc4ac, 0x5665);
+    K[48] = uint32Hack(0xf429, 0x2244);
+    K[49] = uint32Hack(0x432a, 0xff97);
+    K[50] = uint32Hack(0xab94, 0x23a7);
+    K[51] = uint32Hack(0xfc93, 0xa039);
+    K[52] = uint32Hack(0x655b, 0x59c3);
+    K[53] = uint32Hack(0x8f0c, 0xcc92);
+    K[54] = uint32Hack(0xffef, 0xf47d);
+    K[55] = uint32Hack(0x8584, 0x5dd1);
+    K[56] = uint32Hack(0x6fa8, 0x7e4f);
+    K[57] = uint32Hack(0xfe2c, 0xe6e0);
+    K[58] = uint32Hack(0xa301, 0x4314);
+    K[59] = uint32Hack(0x4e08, 0x11a1);
+    K[60] = uint32Hack(0xf753, 0x7e82);
+    K[61] = uint32Hack(0xbd3a, 0xf235);
+    K[62] = uint32Hack(0x2ad7, 0xd2bb);
+    K[63] = uint32Hack(0xeb86, 0xd391);
+
+    int A = uint32Hack(0x6745, 0x2301);
+    int B = uint32Hack(0xefcd, 0xab89);
+    int C = uint32Hack(0x98ba, 0xdcfe);
+    int D = uint32Hack(0x1032, 0x5476);
+
+    // Add a single 1 bit to the end of the current message.
+    // Since the message deals with bytes and we'll be rounding this out with 0's, add a full byte of 0's
+    // except the first digit is a 1: 10000000, aka 128
+    inputBytes.Add(128);
+
+    // The idea is to create a series of 64 byte blocks, but there needs to be 8 bytes of space for the
+    // length of the original stream which will be added at the end as a 64 bit (8 byte) integer.
+    while (inputBytes.Size() % 64 != 56) {
+        inputBytes.Add(0);
+    }
+
+    // Add the length as a 64 bit integer indicating how many BITS the original length is.
+    inputBytes.Add((originalLength >> 0) & 255);
+    inputBytes.Add((originalLength >> 8) & 255);
+    inputBytes.Add((originalLength >> 16) & 255);
+    inputBytes.Add((originalLength >> 24) & 255);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+
+    Array<int> mWords = new Array<int>(16);
+
+    // TODO: each iteration of this function can happen every time 512 bits of data have been added to the message
+    // and then stored without processing the whole hash. That way more than 4 GB of data can be hashed without
+    // having it all in memory.
+
+    int mask32 = uint32Hack(0xffff, 0xffff); // Extra cross-platform insurance to make sure values don't grow wildly on Python/JS.
+
+    for (int chunkIndex = 0; chunkIndex < inputBytes.Size(); chunkIndex += 64) {
+
+        // Copy the bytes into 16 32-bit words.
+        crypto_md5_createWordsForBlock(chunkIndex, inputBytes, mWords);
+
+        // make a copy of the hash as it currently stands
+        int A_init = A;
+        int B_init = B;
+        int C_init = C;
+        int D_init = D;
+
+        // Create new values of A, B, C, and D by performing this magic shuffle 64 times.
+        // The pattern for which numbers from the accumulating hash to use repeats every 4 times
+        // so perform the shuffle in chunks of 4.
+        for (int j = 0; j < 64; j += 4) {
+            A = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, A, B, C, D, j);
+            D = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, D, A, B, C, j | 1);
+            C = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, C, D, A, B, j | 2);
+            B = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, B, C, D, A, j | 3);
+        }
+
+        // Add the new hash values to the previous hash values from the previous 64 byte block.
+        // Also ensure they don't overflow into weird values when transpiled to JS/Python.
+        A = Core.ForceParens(A_init + A) & mask32;
+        B = Core.ForceParens(B_init + B) & mask32;
+        C = Core.ForceParens(C_init + C) & mask32;
+        D = Core.ForceParens(D_init + D) & mask32;
+    }
+
+    // Convert the 4 32-bit integers into 16 8-bit integers.
+    List<Value> output = new List<Value>();
+    output.Add(buildInteger(globals, A & 255));
+    output.Add(buildInteger(globals, (A >> 8) & 255));
+    output.Add(buildInteger(globals, (A >> 16) & 255));
+    output.Add(buildInteger(globals, (A >> 24) & 255));
+
+    output.Add(buildInteger(globals, B & 255));
+    output.Add(buildInteger(globals, (B >> 8) & 255));
+    output.Add(buildInteger(globals, (B >> 16) & 255));
+    output.Add(buildInteger(globals, (B >> 24) & 255));
+
+    output.Add(buildInteger(globals, C & 255));
+    output.Add(buildInteger(globals, (C >> 8) & 255));
+    output.Add(buildInteger(globals, (C >> 16) & 255));
+    output.Add(buildInteger(globals, (C >> 24) & 255));
+
+    output.Add(buildInteger(globals, D & 255));
+    output.Add(buildInteger(globals, (D >> 8) & 255));
+    output.Add(buildInteger(globals, (D >> 16) & 255));
+    output.Add(buildInteger(globals, (D >> 24) & 255));
+
+    return buildList(output);
+}
+
+int crypto_md5_createWordsForBlock(int startIndex, List<int> byteList, Array<int> mWords) {
+    // Convert the chunk into 16 32-bit integer words (Little Endian).
+    for (int i = 0; i < 64; i += 4) {
+        mWords[i >> 2] = Core.ForceParens(byteList[startIndex + i]) |
+            Core.ForceParens(byteList[startIndex + i + 1] << 8) |
+            Core.ForceParens(byteList[startIndex + i + 2] << 16) |
+            Core.ForceParens(byteList[startIndex + i + 3] << 24);
+    }
+    return 0;
+}
+
+int crypto_md5_magicShuffle(
+    Array<int> mWords,
+    Array<int> sineValues,
+    Array<int> shiftValues,
+    int mask32,
+    int a,
+    int b,
+    int c,
+    int d,
+    int counter) {
+
+    int roundNumber = counter >> 4;
+    int t = 0;
+    int shiftAmount = shiftValues[counter];
+    int sineValue = sineValues[counter];
+    int mWord = 0;
+    if (roundNumber == 0) {
+        t = Core.ForceParens(b & c) | Core.ForceParens(crypto_md5_bitwiseNot(b) & d);
+        mWord = mWords[counter];
+    } else if (roundNumber == 1) {
+        t = Core.ForceParens(b & d) | Core.ForceParens(c & crypto_md5_bitwiseNot(d));
+        mWord = mWords[Core.ForceParens(5 * counter + 1) & 15];
+    } else if (roundNumber == 2) {
+        t = b ^ c ^ d;
+        mWord = mWords[Core.ForceParens(3 * counter + 5) & 15];
+    } else {
+        t = c ^ Core.ForceParens(b | crypto_md5_bitwiseNot(d));
+        mWord = mWords[Core.ForceParens(7 * counter) & 15];
+    }
+
+    t = Core.ForceParens(a + t + mWord + sineValue) & mask32;
+    t = b + crypto_md5_leftRotate(t, shiftAmount);
+    return t & mask32;
+}
+
+int crypto_md5_leftRotate(int value, int amt) {
+    if (amt == 0) return value;
+    int a = value << amt;
+    int b = crypto_md5_bitShiftRight(value, 32 - amt);
+    int result = a | b;
+    return result;
+}
+
+// the lack of the distinction with >>> on some platforms makes this necessary when the result isn't explicitly masked.
+int crypto_md5_bitShiftRight(int value, int amount) {
+    if (amount == 0) return value;
+    value = value & uint32Hack(65535, 65535);
+    int mask = 0x7fffffff;
+    if (value > 0) return value >> amount;
+    return Core.ForceParens(value >> amount) & Core.ForceParens(mask >> Core.ForceParens(amount - 1));
+}
+
+// Pastel does not support unsigned int32 and will give range exceptions. However C# and Java will gracefully overflow
+// into negative numbers and this is okay. Python and JavaScript use Big Integer and int64's respectively.
+int uint32Hack(int left, int right) {
+    return Core.ForceParens(left << 16) | right;
+}
+
+// TODO: implement this in Pastel
+int crypto_md5_bitwiseNot(int x) {
+    return -x - 1;
+}

@@ -4,6 +4,7 @@
 @import("BinaryOpsUtil.pst");
 @import("ByteCodeLoader.pst");
 @import("CoreFuncsHelper.pst");
+@import("CryptoHelper.pst");
 @import("DateTimeHelper.pst");
 @import("Debugger.pst");
 @import("ImageHelper.pst");

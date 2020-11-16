@@ -89,6 +89,7 @@ namespace Parser
         ARG_VERIFY_NUMS = 83,
         XML_PARSE = 84,
         LAUNCH_BROWSER = 85,
+        CRYPTO_DIGEST= 86,
     }
 
     internal static class CoreFunctionIDHelper
@@ -182,6 +183,7 @@ namespace Parser
                 case "argVerifyNums": return (int)CoreFunctionID.ARG_VERIFY_NUMS;
                 case "xmlParse": return (int)CoreFunctionID.XML_PARSE;
                 case "launchBrowser": return (int)CoreFunctionID.LAUNCH_BROWSER;
+                case "cryptoDigest": return (int)CoreFunctionID.CRYPTO_DIGEST;
                 default: return -1;
             }
         }
