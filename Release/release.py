@@ -181,11 +181,15 @@ def buildRelease(args):
 	os.makedirs(copyToDir)
 
 	if isWindows:
-		u3win_exe = os.path.join('..', 'U3', 'dist', 'win-u3window.exe')
-		if not os.path.exists(u3win_exe):
+		u3_dir = os.path.join('..', 'U3', 'dist', 'win')
+		if not os.path.exists(u3_dir):
 			print("*** ERROR! ***")
-			print("win-u3window.exe is missing. Run Scripts/u3packager.py first.")
+			print("U3 executable is missing. Run Scripts/u3packager.py first.")
 			return
+	else:
+		print("*** ERROR ***")
+		print("TODO: Need to implement U3 copying for non-Windows platforms")
+		return
 	
 	# Compile the compiler bits in the source tree to their usual bin directory
 
@@ -299,7 +303,7 @@ def buildRelease(args):
 
 	# Copy U3 window
 	if isWindows:
-		copy_file(u3win_exe, copyToDir + '/u3window.exe')
+		copyDirectory(u3_dir, copyToDir + '/u3')
 
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")

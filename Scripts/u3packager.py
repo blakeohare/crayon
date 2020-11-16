@@ -25,20 +25,16 @@ def main(args):
     shutil.rmtree('dist')
   os.mkdir('dist')
 
-  push_cd(os.path.join('.', 'src'))
+  run_command('electron-packager src u3window --platform=win32 --arch=x64 --out=dist/temp --lang=en-US')
 
-  if os.path.exists('dist'):
-    shutil.rmtree('dist')
+  source = os.path.join('dist', 'temp', 'u3window-win32-x64')
+  target = os.path.join('dist', 'win')
+  shutil.move(source, target)
 
-  run_command('electron-builder -p never --win --x64')
+  print("U3/dist/win/u3window.exe created")
 
-  source = os.path.abspath(os.path.join('dist', 'win-unpacked', 'u3window.exe'))
-  target = os.path.abspath(os.path.join('..', 'dist', 'win-u3window.exe'))
-  os.rename(source, target)
+  shutil.rmtree(os.path.join('dist', 'temp'))
 
-  print("U3/dist/win-u3window.exe created")
-
-  pop_cd()
   pop_cd()
 
 
