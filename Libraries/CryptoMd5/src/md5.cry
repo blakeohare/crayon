@@ -9,7 +9,7 @@ namespace CryptoMd5 {
         }
 
         function digestImpl() {
-            return $lib_md5_digestMd5(this, []);
+            return $$$('cryptoDigest', this._bytes, 1);
         }
     }
 }

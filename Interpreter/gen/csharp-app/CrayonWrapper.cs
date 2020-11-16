@@ -771,6 +771,254 @@ namespace Interpreter.Vm
             return vm;
         }
 
+        public static Value crypto_digest(VmGlobals globals, ListImpl bytes, int algo)
+        {
+            int[] byteArray = listImplToBytes(bytes);
+            List<int> byteList = new List<int>();
+            int i = 0;
+            while ((i < byteArray.Length))
+            {
+                byteList.Add(byteArray[i]);
+                i += 1;
+            }
+            if ((algo == 1))
+            {
+                return crypto_md5_digestMd5(globals, byteList);
+            }
+            if ((algo == 2))
+            {
+                return globals.valueNull;
+            }
+            return globals.valueNull;
+        }
+
+        public static int crypto_md5_bitShiftRight(int value, int amount)
+        {
+            if ((amount == 0))
+            {
+                return value;
+            }
+            value = (value & uint32Hack(65535, 65535));
+            int mask = 2147483647;
+            if ((value > 0))
+            {
+                return (value >> amount);
+            }
+            return (((value >> amount)) & ((mask >> ((amount - 1)))));
+        }
+
+        public static int crypto_md5_bitwiseNot(int x)
+        {
+            return (-x - 1);
+        }
+
+        public static int crypto_md5_createWordsForBlock(int startIndex, List<int> byteList, int[] mWords)
+        {
+            int i = 0;
+            while ((i < 64))
+            {
+                mWords[(i >> 2)] = ((byteList[(startIndex + i)]) | ((byteList[(startIndex + i + 1)] << 8)) | ((byteList[(startIndex + i + 2)] << 16)) | ((byteList[(startIndex + i + 3)] << 24)));
+                i += 4;
+            }
+            return 0;
+        }
+
+        public static Value crypto_md5_digestMd5(VmGlobals globals, List<int> inputBytes)
+        {
+            int originalLength = (inputBytes.Count * 8);
+            int[] shiftTable = new int[64];
+            int[] K = new int[64];
+            int i = 0;
+            while ((i < 16))
+            {
+                shiftTable[i] = 7;
+                shiftTable[(i + 1)] = 12;
+                shiftTable[(i + 2)] = 17;
+                shiftTable[(i + 3)] = 22;
+                shiftTable[(i + 16)] = 5;
+                shiftTable[(i + 17)] = 9;
+                shiftTable[(i + 18)] = 14;
+                shiftTable[(i + 19)] = 20;
+                shiftTable[(i + 32)] = 4;
+                shiftTable[(i + 33)] = 11;
+                shiftTable[(i + 34)] = 16;
+                shiftTable[(i + 35)] = 23;
+                shiftTable[(i + 48)] = 6;
+                shiftTable[(i + 49)] = 10;
+                shiftTable[(i + 50)] = 15;
+                shiftTable[(i + 51)] = 21;
+                i += 4;
+            }
+            K[0] = uint32Hack(55146, 42104);
+            K[1] = uint32Hack(59591, 46934);
+            K[2] = uint32Hack(9248, 28891);
+            K[3] = uint32Hack(49597, 52974);
+            K[4] = uint32Hack(62844, 4015);
+            K[5] = uint32Hack(18311, 50730);
+            K[6] = uint32Hack(43056, 17939);
+            K[7] = uint32Hack(64838, 38145);
+            K[8] = uint32Hack(27008, 39128);
+            K[9] = uint32Hack(35652, 63407);
+            K[10] = uint32Hack(65535, 23473);
+            K[11] = uint32Hack(35164, 55230);
+            K[12] = uint32Hack(27536, 4386);
+            K[13] = uint32Hack(64920, 29075);
+            K[14] = uint32Hack(42617, 17294);
+            K[15] = uint32Hack(18868, 2081);
+            K[16] = uint32Hack(63006, 9570);
+            K[17] = uint32Hack(49216, 45888);
+            K[18] = uint32Hack(9822, 23121);
+            K[19] = uint32Hack(59830, 51114);
+            K[20] = uint32Hack(54831, 4189);
+            K[21] = uint32Hack(580, 5203);
+            K[22] = uint32Hack(55457, 59009);
+            K[23] = uint32Hack(59347, 64456);
+            K[24] = uint32Hack(8673, 52710);
+            K[25] = uint32Hack(49975, 2006);
+            K[26] = uint32Hack(62677, 3463);
+            K[27] = uint32Hack(17754, 5357);
+            K[28] = uint32Hack(43491, 59653);
+            K[29] = uint32Hack(64751, 41976);
+            K[30] = uint32Hack(26479, 729);
+            K[31] = uint32Hack(36138, 19594);
+            K[32] = uint32Hack(65530, 14658);
+            K[33] = uint32Hack(34673, 63105);
+            K[34] = uint32Hack(28061, 24866);
+            K[35] = uint32Hack(64997, 14348);
+            K[36] = uint32Hack(42174, 59972);
+            K[37] = uint32Hack(19422, 53161);
+            K[38] = uint32Hack(63163, 19296);
+            K[39] = uint32Hack(48831, 48240);
+            K[40] = uint32Hack(10395, 32454);
+            K[41] = uint32Hack(60065, 10234);
+            K[42] = uint32Hack(54511, 12421);
+            K[43] = uint32Hack(1160, 7429);
+            K[44] = uint32Hack(55764, 53305);
+            K[45] = uint32Hack(59099, 39397);
+            K[46] = uint32Hack(8098, 31992);
+            K[47] = uint32Hack(50348, 22117);
+            K[48] = uint32Hack(62505, 8772);
+            K[49] = uint32Hack(17194, 65431);
+            K[50] = uint32Hack(43924, 9127);
+            K[51] = uint32Hack(64659, 41017);
+            K[52] = uint32Hack(25947, 22979);
+            K[53] = uint32Hack(36620, 52370);
+            K[54] = uint32Hack(65519, 62589);
+            K[55] = uint32Hack(34180, 24017);
+            K[56] = uint32Hack(28584, 32335);
+            K[57] = uint32Hack(65068, 59104);
+            K[58] = uint32Hack(41729, 17172);
+            K[59] = uint32Hack(19976, 4513);
+            K[60] = uint32Hack(63315, 32386);
+            K[61] = uint32Hack(48442, 62005);
+            K[62] = uint32Hack(10967, 53947);
+            K[63] = uint32Hack(60294, 54161);
+            int A = uint32Hack(26437, 8961);
+            int B = uint32Hack(61389, 43913);
+            int C = uint32Hack(39098, 56574);
+            int D = uint32Hack(4146, 21622);
+            inputBytes.Add(128);
+            while (((inputBytes.Count % 64) != 56))
+            {
+                inputBytes.Add(0);
+            }
+            inputBytes.Add(((originalLength >> 0) & 255));
+            inputBytes.Add(((originalLength >> 8) & 255));
+            inputBytes.Add(((originalLength >> 16) & 255));
+            inputBytes.Add(((originalLength >> 24) & 255));
+            inputBytes.Add(0);
+            inputBytes.Add(0);
+            inputBytes.Add(0);
+            inputBytes.Add(0);
+            int[] mWords = new int[16];
+            int mask32 = uint32Hack(65535, 65535);
+            int chunkIndex = 0;
+            while ((chunkIndex < inputBytes.Count))
+            {
+                crypto_md5_createWordsForBlock(chunkIndex, inputBytes, mWords);
+                int A_init = A;
+                int B_init = B;
+                int C_init = C;
+                int D_init = D;
+                int j = 0;
+                while ((j < 64))
+                {
+                    A = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, A, B, C, D, j);
+                    D = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, D, A, B, C, (j | 1));
+                    C = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, C, D, A, B, (j | 2));
+                    B = crypto_md5_magicShuffle(mWords, K, shiftTable, mask32, B, C, D, A, (j | 3));
+                    j += 4;
+                }
+                A = (((A_init + A)) & mask32);
+                B = (((B_init + B)) & mask32);
+                C = (((C_init + C)) & mask32);
+                D = (((D_init + D)) & mask32);
+                chunkIndex += 64;
+            }
+            List<Value> output = new List<Value>();
+            output.Add(buildInteger(globals, (A & 255)));
+            output.Add(buildInteger(globals, ((A >> 8) & 255)));
+            output.Add(buildInteger(globals, ((A >> 16) & 255)));
+            output.Add(buildInteger(globals, ((A >> 24) & 255)));
+            output.Add(buildInteger(globals, (B & 255)));
+            output.Add(buildInteger(globals, ((B >> 8) & 255)));
+            output.Add(buildInteger(globals, ((B >> 16) & 255)));
+            output.Add(buildInteger(globals, ((B >> 24) & 255)));
+            output.Add(buildInteger(globals, (C & 255)));
+            output.Add(buildInteger(globals, ((C >> 8) & 255)));
+            output.Add(buildInteger(globals, ((C >> 16) & 255)));
+            output.Add(buildInteger(globals, ((C >> 24) & 255)));
+            output.Add(buildInteger(globals, (D & 255)));
+            output.Add(buildInteger(globals, ((D >> 8) & 255)));
+            output.Add(buildInteger(globals, ((D >> 16) & 255)));
+            output.Add(buildInteger(globals, ((D >> 24) & 255)));
+            return buildList(output);
+        }
+
+        public static int crypto_md5_leftRotate(int value, int amt)
+        {
+            if ((amt == 0))
+            {
+                return value;
+            }
+            int a = (value << amt);
+            int b = crypto_md5_bitShiftRight(value, (32 - amt));
+            int result = (a | b);
+            return result;
+        }
+
+        public static int crypto_md5_magicShuffle(int[] mWords, int[] sineValues, int[] shiftValues, int mask32, int a, int b, int c, int d, int counter)
+        {
+            int roundNumber = (counter >> 4);
+            int t = 0;
+            int shiftAmount = shiftValues[counter];
+            int sineValue = sineValues[counter];
+            int mWord = 0;
+            if ((roundNumber == 0))
+            {
+                t = (((b & c)) | ((crypto_md5_bitwiseNot(b) & d)));
+                mWord = mWords[counter];
+            }
+            else if ((roundNumber == 1))
+            {
+                t = (((b & d)) | ((c & crypto_md5_bitwiseNot(d))));
+                mWord = mWords[((((5 * counter) + 1)) & 15)];
+            }
+            else if ((roundNumber == 2))
+            {
+                t = (b ^ c ^ d);
+                mWord = mWords[((((3 * counter) + 5)) & 15)];
+            }
+            else
+            {
+                t = (c ^ ((b | crypto_md5_bitwiseNot(d))));
+                mWord = mWords[(((7 * counter)) & 15)];
+            }
+            t = (((a + t + mWord + sineValue)) & mask32);
+            t = (b + crypto_md5_leftRotate(t, shiftAmount));
+            return (t & mask32);
+        }
+
         public static object DateTime_getNativeTimezone(Value value)
         {
             ObjectInstance tzObj = (ObjectInstance)value.internalValue;
@@ -6178,6 +6426,13 @@ namespace Interpreter.Vm
                                 System.Diagnostics.Process.Start((string)arg1.internalValue);
                                 output = vm.globalNull;
                                 break;
+                            case 86:
+                                // cryptoDigest;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = crypto_digest(globals, (ListImpl)arg1.internalValue, (int)arg2.internalValue);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -9326,6 +9581,11 @@ namespace Interpreter.Vm
                 default:
                     return "Unknown";
             }
+        }
+
+        public static int uint32Hack(int left, int right)
+        {
+            return (((left << 16)) | right);
         }
 
         public static InterpreterResult uncaughtExceptionResult(VmContext vm, Value exception)

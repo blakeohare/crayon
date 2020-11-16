@@ -2,10 +2,5 @@
     "name": "CryptoCommon",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/cryptocommon",
-    "description": "Library containing the base class and common implementation for various cryptographic hashes.",
-
-    "cni": [
-        { "name": "lib_cryptocommon_addBytes", "argc": 2 },
-        { "name": "lib_cryptocommon_initHash", "argc": 1 }
-    ]
+    "description": "Library containing the base class and common implementation for various cryptographic hashes."
 }
