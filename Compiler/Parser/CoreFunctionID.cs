@@ -90,6 +90,8 @@ namespace Parser
         XML_PARSE = 84,
         LAUNCH_BROWSER = 85,
         CRYPTO_DIGEST= 86,
+        BYTES_TO_TEXT = 87,
+        TEXT_TO_BYTES = 88,
     }
 
     internal static class CoreFunctionIDHelper
@@ -184,6 +186,8 @@ namespace Parser
                 case "xmlParse": return (int)CoreFunctionID.XML_PARSE;
                 case "launchBrowser": return (int)CoreFunctionID.LAUNCH_BROWSER;
                 case "cryptoDigest": return (int)CoreFunctionID.CRYPTO_DIGEST;
+                case "bytesToText": return (int)CoreFunctionID.BYTES_TO_TEXT;
+                case "textToBytes": return (int)CoreFunctionID.TEXT_TO_BYTES;
                 default: return -1;
             }
         }

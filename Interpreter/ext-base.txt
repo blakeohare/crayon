@@ -38,3 +38,6 @@ EXT-TYPE: object CoreFunc_NamedPipeServerCreate(string name, Value startFn, Valu
 EXT-TYPE: string CoreFunc_NamedPipeServerClose(object pipe);
 
 EXT-TYPE: string CoreFunc_ResourceGetText(string path);
+
+EXT-TYPE: int CoreFunc_TextEncoding_ConvertBytesToText(Array<int> byteValues, int format, Array<string> strOut);
+EXT-TYPE: int CoreFunc_TextEncoding_ConvertTextToBytes(string value, bool includeBom, int format, List<Value> byteList, Array<Value> positiveIntegers, Array<int> intOut);

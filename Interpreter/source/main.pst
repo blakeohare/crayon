@@ -18,6 +18,7 @@
 @import("Runner.pst");
 @import("SliceHelper.pst");
 @import("SortHelper.pst");
+@import("TextEncodingHelper.pst");
 @import("TypesUtil.pst");
 @import("ValueUtil.pst");
 @import("VmPublicUtil.pst");
