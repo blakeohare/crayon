@@ -32,15 +32,15 @@ app.whenReady().then(() => {
             title, 
             width, 
             height, 
-            initialData.length === 0 ? null : initialData,
-            () => {
-                // Don't fire the callback until the window is fully ready.
-                // Otherwise Crayon can send new messages that will get dropped. 
-                if (cb) cb(true); 
-            });
-        rwindow.setListener(winMsgs => {
-            hub.send('u3events', winMsgs);
-        })
+            initialData.length === 0 ? null : initialData);
+        rwindow.setListener('events', msgs => {
+            hub.send('u3events', msgs);
+        });
+        rwindow.setListener('shown', () => {
+            // Don't fire the callback until the window is fully ready.
+            // Otherwise Crayon can send new messages that will get dropped. 
+            if (cb) cb(true); 
+        });
     });
 
     hub.addListener('u3data', msg => {

@@ -15,7 +15,7 @@ window.sendMessage = null;
         }
     });
 
-    window.sendMessage = (data) => {
-        ipcRenderer.send('mboundmsg', data);
+    window.sendMessage = (type, data) => {
+        ipcRenderer.send('mboundmsg', { type, data });
     };
 })();

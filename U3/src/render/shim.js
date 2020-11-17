@@ -6,7 +6,7 @@ let msgQueueLastFlush = 0;
 let enqueuedFlushes = [];
 const msgQueueDelay = Math.floor(1000 / 30);
 function platformSpecificHandleEvent(id, eventName, args) {
-	msgQueue.push('E', id, eventName, args);
+	msgQueue.push({ type: 'E', id, eventName, arg: args });
 	flushMessageQueue();
 }
 
@@ -17,7 +17,7 @@ function flushMessageQueue() {
 		enqueuedFlushes.push(window.setTimeout(() => { flushMessageQueue() }, nextSlot - now));
 	} else {
 		if (msgQueue.length > 0) {
-			window.sendMessage(msgQueue.join(' '));
+			window.sendMessage('events', msgQueue);
 			msgQueue = [];
 			msgQueueLastFlush = now;
 			for (let ef of enqueuedFlushes) {
@@ -45,5 +45,5 @@ function shimInit(uiData) {
 		flushUpdates(['NO', 0]);
 	};
 	flushUpdates(uiData);
-	window.sendMessage('SHOWN');
+	window.sendMessage('shown', true);
 }
