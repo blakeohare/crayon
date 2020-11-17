@@ -5,8 +5,13 @@ const NoriCanvas = (() => {
         let cvWidth = canvas.width;
         let cvHeight = canvas.height;
         let end = start + len;
-        let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex;
+        let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex, img;
         let i = start;
+        let imgLookup = canvas._NORI_imgLookup;
+        if (!imgLookup) {
+            imgLookup = {};
+            canvas._NORI_imgLookup = imgLookup;
+        }
         while (i < end) {
             r = buffer[i + 1];
             g = buffer[i + 2];
@@ -64,6 +69,36 @@ const NoriCanvas = (() => {
                     // TODO: this
                     break;
                 
+                case 'ImgData':
+                    r = buffer[i + 4]; // version key
+                    g = buffer[i + 5]; // resource ID
+                    b = buffer[i + 6]; // actual image data
+                    ((imageData, versionKey) => {
+                        let imgLoader = new Image();
+                        imgLoader.onload = () => {
+                            let newImg = document.createElement('canvas');
+                            newImg.width = imgLoader.width;
+                            newImg.height = imgLoader.height;
+                            let ctx = newImg.getContext('2d');
+                            ctx.drawImage(imgLoader, 0, 0);
+                            imgLookup[versionKey] = newImg;
+                        };
+                        imgLoader.src = 'data:image/png;base64,' + imageData;
+                    })(b, r);
+                    i += 7;
+                    break;
+
+                case 'I1':
+                    r = buffer[i + 4]; // version key
+                    img = imgLookup[r];
+                    if (img) {
+                        x = buffer[i + 5];
+                        y = buffer[i + 6];
+                        ctx.drawImage(img, x, y);
+                    }
+                    i += 7;
+                    break;
+
                 default:
                     throw new Error("Unknown draw instruction: " + buffer[i]);
             }
