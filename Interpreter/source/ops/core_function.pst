@@ -86,6 +86,8 @@
     case 84: Core.EmitComment("xmlParse"); @import("corefuncs/xmlParse.pst"); break;
     case 85: Core.EmitComment("launchBrowser"); @import("corefuncs/launchBrowser.pst"); break;
     case 86: Core.EmitComment("cryptoDigest"); @import("corefuncs/cryptoDigest.pst"); break;
+    case 87: Core.EmitComment("bytesToText"); @import("corefuncs/bytesToText.pst"); break;
+    case 88: Core.EmitComment("textToBytes"); @import("corefuncs/textToBytes.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

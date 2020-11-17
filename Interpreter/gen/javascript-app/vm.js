@@ -5152,6 +5152,23 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[valueStackSize];
 						output = crypto_digest(globals, arg1[1], arg2[1]);
 						break;
+					case 87:
+						// bytesToText;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = textencoding_convertBytesToText(vm, arg1, arg2, arg3);
+						break;
+					case 88:
+						// textToBytes;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = textencoding_convertTextToBytes(vm, arg1, arg2, arg3, arg4);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -7401,6 +7418,72 @@ var stringFromHex = function(encoded) {
 
 var suspendInterpreter = function() {
 	return [2, null, 0.0, 0, false, ""];
+};
+
+var textencoding_convertBytesToText = function(vm, arg1, arg2, arg3) {
+	if ((arg1[0] != 6)) {
+		return buildInteger(vm[13], 2);
+	}
+	var byteList = arg1[1];
+	var format = arg2[1];
+	var output = arg3[1];
+	var strOut = PST$stringBuffer16;
+	var length = byteList[1];
+	var unwrappedBytes = PST$createNewArray(length);
+	var i = 0;
+	var value = null;
+	var c = 0;
+	while ((i < length)) {
+		value = byteList[2][i];
+		if ((value[0] != 3)) {
+			return buildInteger(vm[13], 3);
+		}
+		c = value[1];
+		if (((c < 0) || (c > 255))) {
+			return buildInteger(vm[13], 3);
+		}
+		unwrappedBytes[i] = c;
+		i += 1;
+	}
+	var sc = C$textencoding.bytesToText(unwrappedBytes, format, strOut);
+	if ((sc == 0)) {
+		addToList(output, buildString(vm[13], strOut[0]));
+	}
+	return buildInteger(vm[13], sc);
+};
+
+var textencoding_convertTextToBytes = function(vm, arg1, arg2, arg3, arg4) {
+	var value = arg1[1];
+	var format = arg2[1];
+	var includeBom = arg3[1];
+	var output = arg4[1];
+	var byteList = [];
+	var intOut = PST$intBuffer16;
+	var sc = C$textencoding.textToBytes(value, includeBom, format, byteList, vm[13][9], intOut);
+	var swapWordSize = intOut[0];
+	if ((swapWordSize != 0)) {
+		var i = 0;
+		var j = 0;
+		var length = byteList.length;
+		var swap = null;
+		var half = (swapWordSize >> 1);
+		var k = 0;
+		while ((i < length)) {
+			k = (i + swapWordSize - 1);
+			j = 0;
+			while ((j < half)) {
+				swap = byteList[(i + j)];
+				byteList[(i + j)] = byteList[(k - j)];
+				byteList[(k - j)] = swap;
+				j += 1;
+			}
+			i += swapWordSize;
+		}
+	}
+	if ((sc == 0)) {
+		addToList(output, buildList(byteList));
+	}
+	return buildInteger(vm[13], sc);
 };
 
 var tokenDataImpl = function(vm, row) {

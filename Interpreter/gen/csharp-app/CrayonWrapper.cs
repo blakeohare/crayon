@@ -6552,6 +6552,23 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[valueStackSize];
                                 output = crypto_digest(globals, (ListImpl)arg1.internalValue, (int)arg2.internalValue);
                                 break;
+                            case 87:
+                                // bytesToText;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = textencoding_convertBytesToText(vm, arg1, arg2, arg3);
+                                break;
+                            case 88:
+                                // textToBytes;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = textencoding_convertTextToBytes(vm, arg1, arg2, arg3, arg4);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -9437,6 +9454,83 @@ namespace Interpreter.Vm
         public static InterpreterResult suspendInterpreter()
         {
             return new InterpreterResult(2, null, 0.0, 0, false, "");
+        }
+
+        public static Value textencoding_convertBytesToText(VmContext vm, Value arg1, Value arg2, Value arg3)
+        {
+            if ((arg1.type != 6))
+            {
+                return buildInteger(vm.globals, 2);
+            }
+            ListImpl byteList = (ListImpl)arg1.internalValue;
+            int format = (int)arg2.internalValue;
+            ListImpl output = (ListImpl)arg3.internalValue;
+            string[] strOut = PST_StringBuffer16;
+            int length = byteList.size;
+            int[] unwrappedBytes = new int[length];
+            int i = 0;
+            Value value = null;
+            int c = 0;
+            while ((i < length))
+            {
+                value = byteList.array[i];
+                if ((value.type != 3))
+                {
+                    return buildInteger(vm.globals, 3);
+                }
+                c = (int)value.internalValue;
+                if (((c < 0) || (c > 255)))
+                {
+                    return buildInteger(vm.globals, 3);
+                }
+                unwrappedBytes[i] = c;
+                i += 1;
+            }
+            int sc = TextEncodingHelper.BytesToText(unwrappedBytes, format, strOut);
+            if ((sc == 0))
+            {
+                addToList(output, buildString(vm.globals, strOut[0]));
+            }
+            return buildInteger(vm.globals, sc);
+        }
+
+        public static Value textencoding_convertTextToBytes(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4)
+        {
+            string value = (string)arg1.internalValue;
+            int format = (int)arg2.internalValue;
+            bool includeBom = (bool)arg3.internalValue;
+            ListImpl output = (ListImpl)arg4.internalValue;
+            List<Value> byteList = new List<Value>();
+            int[] intOut = PST_IntBuffer16;
+            int sc = TextEncodingHelper.TextToBytes(value, includeBom, format, byteList, vm.globals.positiveIntegers, intOut);
+            int swapWordSize = intOut[0];
+            if ((swapWordSize != 0))
+            {
+                int i = 0;
+                int j = 0;
+                int length = byteList.Count;
+                Value swap = null;
+                int half = (swapWordSize >> 1);
+                int k = 0;
+                while ((i < length))
+                {
+                    k = (i + swapWordSize - 1);
+                    j = 0;
+                    while ((j < half))
+                    {
+                        swap = byteList[(i + j)];
+                        byteList[(i + j)] = byteList[(k - j)];
+                        byteList[(k - j)] = swap;
+                        j += 1;
+                    }
+                    i += swapWordSize;
+                }
+            }
+            if ((sc == 0))
+            {
+                addToList(output, buildList(byteList));
+            }
+            return buildInteger(vm.globals, sc);
         }
 
         public static int tokenDataImpl(VmContext vm, int[] row)

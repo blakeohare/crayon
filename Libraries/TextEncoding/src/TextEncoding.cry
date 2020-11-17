@@ -65,7 +65,7 @@
             } else if ((format == TextFormat.UTF32_LE || format == TextFormat.UTF32_BE) && bLength % 4 != 0) {
                 sc = 4;
             } else {
-                sc = $lib_textencoding_convertBytesToText(bytes, format, output);
+                sc = $$$('bytesToText', bytes, format, output);
             }
         }
         err = '';
@@ -90,7 +90,7 @@
         if (format == TextFormat.UNKNOWN) throw new InvalidArgumentException("UNKNOWN cannot be used as the encoding format.");
 
         output = [];
-        sc = $lib_textencoding_convertTextToBytes(value, format, includeBom, output);
+        sc = $$$('textToBytes', value, format, includeBom, output);
         switch (sc) {
             case 0: return output[0];
             case 1: throw new EncodingException("The given string cannot be represented in the desired format.");
