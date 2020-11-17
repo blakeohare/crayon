@@ -1,0 +1,11 @@
+﻿namespace Game {
+
+    @localized('en', 'EventButton')
+    @localized('es', 'ESEventButton')
+    @localized('jp', 'JPEventButton')
+    enum EventButton {
+        LEFT = 0,
+        // MIDDLE = 1, // TODO
+        RIGHT = 2,
+    }
+}

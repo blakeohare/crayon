@@ -1,0 +1,14 @@
+﻿namespace Game {
+    function GamepadImpl_isSupported() { return false; }
+    function GamepadImpl_getPlatform() { throw new NotImplementedException(); }
+    function GamepadImpl_isOsx() { throw new NotImplementedException(); }
+    function GamepadImpl_platformRequiresRefresh() { throw new NotImplementedException(); }
+    function GamepadImpl_refreshDevices() { throw new NotImplementedException(); }
+    function GamepadImpl_getDeviceCount() { throw new NotImplementedException(); }
+    function GamepadImpl_initDevice(index, dev, params) { throw new NotImplementedException(); }
+    function GamepadImpl_pollUniverse() { throw new NotImplementedException(); }
+    function GamepadImpl_getButtonState(dev, index) { throw new NotImplementedException(); }
+    function GamepadImpl_getAxis1dState(dev, index) { throw new NotImplementedException(); }
+    function GamepadImpl_getAxis2dState(dev, index, outParam) { throw new NotImplementedException(); }
+    function GamepadImpl_getSaveFilePath() { throw new NotImplementedException(); }
+}

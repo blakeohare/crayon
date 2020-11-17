@@ -1,0 +1,23 @@
+﻿namespace Game {
+
+    @localized('en', 'MouseEvent')
+    @localized('es', 'ESMouseEvent')
+    @localized('jp', 'JPMouseEvent')
+    class MouseEvent : Event {
+
+        @localized('en', 'x')
+        @localized('es', 'x')
+        @localized('jp', 'x')
+        field x;
+
+        @localized('en', 'y')
+        @localized('es', 'y')
+        @localized('jp', 'y')
+        field y;
+
+        constructor(type, x, y) : base(type) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+}

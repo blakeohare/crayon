@@ -1,0 +1,17 @@
+﻿namespace Game {
+    function AudioImpl_isSupported() { return false; }
+    function AudioImpl_getAudioResourcePath(path) { throw new NotImplementedException(); }
+    function AudioImpl_musicStop() { throw new NotImplementedException(); }
+    function AudioImpl_musicPlay(music, vol, loop) { throw new NotImplementedException(); }
+    function AudioImpl_musicSetVolume(v) { throw new NotImplementedException(); }
+    function AudioImpl_musicLoadFromResource(music, path) { throw new NotImplementedException(); }
+    function AudioImpl_musicIsPlaying() { throw new NotImplementedException(); }
+    function AudioImpl_sfxPlay(obj, resource, volume, pan) { throw new NotImplementedException(); }
+    function AudioImpl_sfxGetState(obj) { throw new NotImplementedException(); }
+    function AudioImpl_sfxResume(obj) { throw new NotImplementedException(); }
+    function AudioImpl_sfxStop(obj, state, isPause) { throw new NotImplementedException(); }
+    function AudioImpl_sfxSetPan(obj) { throw new NotImplementedException(); }
+    function AudioImpl_sfxSetVolume(obj) { throw new NotImplementedException(); }
+    function AudioImpl_sfxLoadFromFile(snd, path) { throw new NotImplementedException(); }
+    function AudioImpl_sfxLoadFromResource(snd, path) { throw new NotImplementedException(); }
+}
