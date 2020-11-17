@@ -3,34 +3,19 @@ const { ipcMain } = require('electron')
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = (title, width, height, initialData, shownCallback) => {
+let createWindow = (title, width, height, initialData) => {
 
-    let listener = null;
-    let mBoundMessageQueue = [];
+    let listeners = {};
+    let mBoundMessageQueues = {};
     let rBoundMessageQueue = [];
     
     ipcMain.on('mboundmsg', (event, arg) => {
-        if (arg === 'SHOWN') {
-            shownCallback();
-            return;
-        }
-        let eventArgs = arg.split(' ');
-        let msgs = [];
-        for (let i = 0; i < eventArgs.length; i += 4) {
-            let msg = {
-                type: eventArgs[i],
-                id: parseInt(eventArgs[i + 1]),
-                eventName: eventArgs[i + 2],
-                arg: eventArgs[i + 3],
-            };
-            msgs.push(msg);
-        }
-        if (listener === null) {
-            for (let msg of msgs) {
-                mBoundMessageQueue.push(msg);
-            }
+        if (!listeners[arg.type]) {
+            let q = mBoundMessageQueue[arg.type] || [];
+            mBoundMessageQueue[arg.type] = q;
+            q.push(arg.data);
         } else {
-            listener(msgs);
+            listeners[arg.type](arg.data);
         }
     });
     
@@ -73,12 +58,12 @@ let createWindow = (title, width, height, initialData, shownCallback) => {
 
     return {
         send: sendToRenderer,
-        setListener: newListener => { 
-            let flushQueue = listener === null;
-            listener = newListener;
-            if (flushQueue) {
-                listener(mBoundMessageQueue);
-                mBoundMessageQueue = [];
+        setListener: (type, newListener) => { 
+            let flushQueue = !listeners[type];
+            listeners[type] = newListener;
+            if (flushQueue && mBoundMessageQueues[type]) {
+                mBoundMessageQueue[type].forEach(newListener);
+                mBoundMessageQueue[type] = null;
             }
         },
         close,
