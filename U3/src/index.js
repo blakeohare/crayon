@@ -28,11 +28,19 @@ app.whenReady().then(() => {
 
     hub.addListener('u3init', (msg, cb) => {
         let { title, width, height, initialData } = msg;
-        rwindow = renderwindow.createWindow(title, width, height, initialData.length === 0 ? null : initialData);
+        rwindow = renderwindow.createWindow(
+            title, 
+            width, 
+            height, 
+            initialData.length === 0 ? null : initialData,
+            () => {
+                // Don't fire the callback until the window is fully ready.
+                // Otherwise Crayon can send new messages that will get dropped. 
+                if (cb) cb(true); 
+            });
         rwindow.setListener(winMsgs => {
             hub.send('u3events', winMsgs);
         })
-        if (cb) cb(true);
     });
 
     hub.addListener('u3data', msg => {

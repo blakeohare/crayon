@@ -45,5 +45,5 @@ function shimInit(uiData) {
 		flushUpdates(['NO', 0]);
 	};
 	flushUpdates(uiData);
+	window.sendMessage('SHOWN');
 }
-

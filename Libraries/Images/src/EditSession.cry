@@ -106,6 +106,7 @@
             $$$('imageSessionFinish', this, this._bitmap);
             this._bitmap._versionId++;
             this._bitmap._lastPng = null;
+            this._bitmap._versionKey = this._bitmap._resourceId + '_' + this._bitmap._versionId;
         }
     }
 }

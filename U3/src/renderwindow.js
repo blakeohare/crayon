@@ -3,13 +3,17 @@ const { ipcMain } = require('electron')
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = (title, width, height, initialData) => {
+let createWindow = (title, width, height, initialData, shownCallback) => {
 
     let listener = null;
     let mBoundMessageQueue = [];
     let rBoundMessageQueue = [];
     
     ipcMain.on('mboundmsg', (event, arg) => {
+        if (arg === 'SHOWN') {
+            shownCallback();
+            return;
+        }
         let eventArgs = arg.split(' ');
         let msgs = [];
         for (let i = 0; i < eventArgs.length; i += 4) {

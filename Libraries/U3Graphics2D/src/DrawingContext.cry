@@ -1,4 +1,6 @@
-﻿namespace U3Graphics2D {
+﻿import Images;
+
+namespace U3Graphics2D {
 
     const INVALID_COLOR_ERR = "Color values must be integers from 0 to 255.";
 
@@ -11,7 +13,9 @@
         field _canvas;
         field u3window = null; // lazily initialized when flushing the buffer.
         field _buffer = [];
+        field _imageDataBuffer = [];
         field _bufferContainsFlush = false;
+        field _transferredImageVersionKeys = {};
 
         static field UNDOCUMENTED_DO_NOT_USE = new Object();
 
@@ -50,6 +54,24 @@
             return this;
         }
 
+        function drawImage(image, x, y) {
+            if (!(image is Images.Bitmap)) this._notAnImage();
+            $$$('argVerifyNums', "Coordinates must be numbers.", x, y, 2);
+            if (this._transferredImageVersionKeys.get(image._versionKey) == null) {
+                this._submitImageData(image);
+            }
+            this._buffer.add('I1', 0, 0, 0, image._versionKey, x, y);
+            return this;
+        }
+
+        function _submitImageData(image) {
+            this._imageDataBuffer.add('ImgData', 0, 0, 0, image._versionKey, image._resourceId, image.toBase64(Images.ImageFormat.PNG));
+            this._transferredImageVersionKeys[image._versionKey] = true;
+            // TODO: track old image data and send message to purge it
+        }
+
+        function _notAnImage() { throw new InvalidArgumentException("First argument must be an Image.Bitmap instance."); }
+
         // TODO: move this into an internals helper class
         function _getU3Window() {
             if (this._canvas == null) return null;
@@ -70,8 +92,15 @@
                 // If the back buffer has information in it and the Canvas gets added to the UI tree, it gets flushed at that time.
                 throw new NotImplementedException("Cannot flush drawing context buffer if the canvas isn't in an open window. This is not a design decision, just a current gap in the implementation.");
             } else {
-                win.sendCanvasData(this._canvas._id, this._buffer);
+                buffer = this._buffer;
+                if (this._imageDataBuffer.length > 0) {
+                    buffer = this._imageDataBuffer + buffer;
+                    this._imageDataBuffer.clear();
+                }
+                win.sendCanvasData(this._canvas._id, buffer);
             }
+            this._buffer.clear();
+
             return this;
         }
     }

@@ -16,6 +16,7 @@
 
         field _resourceId = ++Internal.ImagesHelper.resourceIdAlloc;
         field _versionId = 0;
+        field _versionKey;
         field _lastPng = null;
 
         constructor(width, height) {
@@ -28,6 +29,7 @@
                 this.height = height;
                 $$$('imageCreate', this, width, height);
             }
+            this._versionKey = this._resourceId + '_' + this._versionId;
         }
 
         static function fromResource(path) {
