@@ -75,18 +75,6 @@ namespace U3Game {
             canvas
                 .setCanvasWidth(this._fields['w'])
                 .setCanvasHeight(this._fields['h'])
-                .setMouseDownHandler(e => {
-                    xy = Internal.parseMouseCoord(e, this);
-                    print("Mouse down: " + xy[0] + ', ' + xy[1]);
-                })
-                .setMouseUpHandler(e => {
-                    xy = Internal.parseMouseCoord(e, this);
-                    print("Mouse up: " + xy[0] + ', ' + xy[1]);
-                })
-                .setMouseMoveHandler(e => {
-                    xy = Internal.parseMouseCoord(e, this);
-                    //print("Mouse move: " + xy[0] + ', ' + xy[1]);
-                })
                 .setLoadHandler(() => {
                     if (block) {
                         U3Game.Internal.doGameLoop(this);

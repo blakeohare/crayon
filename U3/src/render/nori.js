@@ -425,6 +425,9 @@ function flushUpdates(data) {
 	let isTextProperty = ctx.isTextProperty;
 	let elementById = ctx.elementById;
 	let i = 0;
+
+	let performLayoutPass = false;
+
 	while (i < len) {
 		instruction = items[i++];
 		id = parseInt(items[i++]);
@@ -452,6 +455,7 @@ function flushUpdates(data) {
 				break;
 
 			case 'PF': // property full state
+				performLayoutPass = true;
 				type = items[i++];
 				element = elementById[id];
 				if (element === undefined) {
@@ -474,6 +478,7 @@ function flushUpdates(data) {
 				break;
 			
 			case 'PI': // property incremental updates
+				performLayoutPass = true;
 				element = elementById[id];
 				
 				// delete properties
@@ -499,6 +504,7 @@ function flushUpdates(data) {
 				break;
 			
 			case 'CF': // children full state
+				performLayoutPass = true;
 				element = elementById[id];
 				childrenCount = parseInt(items[i++]);
 				for (j = 0; j < childrenCount; ++j) {
@@ -509,6 +515,7 @@ function flushUpdates(data) {
 				break;
 			
 			case 'CI': // children incremental updates
+				performLayoutPass = true;
 				element = elementById[id];
 				
 				// removals occur first
@@ -524,6 +531,7 @@ function flushUpdates(data) {
 				break;
 			
 			case 'RE': // Root element change
+				performLayoutPass = true;
 				
 				ctx.rootElementId = id;
 				let re = ctx.elementById[id];
@@ -594,15 +602,35 @@ function flushUpdates(data) {
 				i += j;
 				break;
 
+			case 'GS': // declare a canvas as a game surface.
+				element = elementById[id];
+				NoriEvents.enableBatchMode();
+				(canvas => {
+					let handleMouseEvent = (type, ev) => {
+						let rect = canvas.getBoundingClientRect();
+						let px = ev.clientX - rect.left;
+						let py = ev.clientY - rect.top;
+						let x = Math.floor(canvas.firstChild.width * px / rect.width);
+						let y = Math.floor(canvas.firstChild.height * py / rect.height);
+						let btn = -1;
+						NoriEvents.addBatchEvent(type, [x, y, btn]);
+					};
+					canvas.addEventListener('mousemove', e => { handleMouseEvent('mousemove', e); });
+					canvas.addEventListener('mousedown', e => { handleMouseEvent('mousedown', e); });
+					canvas.addEventListener('mouseup', e => { handleMouseEvent('mouseup', e); });
+				})(element);
+				break;
+
+			case 'FE': // flush events
+				NoriEvents.flushEventBatches();
+				break;
+
 			default:
 				throw "Unknown command";
 		}
 	}
 	
-	// Canvas renderings will never affect layout.
-	let skipLayout = (items[0] === 'CV' && items.length === items[2] + 3);
-
-	if (!skipLayout) {
+	if (performLayoutPass) {
 		NoriLayout.doLayoutPass();
 		platformSpecificHandleEvent(-1, 'on-render-pass', '');
 	}

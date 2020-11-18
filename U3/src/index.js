@@ -2,6 +2,8 @@ const { app } = require('electron');
 const { createHub } = require('./messagehubclient');
 const renderwindow = require('./renderwindow.js');
 
+const HIDE_MENU_AND_DEBUG = false;
+
 let args = (() => {
     let output = {};
     let argv = process.argv;
@@ -32,7 +34,8 @@ app.whenReady().then(() => {
             title, 
             width, 
             height, 
-            initialData.length === 0 ? null : initialData);
+            initialData.length === 0 ? null : initialData,
+            HIDE_MENU_AND_DEBUG);
         rwindow.setListener('events', msgs => {
             hub.send('u3events', msgs);
         });
@@ -40,6 +43,9 @@ app.whenReady().then(() => {
             // Don't fire the callback until the window is fully ready.
             // Otherwise Crayon can send new messages that will get dropped. 
             if (cb) cb(true); 
+        });
+        rwindow.setListener('eventBatch', data => {
+            hub.send('u3batch', data);
         });
     });
 

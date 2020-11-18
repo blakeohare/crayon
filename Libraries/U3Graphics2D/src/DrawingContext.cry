@@ -81,7 +81,7 @@ namespace U3Graphics2D {
             return f._u3window;
         }
 
-        function flush() {
+        function flush(isGame = false) {
             win = this._getU3Window();
 
             if (win == null) {
@@ -97,7 +97,12 @@ namespace U3Graphics2D {
                     buffer = this._imageDataBuffer + buffer;
                     this._imageDataBuffer.clear();
                 }
-                win.sendCanvasData(this._canvas._id, buffer);
+                id = this._canvas._id;
+                if (isGame) {
+                    win.sendGameData(id, buffer);
+                } else {
+                    win.sendCanvasData(id, buffer);
+                }
             }
             this._buffer.clear();
 
