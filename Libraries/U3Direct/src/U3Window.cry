@@ -42,6 +42,11 @@ namespace U3Direct {
                     eventListener(eventType, id, arg);
                 }
             });
+
+            this._hub.listen('u3batch', (data, cb) => {
+                //print("BATCH DATA: " + data);
+                cb(null);
+            });
         }
 
         function show(title, width, height, initialData, isBlocking) {
@@ -72,6 +77,17 @@ namespace U3Direct {
         function sendData(items) {
             this._hub.send('u3data', { "buffer": items });
             return this;
+        }
+
+        field _isGame = false;
+        function sendGameData(canvasId, items) {
+            data = ['CV', canvasId, items.length] + items;
+            if (!this._isGame) {
+                this._isGame = true;
+                data = ['GS', canvasId] + data;
+            }
+            data.add('FE', -1);
+            return this.sendData(data);
         }
 
         function sendCanvasData(id, items) {

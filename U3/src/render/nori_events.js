@@ -2,12 +2,15 @@ const NoriEvents = (() => {
     let isKeyPressed = {};
     
     window.addEventListener('keydown', e => {
-        if (ctx.hasKeyDownListener) handleKeyEvent(e, true);
+        handleKeyEvent(e, true);
     });
 
     window.addEventListener('keyup', e => {
-        if (ctx.hasKeyUpListener) handleKeyEvent(e, false);
+        handleKeyEvent(e, false);
     });
+
+    let batchModeEnabled = false;
+    let batchData = [];
 
     const handleKeyEvent = (e, isDown) => {
         let keyName = keyEventToType(e);
@@ -17,7 +20,35 @@ const NoriEvents = (() => {
         if (e.shiftKey) arg += '|s';
         if (e.ctrlKey) arg += '|c';
         if (e.altKey) arg += '|a';
-        platformSpecificHandleEvent(-1, 'frame.' + (isDown ? 'keydown' : 'keyup'), arg);
+        let sendEvent = isDown ? ctx.hasKeyDownListener : ctx.hasKeyUpListener;
+        if (sendEvent) {
+            platformSpecificHandleEvent(-1, 'frame.' + (isDown ? 'keydown' : 'keyup'), arg);
+        }
+        if (batchModeEnabled) {
+            addBatchEvent(isDown ? 'keydown' : 'keyup', arg);
+        }
+    };
+
+    let addBatchEvent = (type, args) => {
+        if (args !== undefined) {
+            if (Array.isArray(args)) {
+                batchData.push(1 + args.length, type);
+                for (let arg of args) batchData.push(arg);
+            } else {
+                batchData.push(2, type, args);
+            }
+        } else {
+            batchData.push(1, type);
+        }
+    };
+
+    let flushEventBatches = () => {
+        if (batchData.length > 0) {
+            let batch = batchData;
+            batchData = [];
+            // TODO: put this in the shim, won't work in browser JS
+            window.sendMessage('eventBatch', batch);
+        }
     };
 
     const keyEventToChar = e => {
@@ -105,5 +136,8 @@ const NoriEvents = (() => {
 
     return {
         buildEventHandler,
+        addBatchEvent,
+        flushEventBatches,
+        enableBatchMode: () => { batchModeEnabled = true; },
     };
 })();

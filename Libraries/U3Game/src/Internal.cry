@@ -9,7 +9,7 @@ namespace U3Game {
         }
 
         static function doClockTick(window, drawingContext) {
-            drawingContext.flush();
+            drawingContext.flush(true);
             Internal.fillBg(window);
             f = window._fields;
             if (!f.get('open')) return;

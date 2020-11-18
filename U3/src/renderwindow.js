@@ -3,7 +3,7 @@ const { ipcMain } = require('electron')
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = (title, width, height, initialData) => {
+let createWindow = (title, width, height, initialData, hideMenu) => {
 
     let listeners = {};
     let mBoundMessageQueues = {};
@@ -28,7 +28,9 @@ let createWindow = (title, width, height, initialData) => {
         }
     });
 
-    win.setMenu(null);
+    if (hideMenu) {
+        win.setMenu(null);
+    }
 
     const close = () => { win.close(); };
 
