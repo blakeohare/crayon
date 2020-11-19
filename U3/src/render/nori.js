@@ -25,6 +25,7 @@ function setFrameSize(width, height) {
 	s = ctx.noriHostDiv.style;
 	s.width = width + 'px';
 	s.height = height + 'px';
+	NoriLayout.doLayoutPass();
 }
 
 function createElement(id, type) {
