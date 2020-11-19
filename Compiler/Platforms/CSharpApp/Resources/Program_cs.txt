@@ -16,7 +16,7 @@ namespace Interpreter
             TranslationHelper.ProgramData = vm;
             CrayonWrapper.vmEnableLibStackTrace(vm);
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
-            Debugger.INSTANCE.StartListening();
+            // Debugger.INSTANCE.StartListening();
             EventLoop.StartInterpreter();
             UniversalBitmap.EnsureAllFreed();
         }

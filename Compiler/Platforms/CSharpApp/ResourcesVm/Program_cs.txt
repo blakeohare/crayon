@@ -99,7 +99,7 @@ namespace CrayonRuntime
             vm.environment.stdoutPrefix = usePrefixes ? "STDOUT" : null;
             vm.environment.stacktracePrefix = usePrefixes ? "STACKTRACE" : null;
             vm.environment.showLibStack = showLibStack;
-            Debugger.INSTANCE.StartListening();
+            // Debugger.INSTANCE.StartListening();
             TranslationHelper.ProgramData = vm;
             EventLoop.StartInterpreter();
         }
