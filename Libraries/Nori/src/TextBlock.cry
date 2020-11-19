@@ -24,8 +24,6 @@ namespace Nori {
                 case '<content>':
                 case 'text':
                     return this.setText(strValue);
-                case 'size': // TODO: remove this alias.
-                    return this.setFontSize(strValue);
                 case 'wrap':
                     return this._setBooleanAsString(TextBlock_Wrap, strValue);
 
