@@ -206,10 +206,10 @@ function setProperty(e, key, value) {
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
 		case 'border.rightcolor': e.firstChild.style.borderRightColor = value; break;
 		case 'border.bottomcolor': e.firstChild.style.borderBottomColor = value; break;
-		case 'border.leftthickness': e.NORI_borders[0] = value; e.firstChild.style.borderLeftThickness = value + 'px'; e.firstChild.style.borderLeftStyle = value > 0 ? 'solid' : 'none'; break;
-		case 'border.topthickness': e.NORI_borders[1] = value; e.firstChild.style.borderTopThickness = value + 'px'; e.firstChild.style.borderTopStyle = value > 0 ? 'solid' : 'none'; break;
-		case 'border.rightthickness': e.NORI_borders[2] = value; e.firstChild.style.borderRightThickness = value + 'px'; e.firstChild.style.borderRightStyle = value > 0 ? 'solid' : 'none'; break;
-		case 'border.bottomthickness': e.NORI_borders[3] = value; e.firstChild.style.borderBottomThickness = value + 'px'; e.firstChild.style.borderBottomStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.leftthickness': e.NORI_borders[0] = value; e.firstChild.style.borderLeftWidth = value + 'px'; e.firstChild.style.borderLeftStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.topthickness': e.NORI_borders[1] = value; e.firstChild.style.borderTopWidth = value + 'px'; e.firstChild.style.borderTopStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.rightthickness': e.NORI_borders[2] = value; e.firstChild.style.borderRightWidth = value + 'px'; e.firstChild.style.borderRightStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.bottomthickness': e.NORI_borders[3] = value; e.firstChild.style.borderBottomWidth = value + 'px'; e.firstChild.style.borderBottomStyle = value > 0 ? 'solid' : 'none'; break;
 		
 		case 'cv.height': e.firstChild.height = value; break;
 		case 'cv.width': e.firstChild.width = value; break;
