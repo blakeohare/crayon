@@ -101,6 +101,32 @@
             return this;
         }
 
+        function flip(flipX, flipY) {
+            width = this._bitmap.width;
+            height = this._bitmap.height;
+            p1 = [];
+            p2 = [];
+            if (flipX) {
+                xs = [];
+                for (x = 0; x < width / 2; ++x) xs.add(x);
+                c = width - 1;
+                for (y = 0; y < height; ++y) {
+                    for (x : xs) {
+                        x2 = c - x;
+                        $$$('imageGetPixel', this._bitmap, this, x, y, p1);
+                        $$$('imageGetPixel', this._bitmap, this, x2, y, p2);
+                        $$$('imageSetPixel', this, x, y, x, y, p2, null, null, 255);
+                        $$$('imageSetPixel', this, x2, y, x2, y, p1, null, null, 255);
+                    }
+                }
+            }
+
+            if (flipY) {
+                throw new NotImplementedException();
+            }
+            return this;
+        }
+
         function finish() {
             this._finished = true;
             $$$('imageSessionFinish', this, this._bitmap);
