@@ -31,7 +31,6 @@ class LoadingScene : AbstractScene {
         delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
         this.progress += delta;
 
-        print(newProgress);
         if (this._imagesToLoad.length == 0) {
             if (this.progress > .999) {
                 this.switchScene(new PlayScene());
