@@ -58,8 +58,8 @@ namespace Nori {
             return this;
         }
 
-        function addFontResourceLink(url) {
-            this._fontResourceLinks.add(url);
+        function addFontResourceLink(name, url) {
+            this._fontResourceLinks.add([name, url]);
             return this;
         }
 
@@ -169,7 +169,7 @@ namespace Nori {
 
             if (this._fontResourceLinks.length > 0) {
                 for (f : this._fontResourceLinks) {
-                    wireData.add('FR', 0, f);
+                    wireData.add('FR', 0, Frame.escapeStringToHex(f[1]), Frame.escapeStringToHex(f[0]));
                 }
                 this._fontResourceLinks.clear();
             }
