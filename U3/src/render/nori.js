@@ -637,3 +637,26 @@ function flushUpdates(data) {
 		platformSpecificHandleEvent(-1, 'on-render-pass', '');
 	}
 }
+
+const waitForFonts = () => {
+	let root = document.getElementById('html_render_host');
+	if (ctx.fontsLoading.length === 0) {
+		return Promise.resolve(true);
+	}
+	const font = ctx.fontsLoading.pop();
+	let temp = document.createElement('div'); // font will not load until something uses it.
+	root.append(temp);
+	let style = temp.style;
+	style.fontSize = '1pt';
+	style.color = '#fff';
+	temp.append('.');
+	style.fontFamily = '"' + font + '"';
+	let waitForFont = () => {
+		if (document.fonts.check('8pt "' + font + '"')) {
+			root.removeChild(temp);
+			return waitForFonts();
+		}
+		return NoriUtil.promiseWait(10).then(() => waitForFont());
+	};
+	return waitForFont();
+};

@@ -117,6 +117,15 @@ namespace Nori {
 
             wireData = [];
 
+            // Font data must ALWAYS be sent first.
+            // It will pause execution of the flush until the font is loaded.
+            if (this._fontResourceLinks.length > 0) {
+                for (f : this._fontResourceLinks) {
+                    wireData.add('FR', 0, Frame.escapeStringToHex(f[1]), Frame.escapeStringToHex(f[0]));
+                }
+                this._fontResourceLinks.clear();
+            }
+
             if (this._fullFlushElements.length > 0) {
                 for (id : this._fullFlushElements.keys()) {
                     e = this._fullFlushElements[id];
@@ -165,13 +174,6 @@ namespace Nori {
                     wireData.add('FA', 0, attr, this._dirtyFrameAttributes[attr]);
                 }
                 this._dirtyFrameAttributes.clear();
-            }
-
-            if (this._fontResourceLinks.length > 0) {
-                for (f : this._fontResourceLinks) {
-                    wireData.add('FR', 0, Frame.escapeStringToHex(f[1]), Frame.escapeStringToHex(f[0]));
-                }
-                this._fontResourceLinks.clear();
             }
 
             return wireData;
