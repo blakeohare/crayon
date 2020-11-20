@@ -1,4 +1,4 @@
-﻿namespace Game {
+﻿namespace U3Game {
     function GamepadImpl_isSupported() { return false; }
     function GamepadImpl_getPlatform() { throw new NotImplementedException(); }
     function GamepadImpl_isOsx() { throw new NotImplementedException(); }

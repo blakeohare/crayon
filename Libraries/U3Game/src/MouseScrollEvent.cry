@@ -1,4 +1,4 @@
-﻿namespace Game {
+﻿namespace U3Game {
 
     @localized('en', 'MouseScrollEvent')
     @localized('es', 'ESMouseScrollEvent')

@@ -1,4 +1,4 @@
-﻿namespace Game {
+﻿namespace U3Game {
 
     // TODO: mark as abstract.
     // This can be extended in other libraries, such as Gamepad
