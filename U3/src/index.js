@@ -28,6 +28,8 @@ app.whenReady().then(() => {
 
     const hub = createHub(u3Token);
 
+    let queuedEventBatch = [];
+
     hub.addListener('u3init', (msg, cb) => {
         let { title, width, height, initialData } = msg;
         rwindow = renderwindow.createWindow(
@@ -43,9 +45,20 @@ app.whenReady().then(() => {
             // Don't fire the callback until the window is fully ready.
             // Otherwise Crayon can send new messages that will get dropped. 
             if (cb) cb(true); 
+
+            let batchSender = () => {
+                if (queuedEventBatch.length > 0) {
+                    let events = queuedEventBatch;
+                    queuedEventBatch = [];
+                    hub.send('u3batch', events);
+                }
+                setTimeout(batchSender, 50); // limit input data to 20 FPS
+            };
+            
+            batchSender();
         });
         rwindow.setListener('eventBatch', data => {
-            hub.send('u3batch', data);
+            queuedEventBatch = queuedEventBatch.concat(data);
         });
     });
 
