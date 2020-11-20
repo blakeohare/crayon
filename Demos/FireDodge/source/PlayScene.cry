@@ -1,5 +1,4 @@
-﻿import Game;
-import Graphics2D;
+﻿import U3Game;
 import Math;
 
 enum GameMode {
@@ -108,30 +107,30 @@ class PlayScene : AbstractScene {
         return false;
     }
 
-    function render() {
+    function render(draw) {
 
         // This color is charcoal
-        Draw.fill(40, 40, 40);
+        draw.fill(40, 40, 40);
 
         // Draw fires
         for (fire : this.fires) {
-            fire.render(this.gameCounter);
+            fire.render(draw, this.gameCounter);
         }
 
         // Draw player (after fires, so always on top)
-        this.player.render(this.gameCounter);
+        this.player.render(draw, this.gameCounter);
 
         // Display number of fires on the screen.
-        this.displayScore();
+        this.displayScore(draw);
     }
 
-    function displayScore() {
+    function displayScore(draw) {
         text = this.fires.length + '';
         x = 10; // 10 pixels from the left
         y = SCREEN_HEIGHT - ImageLibrary.getTextChar('0').height - 10; // 10 pixels from the bottom
         for (char : '' + text) {
             img = ImageLibrary.getTextChar(char);
-            img.draw(x, y);
+            draw.drawImage(img, x, y);
             x += img.width + 5;
         }
     }

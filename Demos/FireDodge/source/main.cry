@@ -1,12 +1,18 @@
-﻿import Game;
-import Graphics2D;
+﻿import U3Game;
 
 const FPS = 60;
 const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
 
 function main() {
-    window = new GameWindow("Fire Dodge", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+    window = new GameWindow()
+        .setTitle("Fire Dodge")
+        .setFps(FPS)
+        .setGameSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    window.show(false);
+
+    draw = window.getDrawingContext();
 
     activeScene = new LoadingScene();
 
@@ -20,7 +26,7 @@ function main() {
 
         activeScene.processInput(events);
         activeScene.update();
-        activeScene.render();
+        activeScene.render(draw);
 
         activeScene = activeScene.nextScene ?? activeScene;
 
