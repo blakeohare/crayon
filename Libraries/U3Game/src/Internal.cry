@@ -3,9 +3,59 @@
 namespace U3Game {
 
     static class Internal {
+        // TODO: do this lookup directly in U3 before sending values over.
+        static field HACK_keyLookup = null;
 
         static function doPumpEvents(window) {
-            return [];
+            if (Internal.HACK_keyLookup == null) {
+                lookup = {
+                    'left': KeyboardKey.LEFT,
+                    'up': KeyboardKey.UP,
+                    'right': KeyboardKey.RIGHT,
+                    'down': KeyboardKey.DOWN,
+                    'space': KeyboardKey.SPACE,
+                    'enter': KeyboardKey.ENTER,
+                };
+                for (i = 0; i < 26; ++i) {
+                    lookup[chr(ord('a') + i)] = KeyboardKey.A + i;
+                }
+                for (i = 0; i < 10; ++i) {
+                    lookup[chr(ord('0') + i)] = KeyboardKey.NUM_0 + i;
+                }
+                Internal.HACK_keyLookup = lookup;
+            }
+            output = [];
+            for (item : window._fields['win']._u3window.flushInputData()) {
+                name = item['name'];
+                args = item['args'];
+                switch (item['name']) {
+                    case 'keydown':
+                    case 'keyup':
+                        t = args[0].split('|');
+                        kcode = Internal.HACK_keyLookup.get(t[0]);
+                        if (kcode != null) {
+                            output.add(new KeyEvent(kcode, name == 'keydown'));
+                        }
+                        break;
+                    
+                    case 'mousemove':
+                    case 'mousedown':
+                    case 'mouseup':
+                        x = args[0];
+                        y = args[1];
+                        b = args[2];
+                        if (name == 'mousemove') {
+                            output.add(new MouseMoveEvent(x, y));
+                        } else {
+                            // TODO: move this logic into the constructor.
+                            isDown = name == 'mousedown';
+                            type = isDown ? EventType.MOUSE_LEFT_DOWN : EventType.MOUSE_LEFT_UP;
+                            output.add(new MouseClickEvent(type, EventButton.LEFT, name == 'mousedown', x, y));
+                        }
+                        break;
+                }
+            }
+            return output;
         }
 
         static function doClockTick(window, drawingContext) {

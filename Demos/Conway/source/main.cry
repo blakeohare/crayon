@@ -84,7 +84,6 @@ function main() {
 
     while (true) {
         for (event : window.pumpEvents()) {
-            /*
             switch (event.type) {
                 case EventType.QUIT:
                     return;
@@ -105,7 +104,6 @@ function main() {
                     mousePressed = false;
                     break;
             }
-            */
         }
 
         if (lastPosition >= 0) {

@@ -11,6 +11,7 @@ namespace U3Direct {
 
     class U3Window {
         field _hub;
+        field _inputBuffer = [];
 
         constructor(eventListener) {
             this._hub = new Hub();
@@ -44,7 +45,16 @@ namespace U3Direct {
             });
 
             this._hub.listen('u3batch', (data, cb) => {
-                //print("BATCH DATA: " + data);
+                i = 0;
+                while (i < data.length) {
+                    len = data[i++];
+                    item = {
+                        "name": data[i],
+                        "args": data[i + 1 : i + len],
+                    };
+                    i += len;
+                    this._inputBuffer.add(item);
+                }
                 cb(null);
             });
         }
@@ -97,6 +107,12 @@ namespace U3Direct {
         function close() {
             this._hub.send('u3close', {});
             return this;
+        }
+
+        function flushInputData() {
+            b = this._inputBuffer;
+            this._inputBuffer = [];
+            return b;
         }
     }
 }
