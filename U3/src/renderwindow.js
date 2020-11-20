@@ -11,8 +11,8 @@ let createWindow = (title, width, height, initialData, hideMenu) => {
     
     ipcMain.on('mboundmsg', (event, arg) => {
         if (!listeners[arg.type]) {
-            let q = mBoundMessageQueue[arg.type] || [];
-            mBoundMessageQueue[arg.type] = q;
+            let q = mBoundMessageQueues[arg.type] || [];
+            mBoundMessageQueues[arg.type] = q;
             q.push(arg.data);
         } else {
             listeners[arg.type](arg.data);
@@ -64,8 +64,8 @@ let createWindow = (title, width, height, initialData, hideMenu) => {
             let flushQueue = !listeners[type];
             listeners[type] = newListener;
             if (flushQueue && mBoundMessageQueues[type]) {
-                mBoundMessageQueue[type].forEach(newListener);
-                mBoundMessageQueue[type] = null;
+                mBoundMessageQueues[type].forEach(newListener);
+                mBoundMessageQueues[type] = null;
             }
         },
         close,

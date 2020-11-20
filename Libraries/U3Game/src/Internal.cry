@@ -37,7 +37,7 @@ namespace U3Game {
                             output.add(new KeyEvent(kcode, name == 'keydown'));
                         }
                         break;
-                    
+
                     case 'mousemove':
                     case 'mousedown':
                     case 'mouseup':
