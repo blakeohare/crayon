@@ -15,7 +15,12 @@ namespace Interpreter.Vm
         private static Dictionary<int, UniversalBitmap> loadedChunks = new Dictionary<int, UniversalBitmap>();
         public static void ChunkLoadAsync(int chunkId, int[] chunkIds, Value loadedCallback)
         {
-            loadedChunks[chunkId] = ResourceReader.ReadImageResource("ch_" + chunkId + ".png");
+            string path = "ch_" + chunkId + ".png";
+            loadedChunks[chunkId] = ResourceReader.ReadImageResource(path);
+            if (loadedChunks[chunkId] == null)
+            {
+                throw new Exception("Image resource not available: " + path);
+            }
             int total = chunkIds.Length;
             int loaded = 0;
             foreach (int otherChunk in chunkIds)
