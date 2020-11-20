@@ -172,59 +172,28 @@ namespace Build
         public void GenerateResourceMapping()
         {
             List<string> manifest = new List<string>();
-
-            int i = 1;
+            int resourceId = 1;
             foreach (FileOutput textFile in this.TextResources)
             {
-                textFile.CanonicalFileName = "txt" + (i++) + ".txt";
+                textFile.CanonicalFileName = "txt" + (resourceId++) + ".txt";
                 manifest.Add("TXT," + textFile.OriginalPath + "," + textFile.CanonicalFileName);
             }
 
-            List<string> imageSheetManifestFileAdditions = new List<string>();
-            i = 1;
             foreach (FileOutput imageFile in this.ImageResources)
             {
-                if (imageFile.Type == FileOutputType.Ghost)
-                {
-                    manifest.Add("IMGSH," + imageFile.OriginalPath + ",," + imageFile.ImageSheetId);
-                }
-                else
-                {
-                    bool isPng = imageFile.OriginalPath.ToLowerInvariant().EndsWith(".png");
-                    imageFile.CanonicalFileName = "i" + (i++) + (isPng ? ".png" : ".jpg");
-                    manifest.Add("IMG," + imageFile.OriginalPath + "," + imageFile.CanonicalFileName);
-                    imageSheetManifestFileAdditions.Add("A," + imageFile.CanonicalFileName + "," + imageFile.Bitmap.Width + "," + imageFile.Bitmap.Height + "," + imageFile.OriginalPath);
-                }
+                manifest.Add("IMG," + imageFile.OriginalPath + ",");
             }
 
-            if (imageSheetManifestFileAdditions.Count > 0)
-            {
-                if (this.ImageSheetManifestFile == null)
-                {
-                    this.ImageSheetManifestFile = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = string.Join("\n", imageSheetManifestFileAdditions),
-                    };
-                }
-                else
-                {
-                    this.ImageSheetManifestFile.TextContent += "\n" + string.Join("\n", imageSheetManifestFileAdditions);
-                }
-            }
-
-            i = 1;
             foreach (FileOutput audioFile in this.AudioResources)
             {
-                audioFile.CanonicalFileName = "snd" + (i++) + ".ogg";
+                audioFile.CanonicalFileName = "snd" + (resourceId++) + ".ogg";
                 // TODO: swap the order of the original path and the canonical name
                 manifest.Add("SND," + audioFile.OriginalPath + "," + audioFile.CanonicalFileName);
             }
 
-            i = 1;
             foreach (FileOutput fontFile in this.FontResources)
             {
-                fontFile.CanonicalFileName = "ttf" + (i++) + ".ttf";
+                fontFile.CanonicalFileName = "ttf" + (resourceId++) + ".ttf";
                 manifest.Add("TTF," + fontFile.OriginalPath + "," + fontFile.CanonicalFileName);
             }
 
@@ -253,13 +222,11 @@ namespace Build
             {
                 output["res/bin/" + binResource.CanonicalFileName] = binResource;
             }
-            foreach (FileOutput imgResource in this.ImageResources)
+
+            foreach (string name in this.Image2ResourceFiles.Keys)
             {
-                output["res/img/" + imgResource.CanonicalFileName] = imgResource;
-            }
-            foreach (string key in this.ImageSheetFiles.Keys)
-            {
-                output["res/img/" + key] = this.ImageSheetFiles[key];
+                FileOutput imgResource = this.Image2ResourceFiles[name];
+                output["res/img/" + name] = imgResource;
             }
         }
     }
