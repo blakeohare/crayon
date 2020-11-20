@@ -6,6 +6,7 @@ const ctx = {
 	elementById: {},
 	frameSize: [0, 0],
 	textSizer: null,
+	fontsLoading: [],
 	
 	// some static data:
 	isTextProperty: {

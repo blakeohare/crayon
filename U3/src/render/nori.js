@@ -451,7 +451,8 @@ function flushUpdates(data) {
 				break;
 			
 			case 'FR': // Font resource
-				propertyValue = items[i++];
+				propertyValue = NoriUtil.decodeHex(items[i++]);
+				ctx.fontsLoading.push(NoriUtil.decodeHex(items[i++]));
 				document.getElementById('font_loader').innerHTML += "\n@import url('" + propertyValue + "');"
 				break;
 
