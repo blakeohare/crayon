@@ -48,14 +48,14 @@ class Sprite {
         fail("Overriden");
     }
 
-    function render(gameCounter) {
+    function render(draw, gameCounter) {
         image = this.getImage(gameCounter);
 
         // The sprite's coordinate is the center of the sprite.
         // .draw requires the top left corner of the image, so subtract half the width and height.
         x = floor(this.position[0] - image.width / 2);
         y = floor(this.position[1] - image.height / 2);
-        image.draw(x, y);
+        draw.drawImage(image, x, y);
     }
 }
 

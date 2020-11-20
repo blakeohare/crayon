@@ -1,15 +1,24 @@
 ﻿import Graphics2D;
-import ImageResources;
+import Resources;
+import Images;
 import Math;
 
 class LoadingScene : AbstractScene {
     field phase = 'start';
     field progress = 0.0;
-    field loader;
     field minLoadDuration = FPS * 3 / 4; // show the progress bar for at least three quarters of a seconds.
 
+    field _imagesToLoad = [];
+    field _imagesToLoadLength = 0;
+
     constructor() : base() {
-        this.loader = ImageSheet.loadFromResourcesAsync('everything');
+        allImages = [];
+        for (dir : Resources.directoryList('images', true)) {
+            for (imgPath : Resources.directoryList(dir, true)) {
+                this._imagesToLoad.add(imgPath);
+            }
+        }
+        this._imagesToLoadLength = this._imagesToLoad.length;
     }
 
     function processInput(events) {
@@ -18,17 +27,23 @@ class LoadingScene : AbstractScene {
 
     function update() {
         // force the progress bar to ease into completion so that it doesn't appear in a flicker
-        newProgress = this.loader.getProgress();
+        newProgress = 1.0 - 1.0 * this._imagesToLoad.length / this._imagesToLoadLength;
         delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
         this.progress += delta;
 
-        if (this.loader.isDone() && this.progress > .999) {
-            ImageLibrary.initializeWithImageSheet(this.loader);
-            this.switchScene(new PlayScene());
+        print(newProgress);
+        if (this._imagesToLoad.length == 0) {
+            if (this.progress > .999) {
+                this.switchScene(new PlayScene());
+            }
+        } else {
+            imgPath = this._imagesToLoad.pop();
+            img = Bitmap.fromResource(imgPath);
+            ImageLibrary.addImage(imgPath, img);
         }
     }
 
-    function render() {
+    function render(draw) {
         width = 400;
         height = 30;
 
@@ -37,13 +52,13 @@ class LoadingScene : AbstractScene {
 
         margin = 10;
 
-        Draw.fill(40, 0, 0);
-        Draw.rectangle(left - margin, top - margin, width + 2 * margin, height + 2 * margin, 80, 80, 80);
-        Draw.rectangle(left, top, width, height, 0, 0, 0);
+        draw.fill(40, 0, 0);
+        draw.rectangle(left - margin, top - margin, width + 2 * margin, height + 2 * margin, 80, 80, 80);
+        draw.rectangle(left, top, width, height, 0, 0, 0);
 
         barWidth = floor(width * this.progress);
-        Draw.rectangle(left, top, barWidth, height, 255, 128, 0);
-        Draw.rectangle(left, top, barWidth, height / 5, 255, 255, 0);
-        Draw.rectangle(left, top + height * 4 / 5, barWidth, height / 5, 255, 0, 0);
+        draw.rectangle(left, top, barWidth, height, 255, 128, 0);
+        draw.rectangle(left, top, barWidth, height / 5, 255, 255, 0);
+        draw.rectangle(left, top + height * 4 / 5, barWidth, height / 5, 255, 0, 0);
     }
 }

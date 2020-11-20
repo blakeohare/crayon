@@ -15,7 +15,7 @@
         fail("Overriden");
     }
 
-    function render() {
+    function render(draw) {
         fail("Overriden");
     }
 }

@@ -9,13 +9,6 @@
     "version": "2.9.0",
     "guidSeed": "org.crayonlang.demos.firedodge,%VERSION%,%TARGET_NAME%",
 
-    "imageSheets": [
-        {
-            "id": "everything",
-            "prefix": "*"
-        }
-    ],
-
     "targets": [
         {
             "name": "javascript",

@@ -4,9 +4,10 @@ class ImageLibrary {
     static field images = {};
     static field text = {};
     static field sheet = null;
+    static field drawReference = null;
 
-    static function initializeWithImageSheet(sheet) {
-        ImageLibrary.sheet = sheet;
+    static function addImage(path, img) {
+        ImageLibrary.images[path] = img;
     }
 
     static function getTextChar(char) {
@@ -26,7 +27,8 @@ class ImageLibrary {
                 // east-facing image and flip it.
                 eastImagePath = path.replace('images/player/w', 'images/player/e');
                 img = ImageLibrary.get(eastImagePath);
-                img = img.flip(true, false);
+                img = img.clone();
+                img.edit().flip(true, false).finish();
             } else {
                 rawResource = ImageLibrary.sheet.getImage(path);
                 img = GraphicsTexture.load(rawResource);
