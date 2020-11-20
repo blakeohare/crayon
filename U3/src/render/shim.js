@@ -44,6 +44,30 @@ function shimInit(uiData) {
 		platformSpecificHandleEvent(-1, 'frame.onresize', newSize[0] + ',' + newSize[1]);
 		flushUpdates(['NO', 0]);
 	};
-	flushUpdates(uiData);
-	window.sendMessage('shown', true);
+	let fontUpdates = [];
+	let otherUpdates = [];
+	for (let i = 0; i < uiData.length; ++i) {
+		if (uiData[i] === 'FR') {
+			for (let j = 0; j < 4; ++j) {
+				fontUpdates.push(uiData[i + j]);
+			}
+			i += 3;
+		} else {
+			otherUpdates = uiData.slice(i);
+			break;
+		}
+	}
+	uiData = otherUpdates;
+	
+	let finishInit = () => {
+		flushUpdates(uiData);
+		window.sendMessage('shown', true);
+	};
+
+	if (fontUpdates.length === 0) {
+		finishInit();
+	} else {
+		flushUpdates(fontUpdates);
+		waitForFonts().then(finishInit);
+	}
 }

@@ -2,6 +2,12 @@ const NoriUtil = (() => {
 
     let noopFn = () => { };
 
+    let promiseWait = ms => {
+        return new Promise(res => {
+           window.setTimeout(() => res(true), ms); 
+        });
+    };
+
     function escapeHtml(text) {
         let o = [];
         let len = text.length;
@@ -57,6 +63,7 @@ const NoriUtil = (() => {
     
     return {
         noopFn,
+        promiseWait,
         escapeHtml,
         decodeHex,
         encodeHex,
