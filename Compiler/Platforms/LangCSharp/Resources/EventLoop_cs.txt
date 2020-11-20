@@ -141,7 +141,7 @@ namespace Interpreter.Vm
             VmContext vm = TranslationHelper.ProgramData;
             EnsureRunningOnStartingThread();
 
-            Debugger.INSTANCE.FlushMessageQueue();
+            // Debugger.INSTANCE.FlushMessageQueue();
 
             if (invocation == null) return;
 
@@ -244,14 +244,14 @@ namespace Interpreter.Vm
         public static InterpreterResult RunInterpreter(int executionContextId)
         {
             EnsureRunningOnStartingThread();
-            Debugger.INSTANCE.FlushMessageQueue();
+            // Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.runInterpreter(TranslationHelper.ProgramData, executionContextId));
         }
 
         public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
         {
             EnsureRunningOnStartingThread();
-            Debugger.INSTANCE.FlushMessageQueue();
+            // Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.runInterpreterWithFunctionPointer(TranslationHelper.ProgramData, functionPointer, args));
         }
 
@@ -272,7 +272,7 @@ namespace Interpreter.Vm
                     double sleepForSeconds = result.reinvokeDelay;
                     System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
                 }
-                Debugger.INSTANCE.FlushMessageQueue();
+                // Debugger.INSTANCE.FlushMessageQueue();
                 result = CrayonWrapper.runInterpreter(TranslationHelper.ProgramData, result.executionContextId);
             }
             if (result.status == 1) // FINISHED
