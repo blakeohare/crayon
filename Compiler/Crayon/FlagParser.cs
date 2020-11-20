@@ -112,172 +112,139 @@ namespace Crayon
             Dictionary<string, string> output = new Dictionary<string, string>();
             int i;
 
-            // TODO: I need to fix the TODO below regarding having an unambiguous format.
-            // For now, do a first-pass scrape of showLibStack.
-            List<string> argsMutable = new List<string>(args);
-            for (i = 0; i < argsMutable.Count; ++i)
+            List<string> directRunArgs = new List<string>();
+
+            for (i = 0; i < args.Length; ++i)
             {
-                if (argsMutable[i].StartsWith("-CR:"))
+                string arg = args[i];
+                string dehyphenatedArg = arg.StartsWith("-") ? arg.Substring(1) : "";
+                if (arg.StartsWith("-CR:"))
                 {
-                    string name = argsMutable[i].Substring("-CR:".Length);
+                    string name = arg.Substring("-CR:".Length);
                     if (ATOMIC_FLAGS.Contains(name))
                     {
                         output[name] = "";
-                        argsMutable.RemoveAt(i--);
                     }
-                    else if (ONE_ARG_FLAGS.Contains(name) && i + 1 < argsMutable.Count)
+                    else if (ONE_ARG_FLAGS.Contains(name) && i + 1 < args.Length)
                     {
                         string value;
-                        if (i + 1 == argsMutable.Count || argsMutable[i + 1].StartsWith("-CR:"))
+                        if (i + 1 == args.Length || args[i + 1].StartsWith("-CR:"))
                         {
                             value = "";
                         }
                         else
                         {
-                            value = argsMutable[i + 1];
-                            argsMutable.RemoveAt(i + 1);
+                            value = args[++i];
                         }
                         output[name] = value;
-                        argsMutable.RemoveAt(i--);
                     }
                     else
                     {
                         throw new InvalidOperationException("Unrecognized compiler flag: " + name);
                     }
                 }
-            }
-            args = argsMutable.ToArray();
-
-            // TODO: change this. This is a hack.
-            // Ideally, the format will change to something that is not ambiguous.
-            // For now, just check to see if the first argument ends with ".build" and
-            // that the second argument is not "-target".
-            // Current idea is to have -export Foo.build instead of just Foo.build
-            // However, this will make all currently written documentation and tutorials
-            // incorrect, at least for 2.1.0
-            if (args.Length > 0 && args[0].ToLowerInvariant().EndsWith(".build") && !output.ContainsKey(BUILD_TARGET))
-            {
-                if (args.Length == 1 || (args[1] != "-target" && args[1] != "-CR:target"))
+                else if (!output.ContainsKey(BUILD_FILE) && arg.ToLowerInvariant().EndsWith(".build"))
                 {
-                    string[] directRunArgs = new string[args.Length - 1];
-                    Array.Copy(args, 1, directRunArgs, 0, directRunArgs.Length);
-                    Command runCommand = new Command()
-                    {
-                        IsDirectCbxRun = true,
-                        DirectRunArgs = directRunArgs,
-                        BuildFilePath = args[0],
-                        DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK),
-                    };
-
-                    ParseAdditionalArgs(runCommand, output);
-
-                    return runCommand;
+                    output[BUILD_FILE] = arg;
                 }
-            }
-
-            i = 0;
-            while (i < args.Length)
-            {
-                string arg = args[i];
-                if (arg.StartsWith("-"))
+                else if (!output.ContainsKey(BUILD_FILE) || output.ContainsKey(BUILD_TARGET))
                 {
-                    string noHyphen = arg.Substring(1);
-                    if (ALIASES.ContainsKey(noHyphen))
-                    {
-                        noHyphen = ALIASES[noHyphen];
-                    }
+                    // don't allow flags without -CR: prefix if a build file has been seen UNLESS a target has also been seen.
 
-                    if (ATOMIC_FLAGS.Contains(noHyphen))
+                    if (ATOMIC_FLAGS.Contains(dehyphenatedArg))
                     {
-                        if (output.ContainsKey(noHyphen))
-                        {
-                            throw new InvalidOperationException("Found an extraneous " + arg + " flag");
-                        }
-                        else
-                        {
-                            output[noHyphen] = "";
-                        }
-                        ++i;
+                        output[dehyphenatedArg] = "";
                     }
-                    else if (ONE_ARG_FLAGS.Contains(noHyphen))
+                    else if (ONE_ARG_FLAGS.Contains(dehyphenatedArg))
                     {
-                        if (output.ContainsKey(noHyphen))
+                        if (i + 1 < args.Length)
                         {
-                            throw new InvalidOperationException("Found an extraneous " + arg + " flag");
-                        }
-                        else if (i + 1 >= args.Length || args[i + 1].StartsWith("-"))
-                        {
-                            throw new InvalidOperationException("The " + arg + " argument requires a parameter following it.");
+                            if (args[i].StartsWith("-CR:"))
+                            {
+                                output[dehyphenatedArg] = "";
+                            }
+                            else
+                            {
+                                output[dehyphenatedArg] = args[++i];
+                            }
                         }
                         else
                         {
-                            output[noHyphen] = args[i + 1];
-                            i += 2;
+                            output[dehyphenatedArg] = "";
                         }
                     }
                     else
                     {
-                        throw new InvalidOperationException("Unknown command line argument: " + arg);
+                        throw new InvalidOperationException("Unknown argument: '" + arg + "'");
                     }
                 }
-                else if (!output.ContainsKey(BUILD_FILE) && arg.ToLowerInvariant().EndsWith(".build"))
+                else if (directRunArgs.Count == 0 && arg == "-target" && i + 1 < args.Length)
                 {
-                    output[BUILD_FILE] = arg;
-                    ++i;
+                    // Allow -target to be used after the build file without a -CR: prefix IFF it's the
+                    // first "-CR:"-free argument after the build file.
+                    // This is unfortunate and perhaps the command line arg format should be changed because
+                    // it doesn't allow for "-target" to be used as the first command line argument in any
+                    // user program if you run directly from the build file.
+                    output[BUILD_TARGET] = args[++i];
                 }
                 else
                 {
-                    // TODO: specific bad-argument exception that will make it show the usage notes.
-                    throw new InvalidOperationException("Unexpected argument: '" + arg + "'");
+                    directRunArgs.Add(arg);
                 }
             }
 
-            return GenerateExportCommand(output);
-        }
-
-        private static Command GenerateExportCommand(Dictionary<string, string> args)
-        {
-            Command command = new Command();
-
-            if (args.Count == 0) command.IsEmpty = true;
-
-            if (args.ContainsKey(GEN_DEFAULT_PROJ))
+            Command command = new Command()
             {
-                command.DefaultProjectId = args[GEN_DEFAULT_PROJ].Trim();
+                ShowPerformanceMarkers = output.ContainsKey(SHOW_PERFORMANCE_MARKERS),
+                ShowDependencyTree = output.ContainsKey(SHOW_DEP_TREE),
+                IsErrorCheckOnly = output.ContainsKey(ERROR_CHECK_ONLY),
+                IsJsonOutput = output.ContainsKey(JSON_OUTPUT),
+                UseOutputPrefixes = output.ContainsKey(USE_OUTPUT_PREFIXES),
+                OutputDirectoryOverride = output.ContainsKey(OVERRIDE_OUTPUT_DIR) ? output[OVERRIDE_OUTPUT_DIR] : null,
+                ResourceErrorsShowRelativeDir = output.ContainsKey(RESOURCE_ERRORS_SHOW_RELATIVE_DIR),
+            };
+
+            if (output.ContainsKey(BUILD_FILE) && !output.ContainsKey(BUILD_TARGET))
+            {
+                command.IsDirectCbxRun = true;
+                command.DirectRunArgs = directRunArgs.ToArray();
+                command.BuildFilePath = output[BUILD_FILE];
+                command.DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK);
+
+                return command;
+            }
+
+            if (directRunArgs.Count > 0)
+            {
+                throw new InvalidOperationException("Unknown argument: '" + directRunArgs[0] + "'");
+            }
+
+            if (output.ContainsKey(GEN_DEFAULT_PROJ))
+            {
+                command.DefaultProjectId = output[GEN_DEFAULT_PROJ].Trim();
                 command.DefaultProjectLocale = "EN";
             }
-            if (args.ContainsKey(GEN_DEFAULT_PROJ_ES))
+            else if (output.ContainsKey(GEN_DEFAULT_PROJ_ES))
             {
-                command.DefaultProjectId = args[GEN_DEFAULT_PROJ_ES].Trim();
+                command.DefaultProjectId = output[GEN_DEFAULT_PROJ_ES].Trim();
                 command.DefaultProjectLocale = "ES";
             }
-            if (args.ContainsKey(GEN_DEFAULT_PROJ_JP))
+            else if (output.ContainsKey(GEN_DEFAULT_PROJ_JP))
             {
-                command.DefaultProjectId = args[GEN_DEFAULT_PROJ_JP].Trim();
+                command.DefaultProjectId = output[GEN_DEFAULT_PROJ_JP].Trim();
                 command.DefaultProjectLocale = "JP";
             }
-
-            if (args.ContainsKey(BUILD_FILE)) command.BuildFilePath = args[BUILD_FILE].Trim();
-            if (args.ContainsKey(BUILD_TARGET)) command.BuildTarget = args[BUILD_TARGET].Trim();
-            if (args.ContainsKey(VM_DIR)) command.VmExportDirectory = args[VM_DIR].Trim();
-            if (args.ContainsKey(VM)) command.VmPlatform = args[VM].Trim();
-            if (args.ContainsKey(CBX)) command.CbxExportPath = args[CBX].Trim();
-            if (args.ContainsKey(VERSION)) command.ShowVersion = true;
-
-            ParseAdditionalArgs(command, args);
+            else
+            {
+                if (output.ContainsKey(BUILD_FILE)) command.BuildFilePath = output[BUILD_FILE];
+                if (output.ContainsKey(BUILD_TARGET)) command.BuildTarget = output[BUILD_TARGET];
+                if (output.ContainsKey(VM_DIR)) command.VmExportDirectory = output[VM_DIR];
+                if (output.ContainsKey(VM)) command.VmPlatform = output[VM];
+                if (output.ContainsKey(CBX)) command.CbxExportPath = output[CBX];
+                if (output.ContainsKey(VERSION)) command.ShowVersion = true;
+            }
 
             return command;
-        }
-
-        private static void ParseAdditionalArgs(Command command, Dictionary<string, string> args)
-        {
-            command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
-            command.ShowDependencyTree = args.ContainsKey(SHOW_DEP_TREE);
-            command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
-            command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
-            command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
-            command.OutputDirectoryOverride = args.ContainsKey(OVERRIDE_OUTPUT_DIR) ? args[OVERRIDE_OUTPUT_DIR] : null;
-            command.ResourceErrorsShowRelativeDir = args.ContainsKey(RESOURCE_ERRORS_SHOW_RELATIVE_DIR);
         }
     }
 }
