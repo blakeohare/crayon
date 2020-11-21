@@ -51,4 +51,12 @@ class LangIncrementTest : Test {
         assertThat(LangIncrementTest.numStatic++).isEqualTo(101);
         assertThat(LangIncrementTest.numStatic).isEqualTo(102);
     }
+
+    function testIncrementAddToString() {
+        integer = 0;
+        value = 'x' + ++integer;
+        assertThat(value).isEqualTo('x1');
+        value = 'y' + --integer;
+        assertThat(value).isEqualTo('y0');
+    }
 }
