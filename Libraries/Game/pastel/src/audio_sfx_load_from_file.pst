@@ -1,7 +1,0 @@
-﻿/*
-    args[0] -> blank sound object instance
-    args[1] -> file path
-*/
-VM.Value lib_game_audio_sfx_load_from_file(VM.VmContext vm, Array<VM.Value> args) {
-    return vm.globals.valueNull;
-}
