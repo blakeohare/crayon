@@ -102,6 +102,8 @@
         }
 
         function flip(flipX, flipY) {
+            // TODO: implement these natively.
+
             width = this._bitmap.width;
             height = this._bitmap.height;
             p1 = [];
@@ -122,8 +124,20 @@
             }
 
             if (flipY) {
-                throw new NotImplementedException();
+                ys = [];
+                for (y = 0; y < height / 2; ++y) ys.add(y);
+                c = height - 1;
+                for (x = 0; x < width; ++x) {
+                    for (y : ys) {
+                        y2 = c - y;
+                        $$$('imageGetPixel', this._bitmap, this, x, y, p1);
+                        $$$('imageGetPixel', this._bitmap, this, x, y2, p2);
+                        $$$('imageSetPixel', this, x, y, x, y, p2, null, null, 255);
+                        $$$('imageSetPixel', this, x, y2, x, y2, p1, null, null, 255);
+                    }
+                }
             }
+
             return this;
         }
 
