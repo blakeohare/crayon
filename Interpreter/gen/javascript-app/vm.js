@@ -5169,6 +5169,18 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[valueStackSize];
 						output = textencoding_convertTextToBytes(vm, arg1, arg2, arg3, arg4);
 						break;
+					case 89:
+						// jsonSerialize;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = JsonHelper_serialize(intBuffer, vm, arg1, arg2[1], arg3[1], arg4[1]);
+						if ((intBuffer[0] == 1)) {
+							hasInterrupt = EX_InvalidArgument(ec, output[1]);
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -6332,6 +6344,142 @@ var isStringEqual = function(a, b) {
 
 var isVmResultRootExecContext = function(result) {
 	return result[4];
+};
+
+var JsonHelper_serialize = function(statusOut, vm, root, depth, isPretty, omitDictNull) {
+	var sb = [];
+	var errorOut = PST$createNewArray(1);
+	errorOut[0] = null;
+	JsonHelper_serializeImpl(vm, 0, root, depth, isPretty, omitDictNull, sb, errorOut);
+	statusOut[0] = 0;
+	if ((errorOut[0] != null)) {
+		statusOut[0] = 1;
+		return buildString(vm[13], errorOut[0]);
+	}
+	return buildString(vm[13], sb.join(""));
+};
+
+var JsonHelper_serializeImpl = function(vm, currentIndent, root, depth, isPretty, omitDictNull, sb, errorOut) {
+	var i = 0;
+	switch (root[0]) {
+		case 1:
+			sb.push("null");
+			break;
+		case 2:
+			if (root[1]) {
+				sb.push("true");
+			} else {
+				sb.push("false");
+			}
+			break;
+		case 4:
+			sb.push(valueToString(vm, root));
+			break;
+		case 3:
+			sb.push(('' + root[1]));
+			break;
+		case 5:
+			sb.push(JSON.stringify(root[1]));
+			break;
+		case 6:
+			if ((depth == 0)) {
+				errorOut[0] = "Maximum recursion depth exceeded.";
+				return;
+			}
+			var list = root[1];
+			if ((list[1] == 0)) {
+				sb.push("[]");
+			} else {
+				var newIndent = (currentIndent + 1);
+				sb.push("[");
+				i = 0;
+				while ((i < list[1])) {
+					if ((errorOut[0] != null)) {
+						return;
+					}
+					if ((i > 0)) {
+						sb.push(",");
+					}
+					if (isPretty) {
+						sb.push("\n");
+						var s = 0;
+						while ((s < newIndent)) {
+							sb.push("  ");
+							s += 1;
+						}
+						JsonHelper_serializeImpl(vm, newIndent, list[2][i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
+					}
+					i += 1;
+				}
+				if (isPretty) {
+					sb.push("\n");
+					i = 0;
+					while ((i < currentIndent)) {
+						sb.push("  ");
+						i += 1;
+					}
+				}
+				sb.push("]");
+			}
+			break;
+		case 7:
+			if ((depth == 0)) {
+				errorOut[0] = "Maximum recursion depth exceeded.";
+				return;
+			}
+			var dict = root[1];
+			if ((dict[0] == 0)) {
+				sb.push("{}");
+			} else {
+				var newIndent = (currentIndent + 1);
+				sb.push("{");
+				var keys = dict[6];
+				var values = dict[7];
+				if ((keys[0][0] != 5)) {
+					errorOut[0] = "Only string dictionaries can be used.";
+					return;
+				}
+				i = 0;
+				while ((i < keys.length)) {
+					if ((errorOut[0] != null)) {
+						return;
+					}
+					if ((i > 0)) {
+						sb.push(",");
+					}
+					if (isPretty) {
+						sb.push("\n");
+						var s = 0;
+						while ((s < newIndent)) {
+							sb.push("  ");
+							s += 1;
+						}
+					}
+					sb.push(JSON.stringify(keys[i][1]));
+					if (isPretty) {
+						sb.push(": ");
+					} else {
+						sb.push(":");
+					}
+					JsonHelper_serializeImpl(vm, newIndent, values[i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
+					i += 1;
+				}
+				if (isPretty) {
+					sb.push("\n");
+					i = 0;
+					while ((i < currentIndent)) {
+						sb.push("  ");
+						i += 1;
+					}
+				}
+				sb.push("}");
+			}
+			break;
+		default:
+			errorOut[0] = "This type cannot be serialized to JSON.";
+			break;
+	}
+	return;
 };
 
 var listImplToBytes = function(list) {

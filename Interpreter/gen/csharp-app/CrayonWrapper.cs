@@ -60,6 +60,76 @@ namespace Interpreter.Vm
 
         private static Dictionary<string, System.Func<object[], object>> PST_ExtCallbacks = new Dictionary<string, System.Func<object[], object>>();
 
+        private static bool[] PST_ToCodeStringSafeChars = null;
+        private static string[] PST_ToCodeStringSwapChars = null;
+        private static string PST_ToCodeString(string str)
+        {
+            int i;
+            if (PST_ToCodeStringSafeChars == null)
+            {
+                bool[] safe = new bool[128];
+                PST_ToCodeStringSafeChars = safe;
+                foreach (char sc in ".,/:;'[]{}|()!@#$%^&*-_=+`~<>? ".ToCharArray())
+                {
+                    safe[(int)sc] = true;
+                }
+                for (i = 0; i < 10; ++i) safe['0' + i] = true;
+                for (i = 0; i < 26; ++i)
+                {
+                    safe['A' + i] = true;
+                    safe['a' + i] = true;
+                }
+                string[] swaps = new string[128];
+                swaps[0] = "\\0";
+                swaps['\n'] = "\\n";
+                swaps['\t'] = "\\t";
+                swaps['\r'] = "\\r";
+                swaps['\\'] = "\\\\";
+                swaps['"'] = "\\\"";
+                PST_ToCodeStringSwapChars = swaps;
+            }
+
+            char[] chars = str.ToCharArray();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append('"');
+            int len = chars.Length;
+            char c;
+            int b;
+            string swap;
+            for (i = 0; i < len; ++i)
+            {
+                c = chars[i];
+                b = c;
+                if (b >= 0 && c < 128)
+                {
+                    if (PST_ToCodeStringSafeChars[b])
+                    {
+                        sb.Append(c);
+                    }
+                    else
+                    {
+                        swap = PST_ToCodeStringSwapChars[b];
+                        if (swap != null)
+                        {
+                            sb.Append(swap);
+                        }
+                        else
+                        {
+                            sb.Append("\\u");
+                            sb.Append(b.ToString("X4"));
+                        }
+                    }
+                }
+                else
+                {
+                    sb.Append("\\u");
+                    sb.Append(b.ToString("X4"));
+                }
+            }
+            sb.Append('"');
+            return sb.ToString();
+        }
+
         private static string PST_Base64ToString(string b64Value)
         {
             byte[] utf8Bytes = System.Convert.FromBase64String(b64Value);
@@ -89,7 +159,8 @@ namespace Interpreter.Vm
             return true;
         }
 
-        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func) {
+        public static void PST_RegisterExtensibleCallback(string name, System.Func<object[], object> func)
+        {
             PST_ExtCallbacks[name] = func;
         }
 
@@ -6569,6 +6640,19 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[valueStackSize];
                                 output = textencoding_convertTextToBytes(vm, arg1, arg2, arg3, arg4);
                                 break;
+                            case 89:
+                                // jsonSerialize;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = JsonHelper_serialize(intBuffer, vm, arg1, (int)arg2.internalValue, (bool)arg3.internalValue, (bool)arg4.internalValue);
+                                if ((intBuffer[0] == 1))
+                                {
+                                    hasInterrupt = EX_InvalidArgument(ec, (string)output.internalValue);
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -8057,6 +8141,188 @@ namespace Interpreter.Vm
         public static bool isVmResultRootExecContext(InterpreterResult result)
         {
             return result.isRootContext;
+        }
+
+        public static Value JsonHelper_serialize(int[] statusOut, VmContext vm, Value root, int depth, bool isPretty, bool omitDictNull)
+        {
+            List<string> sb = new List<string>();
+            string[] errorOut = new string[1];
+            errorOut[0] = null;
+            JsonHelper_serializeImpl(vm, 0, root, depth, isPretty, omitDictNull, sb, errorOut);
+            statusOut[0] = 0;
+            if ((errorOut[0] != null))
+            {
+                statusOut[0] = 1;
+                return buildString(vm.globals, errorOut[0]);
+            }
+            return buildString(vm.globals, string.Join("", sb));
+        }
+
+        public static void JsonHelper_serializeImpl(VmContext vm, int currentIndent, Value root, int depth, bool isPretty, bool omitDictNull, List<string> sb, string[] errorOut)
+        {
+            int i = 0;
+            switch (root.type)
+            {
+                case 1:
+                    sb.Add("null");
+                    break;
+                case 2:
+                    if ((bool)root.internalValue)
+                    {
+                        sb.Add("true");
+                    }
+                    else
+                    {
+                        sb.Add("false");
+                    }
+                    break;
+                case 4:
+                    sb.Add(valueToString(vm, root));
+                    break;
+                case 3:
+                    sb.Add(((int)root.internalValue).ToString());
+                    break;
+                case 5:
+                    sb.Add(PST_ToCodeString((string)root.internalValue));
+                    break;
+                case 6:
+                    if ((depth == 0))
+                    {
+                        errorOut[0] = "Maximum recursion depth exceeded.";
+                        return;
+                    }
+                    ListImpl list = (ListImpl)root.internalValue;
+                    if ((list.size == 0))
+                    {
+                        sb.Add("[]");
+                    }
+                    else
+                    {
+                        int newIndent = (currentIndent + 1);
+                        sb.Add("[");
+                        i = 0;
+                        while ((i < list.size))
+                        {
+                            if ((errorOut[0] != null))
+                            {
+                                return;
+                            }
+                            if ((i > 0))
+                            {
+                                sb.Add(",");
+                            }
+                            if (isPretty)
+                            {
+                                sb.Add("\n");
+                                int s = 0;
+                                while ((s < newIndent))
+                                {
+                                    sb.Add("  ");
+                                    s += 1;
+                                }
+                            }
+                            JsonHelper_serializeImpl(vm, newIndent, list.array[i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
+                            i += 1;
+                        }
+                        if (isPretty)
+                        {
+                            sb.Add("\n");
+                            i = 0;
+                            while ((i < currentIndent))
+                            {
+                                sb.Add("  ");
+                                i += 1;
+                            }
+                        }
+                        sb.Add("]");
+                    }
+                    break;
+                case 7:
+                    if ((depth == 0))
+                    {
+                        errorOut[0] = "Maximum recursion depth exceeded.";
+                        return;
+                    }
+                    DictImpl dict = (DictImpl)root.internalValue;
+                    if ((dict.size == 0))
+                    {
+                        sb.Add("{}");
+                    }
+                    else
+                    {
+                        int newIndent = (currentIndent + 1);
+                        sb.Add("{");
+                        List<Value> keys = dict.keys;
+                        List<Value> values = dict.values;
+                        if ((keys[0].type != 5))
+                        {
+                            errorOut[0] = "Only string dictionaries can be used.";
+                            return;
+                        }
+                        bool isFirst = true;
+                        int start = 0;
+                        int end = keys.Count;
+                        if (omitDictNull)
+                        {
+                            while (((start < end) && (values[start].type == 1)))
+                            {
+                                start += 1;
+                            }
+                        }
+                        i = start;
+                        while ((i < end))
+                        {
+                            if ((errorOut[0] != null))
+                            {
+                                return;
+                            }
+                            if (((values[i].type != 1) || !omitDictNull))
+                            {
+                                if ((i > start))
+                                {
+                                    sb.Add(",");
+                                }
+                                if (isPretty)
+                                {
+                                    sb.Add("\n");
+                                    int s = 0;
+                                    while ((s < newIndent))
+                                    {
+                                        sb.Add("  ");
+                                        s += 1;
+                                    }
+                                }
+                                sb.Add(PST_ToCodeString((string)keys[i].internalValue));
+                                if (isPretty)
+                                {
+                                    sb.Add(": ");
+                                }
+                                else
+                                {
+                                    sb.Add(":");
+                                }
+                                JsonHelper_serializeImpl(vm, newIndent, values[i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
+                            }
+                            i += 1;
+                        }
+                        if (isPretty)
+                        {
+                            sb.Add("\n");
+                            i = 0;
+                            while ((i < currentIndent))
+                            {
+                                sb.Add("  ");
+                                i += 1;
+                            }
+                        }
+                        sb.Add("}");
+                    }
+                    break;
+                default:
+                    errorOut[0] = "This type cannot be serialized to JSON.";
+                    break;
+            }
+            return;
         }
 
         public static int[] listImplToBytes(ListImpl list)

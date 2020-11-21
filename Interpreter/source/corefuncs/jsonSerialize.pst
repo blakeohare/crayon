@@ -1,0 +1,6 @@
+﻿@import("inline/4_arg.pst");
+
+output = JsonHelper_serialize(intBuffer, vm, arg1, (int) arg2.internalValue, (bool) arg3.internalValue, (bool) arg4.internalValue);
+if (intBuffer[0] == 1) {
+    hasInterrupt = EX_InvalidArgument(ec, (string) output.internalValue);
+}

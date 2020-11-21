@@ -9,6 +9,7 @@
 @import("Debugger.pst");
 @import("ImageHelper.pst");
 @import("Ipc.pst");
+@import("JsonHelper.pst");
 @import("Interpreter.pst");
 @import("MetadataInitializer.pst");
 @import("NamedCallbacks.pst");
