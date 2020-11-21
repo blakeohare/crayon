@@ -14,10 +14,6 @@
         { "name": "is_landscape", "value": false }
     ],
 
-    "imageSheets": [
-        { "id": "everything", "prefix": "*" }
-    ],
-
     "targets": [
         {
             "name": "android",
@@ -50,14 +46,6 @@
         {
             "name": "csharp",
             "platform": "csharp-app"
-        },
-        {
-            "name": "java",
-            "platform": "java-app"
-        },
-        {
-            "name": "python",
-            "platform": "python-app"
         }
     ]
 }

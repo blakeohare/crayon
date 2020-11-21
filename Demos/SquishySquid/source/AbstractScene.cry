@@ -14,10 +14,10 @@
     }
 
     function update(isTap) {
-        Core.assert(false, "Override me!");
+        throw new Exception("Override me!");
     }
 
-    function render() {
-        Core.assert(false, "Override me!");
+    function render(draw) {
+        throw new Exception("Override me!");
     }
 }

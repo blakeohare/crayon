@@ -50,17 +50,17 @@ class Kelp {
         return false;
     }
 
-    function render(cameraX) {
+    function render(draw, cameraX) {
         left = Math.floor(this.left - cameraX + WIDTH / 2);
 
         // Draw kelp on top
-        img = ImageLibrary.getFlipped('kelp.png');
+        img = ImageLibrary.get('kelp-flipped.png');
         targetX = left;
         sourceX = 0;
         targetY = 0;
         kelpHeight = this.topOpeningY;
         sourceY = img.height - kelpHeight;
-        img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+        draw.drawImageRegion(img, targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
 
         // Draw kelp on bottom
         img = ImageLibrary.get('kelp.png');
@@ -69,6 +69,6 @@ class Kelp {
         targetX = left;
         targetY = this.bottomOpeningY;
         kelpHeight = AVAILABLE_HEIGHT - this.bottomOpeningY;
-        img.drawRegion(targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
+        draw.drawImageRegion(img, targetX, targetY, sourceX, sourceY, KELP_WIDTH, kelpHeight);
     }
 }
