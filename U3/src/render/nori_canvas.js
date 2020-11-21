@@ -44,16 +44,34 @@ const NoriCanvas = (() => {
                     break;
                 
                 case 'E':
-                    r = buffer[i + 1];
-                    g = buffer[i + 2];
-                    b = buffer[i + 3];
                     a = buffer[i + 4];
                     x = buffer[i + 5];
                     y = buffer[i + 6];
                     w = buffer[i + 7];
                     h = buffer[i + 8];
                     i += 9;
-                    // TODO: this
+                    w = w * 4 / 3; // no idea why this needs to exist to look correct...
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - h);
+                    ctx.bezierCurveTo(
+                        x + w, y - h,
+                        x + w, y + h,
+                        x, y + h);
+                    ctx.bezierCurveTo(
+                        x - w, y + h,
+                        x - w, y - h,
+                        x, y - h);
+                    
+                    ctx.fillStyle = hex;
+                    if (a !== 255) {
+                        ctx.globalAlpha = a / 255;
+                        ctx.fill();
+                        ctx.closePath();
+                        ctx.globalAlpha = 1;
+                    } else {
+                        ctx.fill();
+                        ctx.closePath();
+                    }
                     break;
                 
                 case 'L':
