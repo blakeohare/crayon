@@ -74,6 +74,16 @@ namespace U3Graphics2D {
             return this;
         }
 
+        function drawImageRotated(image, centerX, centerY, angle) {
+            if (!(image is Images.Bitmap)) this._notAnImage();
+            $$$('argVerifyNums', "Arguments must be numbers.", centerX, centerY, angle, 3);
+            if (this._transferredImageVersionKeys.get(image._versionKey) == null) {
+                this._submitImageData(image);
+            }
+            this._buffer.add('I3', 0, 0, 0, image._versionKey, centerX, centerY, angle);
+            return this;
+        }
+
         function _submitImageData(image) {
             this._imageDataBuffer.add('ImgData', 0, 0, 0, image._versionKey, image._resourceId, image.toBase64(Images.ImageFormat.PNG));
             this._transferredImageVersionKeys[image._versionKey] = true;

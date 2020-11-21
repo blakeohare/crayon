@@ -133,6 +133,32 @@ const NoriCanvas = (() => {
                     i += 11;
                     break;
 
+                case 'I3':
+                    r = buffer[i + 4]; // version key
+                    img = imgLookup[r];
+                    if (img) {
+                        tx = buffer[i + 5];
+                        ty = buffer[i + 6];
+                        r = buffer[i + 7];
+                        w = img.width;
+                        h = img.height;
+
+                        ctx.save();
+                        ctx.translate(tx, ty);
+                        ctx.rotate(r);
+
+                        //if (a === 255) {
+                            ctx.drawImage(img, -w / 2, -h / 2);
+                        //} else {
+                        //    ctx.globalAlpha = a / 255;
+                        //    ctx.drawImage(canvas, -w / 2, -h / 2);
+                        //    ctx.globalAlpha = 1;
+                        //}
+                        ctx.restore();
+                    }
+                    i += 8;
+                    break;
+
                 default:
                     throw new Error("Unknown draw instruction: " + buffer[i]);
             }

@@ -59,7 +59,6 @@ class Squid {
             }
             img = ImageLibrary.get('squid_' + imgNum + '.png');
         }
-        // draw.drawRotated(img, x, y, this.currentTheta);
-        draw.drawImage(img, x, y);
+        draw.drawImageRotated(img, x, y, this.currentTheta);
     }
 }
