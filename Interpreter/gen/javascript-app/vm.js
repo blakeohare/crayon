@@ -6407,8 +6407,8 @@ var JsonHelper_serializeImpl = function(vm, currentIndent, root, depth, isPretty
 							sb.push("  ");
 							s += 1;
 						}
-						JsonHelper_serializeImpl(vm, newIndent, list[2][i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
 					}
+					JsonHelper_serializeImpl(vm, newIndent, list[2][i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
 					i += 1;
 				}
 				if (isPretty) {
@@ -6439,29 +6439,39 @@ var JsonHelper_serializeImpl = function(vm, currentIndent, root, depth, isPretty
 					errorOut[0] = "Only string dictionaries can be used.";
 					return;
 				}
-				i = 0;
-				while ((i < keys.length)) {
+				var isFirst = true;
+				var start = 0;
+				var end = keys.length;
+				if (omitDictNull) {
+					while (((start < end) && (values[start][0] == 1))) {
+						start += 1;
+					}
+				}
+				i = start;
+				while ((i < end)) {
 					if ((errorOut[0] != null)) {
 						return;
 					}
-					if ((i > 0)) {
-						sb.push(",");
-					}
-					if (isPretty) {
-						sb.push("\n");
-						var s = 0;
-						while ((s < newIndent)) {
-							sb.push("  ");
-							s += 1;
+					if (((values[i][0] != 1) || !omitDictNull)) {
+						if ((i > start)) {
+							sb.push(",");
 						}
+						if (isPretty) {
+							sb.push("\n");
+							var s = 0;
+							while ((s < newIndent)) {
+								sb.push("  ");
+								s += 1;
+							}
+						}
+						sb.push(JSON.stringify(keys[i][1]));
+						if (isPretty) {
+							sb.push(": ");
+						} else {
+							sb.push(":");
+						}
+						JsonHelper_serializeImpl(vm, newIndent, values[i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
 					}
-					sb.push(JSON.stringify(keys[i][1]));
-					if (isPretty) {
-						sb.push(": ");
-					} else {
-						sb.push(":");
-					}
-					JsonHelper_serializeImpl(vm, newIndent, values[i], (depth - 1), isPretty, omitDictNull, sb, errorOut);
 					i += 1;
 				}
 				if (isPretty) {
