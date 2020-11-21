@@ -1,7 +1,0 @@
-﻿VM.Value lib_graphics2d_isPlatformUsingTextureAtlas(VM.VmContext vm, Array<VM.Value> args) {
-    if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
-        return vm.globalTrue;
-    } else {
-        return vm.globalFalse;
-    }
-}

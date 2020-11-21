@@ -1,6 +1,0 @@
-IMPORT: javascript-app.txt
-
-OUTPUT-FUNCTIONS: ../native/javascript-app-ios/gen/lib_game.js
-
-EXT: _lib_game_getScreenInfo: C$ios$screenInfo([ARG:1])
-EXT: _lib_game_set_window_mode: C$common$alwaysFalse()

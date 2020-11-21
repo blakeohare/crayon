@@ -1,9 +1,0 @@
-﻿/*
-    Returns true if GIF capture is supported on this platform.
-*/
-VM.Value lib_gamegifcap_isSupported(VM.VmContext vm, Array<VM.Value> args) {
-    if (Extension._lib_gamegifcap_isSupported()) {
-        return vm.globalTrue;
-    }
-    return vm.globalFalse;
-}

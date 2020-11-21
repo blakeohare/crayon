@@ -1,9 +1,0 @@
-﻿namespace Graphics2DText {
-
-    @localized('en', 'FontNotFoundException')
-    @localized('es', 'ESFontNotFoundException')
-    @localized('jp', 'JPFontNotFoundException')
-    class FontNotFoundException : Core.Exception {
-        constructor(m) : base (m, null) { }
-    }
-}
