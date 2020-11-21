@@ -1,4 +1,4 @@
-﻿import Game;
+﻿import U3Game;
 
 const IS_LANDSCAPE_MODE = $var['is_landscape'];
 const FPS = 60;
@@ -7,11 +7,14 @@ const HEIGHT = IS_LANDSCAPE_MODE ? 400: 700;
 
 function main() {
 
-    print("Named pipe? " + NamedPipe.isSupported());
-
-    window = new Game.GameWindow('Squishy Squid', FPS, WIDTH, HEIGHT);
+    window = new GameWindow()
+        .setTitle("Squishy Squid")
+        .setFps(60)
+        .setGameSize(WIDTH, HEIGHT)
+        .show(false);
 
     activeScene = new LoadingScene();
+    drawingContext = window.getDrawingContext();
 
     while (true) {
         isTap = false;
@@ -41,7 +44,7 @@ function main() {
 
         activeScene.update(isTap);
 
-        activeScene.render();
+        activeScene.render(drawingContext);
 
         activeScene = activeScene._nextScene ?? activeScene;
 

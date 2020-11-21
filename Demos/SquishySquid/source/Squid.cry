@@ -46,7 +46,7 @@ class Squid {
         this.isDead = true;
     }
 
-    function render(cameraX) {
+    function render(draw, cameraX) {
         x = Math.floor(this.x - cameraX + WIDTH / 2);
         y = Math.floor(this.y);
 
@@ -59,6 +59,7 @@ class Squid {
             }
             img = ImageLibrary.get('squid_' + imgNum + '.png');
         }
-        img.drawRotated(x, y, this.currentTheta);
+        // draw.drawRotated(img, x, y, this.currentTheta);
+        draw.drawImage(img, x, y);
     }
 }
