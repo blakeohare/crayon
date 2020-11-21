@@ -1,10 +1,6 @@
-﻿import Graphics2D;
-
-class ImageLibrary {
+﻿class ImageLibrary {
     static field images = {};
     static field text = {};
-    static field sheet = null;
-    static field drawReference = null;
 
     static function addImage(path, img) {
         ImageLibrary.images[path] = img;
@@ -20,23 +16,6 @@ class ImageLibrary {
     }
 
     static function get(path) {
-        img = ImageLibrary.images.get(path);
-        if (img == null) {
-            if (path.startsWith('images/player/w')) {
-                // Instead of saving west-facing images, just get the
-                // east-facing image and flip it.
-                eastImagePath = path.replace('images/player/w', 'images/player/e');
-                img = ImageLibrary.get(eastImagePath);
-                img = img.clone();
-                img.edit().flip(true, false).finish();
-            } else {
-                rawResource = ImageLibrary.sheet.getImage(path);
-                img = GraphicsTexture.load(rawResource);
-            }
-
-            // cache the image.
-            ImageLibrary.images[path] = img;
-        }
-        return img;
+        return ImageLibrary.images.get(path);
     }
 }

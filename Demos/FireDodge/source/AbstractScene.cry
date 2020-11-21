@@ -7,15 +7,9 @@
         this.nextScene = nextScene;
     }
 
-    function processInput(events) {
-        fail("Overriden");
-    }
+    function processInput(events) { }
 
-    function update() {
-        fail("Overriden");
-    }
+    function update() { }
 
-    function render(draw) {
-        fail("Overriden");
-    }
+    function render(draw) { }
 }

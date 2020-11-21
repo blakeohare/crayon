@@ -1,0 +1,119 @@
+﻿import Images;
+import Math;
+import Resources;
+
+namespace U3Game {
+
+    class GameImageLoader {
+        field _imagesDone = {};
+        field _imagesRemaining = null;
+        field _progress = 0.0;
+        field _progressTimestamp = null;
+        field _minLoadDuration = null;
+        field _prefix;
+        field _renderContext = null;
+        field _imageModifiers = [];
+
+        constructor(prefix = null) {
+            this._prefix = (prefix ?? '') + '';
+        }
+
+        function easeLoadingAnimationAcrossMinimumDuration(seconds) {
+            if (seconds == 0) this._minLoadDuration = null;
+            if (seconds < 0) throw new InvalidArgumentException("Time must be positive.");
+            this._minLoadDuration = seconds * 1.0;
+            return this;
+        }
+
+        function setRenderContext(renderContext) {
+            this._renderContext = renderContext;
+            return this;
+        }
+
+        function addImageModifier(fn) {
+            this._imageModifiers.add(fn);
+            return this;
+        }
+
+        function update() {
+            now = Core.currentTime();
+            if (this._imagesRemaining == null) {
+                this._imagesRemaining = [];
+                dirs = [''];
+                i = 0;
+                while (i < dirs.length) {
+                    files = Resources.directoryList(dirs[i++], true);
+                    for (file : files) {
+                        if (Resources.directoryExists(file)) {
+                            dirs.add(file);
+                        } else {
+                            ext = file.lower().split('.')[-1];
+                            if (ext == 'png' || ext == 'jpg' || ext == 'jpeg') {
+                                if (file.startsWith(this._prefix)) {
+                                    this._imagesRemaining.add(file);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (this._renderContext != null) {
+                for (i = 0; i < 30 && this._imagesRemaining.length > 0 && Core.currentTime() < now + .01; ++i) {
+                    path = this._imagesRemaining.pop();
+                    img = Images.Bitmap.fromResource(path);
+                    this._imagesDone[path] = img;
+                    images = [img];
+                    for (modifier : this._imageModifiers) {
+                        newImages = modifier(path, img);
+                        if (newImages != null) {
+                            for (key : newImages.keys()) {
+                                img = newImages[key];
+                                this._imagesDone[key] = img;
+                                images.add(img);
+                            }
+                        }
+                    }
+
+                    // draw the image off screen to eliminate loading delay the first time the image is used.
+                    for (img : images) {
+                        this._renderContext.drawImage(img, -img.width - 1, 0);
+                    }
+                }
+            }
+
+            return this;
+        }
+
+        function getProgress() {
+            p = this._getProgressImpl();
+            if (this._minLoadDuration == null) return p;
+
+            now = Core.currentTime();
+            lastProgress = this._progress;
+            lastProgressTime = this._progressTimestamp ?? now;
+            diff = now - lastProgressTime;
+            fastestPossibleRatioLoaded = diff / this._minLoadDuration;
+            ratioLoaded = Math.min(fastestPossibleRatioLoaded, p - lastProgress);
+            this._progress = Math.min(1.0, this._progress + ratioLoaded);
+            this._progressTimestamp = now;
+            return this._progress;
+        }
+
+        function _getProgressImpl() {
+            if (this._imagesRemaining == null) return 0.0;
+            if (this._imagesRemaining.length == 0) return 1.0;
+            r = this._imagesRemaining.length;
+            d = this._imagesDone.length;
+            return d / (0.0 + r + d);
+        }
+
+        function isDone() {
+            return this._imagesRemaining != null && this._imagesRemaining.length == 0 && this._progress == 1.0;
+        }
+
+        function getImagesByPath() {
+            return this._imagesDone.clone();
+        }
+    }
+}
