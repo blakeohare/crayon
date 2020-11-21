@@ -116,6 +116,10 @@ namespace Parser
                         return next;
                     }
 
+                    if (this.Index + 1 == this.Length) return next;
+                    Token oneAfter = this.Tokens[this.Index + 1];
+                    if (oneAfter.Line != next.Line || oneAfter.Col != next.Col + next.Value.Length) return next;
+
                     if (next.Value.Length != 1) throw new System.Exception(); // this should not happen
                     char c = next.Value[0];
                     char[][] mcharTokens;
