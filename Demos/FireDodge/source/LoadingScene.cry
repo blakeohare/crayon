@@ -1,48 +1,39 @@
-﻿import Graphics2D;
-import Resources;
-import Images;
-import Math;
+﻿import Math;
+import U3Game;
 
 class LoadingScene : AbstractScene {
-    field phase = 'start';
-    field progress = 0.0;
-    field minLoadDuration = FPS * 3 / 4; // show the progress bar for at least three quarters of a seconds.
 
-    field _imagesToLoad = [];
-    field _imagesToLoadLength = 0;
-
-    constructor() : base() {
-        allImages = [];
-        for (dir : Resources.directoryList('images', true)) {
-            for (imgPath : Resources.directoryList(dir, true)) {
-                this._imagesToLoad.add(imgPath);
+    field loader = new GameImageLoader()
+        .easeLoadingAnimationAcrossMinimumDuration(.75)
+        .addImageModifier((path, img) => {
+            if (path.startsWith('images/player/e')) {
+                eastImagePath = path.replace('images/player/e', 'images/player/w');
+                img = img.clone();
+                img.edit().flip(true, false).finish();
+                output = {};
+                output[eastImagePath] = img;
+                return output;
             }
-        }
-        this._imagesToLoadLength = this._imagesToLoad.length;
-    }
+        });
 
-    function processInput(events) {
-        // can't do anything.
-    }
+    constructor() : base() { }
 
     function update() {
-        // force the progress bar to ease into completion so that it doesn't appear in a flicker
-        newProgress = 1.0 - 1.0 * this._imagesToLoad.length / this._imagesToLoadLength;
-        delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
-        this.progress += delta;
+        this.loader.update();
 
-        if (this._imagesToLoad.length == 0) {
-            if (this.progress > .999) {
-                this.switchScene(new PlayScene());
+        if (this.loader.isDone()) {
+            images = this.loader.getImagesByPath();
+            for (path : images.keys()) {
+                ImageLibrary.addImage(path, images[path]);
             }
-        } else {
-            imgPath = this._imagesToLoad.pop();
-            img = Bitmap.fromResource(imgPath);
-            ImageLibrary.addImage(imgPath, img);
+
+            this.switchScene(new PlayScene());
         }
     }
 
     function render(draw) {
+        this.loader.setRenderContext(draw);
+
         width = 400;
         height = 30;
 
@@ -55,7 +46,7 @@ class LoadingScene : AbstractScene {
         draw.rectangle(left - margin, top - margin, width + 2 * margin, height + 2 * margin, 80, 80, 80);
         draw.rectangle(left, top, width, height, 0, 0, 0);
 
-        barWidth = floor(width * this.progress);
+        barWidth = Math.floor(width * this.loader.getProgress());
         draw.rectangle(left, top, barWidth, height, 255, 128, 0);
         draw.rectangle(left, top, barWidth, height / 5, 255, 255, 0);
         draw.rectangle(left, top + height * 4 / 5, barWidth, height / 5, 255, 0, 0);
