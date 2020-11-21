@@ -13,11 +13,11 @@ valueList1 = new List<Value>(); // values
 _len = row[0];
 type = Types.INTEGER;  // always ignored when size is 0
 first = true;
-i = _len; // size
-while (i > 0) {
-    valueStackSize -= 2;
-    value = valueStack[valueStackSize + 1]; // value
-    value2 = valueStack[valueStackSize]; // key
+i = 0; // size
+valueStackSize -= 2 * _len;
+while (i < _len && !hasInterrupt) {
+    value = valueStack[valueStackSize + 2 * i + 1]; // value
+    value2 = valueStack[valueStackSize + 2 * i]; // key
     if (first) {
         type = value2.type;
         first = false;
@@ -46,7 +46,7 @@ while (i > 0) {
         }
         valueList2.Add(value2);
         valueList1.Add(value);
-        i -= 1;
+        i += 1;
     }
 }
 

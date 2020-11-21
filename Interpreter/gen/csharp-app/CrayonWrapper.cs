@@ -6678,12 +6678,12 @@ namespace Interpreter.Vm
                         _len = row[0];
                         type = 3;
                         first = true;
-                        i = _len;
-                        while ((i > 0))
+                        i = 0;
+                        valueStackSize -= (2 * _len);
+                        while (((i < _len) && !hasInterrupt))
                         {
-                            valueStackSize -= 2;
-                            value = valueStack[(valueStackSize + 1)];
-                            value2 = valueStack[valueStackSize];
+                            value = valueStack[(valueStackSize + (2 * i) + 1)];
+                            value2 = valueStack[(valueStackSize + (2 * i))];
                             if (first)
                             {
                                 type = value2.type;
@@ -6725,7 +6725,7 @@ namespace Interpreter.Vm
                                 }
                                 valueList2.Add(value2);
                                 valueList1.Add(value);
-                                i -= 1;
+                                i += 1;
                             }
                         }
                         if (!hasInterrupt)

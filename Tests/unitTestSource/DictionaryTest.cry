@@ -1,0 +1,70 @@
+﻿import CrayonUnit;
+
+class DictionaryTest: Test {
+    constructor() : base() { }
+
+    function testSmoke() {
+        a = {
+            "a": 1,
+            "b": 2,
+            "c": 3,
+        };
+        assertThat(a).hasLength(3);
+        assertThat(a['a']).isEqualTo(1);
+        assertThat(a['b']).isEqualTo(2);
+        assertThat(a['c']).isEqualTo(3);
+
+        // Keys should be iterated through in the order they were added (barring deletions), regardless of platform.
+        assertThat(a.keys()).contains(['a', 'b', 'c']).inOrder();
+        assertThat(a.values()).contains([1, 2, 3]).inOrder();
+
+        b = {
+            1: 'a',
+            2: 'b',
+            3: 'c',
+        };
+        assertThat(b).hasLength(3);
+        assertThat(b[1]).isEqualTo('a');
+        assertThat(b[2]).isEqualTo('b');
+        assertThat(b[3]).isEqualTo('c');
+        assertThat(b.keys()).contains([1, 2, 3]).inOrder();
+        assertThat(b.values()).contains(['a', 'b', 'c']).inOrder();
+
+        a.clear();
+        assertThat(a).hasLength(0);
+        assertThat(a.keys()).isEmpty();
+        assertThat(a.values()).isEmpty();
+
+        a[2] = 'x'; // changing key type
+        assertThat(a).hasLength(1);
+        assertThat(a.keys()).contains([2]);
+        assertThat(a.values()).contains(['x']);
+    }
+
+    function testRemovalSwapBehavior() {
+        a = {
+            'a': 1, 'b': 2, 'c': 3,
+        };
+        a.remove('a');
+        assertThat(a.keys()).contains(['c', 'b']).inOrder();
+    }
+
+    function testDictClone() {
+        dict1 = { "a": 1, "b": 2 };
+        dict2 = dict1.clone();
+        dict1['c'] = 3;
+        dict2['d'] = 4;
+        assertThat(dict1.keys()).contains(['a', 'b', 'c']).inOrder();
+        assertThat(dict2.keys()).contains(['a', 'b', 'd']).inOrder();
+    }
+
+    function testDictMerge() {
+        dict1 = { "a": 1, "b": 2, "d": 4.1, "e": 5 };
+        dict2 = { "a": 1, "c": 3, "d": 4.2, "f": 6 };
+
+        dict1.merge(dict2); // flattens dict2 on top of dict1
+
+        assertThat(dict1.keys()).contains(['a', 'b', 'd', 'e', 'c', 'f']).inOrder();
+        assertThat(dict1.values()).contains([1, 2, 4.2, 5, 3, 6]).inOrder();
+    }
+}
