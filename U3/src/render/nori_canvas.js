@@ -6,6 +6,7 @@ const NoriCanvas = (() => {
         let cvHeight = canvas.height;
         let end = start + len;
         let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex, img;
+        let tx, ty, sx, sy, tw, th, sw, sh;
         let i = start;
         let imgLookup = canvas._NORI_imgLookup;
         if (!imgLookup) {
@@ -92,11 +93,26 @@ const NoriCanvas = (() => {
                     r = buffer[i + 4]; // version key
                     img = imgLookup[r];
                     if (img) {
-                        x = buffer[i + 5];
-                        y = buffer[i + 6];
-                        ctx.drawImage(img, x, y);
+                        tx = buffer[i + 5];
+                        ty = buffer[i + 6];
+                        ctx.drawImage(img, tx, ty);
                     }
                     i += 7;
+                    break;
+                
+                case 'I2':
+                    r = buffer[i + 4]; // version key
+                    img = imgLookup[r];
+                    if (img) {
+                        tx = buffer[i + 5];
+                        ty = buffer[i + 6];
+                        sx = buffer[i + 7];
+                        sy = buffer[i + 8];
+                        sw = buffer[i + 9];
+                        sh = buffer[i + 10];
+                        ctx.drawImage(img, sx, sy, sw, sh, tx, ty, sw, sh);
+                    }
+                    i += 11;
                     break;
 
                 default:
