@@ -64,6 +64,16 @@ namespace U3Graphics2D {
             return this;
         }
 
+        function drawImageRegion(image, targetX, targetY, sourceX, sourceY, sourceWidth, sourceHeight) {
+            if (!(image is Images.Bitmap)) this._notAnImage();
+            $$$('argVerifyNums', "Coordinates must be numbers.", targetX, targetY, sourceX, sourceY, sourceWidth, sourceHeight, 6);
+            if (this._transferredImageVersionKeys.get(image._versionKey) == null) {
+                this._submitImageData(image);
+            }
+            this._buffer.add('I2', 0, 0, 0, image._versionKey, targetX, targetY, sourceX, sourceY, sourceWidth, sourceHeight);
+            return this;
+        }
+
         function _submitImageData(image) {
             this._imageDataBuffer.add('ImgData', 0, 0, 0, image._versionKey, image._resourceId, image.toBase64(Images.ImageFormat.PNG));
             this._transferredImageVersionKeys[image._versionKey] = true;
