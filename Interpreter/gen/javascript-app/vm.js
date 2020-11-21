@@ -5204,11 +5204,11 @@ var interpretImpl = function(vm, executionContextId) {
 				_len = row[0];
 				type = 3;
 				first = true;
-				i = _len;
-				while ((i > 0)) {
-					valueStackSize -= 2;
-					value = valueStack[(valueStackSize + 1)];
-					value2 = valueStack[valueStackSize];
+				i = 0;
+				valueStackSize -= (2 * _len);
+				while (((i < _len) && !hasInterrupt)) {
+					value = valueStack[(valueStackSize + (2 * i) + 1)];
+					value2 = valueStack[(valueStackSize + (2 * i))];
 					if (first) {
 						type = value2[0];
 						first = false;
@@ -5235,7 +5235,7 @@ var interpretImpl = function(vm, executionContextId) {
 						}
 						valueList2.push(value2);
 						valueList1.push(value);
-						i -= 1;
+						i += 1;
 					}
 				}
 				if (!hasInterrupt) {

@@ -1,24 +1,24 @@
 ﻿import CrayonUnit;
-import Http;
+import UrlUtil;
 
-class HttpLibTest : Test {
+class UrlUtilLibTest : Test {
 
     constructor() : base() { }
 
     function testUrlEncoding() {
         s = "This is a test.";
-        sEncoded = Http.urlEncode(s);
+        sEncoded = UrlUtil.urlEncode(s);
         assertThat(sEncoded).isEqualTo("This+is+a+test.");
-        assertThat(Http.urlDecode(sEncoded)).isEqualTo(s);
+        assertThat(UrlUtil.urlDecode(sEncoded)).isEqualTo(s);
 
         s = "猫が大好きです。";
-        sEncoded = Http.urlEncode(s);
+        sEncoded = UrlUtil.urlEncode(s);
         assertThat(sEncoded).isEqualTo("%E7%8C%AB%E3%81%8C%E5%A4%A7%E5%A5%BD%E3%81%8D%E3%81%A7%E3%81%99%E3%80%82");
-        assertThat(Http.urlDecode(sEncoded)).isEqualTo(s);
+        assertThat(UrlUtil.urlDecode(sEncoded)).isEqualTo(s);
 
         s = "mushroom emoji: 🍄";
-        sEncoded = Http.urlEncode(s);
+        sEncoded = UrlUtil.urlEncode(s);
         assertThat(sEncoded).isEqualTo("mushroom+emoji%3A+%F0%9F%8D%84");
-        assertThat(Http.urlDecode(sEncoded)).isEqualTo(s);
+        assertThat(UrlUtil.urlDecode(sEncoded)).isEqualTo(s);
     }
 }

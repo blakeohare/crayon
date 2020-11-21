@@ -167,7 +167,7 @@ namespace CrayonUnit {
             }
 
             if (this.listContainsState == false) {
-                throw new UnitTestFailedException("The collection contained the correct elements but not in the correct order. Found: '" + VerificationContextObject.getValueAsString(this.expected) + "'.");
+                throw new UnitTestFailedException("The collection contained the correct elements but not in the correct order. Found: '" + VerificationContextObject.getValueAsString(this.actual) + "'.");
             }
         }
 
