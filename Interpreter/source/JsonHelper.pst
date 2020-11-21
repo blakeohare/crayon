@@ -1,0 +1,152 @@
+﻿Value JsonHelper_serialize(Array<int> statusOut, VmContext vm, Value root, int depth, bool isPretty, bool omitDictNull) {
+    List<string> sb = new List<string>();
+    Array<string> errorOut = new Array<string>(1);
+    errorOut[0] = null;
+    JsonHelper_serializeImpl(vm, 0, root, depth, isPretty, omitDictNull, sb, errorOut);
+    statusOut[0] = 0;
+    if (errorOut[0] != null) {
+        statusOut[0] = 1;
+        return buildString(vm.globals, errorOut[0]);
+    }
+    return buildString(vm.globals, sb.Join(""));
+}
+
+void JsonHelper_serializeImpl(
+    VmContext vm,
+    int currentIndent,
+    Value root,
+    int depth,
+    bool isPretty,
+    bool omitDictNull,
+    List<string> sb,
+    Array<string> errorOut) {
+
+    int i = 0;
+
+    switch (root.type) {
+        case Types.NULL:
+            sb.Add("null");
+            break;
+
+        case Types.BOOLEAN:
+            if ((bool) root.internalValue) {
+                sb.Add("true");
+            } else {
+                sb.Add("false");
+            }
+            break;
+        case Types.FLOAT:
+            sb.Add(valueToString(vm, root));
+            break;
+        case Types.INTEGER:
+            sb.Add(Core.IntToString((int) root.internalValue));
+            break;
+
+        case Types.STRING:
+            sb.Add(Core.ToCodeString((string) root.internalValue));
+            break;
+
+        case Types.LIST:
+            if (depth == 0) {
+                errorOut[0] = "Maximum recursion depth exceeded.";
+                return;
+            }
+
+            ListImpl list = (ListImpl) root.internalValue;
+            if (list.size == 0) {
+                sb.Add("[]");
+            } else {
+                int newIndent = currentIndent + 1;
+                sb.Add("[");
+                for (i = 0; i < list.size; i += 1) {
+                    if (errorOut[0] != null) return;
+                    if (i > 0) sb.Add(",");
+
+                    if (isPretty) {
+                        sb.Add("\n");
+                        for (int s = 0; s < newIndent; s += 1) {
+                            sb.Add("  ");
+                        }
+                    }
+                    if (@ext_boolean("ARRAY_IS_LIST")) {
+                        JsonHelper_serializeImpl(vm, newIndent, list.list[i], depth - 1, isPretty, omitDictNull, sb, errorOut);
+                    } else {
+                        JsonHelper_serializeImpl(vm, newIndent, list.array[i], depth - 1, isPretty, omitDictNull, sb, errorOut);
+                    }
+                }
+
+                if (isPretty) {
+                    sb.Add("\n");
+                    for (i = 0; i < currentIndent; i += 1) {
+                        sb.Add("  ");
+                    }
+                }
+                sb.Add("]");
+            }
+            break;
+
+        case Types.DICTIONARY:
+            if (depth == 0) {
+                errorOut[0] = "Maximum recursion depth exceeded.";
+                return;
+            }
+
+            DictImpl dict = (DictImpl) root.internalValue;
+            if (dict.size == 0) {
+                sb.Add("{}");
+            } else {
+                int newIndent = currentIndent + 1;
+                sb.Add("{");
+                List<Value> keys = dict.keys;
+                List<Value> values = dict.values;
+                if (keys[0].type != Types.STRING) {
+                    errorOut[0] = "Only string dictionaries can be used.";
+                    return;
+                }
+                bool isFirst = true;
+                int start = 0;
+                int end = keys.Size();
+                if (omitDictNull) {
+                    while (start < end && values[start].type == Types.NULL) {
+                        start += 1;
+                    }
+                }
+                for (i = start; i < end; i += 1) {
+                    if (errorOut[0] != null) return;
+                    if (values[i].type != Types.NULL || !omitDictNull) {
+                        if (i > start) sb.Add(",");
+                        if (isPretty) {
+                            sb.Add("\n");
+                            for (int s = 0; s < newIndent; s += 1) {
+                                sb.Add("  ");
+                            }
+                        }
+
+                        sb.Add(Core.ToCodeString((string) keys[i].internalValue));
+                        if (isPretty) {
+                            sb.Add(": ");
+                        } else {
+                            sb.Add(":");
+                        }
+
+                        JsonHelper_serializeImpl(vm, newIndent, values[i], depth - 1, isPretty, omitDictNull, sb, errorOut);
+                    }
+                }
+
+                if (isPretty) {
+                    sb.Add("\n");
+                    for (i = 0; i < currentIndent; i += 1) {
+                        sb.Add("  ");
+                    }
+                }
+                sb.Add("}");
+            }
+            break;
+
+        default:
+            errorOut[0] = "This type cannot be serialized to JSON.";
+            break;
+    }
+
+    return;
+}

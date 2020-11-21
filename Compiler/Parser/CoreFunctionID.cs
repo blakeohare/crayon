@@ -92,6 +92,7 @@ namespace Parser
         CRYPTO_DIGEST= 86,
         BYTES_TO_TEXT = 87,
         TEXT_TO_BYTES = 88,
+        JSON_SERIALIZE = 89,
     }
 
     internal static class CoreFunctionIDHelper
@@ -188,6 +189,7 @@ namespace Parser
                 case "cryptoDigest": return (int)CoreFunctionID.CRYPTO_DIGEST;
                 case "bytesToText": return (int)CoreFunctionID.BYTES_TO_TEXT;
                 case "textToBytes": return (int)CoreFunctionID.TEXT_TO_BYTES;
+                case "jsonSerialize": return (int)CoreFunctionID.JSON_SERIALIZE;
                 default: return -1;
             }
         }
