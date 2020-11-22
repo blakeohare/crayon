@@ -1,4 +1,5 @@
-﻿import FileIOCommon;
+﻿import Environment;
+import FileIOCommon;
 
 /*
     Please this keep this in sync with the FileIO library.
@@ -21,10 +22,11 @@ namespace UserData {
     }
 //*/
     function getProjectSandboxDirectory() {
-        if (FileIOCommon.FiocHelper.IS_WINDOWS) {
+        env = Environment.getEnvironment();
+        if (env['platform'] == 'windows') {
             return FileIOCommon.FiocHelper.USER_DIRECTORY.join('\\') + '\\' + Core.getProjectId();
-        } else if ($$$('isJavaScript') || $$$('isAndroid')) {
-            return $lib_userdata_getProjectSandboxDirectory(Core.getProjectId().lower());
+        } else if (env['type'] == 'mobile' || env['type'] == 'web') {
+            return '/' + Core.getProjectId().lower();
         } else {
             return '~/.' + Core.getProjectId().lower();
         }
