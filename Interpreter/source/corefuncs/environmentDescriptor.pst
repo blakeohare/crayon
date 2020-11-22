@@ -1,0 +1,1 @@
+﻿output = buildString(globals, Extension.CoreFunc_EnvironmentDescriptor());

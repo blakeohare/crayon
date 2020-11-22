@@ -28,4 +28,17 @@
 
         return output.join();
     }
+
+    function getEnvironment() {
+        t = $$$('environmentDescriptor').split('|');
+        return {
+            'platform': t[0], // windows | mac | linux | web | ios | android
+            'type': {
+                'web': 'web',
+                'ios': 'mobile',
+                'android': 'mobile'
+            }.get(t[0], 'desktop'),
+            'implLang': t[1], // javascript | csharp
+        };
+    }
 }

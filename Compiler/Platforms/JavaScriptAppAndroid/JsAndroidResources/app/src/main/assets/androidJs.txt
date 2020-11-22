@@ -1,6 +1,8 @@
 ﻿// android.js
 // overrides to the regular JavaScript project.
 
+C$common$envDescriptor = () => 'android|javascript';
+
 C$common$globalOptions['is_android'] = true;
 C$common$globalOptions['fullscreen'] = true;
 C$common$globalOptions['aspect_ratio'] = 1.0;
