@@ -6649,6 +6649,11 @@ namespace Interpreter.Vm
                                 // environmentDescriptor;
                                 output = buildString(globals, TranslationHelper.EnvironmentDescriptor);
                                 break;
+                            case 91:
+                                // jsonParse;
+                                arg1 = valueStack[--valueStackSize];
+                                output = JsonHelper.ParseJsonIntoValue(globals, (string)arg1.internalValue);
+                                break;
                         }
                         if ((row[1] == 1))
                         {

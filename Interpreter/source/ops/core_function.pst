@@ -88,6 +88,7 @@
     case 88: Core.EmitComment("textToBytes"); @import("corefuncs/textToBytes.pst"); break;
     case 89: Core.EmitComment("jsonSerialize"); @import("corefuncs/jsonSerialize.pst"); break;
     case 90: Core.EmitComment("environmentDescriptor"); @import("corefuncs/environmentDescriptor.pst"); break;
+    case 91: Core.EmitComment("jsonParse"); @import("corefuncs/jsonParse.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

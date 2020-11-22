@@ -24,6 +24,8 @@ EXT: CoreFunc_ImageScale: C$ImageUtil$scale([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 EXT: CoreFunc_ImageSetPixel: C$ImageUtil$setPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
 EXT: CoreFunc_ImageStartEditSession: C$ImageUtil$startEditSession([ARG:1])
 
+EXT: CoreFunc_JsonParse: C$common$parseJson([ARG:1], [ARG:2])
+
 EXT: CoreFunc_LaunchBrowser: window.open([ARG:1])
 
 EXT: JsInterop_CallbackReturn: C$interop$callbackReturn([ARG:1], [ARG:2])

@@ -24,6 +24,8 @@ EXT-TYPE: object CoreFunc_ImageScale(object bmp, int newWidth, int newHeight, in
 EXT-TYPE: bool CoreFunc_ImageSetPixel(object editSession, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
 EXT-TYPE: object CoreFunc_ImageStartEditSession(object bmp);
 
+EXT-TYPE: Value CoreFunc_JsonParse(VmGlobals globals, string text);
+
 EXT-TYPE: void CoreFunc_LaunchBrowser(string url);
 
 EXT-TYPE: void JsInterop_CallbackReturn(int callbackId, string returnJson);

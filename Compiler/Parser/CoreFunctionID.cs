@@ -92,6 +92,7 @@ namespace Parser
         TEXT_TO_BYTES = 88,
         JSON_SERIALIZE = 89,
         ENVIRONMENT_DESCRIPTOR = 90,
+        JSON_PARSE = 91,
     }
 
     internal static class CoreFunctionIDHelper
@@ -188,6 +189,7 @@ namespace Parser
                 case "textToBytes": return (int)CoreFunctionID.TEXT_TO_BYTES;
                 case "jsonSerialize": return (int)CoreFunctionID.JSON_SERIALIZE;
                 case "environmentDescriptor": return (int)CoreFunctionID.ENVIRONMENT_DESCRIPTOR;
+                case "jsonParser": return (int)CoreFunctionID.JSON_PARSE;
                 default: return -1;
             }
         }
