@@ -47,7 +47,6 @@ namespace Parser
         ADD_SHUTDOWN_HANDLER = 41,
         NATIVE_TUNNEL_SEND = 42,
         NATIVE_TUNNEL_RECV = 43,
-        IPC_NAMED_PIPE_IS_SUPPORTED = 44,
         IPC_NAMED_PIPE_CREATE = 45,
         IPC_NAMED_PIPE_SEND = 46,
         IPC_NAMED_PIPE_FLUSH = 47,
@@ -65,7 +64,6 @@ namespace Parser
         DATETIME_UNIX_TO_STRUCTURED = 59,
         IPC_NAMED_PIPE_SERVER_CREATE = 60,
         IPC_NAMED_PIPE_SERVER_CLOSE = 61,
-        JS_INTEROP_SUPPORTED = 62,
         JS_INTEROP_INVOKE = 63,
         JS_INTEROP_REGISTER_CALLBACK = 64,
         JS_INTEROP_CALLBACK_RETURN = 65,
@@ -145,7 +143,6 @@ namespace Parser
                 case "addShutdownHandler": return (int)CoreFunctionID.ADD_SHUTDOWN_HANDLER;
                 case "nativeTunnelSend": return (int)CoreFunctionID.NATIVE_TUNNEL_SEND;
                 case "nativeTunnelRecv": return (int)CoreFunctionID.NATIVE_TUNNEL_RECV;
-                case "ipcNamedPipeIsSupported": return (int)CoreFunctionID.IPC_NAMED_PIPE_IS_SUPPORTED;
                 case "ipcNamedPipeCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_CREATE;
                 case "ipcNamedPipeSend": return (int)CoreFunctionID.IPC_NAMED_PIPE_SEND;
                 case "ipcNamedPipeFlush": return (int)CoreFunctionID.IPC_NAMED_PIPE_FLUSH;
@@ -163,7 +160,6 @@ namespace Parser
                 case "dateTimeUnixToStructured": return (int)CoreFunctionID.DATETIME_UNIX_TO_STRUCTURED;
                 case "ipcNamedPipeServerCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_SERVER_CREATE;
                 case "ipcNamedPipeServerClose": return (int)CoreFunctionID.IPC_NAMED_PIPE_SERVER_CLOSE;
-                case "jsInteropSupported": return (int)CoreFunctionID.JS_INTEROP_SUPPORTED;
                 case "jsInteropInvoke": return (int)CoreFunctionID.JS_INTEROP_INVOKE;
                 case "jsInteropRegisterCallback": return (int)CoreFunctionID.JS_INTEROP_REGISTER_CALLBACK;
                 case "jsInteropCallbackReturn": return (int)CoreFunctionID.JS_INTEROP_CALLBACK_RETURN;

@@ -43,7 +43,6 @@
     case 41: Core.EmitComment("addShutdownHandler"); @import("corefuncs/addShutdownHandler.pst"); break;
     case 42: Core.EmitComment("nativeTunnelSend"); @import("corefuncs/nativeTunnelSend.pst"); break;
     case 43: Core.EmitComment("nativeTunnelRecv"); @import("corefuncs/nativeTunnelRecv.pst"); break;
-    case 44: Core.EmitComment("ipcNamedPipeIsSupported"); @import("corefuncs/ipcNamedPipeIsSupported.pst"); break;
     case 45: Core.EmitComment("ipcNamedPipeCreate"); @import("corefuncs/ipcNamedPipeCreate.pst"); break;
     case 46: Core.EmitComment("ipcNamedPipeSend"); @import("corefuncs/ipcNamedPipeSend.pst"); break;
     case 47: Core.EmitComment("ipcNamedPipeFlush"); @import("corefuncs/ipcNamedPipeFlush.pst"); break;
@@ -61,7 +60,6 @@
     case 59: Core.EmitComment("dateTimeUnixToStructured"); @import("corefuncs/dateTimeUnixToStructured.pst"); break;
     case 60: Core.EmitComment("ipcNamedPipeServerCreate"); @import("corefuncs/ipcNamedPipeServerCreate.pst"); break;
     case 61: Core.EmitComment("ipcNamedPipeServerClose"); @import("corefuncs/ipcNamedPipeServerClose.pst"); break;
-    case 62: Core.EmitComment("jsInteropSupported"); @import("corefuncs/jsInteropSupported.pst"); break;
     case 63: Core.EmitComment("jsInteropInvoke"); @import("corefuncs/jsInteropInvoke.pst"); break;
     case 64: Core.EmitComment("jsInteropRegisterCallback"); @import("corefuncs/jsInteropRegisterCallback.pst"); break;
     case 65: Core.EmitComment("jsInteropCallbackReturn"); @import("corefuncs/jsInteropCallbackReturn.pst"); break;
