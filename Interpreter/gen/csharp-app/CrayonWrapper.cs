@@ -6653,6 +6653,10 @@ namespace Interpreter.Vm
                                 // jsonParse;
                                 arg1 = valueStack[--valueStackSize];
                                 output = JsonHelper.ParseJsonIntoValue(globals, (string)arg1.internalValue);
+                                if ((output == null))
+                                {
+                                    output = VALUE_NULL;
+                                }
                                 break;
                         }
                         if ((row[1] == 1))
