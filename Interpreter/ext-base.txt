@@ -29,9 +29,7 @@ EXT-TYPE: void CoreFunc_LaunchBrowser(string url);
 EXT-TYPE: void JsInterop_CallbackReturn(int callbackId, string returnJson);
 EXT-TYPE: bool JsInterop_Invoke(string name, string argsJson, Value nullableCallback);
 EXT-TYPE: void JsInterop_RegisterCallback(string name, bool returnsAValue, Value fn);
-EXT-TYPE: bool JsInterop_isSupported();
 
-EXT-TYPE: bool CoreFunc_NamedPipeIsSupported();
 EXT-TYPE: Array<object> CoreFunc_NamedPipeCreate(string pipeName);
 EXT-TYPE: string CoreFunc_NamedPipeSend(object pipe, string data);
 EXT-TYPE: string CoreFunc_NamedPipeFlush(object pipe);

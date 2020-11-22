@@ -1,17 +1,18 @@
-﻿import Json;
+﻿import Environment;
+import Json;
 
 namespace Ipc {
 
     class JavaScriptInterop {
 
         constructor() {
-            if (!$$$('jsInteropSupported')) {
+            if (!JavaScriptInterop.isSupported()) {
                 throw new InvalidOperationException();
             }
         }
 
         static function isSupported() {
-            return $$$('jsInteropSupported');
+            return Environment.getEnvironment()['implLang'] == 'javascript';
         }
 
         /*

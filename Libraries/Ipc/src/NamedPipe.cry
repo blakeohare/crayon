@@ -1,8 +1,22 @@
-﻿namespace Ipc {
+﻿import Environment;
+
+namespace Ipc {
+
+    function isNamedPipeSupported() {
+        env = Environment.getEnvironment();
+        return env['platform'] == 'windows';
+    }
+
+    function ensureNamedPipeSupported() {
+        if (!isNamedPipeSupported()) {
+            throw new InvalidOperationException("Named pipes are not supported on this platform.");
+        }
+    }
+
     class NamedPipeClient {
 
         constructor(name) {
-            NamedPipeClient.ensureSupported();
+            ensureNamedPipeSupported();
             NamedPipeClient.throwIfErr($$$('ipcNamedPipeCreate', this, name));
         }
 
@@ -12,16 +26,6 @@
 
         function flush() {
             NamedPipeClient.throwIfErr($$$('ipcNamedPipeFlush', this));
-        }
-
-        static function ensureSupported() {
-            if (!NamedPipeClient.isSupported()) {
-                throw new InvalidOperationException("Named pipes are not supported on this platform.");
-            }
-        }
-
-        static function isSupported() {
-            return $$$('ipcNamedPipeIsSupported');
         }
 
         static function throwIfErr(s) {
@@ -37,8 +41,8 @@
         field _onClose = () => {};
 
         constructor(name) {
+            ensureNamedPipeSupported();
             this._name = name;
-            NamedPipeClient.ensureSupported();
         }
 
         function setListener(cb) {

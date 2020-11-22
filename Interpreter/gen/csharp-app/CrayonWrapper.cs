@@ -6190,10 +6190,6 @@ namespace Interpreter.Vm
                                     list1.array[3] = rightValue;
                                 }
                                 break;
-                            case 44:
-                                // ipcNamedPipeIsSupported;
-                                output = buildBoolean(globals, IpcNamedPipe_isSupported());
-                                break;
                             case 45:
                                 // ipcNamedPipeCreate;
                                 valueStackSize -= 2;
@@ -6360,10 +6356,6 @@ namespace Interpreter.Vm
                                 {
                                     output = buildString(globals, string1);
                                 }
-                                break;
-                            case 62:
-                                // jsInteropSupported;
-                                output = buildBoolean(globals, false);
                                 break;
                             case 63:
                                 // jsInteropInvoke;
@@ -8069,11 +8061,6 @@ namespace Interpreter.Vm
         {
             object pipe = getNativeDataItem(objValue, 0);
             return CoreFunctions.NamedPipeFlush(pipe);
-        }
-
-        public static bool IpcNamedPipe_isSupported()
-        {
-            return true;
         }
 
         public static string IpcNamedPipe_send(Value objValue, Value strValue)

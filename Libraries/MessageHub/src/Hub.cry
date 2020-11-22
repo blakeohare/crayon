@@ -1,6 +1,6 @@
-﻿import Random;
+﻿import Environment;
+import Random;
 import Json;
-import Ipc;
 
 namespace MessageHub {
 
@@ -26,10 +26,12 @@ namespace MessageHub {
             }
             this._token = token.join('');
 
-            if (NamedPipeClient.isSupported()) {
-                this._impl = new WindowsHub(this._token, this._recvRaw, this._onReady, this._onClose, this._desktopInit);
-            } else if (JavaScriptInterop.isSupported()) {
+            env = Environment.getEnvironment();
+
+            if (env['implLang'] == 'javascript') {
                 this._impl = new WebHub(this._token, this._recvRaw, this._onReady, this._onClose);
+            } else if (env['platform'] == 'windows') {
+                this._impl = new WindowsHub(this._token, this._recvRaw, this._onReady, this._onClose, this._desktopInit);
             } else {
                 throw new NotImplementedException();
             }

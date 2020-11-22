@@ -1,8 +1,4 @@
-﻿bool IpcNamedPipe_isSupported() {
-    return Extension.CoreFunc_NamedPipeIsSupported();
-}
-
-string IpcNamedPipe_create(Value objValue, Value nameValue) {
+﻿string IpcNamedPipe_create(Value objValue, Value nameValue) {
     ObjectInstance obj = (ObjectInstance)objValue.internalValue;
     obj.nativeData = new Array<object>(1);
     obj.nativeData[0] = Extension.CoreFunc_NamedPipeCreate((string)nameValue.internalValue);

@@ -4740,10 +4740,6 @@ var interpretImpl = function(vm, executionContextId) {
 							list1[2][3] = rightValue;
 						}
 						break;
-					case 44:
-						// ipcNamedPipeIsSupported;
-						output = buildBoolean(globals, IpcNamedPipe_isSupported());
-						break;
 					case 45:
 						// ipcNamedPipeCreate;
 						valueStackSize -= 2;
@@ -4888,10 +4884,6 @@ var interpretImpl = function(vm, executionContextId) {
 						} else {
 							output = buildString(globals, string1);
 						}
-						break;
-					case 62:
-						// jsInteropSupported;
-						output = buildBoolean(globals, true);
 						break;
 					case 63:
 						// jsInteropInvoke;
@@ -6286,10 +6278,6 @@ var IpcNamedPipe_create = function(objValue, nameValue) {
 var IpcNamedPipe_flush = function(objValue) {
 	var pipe = getNativeDataItem(objValue, 0);
 	return (() => {})();
-};
-
-var IpcNamedPipe_isSupported = function() {
-	return false;
 };
 
 var IpcNamedPipe_send = function(objValue, strValue) {
