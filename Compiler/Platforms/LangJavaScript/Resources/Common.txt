@@ -5,7 +5,7 @@ C$common$programData = null;
 C$common$resources = {};
 C$common$binaryResources = {};
 C$common$libraryFunctionLookups = {};
-
+C$common$envDescriptor = () => 'web|javascript';
 C$common$globalOptions = {};
 C$common$globalOptions['fullscreen'] = false;
 

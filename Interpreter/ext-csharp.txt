@@ -6,6 +6,7 @@ EXT: CoreFunc_DateTimeGetUtcOffsetAt: DateTimeHelper.GetUtcOffsetAt([ARG:1], [AR
 EXT: CoreFunc_DateTimeIsDstOccurringAt: DateTimeHelper.IsDstOccurringAt([ARG:1], [ARG:2])
 EXT: CoreFunc_DateTimeInitializeTimeZoneList: DateTimeHelper.InitializeTimeZoneList()
 
+EXT: CoreFunc_EnvironmentDescriptor: TranslationHelper.EnvironmentDescriptor
 EXT: CoreFunc_EnvironmentGetVariable: System.Environment.GetEnvironmentVariable([ARG:1])
 
 EXT: CoreFunc_HttpSend: CoreFunctions.HttpSend([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])

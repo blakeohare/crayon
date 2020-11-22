@@ -5181,6 +5181,10 @@ var interpretImpl = function(vm, executionContextId) {
 							hasInterrupt = EX_InvalidArgument(ec, output[1]);
 						}
 						break;
+					case 90:
+						// environmentDescriptor;
+						output = buildString(globals, C$common$envDescriptor());
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

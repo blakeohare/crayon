@@ -17,6 +17,19 @@ namespace Interpreter.Vm
             Environment.OSVersion.Platform == PlatformID.Win32Windows ||
             Environment.OSVersion.Platform == PlatformID.WinCE;
 
+        public static string EnvironmentDescriptor
+        {
+            get
+            {
+                switch (Environment.OSVersion.Platform)
+                {
+                    case PlatformID.Unix: return "linux|csharp";
+                    case PlatformID.MacOSX: return "mac|csharp";
+                    default: return "windows|csharp";
+                }
+            }
+        }
+
         public static LibraryRegistry LibraryRegistry { get; set; }
 
         private static List<Func<string, object>> functionPointerResolvers = new List<Func<string, object>>();

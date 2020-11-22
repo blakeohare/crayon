@@ -6653,6 +6653,10 @@ namespace Interpreter.Vm
                                     hasInterrupt = EX_InvalidArgument(ec, (string)output.internalValue);
                                 }
                                 break;
+                            case 90:
+                                // environmentDescriptor;
+                                output = buildString(globals, TranslationHelper.EnvironmentDescriptor);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
