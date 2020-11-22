@@ -5177,6 +5177,11 @@ var interpretImpl = function(vm, executionContextId) {
 						// environmentDescriptor;
 						output = buildString(globals, C$common$envDescriptor());
 						break;
+					case 91:
+						// jsonParse;
+						arg1 = valueStack[--valueStackSize];
+						output = C$common$parseJson(globals, arg1[1]);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

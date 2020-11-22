@@ -1,3 +1,0 @@
-SOURCE: src/main.pst
-
-EXT-TYPE: VM.Value _lib_json_parse(VM.VmGlobals globals, string jsonValue);
