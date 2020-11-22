@@ -2,3 +2,6 @@
 
 // TODO: one of these days, this will return token information upon error, but that would require embedding a custom parser.
 output = Extension.CoreFunc_JsonParse(globals, (string) arg1.internalValue);
+if (output == null) {
+    output = VALUE_NULL;
+}

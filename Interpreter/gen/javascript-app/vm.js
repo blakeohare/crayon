@@ -5181,6 +5181,9 @@ var interpretImpl = function(vm, executionContextId) {
 						// jsonParse;
 						arg1 = valueStack[--valueStackSize];
 						output = C$common$parseJson(globals, arg1[1]);
+						if ((output == null)) {
+							output = VALUE_NULL;
+						}
 						break;
 				}
 				if ((row[1] == 1)) {
