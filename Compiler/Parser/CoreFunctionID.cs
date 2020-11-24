@@ -93,6 +93,8 @@ namespace Parser
         JSON_SERIALIZE = 89,
         ENVIRONMENT_DESCRIPTOR = 90,
         JSON_PARSE = 91,
+        PROCESS_RUN = 92,
+        PROCESS_KILL = 93,
     }
 
     internal static class CoreFunctionIDHelper
@@ -190,6 +192,8 @@ namespace Parser
                 case "jsonSerialize": return (int)CoreFunctionID.JSON_SERIALIZE;
                 case "environmentDescriptor": return (int)CoreFunctionID.ENVIRONMENT_DESCRIPTOR;
                 case "jsonParse": return (int)CoreFunctionID.JSON_PARSE;
+                case "processRun": return (int)CoreFunctionID.PROCESS_RUN;
+                case "processKill": return (int)CoreFunctionID.PROCESS_KILL;
                 default: return -1;
             }
         }

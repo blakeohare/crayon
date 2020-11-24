@@ -1,44 +1,27 @@
-﻿import Dispatcher;
+﻿import Environment;
+import Math;
 
 namespace ProcessUtil {
-
-    /*
-        Process bridge native data:
-            nativeData[0] -> is finished?
-            nativeData[1] -> exit code
-            nativeData[2] -> STDOUT lines
-            nativeData[3] -> STDERR lines
-            nativeData[4] -> mutex for above items (used by native code, if necessary)
-    */
-    class ProcessResult {
-
-        field _processBridge;
-
-        constructor(bridge) {
-            this._processBridge = bridge;
-        }
-
-        function isRunning() { return this.getReturnCode() == null; }
-        function getReturnCode() { return ProcessResult._procReadBridge(this, 1)[0]; }
-        function getStdOutLines() { return ProcessResult._procReadBridge(this, 2); }
-        function getStdErrLines() { return ProcessResult._procReadBridge(this, 3); }
-
-        static function _procReadBridge(r, id) {
-            lines = [];
-            $lib_processutil_readBridge(r._processBridge, lines, id);
-            return lines;
-        }
-    }
 
     class Process {
 
         field _executable = null;
         field _args = null;
+        field _onStdOut = null;
+        field _onStdErr = null;
+        field _onFinish = null;
+        field _timeouts = [];
+        field _isRunning = false;
+        field _isFinished = false;
+        field _pid = null;
 
-        constructor() { }
+        constructor() {
+            if (!Process.isSupported()) throw new Exception("Launching processes are not supported on this platform.");
+        }
 
         static function isSupported() {
-            return $lib_processutil_isSupported();
+            env = Environment.getEnvironment();
+            return env['type'] == 'desktop';
         }
 
         function setExecutable(e) {
@@ -57,38 +40,67 @@ namespace ProcessUtil {
             return this;
         }
 
-        function launch() { return this._launchImpl(null); }
-        function launchAsync(cb) { return this._launchImpl(cb); }
+        function onStdOut(cb) {
+            this._onStdOut = cb;
+            return this;
+        }
 
-        function _launchImpl(cb) {
-            if (!Process.isSupported()) {
-                throw new NotImplementedException("This platform does not support launching processes.");
+        function onStdErr(cb) {
+            this._onStdErr = cb;
+            return this;
+        }
+
+        function onFinish(cb) {
+            this._onFinish = cb;
+            return this;
+        }
+
+        function onTimeout(seconds, cb) {
+            this._timeouts.add([Math.floor(1000 * seconds), cb]);
+            return this;
+        }
+
+        function isRunning() { return this._isRunning; }
+
+        function run() {
+            if (this._isRunning) throw new Exception("Process is already running.");
+            if (this._isFinished) throw new Exception("Process has already been run.");
+
+            onFinish = (status) => {
+                this._isRunning = false;
+                if (this._onFinish != null) this._onFinish(parseInt(status));
+            };
+            onData = (lines) => {
+                for (i = 0; i < lines.length; i += 2) {
+                    type = lines[i];
+                    str = lines[i + 1];
+                    handler = type == 'E' ? this._onStdErr : type == 'S' ? this._onStdOut : onFinish;
+                    if (handler != null) handler(str);
+                }
+            };
+            this._pid = $$$('processRun', this, this._executable, this._args ?? [], onData);
+            // TODO: return status codes as negative numbers.
+            if (this._pid == -1) throw new Exception("An error occurred while launching the process.");
+            return this._pid;
+        }
+
+        function awaitRun() {
+            status = null;
+            this._onFinish = s => {
+                status = s;
+                if (this._onFinish != null) this._onFinish(s);
+            };
+            this.run();
+            while (status == null) {
+                Core.sleep(0.01);
             }
+            return status;
+        }
 
-            innerProc = new Core.Object();
-
-            isAsync = cb != null;
-            cbStandIn = null;
-            if (isAsync) {
-                wrappedCb = () => {
-                    response = new ProcessResult(innerProc);
-                    cb(response);
-                };
-
-                // Let the dispatcher know that something is in the pipes so that Dispatcher.flush() knows
-                // to yield the main thread briefly if Dispatcher.flush() is called synchronously.
-                cbRefKey = DispatcherInternal.queueConditionalCallback(wrappedCb);
-                cbStandIn = () => {
-                    DispatcherInternal.conditionalCallbackCompleted(cbRefKey);
-                };
+        function kill() {
+            if (this._isRunning) {
+                $$$('processKill', this);
             }
-            $lib_processutil_launchProcess(innerProc, this._executable, this._args, isAsync, cbStandIn, DispatcherInternal._nativeQueue);
-
-            if (cb == null) {
-                return new ProcessResult(innerProc);
-            }
-
-            return null;
         }
     }
 }

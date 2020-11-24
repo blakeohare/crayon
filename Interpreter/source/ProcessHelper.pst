@@ -1,0 +1,16 @@
+﻿int ProcessHelper_processRun(
+    ObjectInstance wrapper,
+    string exPath,
+    ListImpl args,
+    Value onDataCb) {
+
+    Array<int> intOut = new Array<int>(1);
+    wrapper.nativeData = new Array<object>(1);
+    wrapper.nativeData[0] = Extension.CoreFunc_ProcessRun(exPath, listImplToStringArray(args), onDataCb, intOut);
+
+    return intOut[0];
+}
+
+void ProcessHelper_kill(ObjectInstance wrapper) {
+
+}
