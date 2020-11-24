@@ -87,6 +87,13 @@
         return $$$('sleep', seconds);
     }
 
+    function timedCallback(f, seconds) {
+        Core.assert(
+            $$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
+            seconds >= 0, "Invalid argument.");
+        return $$$('timedCallback', f, seconds);
+    }
+
     @localized('en', 'typeof')
     @localized('es', 'EStypeof')
     @localized('jp', 'JPtypeof')

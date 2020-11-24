@@ -1,4 +1,0 @@
-SOURCE: src/main.pst
-
-EXT-TYPE: void _lib_dispatcher_flushNativeQueue(Array<object> things, List<VM.Value> callbacksOut);
-EXT-TYPE: object _lib_dispatcher_newMutex();

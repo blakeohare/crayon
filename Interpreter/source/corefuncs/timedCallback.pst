@@ -1,0 +1,3 @@
+﻿@import("inline/2_arg.pst");
+
+Extension.CoreFunc_TimedCallback(arg1, (double) arg2.internalValue);

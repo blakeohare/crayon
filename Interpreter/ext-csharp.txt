@@ -44,3 +44,5 @@ EXT: CoreFunc_ResourceGetText: Interpreter.ResourceReader.ReadTextResource([ARG:
 
 EXT: CoreFunc_TextEncoding_ConvertBytesToText: TextEncodingHelper.BytesToText([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_TextEncoding_ConvertTextToBytes: TextEncodingHelper.TextToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+
+EXT: CoreFunc_TimedCallback: EventLoop.ExecuteFunctionPointerWithDelay([ARG:1], [ARG:2])

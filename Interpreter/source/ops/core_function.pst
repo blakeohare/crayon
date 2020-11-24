@@ -91,6 +91,7 @@
     case 91: Core.EmitComment("jsonParse"); @import("corefuncs/jsonParse.pst"); break;
     case 92: Core.EmitComment("processRun"); @import("corefuncs/processRun.pst"); break;
     case 93: Core.EmitComment("processKill"); @import("corefuncs/processKill.pst"); break;
+    case 94: Core.EmitComment("timedCallback"); @import("corefuncs/timedCallback.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

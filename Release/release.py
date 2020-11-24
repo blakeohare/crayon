@@ -14,7 +14,6 @@ LIBRARIES = [
 	'CryptoMd5',
 	'CryptoSha1',
 	'DateTime',
-	'Dispatcher',
 	'Easing',
 	'Environment',
 	'FileIO',

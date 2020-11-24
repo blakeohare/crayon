@@ -44,3 +44,5 @@ EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:1])
 
 EXT: CoreFunc_TextEncoding_ConvertBytesToText: C$textencoding.bytesToText([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_TextEncoding_ConvertTextToBytes: C$textencoding.textToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+
+EXT: CoreFunc_TimedCallback: C$common$timedCallback([ARG:1], [ARG:2])

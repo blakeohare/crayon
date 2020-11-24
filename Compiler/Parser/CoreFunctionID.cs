@@ -95,6 +95,7 @@ namespace Parser
         JSON_PARSE = 91,
         PROCESS_RUN = 92,
         PROCESS_KILL = 93,
+        TIMED_CALLBACK = 94,
     }
 
     internal static class CoreFunctionIDHelper
@@ -194,6 +195,7 @@ namespace Parser
                 case "jsonParse": return (int)CoreFunctionID.JSON_PARSE;
                 case "processRun": return (int)CoreFunctionID.PROCESS_RUN;
                 case "processKill": return (int)CoreFunctionID.PROCESS_KILL;
+                case "timedCallback": return (int)CoreFunctionID.TIMED_CALLBACK;
                 default: return -1;
             }
         }
