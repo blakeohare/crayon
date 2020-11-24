@@ -38,6 +38,8 @@ EXT: CoreFunc_NamedPipeFlush: (() => {})()
 EXT: CoreFunc_NamedPipeServerCreate: (() => {})()
 EXT: CoreFunc_NamedPipeServerClose: (() => {})()
 
+EXT: CoreFunc_ProcessRun: (() => {})()
+
 EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:1])
 
 EXT: CoreFunc_TextEncoding_ConvertBytesToText: C$textencoding.bytesToText([ARG:1], [ARG:2], [ARG:3])

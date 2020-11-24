@@ -5185,6 +5185,21 @@ var interpretImpl = function(vm, executionContextId) {
 							output = VALUE_NULL;
 						}
 						break;
+					case 92:
+						// processRun;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = buildInteger(globals, ProcessHelper_processRun(arg1[1], arg2[1], arg3[1], arg4));
+						break;
+					case 93:
+						// processKill;
+						arg1 = valueStack[--valueStackSize];
+						ProcessHelper_kill(arg1[1]);
+						output = VALUE_NULL;
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -6514,6 +6529,22 @@ var listImplToBytes = function(list) {
 	return bytes;
 };
 
+var listImplToStringArray = function(list) {
+	var output = PST$createNewArray(list[1]);
+	var v = null;
+	var i = 0;
+	while ((i < list[1])) {
+		v = list[2][i];
+		if ((v[0] == 5)) {
+			output[i] = v[1];
+		} else {
+			output[i] = null;
+		}
+		i += 1;
+	}
+	return output;
+};
+
 var makeByteListNativeData = function(obj, vList) {
 	if ((vList[0] != 6)) {
 		return false;
@@ -6901,6 +6932,16 @@ var printToStdOut = function(prefix, line) {
 		}
 	}
 	return 0;
+};
+
+var ProcessHelper_kill = function(wrapper) {
+};
+
+var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb) {
+	var intOut = PST$createNewArray(1);
+	wrapper[3] = PST$createNewArray(1);
+	wrapper[3][0] = (() => {})();
+	return intOut[0];
 };
 
 var qsortHelper = function(keyStringList, keyNumList, indices, isString, startIndex, endIndex) {

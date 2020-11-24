@@ -6658,6 +6658,21 @@ namespace Interpreter.Vm
                                     output = VALUE_NULL;
                                 }
                                 break;
+                            case 92:
+                                // processRun;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = buildInteger(globals, ProcessHelper_processRun((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4));
+                                break;
+                            case 93:
+                                // processKill;
+                                arg1 = valueStack[--valueStackSize];
+                                ProcessHelper_kill((ObjectInstance)arg1.internalValue);
+                                output = VALUE_NULL;
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -8351,6 +8366,27 @@ namespace Interpreter.Vm
             return bytes;
         }
 
+        public static string[] listImplToStringArray(ListImpl list)
+        {
+            string[] output = new string[list.size];
+            Value v = null;
+            int i = 0;
+            while ((i < list.size))
+            {
+                v = list.array[i];
+                if ((v.type == 5))
+                {
+                    output[i] = (string)v.internalValue;
+                }
+                else
+                {
+                    output[i] = null;
+                }
+                i += 1;
+            }
+            return output;
+        }
+
         public static bool makeByteListNativeData(ObjectInstance obj, Value vList)
         {
             if ((vList.type != 6))
@@ -8873,6 +8909,18 @@ namespace Interpreter.Vm
                 }
             }
             return 0;
+        }
+
+        public static void ProcessHelper_kill(ObjectInstance wrapper)
+        {
+        }
+
+        public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb)
+        {
+            int[] intOut = new int[1];
+            wrapper.nativeData = new object[1];
+            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(exPath, listImplToStringArray(args), onDataCb, intOut);
+            return intOut[0];
         }
 
         public static int qsortHelper(string[] keyStringList, double[] keyNumList, int[] indices, bool isString, int startIndex, int endIndex)
