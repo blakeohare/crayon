@@ -103,7 +103,6 @@ void JsonHelper_serializeImpl(
                     errorOut[0] = "Only string dictionaries can be used.";
                     return;
                 }
-                bool isFirst = true;
                 int start = 0;
                 int end = keys.Size();
                 if (omitDictNull) {

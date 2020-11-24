@@ -2713,7 +2713,6 @@ namespace Interpreter.Vm
             Value arg8 = null;
             Value arg9 = null;
             Value arg10 = null;
-            List<Token> tokenList = null;
             int[] globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
             MagicNumbers magicNumbers = vm.metadata.magicNumbers;
             Dictionary<int, int>[] integerSwitchesByPc = vm.byteCode.integerSwitchesByPc;
@@ -2734,8 +2733,6 @@ namespace Interpreter.Vm
             System.Func<VmContext, Value[], Value> nativeFp = null;
             VmDebugData debugData = vm.byteCode.debugData;
             bool[] isBreakPointPresent = debugData.hasBreakpoint;
-            BreakpointInfo breakpointInfo = null;
-            bool debugBreakPointTemporaryDisable = false;
             while (true)
             {
                 row = args[pc];
@@ -8274,7 +8271,6 @@ namespace Interpreter.Vm
                             errorOut[0] = "Only string dictionaries can be used.";
                             return;
                         }
-                        bool isFirst = true;
                         int start = 0;
                         int end = keys.Count;
                         if (omitDictNull)

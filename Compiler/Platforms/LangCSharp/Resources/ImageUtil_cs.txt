@@ -108,7 +108,7 @@ namespace Interpreter.Vm
                 int xdiff = x2 - x1;
                 int ydiff = y2 - y1;
                 double progress;
-                int step, xStart, xEnd, yStart, yEnd, x, y;
+                int step, xEnd, yEnd, x, y;
                 if (Math.Abs(xdiff) > Math.Abs(ydiff))
                 {
                     // draw horizontally
