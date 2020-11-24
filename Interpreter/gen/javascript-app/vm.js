@@ -2176,7 +2176,6 @@ var interpretImpl = function(vm, executionContextId) {
 	var arg8 = null;
 	var arg9 = null;
 	var arg10 = null;
-	var tokenList = null;
 	var globalNameIdToPrimitiveMethodName = vm[4][12];
 	var magicNumbers = vm[4][19];
 	var integerSwitchesByPc = vm[2][3];
@@ -2197,8 +2196,6 @@ var interpretImpl = function(vm, executionContextId) {
 	var nativeFp = null;
 	var debugData = vm[2][5];
 	var isBreakPointPresent = debugData[0];
-	var breakpointInfo = null;
-	var debugBreakPointTemporaryDisable = false;
 	while (true) {
 		row = args[pc];
 		switch (ops[pc]) {
@@ -6454,7 +6451,6 @@ var JsonHelper_serializeImpl = function(vm, currentIndent, root, depth, isPretty
 					errorOut[0] = "Only string dictionaries can be used.";
 					return;
 				}
-				var isFirst = true;
 				var start = 0;
 				var end = keys.length;
 				if (omitDictNull) {
