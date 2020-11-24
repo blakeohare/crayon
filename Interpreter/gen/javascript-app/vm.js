@@ -5197,6 +5197,13 @@ var interpretImpl = function(vm, executionContextId) {
 						ProcessHelper_kill(arg1[1]);
 						output = VALUE_NULL;
 						break;
+					case 94:
+						// timedCallback;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						C$common$timedCallback(arg1, arg2[1]);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

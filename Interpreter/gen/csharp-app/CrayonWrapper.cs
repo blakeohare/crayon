@@ -6670,6 +6670,13 @@ namespace Interpreter.Vm
                                 ProcessHelper_kill((ObjectInstance)arg1.internalValue);
                                 output = VALUE_NULL;
                                 break;
+                            case 94:
+                                // timedCallback;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                EventLoop.ExecuteFunctionPointerWithDelay(arg1, (double)arg2.internalValue);
+                                break;
                         }
                         if ((row[1] == 1))
                         {

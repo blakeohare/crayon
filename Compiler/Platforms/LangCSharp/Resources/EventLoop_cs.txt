@@ -45,6 +45,16 @@ namespace Interpreter.Vm
             });
         }
 
+        public static void ExecuteFunctionPointerWithDelay(Value fp, double delay)
+        {
+            AddItemToQueue(new EventLoopInvocation()
+            {
+                FunctionPointer = fp,
+                FunctionPointerArgs = new Value[0],
+                Timestamp = TranslationHelper.GetCurrentTime() + delay,
+            });
+        }
+
         public static void ResumeExecutionAfterDelay(int executionContextId, double delay)
         {
             if (delay <= 0) ResumeExecution(executionContextId);
