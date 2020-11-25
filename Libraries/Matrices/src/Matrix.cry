@@ -1,67 +1,114 @@
 ﻿namespace Matrices {
 
     class Matrix {
-        /*
-            nativeData[0] -> Array<float> data
-            nativeData[1] -> width
-            nativeData[2] -> height
-            nativeData[3] -> Array<Value> data as values
-            nativeData[4] -> bool: data as values are dirty?
-            nativeData[5] -> string: error
-            nativeData[6] -> Array<float> writeBuffer: new data gets written here on multipliccations and then pointers are swapped with data.
-        */
-
         field width;
         field height;
+        field _data;
 
         constructor(height, width) {
             this.width = width;
             this.height = height;
-            $$$('allocNativeData', this, 7);
-            if ($lib_matrices_initMatrix(this, width, height)) this.argError();
+            this._data = (width * height) * [0.0];
         }
 
         static function newIdentityMatrix(size) {
             matrix = new Matrices.Matrix(size, size);
             index = 0;
+            d = matrix._data;
             for (i = 0; i < size; ++i) {
-                matrix.setValue(i, i, 1.0);
+                d[index] = 1.0;
+                index += size + 1;
             }
             return matrix;
         }
 
         function getValue(row, col) {
-            return $lib_matrices_getValue(this, col, row) ?? this.argError();
+            return this._data[row * this.width + col];
         }
 
         function setValue(row, col, value) {
-            return $lib_matrices_setValue(this, col, row, value) ?? this.argError();
+            this._data[row * this.width + col] = value;
+            return this;
         }
 
         function multiplyByScalar(value, output = null) {
-            return $lib_matrices_multiplyScalar(this, value, output, output is Matrices.Matrix) ?? this.argError();
+            len = this.width * this.height;
+            output = output ?? this;
+            d1 = this._data;
+            d2 = output._data;
+            for (i = 0; i < len; ++i) {
+                output[i] = d1[i] * value;
+            }
+            return output;
         }
 
         function addMatrix(other, output = null) {
-            return $lib_matrices_addMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
+            output = output ?? new Matrix(this.height, this.width);
+            if (this.width != other.width ||
+                this.height != other.height ||
+                this.width != output.width ||
+                this.height != output.height) {
+                throw new InvalidArgumentException("Matrices must be the same size.");
+            }
+
+            d1 = this._data;
+            d2 = other._data;
+            d3 = output._data;
+            len = d1.length;
+            for (i = 0; i < len; ++i) {
+                d3[i] = d1[i] + d2[i];
+            }
+            return output;
         }
 
         function multiplyByMatrix(other, output = null) {
-            return $lib_matrices_multiplyMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
+            if (this.width != other.height) throw new InvalidArgumentException("First matrix's width must be equal to the second matrix's height.");
+
+            if (output != null) {
+                if (this.height != output.height) throw new InvalidArgumentException("output matrix's height must match the first matrix's height.");
+                if (other.width != output.width) throw new InvalidArgumentException("output matrix's width must match the second matrix's width.");
+                d3 = [0.0] * output._data.length;
+            } else {
+                output = new Matrix(this.height, other.width);
+                d3 = output._data;
+            }
+
+            // TODO: move this to a core function
+            d1 = this._data;
+            d2 = other._data;
+            d3 = output._data;
+            i3 = 0;
+            for (y = 0; y < output.height; ++y) {
+                for (x = 0; x < output.width; ++x) {
+                    i1 = y * this.width;
+                    i2 = x;
+                    value = 0.0;
+                    print("X/Y: " + x + '/' + y);
+                    print("Looping " + this.width + ' times');
+                    for (i = 0; i < this.width; ++i) {
+                        print("i1 = " + i1);
+                        print("i2 = " + i2);
+                        value += d1[i1] * d2[i2];
+                        i1 += 1;
+                        i2 += other.width;
+                    }
+                    d3[i3++] = value;
+                }
+            }
+
+            output._data = d3;
+            return output;
         }
 
         function toVector(output) {
-            while (output.length < this.width * this.height) {
-                output.add(0.0);
-            }
-            output[0] = $lib_matrices_getValue(this, 0, 0);
-            return $lib_matrices_toVector(this, output) ?? this.argError();
+            return this._data.clone();
         }
 
         function copyFrom(other) {
-            return $lib_matrices_copyFrom(this, other, other is Matrices.Matrix) ?? this.argError();
+            this._data = other._data.clone();
+            this.width = other.width;
+            this.height = other.height;
+            return this;
         }
-
-        function argError() { throw new Core.InvalidArgumentException($lib_matrices_getError(this)); }
     }
 }
