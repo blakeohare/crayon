@@ -1,100 +1,122 @@
 ﻿import Math;
 
-@localized('en', 'Easing')
-@localized('es', 'ESEasing')
-@localized('jp', 'JPEasing')
 namespace Easing {
 
-    @localized('en', 'EasingFunction')
-    @localized('es', 'ESEasingFunction')
-    @localized('jp', 'JPEasingFunction')
     class EasingFunction {
 
-        static function _0(t) { return t; }
-        @localized('en', 'LINEAR')
-        @localized('es', 'ESLINEAR')
-        @localized('jp', 'JPLINEAR')
-        static field LINEAR = new EasingFunction(EasingFunction._0, 1);
-
-        static function _1(t) { return t ** 2; }
-        @localized('en', 'QUADRATIC')
-        @localized('es', 'ESQUADRATIC')
-        @localized('jp', 'JPQUADRATIC')
-        static field QUADRATIC = new EasingFunction(EasingFunction._1);
-
-        static function _2(t) { return t ** 3; }
-        @localized('en', 'CUBIC')
-        @localized('es', 'ESCUBIC')
-        @localized('jp', 'JPCUBIC')
-        static field CUBIC = new EasingFunction(EasingFunction._2);
-
-        static function _3(t) { return t ** 4; }
-        @localized('en', 'QUART')
-        @localized('es', 'ESQUART')
-        @localized('jp', 'JPQUART')
-        static field QUART = new EasingFunction(EasingFunction._3);
-
-        static function _4(t) { return t ** 5; }
-        @localized('en', 'QUINT')
-        @localized('es', 'ESQUINT')
-        @localized('jp', 'JPQUINT')
-        static field QUINT = new EasingFunction(EasingFunction._4);
-
-        static function _5(t) { return (1 - t ** 2) ** .5; }
-        @localized('en', 'CIRCLE')
-        @localized('es', 'ESCIRCLE')
-        @localized('jp', 'JPCIRCLE')
-        static field CIRCLE = new EasingFunction(EasingFunction._5);
-
-        static function _6(t) { return 1.0 - Math.cos(t * (Math.PI / 2)); }
-        @localized('en', 'SIN')
-        @localized('es', 'ESSIN')
-        @localized('jp', 'JPSIN')
-        static field SIN = new EasingFunction(EasingFunction._6);
-
-        static function _7(t) {
+        static field LINEAR = new EasingFunction(t => t).setSamplingInterval(1);
+        static field QUADRATIC = new EasingFunction(t => t ** 2);
+        static field CUBIC = new EasingFunction(t => t ** 3);
+        static field QUART = new EasingFunction(t => t ** 4);
+        static field QUINT = new EasingFunction(t => t ** 5);
+        static field CIRCLE = new EasingFunction(t => (1 - t ** 2) ** .5);
+        static field SIN = new EasingFunction(t => 1.0 - Math.cos(t * (Math.PI / 2)));
+        static field ELASTIC = new EasingFunction(t => {
             if (t < .1) t = (t * 6 + 4) * t;
             else t = t * .6 + .4;
             return Math.sin(t * (2 * Math.PI * 5.25)) * (t ** 6);
-        }
-        @localized('en', 'ELASTIC')
-        @localized('es', 'ESELASTIC')
-        @localized('jp', 'JPELASTIC')
-        static field ELASTIC = new EasingFunction(EasingFunction._7, 400);
+        }).setSamplingInterval(400);
 
-        constructor(fp, intervals = 100) {
-            pts = [];
+        field _fp = null;
+        field _intervals = 100;
+        field _pts = null;
+
+        constructor(fp) {
+            this._fp = fp;
+        }
+
+        function setSamplingInterval(n) {
+            this._pts = null;
+            this._intervals = Math.floor(n);
+            return this;
+        }
+
+        function _manifest() {
+            this._pts = [];
             i = -1;
-            m = intervals * 1.0;
+            m = this._intervals * 1.0;
             while (++i <= m) {
-                pts.add(fp(i / m) * 1.0);
+                this._pts.add(this._fp(i / m) * 1.0);
             }
-            $lib_easing_apply_pts(this, pts);
+            return this._pts;
         }
 
-        @localized('en', 'easeIn')
-        @localized('es', 'ESeaseIn')
-        @localized('jp', 'JPeaseIn')
-        function easeIn(start, end, current, duration, integers = false) {
-            return $lib_easing_interpolate(this, start, end, current, duration, integers, 0) ?? EasingFunction._throw();
+        function easeIn(start, end, current, duration, useInts = false) {
+            return _ease(start, end, current, duration, useInts, -1, this._pts ?? this._manifest());
         }
 
-        @localized('en', 'easeOut')
-        @localized('es', 'ESeaseOut')
-        @localized('jp', 'JPeaseOut')
-        function easeOut(start, end, current, duration, integers = false) {
-            return $lib_easing_interpolate(this, start, end, current, duration, integers, 1) ?? EasingFunction._throw();
+        function easeOut(start, end, current, duration, useInts = false) {
+            return _ease(start, end, current, duration, useInts, 1, this._pts ?? this._manifest());
         }
 
-        @localized('en', 'ease')
-        @localized('es', 'ESease')
-        @localized('jp', 'JPease')
-        function ease(start, end, current, duration, integers = false) {
-            return $lib_easing_interpolate(this, start, end, current, duration, integers, 2) ?? EasingFunction._throw();
+        function ease(start, end, current, duration, useInts = false) {
+            return _ease(start, end, current, duration, useInts, 0, this._pts ?? this._manifest());
+        }
+    }
+
+    const ERR_MSG_SUFFIX = ' must be a number.';
+
+    function _ease(start, end, current, duration, useInts, type, pts) {
+        if (!Core.isNumber(start)) _throw('start' + ERR_MSG_SUFFIX);
+        if (!Core.isNumber(end)) _throw('end' + ERR_MSG_SUFFIX);
+        if (!Core.isNumber(current)) _throw('current' + ERR_MSG_SUFFIX);
+        if (!Core.isNumber(duration)) _throw('duration' + ERR_MSG_SUFFIX);
+
+        $$$('argVerifyNums', "start", start, 1);
+        $$$('argVerifyNums', "start", start, 1);
+        progress = Math.ensureRange((0.0 + current) / duration, 0.0, 1.0);
+        firstHalf = false;
+        switch (type) {
+            case 1:
+                progress = 1 - progress;
+                break;
+            case 0:
+                if (progress < .5) {
+                    firstHalf = true;
+                    progress *= 2;
+                } else {
+                    progress = 2 - 2 * progress;
+                }
+                break;
         }
 
-        static function _throw() {
-            throw new Core.InvalidArgumentException("Inputs must be numbers.");
+        //print("Progress: " + progress + " type: " + type);
+        indexFloat = (pts.length - 1) * progress;
+        indexIntRounded = Math.floor(indexFloat + .5);
+        //print("Raw index: " + indexFloat);
+        if (Math.abs(indexFloat - indexIntRounded) < 0.0000001) {
+            ratio = pts[indexIntRounded];
+        } else {
+            indexIntFloor = Math.floor(indexFloat);
+            left = pts[indexIntFloor];
+            right = pts[indexIntFloor + 1];
+            diff = indexFloat - indexIntFloor;
+            ratio = (right * diff) + (left * (1 - diff));
         }
+
+        // print("ratio: " + ratio);
+
+        if (type == 0) {
+            if (firstHalf) {
+                ratio /= 2.0;
+            } else {
+                ratio = 1 - ratio;
+                ratio = ratio / 2 + .5;
+            }
+        } else if (type == 1) {
+            ratio = 1 - ratio;
+        }
+
+        output = ratio * (end - start) + start;
+
+        if (useInts) {
+            output = Math.floor(output + .5);
+        }
+
+        return output;
+    }
+
+    function _throw(m) {
+        throw new InvalidArgumentException(m);
     }
 }
