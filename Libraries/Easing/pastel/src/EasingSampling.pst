@@ -1,4 +1,0 @@
-﻿struct EasingSampling {
-    int sampleCount;
-    Array<double> samples;
-}
