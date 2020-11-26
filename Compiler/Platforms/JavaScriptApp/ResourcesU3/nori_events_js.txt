@@ -47,6 +47,7 @@ const NoriEvents = (() => {
         if (batchData.length > 0) {
             let batch = batchData;
             batchData = [];
+            // TODO: put this in the shim, won't work in browser JS
             sendBatchMessage(batch);
         }
     };

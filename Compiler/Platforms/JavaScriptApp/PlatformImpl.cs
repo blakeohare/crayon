@@ -29,6 +29,17 @@ namespace JavaScriptApp
             throw new NotImplementedException();
         }
 
+        private static readonly string[] noriFiles = new string[] {
+            "messagehub.js",
+            "nori.js",
+            "nori_canvas.js",
+            "nori_context.js",
+            "nori_events.js",
+            "nori_layout.js",
+            "nori_util.js",
+            "shim.js",
+        };
+
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
@@ -38,6 +49,8 @@ namespace JavaScriptApp
         {
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
 
+            bool usesU3 = libraries.Where(lib => lib.Name == "U3Direct").Any();
+
             if (options.GetBool(ExportOptionKey.JS_FULL_PAGE))
             {
                 jsExtraHead.Add(
@@ -45,6 +58,16 @@ namespace JavaScriptApp
                     + "C$common$globalOptions['fullscreen'] = true;"
                     + "</script>");
             }
+
+            if (usesU3)
+            {
+                foreach (string file in noriFiles)
+                {
+                    this.CopyResourceAsText(output, "u3/" + file, "ResourcesU3/" + file, new Dictionary<string, string>());
+                    jsExtraHead.Add("<script src=\"u3/" + file + "\"></script>");
+                }
+            }
+
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);

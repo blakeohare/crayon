@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\*.txt" />
+    <EmbeddedResource Include="ResourcesU3\*.txt" />
   </ItemGroup>
 </Project>
