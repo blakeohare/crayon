@@ -38,8 +38,8 @@ public class CrayonWebView extends WebView {
         this.getSettings().setDomStorageEnabled(true);
         this.setPivotX(0);
         this.setPivotY(0);
-        this.setScaleX(2);
-        this.setScaleY(2);
+        //this.setScaleX(2);
+        //this.setScaleY(2);
         this.setBackgroundColor(getResources().getColor(android.R.color.black));
         this.setWebViewClient(new CrayonWebViewClient());
         this.setWebChromeClient(new WebChromeClient() {
@@ -65,6 +65,7 @@ public class CrayonWebView extends WebView {
         });
     }
 
+    /*
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         int action = e.getAction();
@@ -96,6 +97,7 @@ public class CrayonWebView extends WebView {
         this.handleMouseEvent(e);
         return true;
     }
+    */
 
     private void handleMouseEvent(MotionEvent e) {
         int mouseEventTypeId = 0;
