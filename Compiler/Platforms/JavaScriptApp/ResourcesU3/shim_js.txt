@@ -20,7 +20,6 @@ window.addEventListener('load', () => {
 		});
 
 		listen('u3init', (request, cb) => {
-			console.log("I received the u3init message: " + JSON.stringify(request));
 			let u3host = document.getElementById('crayon_host');
 			let s = u3host.style;
 			s.width = request.width + 'px';
