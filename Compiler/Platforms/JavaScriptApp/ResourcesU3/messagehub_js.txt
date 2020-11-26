@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
 	if (!window.CrayonInterop) window.CrayonInterop = {};
 	let CI = window.CrayonInterop;
 
