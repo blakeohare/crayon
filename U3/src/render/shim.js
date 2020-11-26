@@ -35,39 +35,7 @@ function getWindowSize() {
 
 function shimInit(uiData) {
 	let noriRoot = document.getElementById('html_render_host');
-	setFrameRoot(noriRoot);
-	let sz = getWindowSize();
-	setFrameSize(sz[0], sz[1]);
-	window.onresize = function() {
-		let newSize = getWindowSize();
-		setFrameSize(newSize[0], newSize[1]);
-		platformSpecificHandleEvent(-1, 'frame.onresize', newSize[0] + ',' + newSize[1]);
-		flushUpdates(['NO', 0]);
-	};
-	let fontUpdates = [];
-	let otherUpdates = [];
-	for (let i = 0; i < uiData.length; ++i) {
-		if (uiData[i] === 'FR') {
-			for (let j = 0; j < 4; ++j) {
-				fontUpdates.push(uiData[i + j]);
-			}
-			i += 3;
-		} else {
-			otherUpdates = uiData.slice(i);
-			break;
-		}
-	}
-	uiData = otherUpdates;
-	
-	let finishInit = () => {
-		flushUpdates(uiData);
-		window.sendMessage('shown', true);
-	};
-
-	if (fontUpdates.length === 0) {
-		finishInit();
-	} else {
-		flushUpdates(fontUpdates);
-		waitForFonts().then(finishInit);
-	}
+	let shownCb = () => { window.sendMessage('shown', true); };
+	let eventBatchSender = data => { window.sendMessage('eventBatch', data); };
+	noriInit(noriRoot, uiData, shownCb, eventBatchSender);
 }

@@ -1,0 +1,42 @@
+
+let getWindowSize;
+let platformSpecificHandleEvent;
+
+(() => {
+
+window.addEventListener('load', () => {
+	window.CrayonInterop.msghubRegisterConsumer(hub => {
+		
+		const { listen, send } = hub;
+
+		platformSpecificHandleEvent = (id, eventName, args) => {
+			let msg = { type: 'E', id, eventName, arg: args };
+			send('u3events', [msg]);
+		};
+
+		listen('u3data', (request, cb) => {
+			flushUpdates(request.buffer);
+			cb();
+		});
+
+		listen('u3init', (request, cb) => {
+			console.log("I received the u3init message: " + JSON.stringify(request));
+			let u3host = document.getElementById('crayon_host');
+			let s = u3host.style;
+			s.width = request.width + 'px';
+			s.height = request.height + 'px';
+
+			getWindowSize = () => [request.width, request.height];
+
+			noriInit(
+				document.getElementById('crayon_host'), 
+				request.initialData, 
+				() => { cb(true); }, 
+				data => { send('u3batch', data); });
+		});
+
+	});
+	
+});
+
+})();
