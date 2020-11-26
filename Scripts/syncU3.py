@@ -22,9 +22,15 @@ def main():
       os.path.join(web_dest_dir, file.replace('.', '_') + '.txt')
     ]
 
-  files[os.path.join('..', 'Libraries', 'MessageHub', 'client', 'js', 'messagehub.js')] = [
+  msghub_client = os.path.join('..', 'Libraries', 'MessageHub', 'client')
+  files[os.path.join(msghub_client, 'js', 'messagehub.js')] = [
     os.path.join(web_dest_dir, 'messagehub_js.txt')
   ]
+
+  msghub_nodejs_client = os.path.join(msghub_client, 'nodejs', 'messagehubclient')
+  print(msghub_nodejs_client )
+  for file in os.listdir(msghub_nodejs_client):
+    files[os.path.join(msghub_nodejs_client, file)] = [os.path.join('..', 'U3', 'src', 'messagehubclient', file)]
 
   for src_file in files.keys():
     for dst_file in files[src_file]:
