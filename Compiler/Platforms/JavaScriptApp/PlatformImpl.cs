@@ -137,11 +137,6 @@ namespace JavaScriptApp
                 resourcesJs.Append("');\n");
             }
 
-            FileOutput imageSheetManifest = resourceDatabase.ImageSheetManifestFile;
-            resourcesJs.Append("C$common$addTextRes('image_sheets.txt', ");
-            resourcesJs.Append(imageSheetManifest == null ? "''" : StringTokenUtil.ConvertStringValueToCode(imageSheetManifest.TextContent));
-            resourcesJs.Append(");\n");
-
             resourcesJs.Append("C$common$resourceManifest = ");
             resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent));
             resourcesJs.Append(";\n");
@@ -153,6 +148,10 @@ namespace JavaScriptApp
                 resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(filePrefix));
                 resourcesJs.Append(";\n");
             }
+
+            string imageManifest = resourceDatabase.Image2ResourceManifestFile.TextContent;
+            imageManifest = StringTokenUtil.ConvertStringValueToCode(imageManifest);
+            resourcesJs.Append("C$common$imageManifest = " + imageManifest + ";\n");
 
             output["resources.js"] = new FileOutput()
             {
@@ -170,6 +169,11 @@ namespace JavaScriptApp
             {
                 FileOutput file = resourceDatabase.ImageSheetFiles[imageResourceFile];
                 output["resources/images/" + imageResourceFile] = file;
+            }
+
+            foreach (string imageChunk in resourceDatabase.Image2ResourceFiles.Keys)
+            {
+                output["resources/images/" + imageChunk] = resourceDatabase.Image2ResourceFiles[imageChunk];
             }
 
             foreach (FileOutput audioResourceFile in resourceDatabase.AudioResources)
