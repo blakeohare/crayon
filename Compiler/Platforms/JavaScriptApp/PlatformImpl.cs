@@ -181,6 +181,11 @@ namespace JavaScriptApp
                 output["resources/audio/" + audioResourceFile.CanonicalFileName] = audioResourceFile;
             }
 
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                this.GenerateIconFile(output, "favicon.ico", options);
+            }
+
             // TODO: minify JavaScript across all of output dictionary
         }
 

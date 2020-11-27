@@ -18,6 +18,7 @@ CONTENT_TYPES = {
   '.ogg': 'audio/ogg',
   '.png': 'image/png',
   '.txt': 'text/plain',
+  '.ico': 'image/x-icon',
 }
 
 class SimpleCrayonFileServer(BaseHTTPRequestHandler):
@@ -49,7 +50,9 @@ class SimpleCrayonFileServer(BaseHTTPRequestHandler):
 
     if '/resources/' in path:
       path = 'resources/' + path.split('/resources/')[-1]
-    if path == '':
+    elif path.endswith('favicon.ico'):
+      file = 'favicon.ico'
+    elif path == '':
       file = 'index.html'
     else:
       path_parts = path.split('/')

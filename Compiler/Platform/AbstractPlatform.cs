@@ -193,5 +193,21 @@ namespace Platform
             Options options,
             string outputDirectory)
         { }
+
+        public void GenerateIconFile(Dictionary<string, FileOutput> files, string iconOutputPath, Options options)
+        {
+            string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
+            CommonUtil.Images.IconGenerator iconGen = new CommonUtil.Images.IconGenerator();
+            foreach (string path in iconPaths)
+            {
+                iconGen.AddImage(new CommonUtil.Images.Bitmap(path.Trim()));
+            }
+
+            files[iconOutputPath] = new FileOutput()
+            {
+                Type = FileOutputType.Binary,
+                BinaryContent = iconGen.GenerateIconFile(),
+            };
+        }
     }
 }

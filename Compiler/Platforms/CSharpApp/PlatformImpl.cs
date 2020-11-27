@@ -310,18 +310,7 @@ namespace CSharpApp
 
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
-                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
-                IconGenerator iconGen = new IconGenerator();
-                foreach (string path in iconPaths)
-                {
-                    iconGen.AddImage(new Bitmap(path.Trim()));
-                }
-
-                output[baseDir + "icon.ico"] = new FileOutput()
-                {
-                    Type = FileOutputType.Binary,
-                    BinaryContent = iconGen.GenerateIconFile(),
-                };
+                this.GenerateIconFile(output, baseDir + "icon.ico", options);
             }
 
             this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
