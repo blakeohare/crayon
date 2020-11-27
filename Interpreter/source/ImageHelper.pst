@@ -31,7 +31,7 @@ void ImageHelper_GetChunkSync(ObjectInstance o, int cid) {
 int ImageHelper_GetPixel(Array<Value> nums, ObjectInstance bmp, ObjectInstance edit, Value xv, Value yv, ListImpl pOut, Array<int> arr) {
     if (xv.type != Types.INTEGER || yv.type != Types.INTEGER) return 1;
     object e = null;
-    if (edit != null) e = edit.nativeData;
+    if (edit != null) e = edit.nativeData[0];
 
     Extension.CoreFunc_ImageGetPixel(bmp.nativeData[0], e, (int)xv.internalValue, (int)yv.internalValue, arr);
     if (arr[4] == 0) return 2;

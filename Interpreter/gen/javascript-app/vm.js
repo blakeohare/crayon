@@ -1594,7 +1594,7 @@ var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
 	}
 	var e = null;
 	if ((edit != null)) {
-		e = edit[3];
+		e = edit[3][0];
 	}
 	C$ImageUtil$getPixel(bmp[3][0], e, xv[1], yv[1], arr);
 	if ((arr[4] == 0)) {

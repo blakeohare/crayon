@@ -1,6 +1,5 @@
 ﻿C$common = 1;
 C$common$textResources = {};
-C$common$jsFilePrefix = ''; // overridden by resources.js if present.
 C$common$programData = null;
 C$common$resources = {};
 C$common$binaryResources = {};
@@ -9,8 +8,12 @@ C$common$envDescriptor = () => 'web|javascript';
 C$common$globalOptions = {};
 C$common$globalOptions['fullscreen'] = false;
 
+// overridden by resources.js if present.
+C$common$jsFilePrefix = '';
+C$common$imageManifest = '';
+
 function main() {
-	C$common$programData = createVm(C$bytecode, C$common$resourceManifest);
+	C$common$programData = createVm(C$bytecode, C$common$resourceManifest, C$common$imageManifest);
 	vmEnableLibStackTrace(C$common$programData);
 	C$handleVmResult(startVm(C$common$programData));
 }
@@ -355,6 +358,38 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 	}
 };
 
+let C$ImageUtil$canvasByChunkId = {};
+C$ImageUtil$getChunk = cid => {
+	return C$ImageUtil$canvasByChunkId[cid] || null;
+};
+
+C$ImageUtil$chunkLoadAsync = (chunkId, chunkIds, cb) => {
+	let path = C$common$jsFilePrefix + 'resources/images/ch_' + chunkId + '.png';
+	let loader = new Image();
+	loader.onload = () => {
+		let canvas = document.createElement('canvas');
+		canvas.width = loader.width;
+		canvas.height = loader.height;
+		let ctx = canvas.getContext('2d');
+		ctx.drawImage(loader, 0, 0);
+		C$ImageUtil$canvasByChunkId[chunkId] = { canvas, ctx, b64: null };
+		let total = chunkIds.length;
+		let loaded = chunkIds.filter(id => C$ImageUtil$canvasByChunkId[id]).length;
+		setTimeout(() => C$runInterpreterWithFunctionPointerNativeArgs(cb, [chunkId, loaded, total]), 0);
+	};
+	loader.src = path;
+};
+
+C$ImageUtil$scale = (bmp, w, h, algo) => {
+	if (algo !== 1) throw new Error();
+	let canvas = document.createElement('canvas');
+	canvas.width = w;
+	canvas.height = h;
+	let ctx = canvas.getContext('2d');
+	ctx.drawImage(bmp.canvas, 0, 0, w, h);
+	return { canvas, ctx, b64: null };
+};
+
 C$ImageUtil$newBitmap = (w, h) => {
 	let cnv = document.createElement('canvas');
 	cnv.width = w;
@@ -363,7 +398,7 @@ C$ImageUtil$newBitmap = (w, h) => {
 		canvas: cnv,
 		ctx: cnv.getContext('2d'),
 		b64: null,
-	}
+	};
 };
 
 C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
@@ -389,6 +424,10 @@ C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
 	};
 	loader.src = ('data:image/' + (isPng ? 'png' : 'jpeg') + ';base64,') + data;
 	return false;
+};
+
+C$ImageUtil$flushImageData = editSess => {
+	throw new Error();
 };
 
 C$ImageUtil$getPixel = (bmp, optEdit, x, y, cOut) => {
@@ -434,19 +473,19 @@ C$ImageUtil$setPixel = (session, x1, y1, x2, y2, r, g, b, a) => {
 	let ctx = session.ctx;
 	if (a == 255) {
 		ctx.fillStyle = C$hexLookupHash[r] + C$hexLookup[g] + C$hexLookup[b];
-		ctx.fillRect(x, y, 1, 1);
+		ctx.fillRect(x1, y1, 1, 1);
 	} else {
 		if (C$ImageUtil$pixelImageData === null) {
-			C$ImageUtil$pixelImageData = session.ctx.getImageData(x, y, 1, 1);
+			C$ImageUtil$pixelImageData = session.ctx.getImageData(x1, y1, 1, 1);
 		}
 		let d = C$ImageUtil$pixelImageData.data;
 		d[0] = r;
 		d[1] = g;
 		d[2] = b;
 		d[3] = a;
-		session.ctx.putImageData(C$ImageUtil$pixelImageData, x, y);
+		session.ctx.putImageData(C$ImageUtil$pixelImageData, x1, y1);
 	}
-	let WAT = ctx.getImageData(x, y, 1, 1).data;
+	let WAT = ctx.getImageData(x1, y1, 1, 1).data;
 	
 	return false;
 };

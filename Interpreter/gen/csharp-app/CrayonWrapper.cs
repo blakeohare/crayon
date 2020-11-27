@@ -2007,7 +2007,7 @@ namespace Interpreter.Vm
             object e = null;
             if ((edit != null))
             {
-                e = edit.nativeData;
+                e = edit.nativeData[0];
             }
             ImageUtil.GetPixel(bmp.nativeData[0], e, (int)xv.internalValue, (int)yv.internalValue, arr);
             if ((arr[4] == 0))
