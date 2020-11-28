@@ -426,15 +426,10 @@ C$ImageUtil$fromBytes = (data, szOut, ndOut, cb) => {
 	return false;
 };
 
-C$ImageUtil$flushImageData = editSess => {
-	throw new Error();
-};
-
 C$ImageUtil$getPixel = (bmp, optEdit, x, y, cOut) => {
 	let img = bmp;
 	if (optEdit !== null) {
 		img = optEdit;
-		if (img.imageData !== null) C$ImageUtil$flushImageData(img);
 	}
 	let c = img.canvas;
 	let w = c.width;
@@ -451,7 +446,7 @@ C$ImageUtil$getPixel = (bmp, optEdit, x, y, cOut) => {
 	cOut[3] = px[3];
 };
 
-C$ImageUtil$pixelImageData = null;
+C$ImageUtil$singlePixelImgData = null;
 C$hexLookup = (() => {
 	let o = [];
 	let H = '0123456789abcdef'.split('');
@@ -465,28 +460,43 @@ C$hexLookupHash = C$hexLookup.map(_ => '#' + _);
 C$ImageUtil$setPixel = (session, x1, y1, x2, y2, r, g, b, a) => {
 	let w = session.width;
 	let h = session.height;
-	if (x1 < 0 || y1 < 0 || x1 >= w || y1 >= h ||
-		x2 < 0 || y2 < 0 || x2 >= w || y2 >= h) return true;
-
-	if (x1 != x2 || y1 != y2) throw new Error("Not Implemented Yet");
-
+	if (x1 < 0 || y1 < 0 || x1 >= w || y1 >= h || x2 < 0 || y2 < 0 || x2 >= w || y2 >= h) return true;
 	let ctx = session.ctx;
 	if (a == 255) {
 		ctx.fillStyle = C$hexLookupHash[r] + C$hexLookup[g] + C$hexLookup[b];
-		ctx.fillRect(x1, y1, 1, 1);
-	} else {
-		if (C$ImageUtil$pixelImageData === null) {
-			C$ImageUtil$pixelImageData = session.ctx.getImageData(x1, y1, 1, 1);
+		if (x1 == x2 && y1 == y2) {
+			ctx.fillRect(x1, y1, 1, 1);
+		} else {
+			let x = Math.min(x1, x2);
+			let y = Math.min(y1, y2);
+			w = Math.abs(x1 - x2) + 1;
+			h = Math.abs(y1 - y2) + 1;
+			ctx.fillRect(x, y, w, h);
 		}
-		let d = C$ImageUtil$pixelImageData.data;
+	} else {
+		if (C$ImageUtil$singlePixelImgData === null) {
+			C$ImageUtil$singlePixelImgData = session.ctx.getImageData(x1, y1, 1, 1);
+		}
+		let d = C$ImageUtil$singlePixelImgData.data;
 		d[0] = r;
 		d[1] = g;
 		d[2] = b;
 		d[3] = a;
-		session.ctx.putImageData(C$ImageUtil$pixelImageData, x1, y1);
+
+		if (x1 == x2 && y1 == y2) {
+			session.ctx.putImageData(C$ImageUtil$singlePixelImgData, x1, y1);
+		} else {
+			let xLeft = Math.min(x1, x2);
+			let yTop = Math.min(y1, y2);
+			let xRight = Math.max(x1, x2);
+			let yBottom = Math.max(y1, y2);
+			for (let y = yTop; y <= yBottom; ++y) {
+				for (let x = xLeft; x <= xRight; ++x) {
+					session.ctx.putImageData(C$ImageUtil$singlePixelImgData, x, y);
+				}
+			}
+		}
 	}
-	let WAT = ctx.getImageData(x1, y1, 1, 1).data;
-	
 	return false;
 };
 
@@ -502,7 +512,6 @@ C$ImageUtil$startEditSession = bmp => {
 		canvas,
 		ctx,
 		parent: bmp,
-		imageData: null,
 	};
 };
 

@@ -49,7 +49,7 @@ class SimpleCrayonFileServer(BaseHTTPRequestHandler):
     path = self.path[1:].split('?')[0].split('#')[0]
 
     if '/resources/' in path:
-      path = 'resources/' + path.split('/resources/')[-1]
+      file = 'resources/' + path.split('/resources/')[-1]
     elif path.endswith('favicon.ico'):
       file = 'favicon.ico'
     elif path == '':

@@ -101,6 +101,10 @@
             return this;
         }
 
+        function flipHorizontally() { return this.flip(true, false); }
+        function flipVertically() { return this.flip(false, true); }
+        function flip180() { return this.flip(true, true); }
+
         function flip(flipX, flipY) {
             // TODO: implement these natively.
 

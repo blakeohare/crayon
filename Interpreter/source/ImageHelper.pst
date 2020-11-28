@@ -37,8 +37,9 @@ int ImageHelper_GetPixel(Array<Value> nums, ObjectInstance bmp, ObjectInstance e
     if (arr[4] == 0) return 2;
 
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        List<Value> c = pOut.list;
+        List<Value> c = new List<Value>();
         pOut.size = 4;
+        pOut.list = c;
         c.Add(nums[arr[0]]);
         c.Add(nums[arr[1]]);
         c.Add(nums[arr[2]]);
