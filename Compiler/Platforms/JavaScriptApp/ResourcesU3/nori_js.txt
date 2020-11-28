@@ -3,12 +3,12 @@ function noriInit(noriRoot, uiData, shownCallback, eventBatchSender) {
 	setFrameRoot(noriRoot);
 	let sz = getWindowSize();
 	setFrameSize(sz[0], sz[1]);
-	window.onresize = function() {
+	window.addEventListener('resize', () => {
 		let newSize = getWindowSize();
 		setFrameSize(newSize[0], newSize[1]);
 		platformSpecificHandleEvent(-1, 'frame.onresize', newSize[0] + ',' + newSize[1]);
 		flushUpdates(['NO', 0]);
-	};
+	});
 	let fontUpdates = [];
 	let otherUpdates = [];
 	for (let i = 0; i < uiData.length; ++i) {
