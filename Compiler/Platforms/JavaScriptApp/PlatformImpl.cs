@@ -61,11 +61,23 @@ namespace JavaScriptApp
 
             if (usesU3)
             {
+                Dictionary<string, FileOutput> u3Files = new Dictionary<string, FileOutput>();
                 foreach (string file in noriFiles)
                 {
-                    this.CopyResourceAsText(output, "u3/" + file, "ResourcesU3/" + file, new Dictionary<string, string>());
-                    jsExtraHead.Add("<script src=\"u3/" + file + "\"></script>");
+                    this.CopyResourceAsText(u3Files, file, "ResourcesU3/" + file, new Dictionary<string, string>());
                 }
+                List<string> newFile = new List<string>();
+                foreach (string file in noriFiles)
+                {
+                    newFile.Add("// From " + file);
+                    newFile.Add(u3Files[file].TextContent.Trim());
+                }
+                output["u3.js"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join("\n", newFile),
+                };
+                jsExtraHead.Add("<script src=\"u3.js\"></script>");
             }
 
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
