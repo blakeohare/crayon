@@ -20,15 +20,57 @@ window.addEventListener('load', () => {
 		});
 
 		listen('u3init', (request, cb) => {
-			let u3host = document.getElementById('crayon_host');
-			let s = u3host.style;
-			s.width = request.width + 'px';
-			s.height = request.height + 'px';
+			document.body.style.margin = '0px';
+			let u3hostOuter = document.getElementById('crayon_host');
+			let sOuter = u3hostOuter.style;
+			sOuter.width = '100%';
+			sOuter.height = '100%';
+			sOuter.overflow = 'hidden';
 
-			getWindowSize = () => [request.width, request.height];
+			let u3hostInner = document.createElement('div');
+			u3hostOuter.append(u3hostInner);
+			let sInner = u3hostInner.style;
+			sInner.overflow = 'hidden';
+			let requestedWidth = Math.max(1, request.width);
+			let requestedHeight = Math.max(1, request.height);
+			let requestedRatio = requestedWidth / requestedHeight;
+			sOuter.position = 'absolute';
+			sInner.position = 'absolute';
+
+			let syncSize = () => {
+				let actualWidth = window.innerWidth;
+				let actualHeight = window.innerHeight;
+				let actualRatio = actualWidth / actualHeight;
+				let innerWidth, innerHeight;
+				if (actualRatio >= requestedRatio) {
+					// vertical black bars
+					innerHeight = actualHeight;
+					innerWidth = Math.floor(innerHeight * requestedRatio);
+				} else {
+					// horizontal black bars
+					innerWidth = actualWidth;
+					innerHeight = Math.floor(innerWidth / requestedRatio);
+				}
+
+				return {
+					outer: [actualWidth, actualHeight],
+					inner: [innerWidth, innerHeight],
+				};
+			};
+			let setSize = () => {
+				let sz = syncSize();
+				sInner.left = (sz.outer[0] - sz.inner[0]) / 2 + 'px';
+				sInner.top = (sz.outer[1] - sz.inner[1]) / 2 + 'px';
+				sInner.width = sz.inner[0] + 'px';
+				sInner.height = sz.inner[1] + 'px';
+			};
+			window.addEventListener('resize', setSize);
+			setSize();
+
+			getWindowSize = () => syncSize().inner;
 
 			noriInit(
-				document.getElementById('crayon_host'), 
+				u3hostInner, 
 				request.initialData, 
 				() => { cb(true); }, 
 				data => { send('u3batch', data); });
