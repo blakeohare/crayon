@@ -1600,8 +1600,9 @@ var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
 	if ((arr[4] == 0)) {
 		return 2;
 	}
-	var c = pOut[2];
+	var c = [];
 	pOut[1] = 4;
+	pOut[2] = c;
 	c.push(nums[arr[0]]);
 	c.push(nums[arr[1]]);
 	c.push(nums[arr[2]]);
