@@ -20,20 +20,6 @@ namespace Platform
             platformNamesMostGeneralFirst.Reverse();
         }
 
-        public TemplateSet GetLibraryTemplates(LibraryForExport library)
-        {
-            Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
-            foreach (string platformName in this.platformNamesMostGeneralFirst)
-            {
-                string libTemplateDir = Path.Join(library.Directory, "native", platformName);
-                if (fileUtil.DirectoryExists(libTemplateDir))
-                {
-                    ReadAllFiles(output, System.IO.Path.GetFullPath(libTemplateDir).Length + 1, libTemplateDir);
-                }
-            }
-            return new TemplateSet(output);
-        }
-
         public TemplateSet GetVmTemplates()
         {
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();

@@ -1,3 +1,0 @@
-﻿int lib_dummy_lol(VM.VmContext vm) {
-    return 42;
-}

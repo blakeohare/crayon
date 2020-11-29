@@ -26,8 +26,7 @@ namespace Exporter
                 Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
                     libraryMetadata.ID,
                     libraryMetadata.Version,
-                    libraryMetadata.Directory,
-                    library.Resources);
+                    libraryMetadata.Directory);
                 output.Add(libraryForExport);
             }
             return output;
@@ -94,19 +93,14 @@ namespace Exporter
         private Platform.LibraryForExport CreateLibraryForExport(
             string libraryName,
             string libraryVersion,
-            string directory,
-            LibraryResourceDatabase libResDb)
+            string directory)
         {
             using (new PerformanceSection("VmGenerator.CreateLibraryForExport"))
             {
-                Multimap<string, Platform.ExportEntity> exportEntities = libResDb.ExportEntities;
-
                 return new Platform.LibraryForExport(directory)
                 {
                     Name = libraryName,
                     Version = libraryVersion,
-                    HasNativeCode = libResDb.HasNativeCode,
-                    ExportEntities = exportEntities,
                 };
             }
         }

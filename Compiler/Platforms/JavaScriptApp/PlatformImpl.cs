@@ -93,34 +93,6 @@ namespace JavaScriptApp
                 TextContent = vmTemplates.GetText("vm.js"),
             };
 
-            List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
-            foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
-            {
-                string libraryName = library.Name;
-                TemplateSet libTemplates = templateReader.GetLibraryTemplates(library);
-
-                List<string> libraryLines = new List<string>();
-                libraryLines.Add(libTemplates.GetText("gen/lib_" + libraryName.ToLowerInvariant() + ".js"));
-                libraryLines.Add("");
-                libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLowerInvariant() + "');");
-                libraryLines.Add("");
-
-                // add helper functions after the scrape.
-
-                foreach (string jsHelperFile in libTemplates.GetPaths("source/", ".js"))
-                {
-                    libraryLines.Add(libTemplates.GetText(jsHelperFile));
-                    libraryLines.Add("");
-                }
-
-                output["libs/lib_" + libraryName.ToLowerInvariant() + ".js"] = new FileOutput()
-                {
-                    Type = FileOutputType.Text,
-                    TextContent = string.Join(this.NL, libraryLines),
-                };
-                librariesWithCode.Add(library);
-            }
-
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
             replacements["JS_LIB_INCLUSIONS"] = GenerateJsLibInclusionHtml(output.Keys);
 

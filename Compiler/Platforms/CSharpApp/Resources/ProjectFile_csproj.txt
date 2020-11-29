@@ -42,8 +42,7 @@
     %%%CSHARP_APP_ICON%%%
   </PropertyGroup>
   <ItemGroup>
-    %%%DLL_REFERENCES%%%
-  <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -54,13 +53,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="*.cs" />
-    <Compile Include="Libraries\*\*.cs"/>
-    <Compile Include="Libraries\*\Structs\*.cs"/>
     <Compile Include="Structs\*.cs"/>
     <Compile Include="Vm\*.cs"/>
-    <EmbeddedResource Include="Libraries\*\TextResources\*.txt"/>
-    <EmbeddedResource Include="Libraries\*\TextResources\*.js"/>
-    <EmbeddedResource Include="Libraries\*\TextResources\*.html"/>
   </ItemGroup>
   <ItemGroup>
     %%%EMBEDDED_RESOURCES%%%
