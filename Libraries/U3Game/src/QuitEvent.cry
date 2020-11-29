@@ -9,9 +9,11 @@
         @localized('es', 'ESquitType')
         @localized('jp', 'JPquitType')
         field quitType;
+        field preventDefaultCb;
 
-        constructor(quitType) : base(EventType.QUIT) {
+        constructor(quitType, preventDefault) : base(EventType.QUIT) {
             this.quitType = quitType;
+            this.preventDefaultCb = preventDefault;
         }
     }
 }

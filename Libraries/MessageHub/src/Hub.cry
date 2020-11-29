@@ -61,6 +61,7 @@ namespace MessageHub {
         }
 
         function send(type, payload, cb = null) {
+            if (!this._isRunning) return;
             id = ++Hub._idAlloc;
             msg = {
                 "a": this._appName,
@@ -131,6 +132,7 @@ namespace MessageHub {
         }
 
         function _sendResponse(id, result) {
+            if (!this._isRunning) return;
             msg = {
                 "a": this._appName,
                 "t": this._token,

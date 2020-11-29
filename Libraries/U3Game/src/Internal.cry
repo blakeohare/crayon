@@ -55,6 +55,16 @@ namespace U3Game {
                         break;
                 }
             }
+
+            for (q : window._fields['quits']) {
+                t = EventQuitType.CLOSE_BUTTON;
+                if (q[0] == 'alt-f4') {
+                    t = EventQuitType.ALT_F4;
+                }
+                output.add(new QuitEvent(t, q[1]));
+            }
+            window._fields['quits'].clear();
+
             return output;
         }
 
