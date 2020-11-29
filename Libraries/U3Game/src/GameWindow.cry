@@ -19,6 +19,7 @@ namespace U3Game {
             'open': false,
             'b': false,
             'un': 0.0,
+            'ar': true,
         };
 
         constructor() { }
@@ -66,6 +67,11 @@ namespace U3Game {
             return this;
         }
 
+        function stretchToFill() {
+            this._fields['ar'] = false;
+            return this;
+        }
+
         function show(block = true) {
             if (this._fields['open']) throw new Exception("GameWindow is already open.");
             this._fields['b'] = block == true;
@@ -88,6 +94,10 @@ namespace U3Game {
                 .setWidth(this._fields['sw'] ?? this._fields['w'])
                 .setHeight(this._fields['sh'] ?? this._fields['h'])
                 .setContent(canvas);
+
+            if (this._fields['ar']) {
+                frame.keepAspectRatio();
+            }
 
             frame.show(block);
 

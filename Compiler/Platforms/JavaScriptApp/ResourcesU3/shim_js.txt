@@ -27,6 +27,8 @@ window.addEventListener('load', () => {
 			sOuter.height = '100%';
 			sOuter.overflow = 'hidden';
 
+			let stretchToFill = !request.keepAspectRatio;
+
 			let u3hostInner = document.createElement('div');
 			u3hostOuter.append(u3hostInner);
 			let sInner = u3hostInner.style;
@@ -40,6 +42,12 @@ window.addEventListener('load', () => {
 			let syncSize = () => {
 				let actualWidth = window.innerWidth;
 				let actualHeight = window.innerHeight;
+				if (stretchToFill) {
+					return {
+						outer: [actualWidth, actualHeight],
+						inner: [actualWidth, actualHeight],
+					};
+				}
 				let actualRatio = actualWidth / actualHeight;
 				let innerWidth, innerHeight;
 				if (actualRatio >= requestedRatio) {

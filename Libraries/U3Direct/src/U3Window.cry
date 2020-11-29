@@ -59,7 +59,7 @@ namespace U3Direct {
             });
         }
 
-        function show(title, width, height, initialData, isBlocking) {
+        function show(title, width, height, initialData, isBlocking, keepAspectRatio) {
 
             setupComplete = false;
             this._hub.setOnReady(() => {
@@ -68,6 +68,7 @@ namespace U3Direct {
                     "width": width,
                     "height": height,
                     "initialData": initialData,
+                    "keepAspectRatio": keepAspectRatio,
                 }, (_) => {
                     setupComplete = true;
                 });

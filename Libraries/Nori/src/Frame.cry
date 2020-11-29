@@ -31,6 +31,10 @@ namespace Nori {
 
         field _size = [400, 300];
 
+        // for platforms that dictate the window size (browser window and mobile screen) this
+        // will insert vertical or horizontal bars at the sides to maintain the aspect ratio.
+        field _keepAspectRatio = false;
+
         field _internalBorder;
 
         field _u3window;
@@ -208,13 +212,17 @@ namespace Nori {
             return this;
         }
 
+        function keepAspectRatio() {
+            this._keepAspectRatio = true;
+        }
+
         function show(blocking = true) {
             if (!this._isShown) {
                 this._isShown = true;
                 renderData = this._getRenderData();
                 execId = Core.getCurrentExecutionToken();
 
-                this._u3window.show(this._title, this._size[0], this._size[1], renderData, blocking == true);
+                this._u3window.show(this._title, this._size[0], this._size[1], renderData, blocking == true, this._keepAspectRatio);
             }
             return this;
         }
