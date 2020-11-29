@@ -53,9 +53,6 @@ namespace JavaScriptAppAndroid
                 resourceDatabase,
                 options);
 
-            // TODO: not good. The library inclusions should automatically be populated in LangJavaScript platforms.
-            replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(basicProject.Keys);
-
             foreach (string filePath in basicProject.Keys)
             {
                 FileOutput file = basicProject[filePath];

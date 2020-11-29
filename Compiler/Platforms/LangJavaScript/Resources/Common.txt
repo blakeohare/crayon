@@ -56,15 +56,14 @@ function C$runInterpreterWithFunctionPointerNativeArgs(fp, args) {
 function C$handleVmResult(res) {
 	var vm = C$common$programData;
 	var status = getVmResultStatus(res);
-	while (status == 5) { // REINVOKE
+	if (status == 5) { // REINVOKE
 		var delayMillis = Math.floor(1000 * getVmReinvokeDelay(res));
 		var execId = getVmResultExecId(res);
 		window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
+	} else {
+		if (status == 1 || status == 2 || status == 3) return;
+		throw "Unknown status";
 	}
-
-	if (status == 1 || status == 2 || status == 3) return;
-
-	throw "Unknown status";
 }
 
 C$common$readResourceText = function (path) {
