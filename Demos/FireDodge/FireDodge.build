@@ -5,6 +5,7 @@
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],
     "launchScreen": "assets/launchscreen.png",
+    "orientation": "landscape",
 
     "version": "2.9.0",
     "guidSeed": "org.crayonlang.demos.firedodge,%VERSION%,%TARGET_NAME%",
@@ -29,13 +30,11 @@
         },
         {
             "name": "android",
-            "platform": "javascript-app-android",
-            "orientation": "landscapeleft,landscaperight"
+            "platform": "javascript-app-android"
         },
         {
             "name": "ios",
-            "platform": "javascript-app-ios",
-            "orientation": "landscapeleft,landscaperight"
+            "platform": "javascript-app-ios"
         }
     ]
 }
