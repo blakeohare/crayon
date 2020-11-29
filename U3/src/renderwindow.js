@@ -3,11 +3,12 @@ const { ipcMain } = require('electron')
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = (title, width, height, initialData, hideMenu) => {
+let createWindow = (title, width, height, initialData, hideMenu, onCloseAttemptCb) => {
 
     let listeners = {};
     let mBoundMessageQueues = {};
     let rBoundMessageQueue = [];
+    let forceClose = false;
     
     ipcMain.on('mboundmsg', (event, arg) => {
         if (!listeners[arg.type]) {
@@ -32,7 +33,10 @@ let createWindow = (title, width, height, initialData, hideMenu) => {
         win.setMenu(null);
     }
 
-    const close = () => { win.close(); };
+    const close = () => {
+        forceClose = true;
+        win.close(); 
+    };
 
     const sendToRenderer = data => {
         if (rBoundMessageQueue !== null) {
@@ -56,6 +60,13 @@ let createWindow = (title, width, height, initialData, hideMenu) => {
         rBoundMessageQueue = null;
         
         win.webContents.send('rboundmsg', { buffers });
+    });
+
+    win.on('close', event => {
+        if (!forceClose) {
+            event.preventDefault();
+            onCloseAttemptCb('x-button');
+        }
     });
 
     return {

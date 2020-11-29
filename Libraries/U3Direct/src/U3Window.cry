@@ -12,6 +12,7 @@ namespace U3Direct {
     class U3Window {
         field _hub;
         field _inputBuffer = [];
+        field _overrideClose = null;
 
         constructor(eventListener) {
             this._hub = new Hub();
@@ -57,6 +58,19 @@ namespace U3Direct {
                 }
                 cb(null);
             });
+
+            this._hub.listen('u3close', (data, cb) => {
+                if (this._overrideClose != null) {
+                    this._overrideClose(data + '');
+                } else {
+                    this.close();
+                }
+                cb(null);
+            });
+        }
+
+        function overrideCloseBehavior(cb) {
+            this._overrideClose = cb;
         }
 
         function show(title, width, height, initialData, isBlocking, keepAspectRatio) {

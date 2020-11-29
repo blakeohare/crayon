@@ -37,7 +37,10 @@ app.whenReady().then(() => {
             width, 
             height, 
             initialData.length === 0 ? null : initialData,
-            HIDE_MENU_AND_DEBUG);
+            HIDE_MENU_AND_DEBUG,
+            (closeBehavior) => {
+                hub.send('u3close', closeBehavior);
+            });
         rwindow.setListener('events', msgs => {
             hub.send('u3events', msgs);
         });
@@ -68,6 +71,10 @@ app.whenReady().then(() => {
         }
         let { buffer } = msg;
         rwindow.send(buffer);
+    });
+
+    hub.addListener('u3close', _ => {
+        rwindow.close();
     });
 
     hub.start();
