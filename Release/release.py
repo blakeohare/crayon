@@ -43,8 +43,6 @@ LIBRARIES = [
 	'UserData',
 	'Web',
 	'Xml',
-	
-	'Dummy',
 ]
 
 import shutil
@@ -290,11 +288,8 @@ def buildRelease(args):
 	log("Compiling the VM in VmTemp using the command: " + cmd)
 	print(runCommand(cmd))
 
-
-	# Copy the built bits from VmTemp to the vm/ directory
-	log("Copying all the VmTemp/Libs/Release dll's and exe's to the vm/ directory")
-	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.dll')
-	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.exe')
+	# Copy the Crayon runtime
+	copyDirectory(VM_TEMP_DIR + '/Source/CrayonRuntime/bin/Release', copyToDir + '/vm', '.exe')
 
 	# Copy U3 window
 	if isWindows:

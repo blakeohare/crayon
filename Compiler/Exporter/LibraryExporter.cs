@@ -15,8 +15,6 @@ namespace Exporter
 
         public Dictionary<string, object> CompileTimeConstants { get; set; }
 
-        internal LibraryResourceDatabase Resources { get; private set; }
-
         private static Dictionary<string, LibraryExporter> libraryCache = new Dictionary<string, LibraryExporter>();
 
         private static string GetLibKey(AssemblyMetadata metadata, Platform.AbstractPlatform platform)
@@ -41,8 +39,6 @@ namespace Exporter
 
             this.Metadata = metadata;
             this.platformName = platform.Name;
-
-            this.Resources = new LibraryResourceDatabase(this, platform);
 
             this.CompileTimeConstants = this.LoadFlagsForPlatform(platform);
         }

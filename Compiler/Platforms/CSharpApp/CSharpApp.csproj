@@ -15,7 +15,6 @@
     <EmbeddedResource Include="Resources\*.txt" />
     <EmbeddedResource Include="ResourcesVm\*.txt" />
     <EmbeddedResource Include="ResourcesVm\*.ico" />
-    <EmbeddedResource Include="ResourcesLib\*.txt" />
   </ItemGroup>
 
 </Project>
