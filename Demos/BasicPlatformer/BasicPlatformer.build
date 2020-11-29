@@ -7,13 +7,6 @@
     "version": "2.9.0",
     "guidSeed": "org.crayonlang.demos.basicplatformer,%VERSION%,%TARGET_NAME%",
 
-    "imageSheets": [
-        {
-            "id": "everything",
-            "prefix": "*"
-        }
-    ],
-
     "targets": [
         {
             "name": "js_local",
@@ -27,14 +20,6 @@
         {
             "name": "csharp",
             "platform": "csharp-app"
-        },
-        {
-            "name": "java",
-            "platform": "java-app"
-        },
-        {
-            "name": "python",
-            "platform": "python-app"
         }
     ]
 }

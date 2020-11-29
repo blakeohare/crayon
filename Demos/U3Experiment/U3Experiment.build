@@ -11,12 +11,8 @@
     "iosBundlePrefix": "com.yourname.U3Experiment,%VERSION%",
     "guidSeed": "com.yourname.U3Experiment,v1,%TARGET_NAME%",
 
-    "imageSheets": [
-        { "id": "everything", "prefix": "*" }
-    ],
-
     "vars": [
-        { "name": "u3_bridge_debug_mode", "value": true }
+        { "name": "CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE", "value": true }
     ],
 
     "targets": [

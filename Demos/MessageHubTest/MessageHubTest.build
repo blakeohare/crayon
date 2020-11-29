@@ -11,10 +11,6 @@
     "iosBundlePrefix": "com.yourname.MessageHubTest,%VERSION%",
     "guidSeed": "com.yourname.MessageHubTest,v1,%TARGET_NAME%",
 
-    "imageSheets": [
-        { "id": "everything", "prefix": "*" }
-    ],
-
     "vars": [
         { "name": "CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE", "value": true }
     ],
