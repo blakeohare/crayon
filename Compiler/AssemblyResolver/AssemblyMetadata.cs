@@ -20,14 +20,11 @@ namespace AssemblyResolver
         public HashSet<Locale> SupportedLocales { get; set; }
         public HashSet<string> OnlyImportableFrom { get; set; }
         public bool IsUserDefined { get; set; }
-        public Dictionary<string, int> CniFunctions { get; set; }
-        public string CniStartupFunction { get; set; }
         public Dictionary<string, string> NameByLocale { get; set; }
         private Dictionary<string, AssemblyMetadata> directDependencies = new Dictionary<string, AssemblyMetadata>();
 
         public string Version { get { return "v1"; } } // TODO: versions
         public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
-        public bool HasNativeCode { get { return this.CniFunctions.Count > 0; } }
 
         public AssemblyMetadata()
         {

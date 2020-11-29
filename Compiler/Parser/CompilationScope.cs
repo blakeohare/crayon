@@ -11,7 +11,6 @@ namespace Parser
     internal class CompilationScope
     {
         public string ScopeKey { get; private set; }
-        internal Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
         public AssemblyMetadata Metadata { get; private set; }
         public int ScopeNumId { get; private set; }
         public Locale Locale { get; private set; }
@@ -40,14 +39,8 @@ namespace Parser
             this.ProgrammingLanguage = programmingLanguage;
             this.ScopeNumId = numIdAlloc++;
             this.topLevelAssembly = topLevelAssembly;
-            this.CniFunctionsByName = new Dictionary<string, CniFunction>();
             this.Metadata = metadata;
             this.ScopeKey = this.Metadata.CanonicalKey;
-
-            foreach (string cniFuncName in metadata.CniFunctions.Keys)
-            {
-                this.RegisterCniFunction(cniFuncName, metadata.CniFunctions[cniFuncName]);
-            }
         }
 
         internal void AddExecutable(TopLevelEntity entity)
@@ -95,17 +88,6 @@ namespace Parser
         internal TopLevelEntity[] GetTopLevelEntities()
         {
             return this.entities.ToArray();
-        }
-
-        public void RegisterCniFunction(string name, int args)
-        {
-            if (this.CniFunctionsByName.ContainsKey(name))
-            {
-                throw new ParserException("There are multiple CNI functions registered with the same name: '" + name + "'");
-            }
-
-            CniFunction func = new CniFunction(this, name, args);
-            this.CniFunctionsByName.Add(name, func);
         }
 
         internal void AddDependency(Token throwToken, LocalizedAssemblyView view)

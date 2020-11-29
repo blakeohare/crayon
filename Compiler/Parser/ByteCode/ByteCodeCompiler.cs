@@ -11,9 +11,6 @@ namespace Parser.ByteCode
     {
         internal ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelEntity> lines)
         {
-            // This has to go first since it allocates the CNI function ID's
-            ByteBuffer buildCniTable = this.BuildCniTable(parser);
-
             ByteBuffer userCode = new ByteBuffer();
 
             this.CompileTopLevelEntities(parser, userCode, lines);
@@ -30,7 +27,6 @@ namespace Parser.ByteCode
             header.Concat(literalsTable);
             header.Concat(tokenData);
             header.Concat(fileContent);
-            header.Concat(buildCniTable);
 
             // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
             header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
@@ -71,21 +67,6 @@ namespace Parser.ByteCode
             output.SetArgs(esfPc, esfOps);
 
             return output;
-        }
-
-        private ByteBuffer BuildCniTable(ParserContext parser)
-        {
-            int idAlloc = 1;
-            ByteBuffer buffer = new ByteBuffer();
-            foreach (CompilationScope scope in parser.GetAllCompilationScopes())
-            {
-                foreach (CniFunction cniFunction in scope.CniFunctionsByName.Keys.OrderBy(k => k).Select(k => scope.CniFunctionsByName[k]))
-                {
-                    cniFunction.ID = idAlloc++;
-                    buffer.Add(null, OpCode.CNI_REGISTER, cniFunction.ByteCodeLookupKey, cniFunction.ID, cniFunction.ArgCount);
-                }
-            }
-            return buffer;
         }
 
         private ByteBuffer BuildLocaleNameIdTable(ParserContext parser)
@@ -476,7 +457,6 @@ namespace Parser.ByteCode
             else if (expr is IsComparison) IsComparisonEncoder.Compile(this, parser, buffer, (IsComparison)expr, outputUsed);
             else if (expr is ClassReferenceLiteral) ClassReferenceEncoder.Compile(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
             else if (expr is Lambda) LambdaEncoder.Compile(this, parser, buffer, (Lambda)expr, outputUsed);
-            else if (expr is CniFunctionInvocation) CniFunctionInvocationEncoder.Compile(this, parser, buffer, (CniFunctionInvocation)expr, null, null, outputUsed);
             else if (expr is PrimitiveMethodReference) DotFieldEncoder.Compile(this, parser, buffer, (PrimitiveMethodReference)expr, outputUsed);
 
             // The following parse tree items must be removed before reaching the byte code encoder.

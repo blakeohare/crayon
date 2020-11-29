@@ -17,7 +17,6 @@ namespace AssemblyResolver
             m.SupportedLocales = new HashSet<Locale>() { locale };
             m.OnlyImportableFrom = new HashSet<string>();
             m.IsUserDefined = true;
-            m.CniFunctions = new Dictionary<string, int>();
             return m;
         }
 
@@ -55,17 +54,7 @@ namespace AssemblyResolver
             m.SupportedLocales = new HashSet<Locale>(manifest.GetAsDictionary("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
             m.SupportedLocales.Add(m.InternalLocale);
             m.OnlyImportableFrom = new HashSet<string>(manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
-            m.CniFunctions = new Dictionary<string, int>();
-            foreach (IDictionary<string, object> cniEntry in manifest.GetAsList("cni").OfType<IDictionary<string, object>>())
-            {
-                if (cniEntry.ContainsKey("name") && cniEntry.ContainsKey("argc"))
-                {
-                    string name = cniEntry["name"].ToString();
-                    int argc = (int)cniEntry["argc"];
-                    m.CniFunctions[name] = argc;
-                }
-            }
-            m.CniStartupFunction = manifest.GetAsString("cni-startup");
+
             return m;
         }
     }

@@ -15,8 +15,8 @@
     CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
     CAST,// see implementation code comment
     CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
-    CNI_INVOKE,
-    CNI_REGISTER,
+    UNUSED_CNI_INVOKE,
+    UNUSED_CNI_REGISTER,
     COMMAND_LINE_ARGS,
     CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
     CORE_FUNCTION, // 1: function ID
