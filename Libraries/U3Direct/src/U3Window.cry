@@ -14,7 +14,7 @@ namespace U3Direct {
         field _inputBuffer = [];
         field _overrideClose = null;
 
-        constructor(eventListener) {
+        constructor(eventListener, onClose = null) {
             this._hub = new Hub();
             isDebug = $var['CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE'] == true;
             if (isDebug) {
@@ -66,6 +66,10 @@ namespace U3Direct {
                     this.close();
                 }
                 cb(null);
+            });
+
+            this._hub.setOnClose(() => {
+                if (onClose != null) onClose();
             });
         }
 

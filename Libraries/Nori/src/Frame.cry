@@ -220,11 +220,14 @@ namespace Nori {
             if (!this._isShown) {
                 this._isShown = true;
                 renderData = this._getRenderData();
-                execId = Core.getCurrentExecutionToken();
-
                 this._u3window.show(this._title, this._size[0], this._size[1], renderData, blocking == true, this._keepAspectRatio);
             }
             return this;
+        }
+
+        // callback takes in a string argument for the type of close ('close-button' or 'alt-f4')
+        function onClose(cb) {
+            this._u3window.overrideCloseBehavior(cb);
         }
 
         function close() {

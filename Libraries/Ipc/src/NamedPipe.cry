@@ -15,21 +15,37 @@ namespace Ipc {
 
     class NamedPipeClient {
 
-        constructor(name) {
+        field _onBroken = null;
+        field _isClosed = false;
+
+        constructor(name, onBroken = null) {
             ensureNamedPipeSupported();
-            NamedPipeClient.throwIfErr($$$('ipcNamedPipeCreate', this, name));
+            this._onBroken = onBroken;
+            this._handleResult($$$('ipcNamedPipeCreate', this, name));
         }
 
         function writeLine(s) {
-            NamedPipeClient.throwIfErr($$$('ipcNamedPipeSend', this, (s ?? '') + ''));
+            if (this._isClosed) throw new InvalidOperationException("Pipe is closed.");
+            this._handleResult($$$('ipcNamedPipeSend', this, (s ?? '') + ''));
         }
 
         function flush() {
-            NamedPipeClient.throwIfErr($$$('ipcNamedPipeFlush', this));
+            if (this._isClosed) throw new InvalidOperationException("Pipe is closed.");
+            this._handleResult($$$('ipcNamedPipeFlush', this));
         }
 
-        static function throwIfErr(s) {
-            if (s != null) throw new Exception(s);
+        function _handleResult(s) {
+            if (s != null) {
+                // TODO: more robust way of checking this error.
+                if (s.contains('Pipe is broken')) {
+                    this._isClosed = true;
+                    if (this._onBroken != null) {
+                        this._onBroken();
+                    }
+                } else {
+                    throw new Exception(s);
+                }
+            }
         }
     }
 
@@ -61,7 +77,7 @@ namespace Ipc {
         }
 
         function start() {
-            NamedPipeClient.throwIfErr($$$('ipcNamedPipeServerCreate',
+            this._handleResult($$$('ipcNamedPipeServerCreate',
                 this,
                 this._name,
                 () => { this._onStart(); },
@@ -70,7 +86,13 @@ namespace Ipc {
         }
 
         function close() {
-            NamedPipeClient.throwIfErr($$$('ipcNamedPipeServerClose', this));
+            this._handleResult($$$('ipcNamedPipeServerClose', this));
+        }
+
+        function _handleResult(s) {
+            if (s != null) {
+                throw new Exception(s);
+            }
         }
     }
 }

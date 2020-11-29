@@ -60,7 +60,9 @@ namespace MessageHub {
             if (this.waitingForDownstreamReady) {
                 if (data.trim() != 'DOWNSTREAM_READY') throw new Exception('|' + data + '|@' + data.length); // did not receive expected response.
                 this.waitingForDownstreamReady = false;
-                this.namedPipeClient = new NamedPipeClient('msghub_' + this.token + '_ds');
+                this.namedPipeClient = new NamedPipeClient('msghub_' + this.token + '_ds', () => {
+                    this.receiveClose();
+                });
                 this.onReady();
                 return;
             }
