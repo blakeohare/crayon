@@ -1,10 +1,6 @@
 ﻿
 C$common$envDescriptor = () => 'ios|javascript';
 
-C$game$enforcedScreenSize = function(width, height) { 
-  return [window.innerWidth, window.innerHeight];
-}
-
 console.log = function(msg) {
   window.webkit.messageHandlers.interop.postMessage(msg + '');
 };

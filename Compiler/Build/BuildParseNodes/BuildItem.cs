@@ -35,7 +35,6 @@ namespace Build.BuildParseNodes
         public string[] RemoteDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; set; }
-        public Size WindowSize { get; set; }
         public string CompilerLocale { get; set; }
 
         public bool ExportDebugByteCode

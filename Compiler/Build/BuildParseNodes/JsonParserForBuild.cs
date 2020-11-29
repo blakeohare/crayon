@@ -78,28 +78,6 @@ namespace Build.BuildParseNodes
 
             item.RemoteDeps = remoteDeps.ToArray();
 
-            int windowWidth = -1;
-            int windowHeight = -1;
-            if (json.Get("windowSize") != null)
-            {
-                windowWidth = json.GetAsInteger("windowSize.width", -1);
-                windowHeight = json.GetAsInteger("windowSize.height", -1);
-            }
-            else
-            {
-                windowWidth = json.GetAsInteger("window-size.width", -1);
-                windowHeight = json.GetAsInteger("window-size.height", -1);
-            }
-
-            if (windowWidth != -1 && windowHeight != -1)
-            {
-                item.WindowSize = new Size()
-                {
-                    Width = new NullableInteger(windowWidth),
-                    Height = new NullableInteger(windowHeight)
-                };
-            }
-
             List<SourceItem> sourceDirectories = new List<SourceItem>();
             string source = json.GetAsString("source");
 

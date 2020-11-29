@@ -34,8 +34,6 @@ namespace Build
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; private set; }
         public bool JsFullPage { get; set; }
-        public NullableInteger WindowWidth { get; set; }
-        public NullableInteger WindowHeight { get; set; }
         public Locale CompilerLocale { get; set; }
         public string[] IconFilePaths { get; set; }
         public string DelegateMainTo { get; set; }
@@ -132,7 +130,6 @@ namespace Build
             string[] localDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, buildInput.LocalDeps);
             string[] remoteDeps = CombineAndFlattenStringArrays(desiredTarget.RemoteDeps, buildInput.RemoteDeps);
             string description = desiredTarget.Description ?? buildInput.Description ?? "";
-            Size windowSize = Size.Merge(desiredTarget.WindowSize, buildInput.WindowSize) ?? new Size();
             string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
             string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
             string delegateMainTo = desiredTarget.DelegateMainTo ?? buildInput.DelegateMainTo;
@@ -197,8 +194,6 @@ namespace Build
                 IosBundlePrefix = iosBundlePrefix,
                 JavaPackage = javaPackage,
                 JsFullPage = jsFullPage,
-                WindowWidth = windowSize.Width,
-                WindowHeight = windowSize.Height,
                 CompilerLocale = Locale.Get(compilerLocale),
                 DelegateMainTo = delegateMainTo,
             };
