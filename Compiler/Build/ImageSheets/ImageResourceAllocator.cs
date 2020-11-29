@@ -8,7 +8,7 @@ namespace Build.ImageSheets
 {
     internal static class ImageResourceAllocator
     {
-        private static Image2[] GetAllImages(ResourceDatabase resDB)
+        private static Image[] GetAllImages(ResourceDatabase resDB)
         {
             // TODO: this needs to be adapted to run across all dependencies
 
@@ -17,7 +17,7 @@ namespace Build.ImageSheets
                 {
                     string fullpath = "@:" + file.OriginalPath;
                     string lowerPath = fullpath.ToLowerInvariant();
-                    return new Image2()
+                    return new Image()
                     {
                         Path = fullpath,
                         File = file,
@@ -30,32 +30,32 @@ namespace Build.ImageSheets
                 .ToArray();
         }
 
-        private static IList<Chunk2> GetChunksForBigImages(IList<Image2> bigImages)
+        private static IList<Chunk> GetChunksForBigImages(IList<Image> bigImages)
         {
-            List<Chunk2> chunks = new List<Chunk2>();
-            foreach (Image2 bigImage in bigImages)
+            List<Chunk> chunks = new List<Chunk>();
+            foreach (Image bigImage in bigImages)
             {
-                Chunk2 chunk = new Chunk2(bigImage.Width, bigImage.Height);
-                bool success = chunk.AttemptAllocation(new Image2[] { bigImage });
+                Chunk chunk = new Chunk(bigImage.Width, bigImage.Height);
+                bool success = chunk.AttemptAllocation(new Image[] { bigImage });
                 if (!success) throw new Exception();
                 chunks.Add(chunk);
             }
             return chunks;
         }
 
-        private static IList<Chunk2> GetChunksForSkinnyImages(IList<Image2> skinnyImages, bool isWide)
+        private static IList<Chunk> GetChunksForSkinnyImages(IList<Image> skinnyImages, bool isWide)
         {
             int currentSize = 0;
-            List<Image2> currentGroup = new List<Image2>();
-            List<List<Image2>> groups = new List<List<Image2>>();
+            List<Image> currentGroup = new List<Image>();
+            List<List<Image>> groups = new List<List<Image>>();
             groups.Add(currentGroup);
-            foreach (Image2 skinnyImage in skinnyImages)
+            foreach (Image skinnyImage in skinnyImages)
             {
                 int size = isWide ? skinnyImage.Height : skinnyImage.Width;
                 int nextSize = currentSize + size;
                 if (nextSize > 1024)
                 {
-                    currentGroup = new List<Image2>() { skinnyImage };
+                    currentGroup = new List<Image>() { skinnyImage };
                     groups.Add(currentGroup);
                     nextSize = size;
                 }
@@ -70,7 +70,7 @@ namespace Build.ImageSheets
                 .Where(group => group.Count > 0)
                 .Select(group =>
                 {
-                    Chunk2 chunk = new Chunk2(1024, 1024);
+                    Chunk chunk = new Chunk(1024, 1024);
                     bool success = chunk.AttemptAllocation(group);
                     if (!success) throw new Exception(); // this shouldn't happen
                     return chunk;
@@ -78,20 +78,20 @@ namespace Build.ImageSheets
                 .ToArray();
         }
 
-        private static IList<Chunk2> GetChunksForSmallImages(IList<Image2> smallImages)
+        private static IList<Chunk> GetChunksForSmallImages(IList<Image> smallImages)
         {
-            List<Chunk2> chunks = new List<Chunk2>();
+            List<Chunk> chunks = new List<Chunk>();
 
             while (smallImages.Count > 0)
             {
                 int passingLowEnd = 1;
                 int failingHighEnd = smallImages.Count + 1;
-                Chunk2 chunk;
+                Chunk chunk;
                 bool success;
                 while (passingLowEnd + 1 < failingHighEnd)
                 {
                     int mid = (passingLowEnd + failingHighEnd) / 2;
-                    chunk = new Chunk2(1024, 1024);
+                    chunk = new Chunk(1024, 1024);
                     success = chunk.AttemptAllocation(smallImages.Take(mid));
                     if (success)
                     {
@@ -103,7 +103,7 @@ namespace Build.ImageSheets
                     }
                 }
 
-                chunk = new Chunk2(1024, 1024);
+                chunk = new Chunk(1024, 1024);
                 success = chunk.AttemptAllocation(smallImages.Take(passingLowEnd));
                 smallImages = smallImages.Skip(passingLowEnd).ToList();
                 if (!success) throw new Exception(); // this should not happen
@@ -112,13 +112,13 @@ namespace Build.ImageSheets
             return chunks;
         }
 
-        private static string ConvertChunksToManifest(IList<Chunk2> chunks)
+        private static string ConvertChunksToManifest(IList<Chunk> chunks)
         {
             string currentModule = "";
             string currentDirectory = null;
             List<string> lines = new List<string>();
             int chunkId = 1;
-            foreach (Chunk2 chunk in chunks)
+            foreach (Chunk chunk in chunks)
             {
                 chunk.ID = chunkId++;
                 lines.Add("C," + chunk.ID + "," + chunk.Width + "," + chunk.Height);
@@ -127,7 +127,7 @@ namespace Build.ImageSheets
                 Bitmap.Graphics g = chunkBmp.MakeGraphics();
                 for (int i = 0; i < chunk.Images.Count; ++i)
                 {
-                    Image2 image = chunk.Images[i];
+                    Image image = chunk.Images[i];
                     string path = image.File.OriginalPath;
                     string dir;
                     string filename;
@@ -165,12 +165,12 @@ namespace Build.ImageSheets
 
         public static void PrepareImageResources(ResourceDatabase resDB)
         {
-            List<Image2> wideImages = new List<Image2>();
-            List<Image2> tallImages = new List<Image2>();
-            List<Image2> bigImages = new List<Image2>();
-            List<Image2> smallImages = new List<Image2>();
+            List<Image> wideImages = new List<Image>();
+            List<Image> tallImages = new List<Image>();
+            List<Image> bigImages = new List<Image>();
+            List<Image> smallImages = new List<Image>();
 
-            foreach (Image2 image in GetAllImages(resDB))
+            foreach (Image image in GetAllImages(resDB))
             {
                 if (image.IsJpeg)
                 {
@@ -194,7 +194,7 @@ namespace Build.ImageSheets
                 }
             }
 
-            List<Chunk2> chunks = new List<Chunk2>();
+            List<Chunk> chunks = new List<Chunk>();
             chunks.AddRange(GetChunksForBigImages(bigImages));
             chunks.AddRange(GetChunksForSkinnyImages(wideImages, true));
             chunks.AddRange(GetChunksForSkinnyImages(tallImages, false));
@@ -209,7 +209,7 @@ namespace Build.ImageSheets
             };
 
             Dictionary<string, FileOutput> chunkImages = new Dictionary<string, FileOutput>();
-            foreach (Chunk2 chunk in chunks)
+            foreach (Chunk chunk in chunks)
             {
                 chunkImages["ch_" + chunk.ID + ".png"] = new FileOutput()
                 {

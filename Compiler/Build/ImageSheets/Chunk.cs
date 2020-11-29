@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Common;
-using CommonUtil.Collections;
 using CommonUtil.Images;
 
 namespace Build.ImageSheets
 {
-    class Chunk2
+    class Chunk
     {
         public int ID { get; set; }
 
         public int MaxWidth { get; set; }
         public int MaxHeight { get; set; }
 
-        public List<Image2> Images { get; set; }
+        public List<Image> Images { get; set; }
         public List<int> X { get; set; }
         public List<int> Y { get; set; }
 
@@ -32,24 +29,24 @@ namespace Build.ImageSheets
             return output;
         }
 
-        public Chunk2(int width, int height)
+        public Chunk(int width, int height)
         {
             this.MaxWidth = width;
             this.MaxHeight = height;
-            this.Images = new List<Image2>();
+            this.Images = new List<Image>();
             this.X = new List<int>();
             this.Y = new List<int>();
         }
 
-        public bool AttemptAllocation(IEnumerable<Image2> images)
+        public bool AttemptAllocation(IEnumerable<Image> images)
         {
             this.currentRowTop = 0;
             this.currentRowBottom = 0;
             this.currentX = 0;
-            Image2[] sortedImages = images.OrderBy(p => PadInt(999999 - p.Height) + "," + p.Path).ToArray();
+            Image[] sortedImages = images.OrderBy(p => PadInt(999999 - p.Height) + "," + p.Path).ToArray();
             for (int i = 0; i < sortedImages.Length; ++i)
             {
-                Image2 image = sortedImages[i];
+                Image image = sortedImages[i];
 
                 if (image.Width > this.MaxWidth) throw new Exception(); // this shouldn't happen.
 
