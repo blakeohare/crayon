@@ -8,6 +8,11 @@ namespace Interpreter.Vm
 {
     internal static class ProcessHelper
     {
+        internal static int GetCurrentId()
+        {
+            return System.Diagnostics.Process.GetCurrentProcess().Id;
+        }
+
         internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();

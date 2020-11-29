@@ -1,0 +1,1 @@
+﻿output = buildInteger(globals, Extension.CoreFunc_ProcessCurrentId());

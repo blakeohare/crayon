@@ -108,6 +108,7 @@ namespace Parser
         DISK_DIRECTORY_CREATE = 104,
         DISK_DIRECTORY_DELETE = 105,
         DISK_DIRECTORY_MOVE = 106,
+        PROCESS_CURRENT_ID = 107,
     }
 
     internal static class CoreFunctionIDHelper
@@ -220,6 +221,7 @@ namespace Parser
                 case "diskDirectoryCreate": return (int)CoreFunctionID.DISK_DIRECTORY_CREATE;
                 case "diskDirectoryDelete": return (int)CoreFunctionID.DISK_DIRECTORY_DELETE;
                 case "diskDirectoryMove": return (int)CoreFunctionID.DISK_DIRECTORY_MOVE;
+                case "processCurrentId": return (int)CoreFunctionID.PROCESS_CURRENT_ID;
 
                 default: return -1;
             }
