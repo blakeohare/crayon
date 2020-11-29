@@ -96,6 +96,18 @@ namespace Parser
         PROCESS_RUN = 92,
         PROCESS_KILL = 93,
         TIMED_CALLBACK = 94,
+        DISK_GET_USER_DIRECTORY = 95,
+        DISK_INITIALIZE_DISK = 96,
+        DISK_GET_CURRENT_DIRECTORY = 97,
+        DISK_FILE_INFO = 98,
+        DISK_FILE_WRITE = 99,
+        DISK_FILE_READ = 100,
+        DISK_FILE_DELETE = 101,
+        DISK_FILE_MOVE = 102,
+        DISK_DIRECTORY_LIST = 103,
+        DISK_DIRECTORY_CREATE = 104,
+        DISK_DIRECTORY_DELETE = 105,
+        DISK_DIRECTORY_MOVE = 106,
     }
 
     internal static class CoreFunctionIDHelper
@@ -196,6 +208,19 @@ namespace Parser
                 case "processRun": return (int)CoreFunctionID.PROCESS_RUN;
                 case "processKill": return (int)CoreFunctionID.PROCESS_KILL;
                 case "timedCallback": return (int)CoreFunctionID.TIMED_CALLBACK;
+                case "diskGetUserDirectory": return (int)CoreFunctionID.DISK_GET_USER_DIRECTORY;
+                case "diskInitializeDisk": return (int)CoreFunctionID.DISK_INITIALIZE_DISK;
+                case "diskGetCurrentDirectory": return (int)CoreFunctionID.DISK_GET_CURRENT_DIRECTORY;
+                case "diskFileInfo": return (int)CoreFunctionID.DISK_FILE_INFO;
+                case "diskFileWrite": return (int)CoreFunctionID.DISK_FILE_WRITE;
+                case "diskFileRead": return (int)CoreFunctionID.DISK_FILE_READ;
+                case "diskFileDelete": return (int)CoreFunctionID.DISK_FILE_DELETE;
+                case "diskFileMove": return (int)CoreFunctionID.DISK_FILE_MOVE;
+                case "diskDirectoryList": return (int)CoreFunctionID.DISK_DIRECTORY_LIST;
+                case "diskDirectoryCreate": return (int)CoreFunctionID.DISK_DIRECTORY_CREATE;
+                case "diskDirectoryDelete": return (int)CoreFunctionID.DISK_DIRECTORY_DELETE;
+                case "diskDirectoryMove": return (int)CoreFunctionID.DISK_DIRECTORY_MOVE;
+
                 default: return -1;
             }
         }

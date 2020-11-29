@@ -7,6 +7,7 @@
 @import("CryptoHelper.pst");
 @import("DateTimeHelper.pst");
 @import("Debugger.pst");
+@import("DiskHelper.pst");
 @import("ImageHelper.pst");
 @import("Ipc.pst");
 @import("JsonHelper.pst");

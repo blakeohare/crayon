@@ -46,3 +46,20 @@ EXT-TYPE: int CoreFunc_TextEncoding_ConvertBytesToText(Array<int> byteValues, in
 EXT-TYPE: int CoreFunc_TextEncoding_ConvertTextToBytes(string value, bool includeBom, int format, List<Value> byteList, Array<Value> positiveIntegers, Array<int> intOut);
 
 EXT-TYPE: void CoreFunc_TimedCallback(Value cb, double delay);
+
+# TODO: change the names of these
+EXT-TYPE: int _lib_fileiocommon_getDirParent(string path, Array<string> stringOut);
+EXT-TYPE: string _lib_fileiocommon_getDirRoot(string path);
+EXT-TYPE: bool _lib_fileiocommon_directoryExists(object diskRef, string path);
+EXT-TYPE: int _lib_fileiocommon_directoryCreate(object diskRef, string path);
+EXT-TYPE: int _lib_fileiocommon_directoryDelete(object diskRef, string path);
+EXT-TYPE: int _lib_fileiocommon_directoryList(object diskRef, string directoryPath, bool includeFullPathOtherwiseIncludeJustFilenames, List<string> outputList);
+EXT-TYPE: int _lib_fileiocommon_directoryMove(object diskRef, string pathFrom, string pathTo);
+EXT-TYPE: int _lib_fileiocommon_fileDelete(object diskRef, string wellFormedPath);
+EXT-TYPE: int _lib_fileiocommon_fileMove(object diskRef, string wellFormedPathFrom, string wellFormedPathTo, bool trueForCopyFalseForMove, bool allowOverwrite);
+EXT-TYPE: int _lib_fileiocommon_fileRead(object diskRef, string wellFormedSandboxedPath, bool readDataAsBytes, Array<string> stringOut, Array<Value> integers, List<Value> outputListForBytes);
+EXT-TYPE: int _lib_fileiocommon_fileWrite(object diskRef, string wellFormedSandboxedPath, int formatEnum, string textOrNull, object byteArrayOrNull);
+EXT-TYPE: string _lib_fileiocommon_getCurrentDirectory();
+EXT-TYPE: void _lib_fileiocommon_getFileInfo(object diskRef, string wellFormedSandboxedPath, int propertiesBitMask, Array<int> intOutParams, Array<double> floatOutParams);
+EXT-TYPE: string _lib_fileiocommon_getUserDirectory();
+EXT-TYPE: object _lib_fileiocommon_initializeDisk(bool useLocalStorage);

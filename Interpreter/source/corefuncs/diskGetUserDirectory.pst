@@ -1,0 +1,2 @@
+﻿// no args
+output = lib_fileiocommon_getUserDirectory(vm);

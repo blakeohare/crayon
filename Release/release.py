@@ -44,6 +44,8 @@ LIBRARIES = [
 	'Web',
 	'Xml',
 	# 'Zip',
+	
+	'Dummy',
 ]
 
 import shutil

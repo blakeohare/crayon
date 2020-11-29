@@ -46,3 +46,20 @@ EXT: CoreFunc_TextEncoding_ConvertBytesToText: TextEncodingHelper.BytesToText([A
 EXT: CoreFunc_TextEncoding_ConvertTextToBytes: TextEncodingHelper.TextToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
 
 EXT: CoreFunc_TimedCallback: EventLoop.ExecuteFunctionPointerWithDelay([ARG:1], [ARG:2])
+
+EXT: _lib_fileiocommon_directoryCreate: DiskHelper.CreateDirectory([ARG:2])
+EXT: _lib_fileiocommon_directoryDelete: DiskHelper.DeleteDirectory([ARG:2])
+EXT: _lib_fileiocommon_directoryExists: DiskHelper.DirectoryExists([ARG:2])
+EXT: _lib_fileiocommon_directoryList: DiskHelper.GetDirectoryList([ARG:2], [ARG:3], [ARG:4])
+EXT: _lib_fileiocommon_directoryMove: DiskHelper.MoveDirectory([ARG:2], [ARG:3])
+EXT: _lib_fileiocommon_fileDelete: DiskHelper.FileDelete([ARG:2])
+EXT: _lib_fileiocommon_fileMove: DiskHelper.FileMove([ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_fileRead: DiskHelper.FileRead([ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+EXT: _lib_fileiocommon_fileWrite: DiskHelper.FileWrite([ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_getCurrentDirectory: DiskHelper.GetCurrentDirectory()
+EXT: _lib_fileiocommon_getDirParent: DiskHelper.GetDirParent([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_getDirRoot: DiskHelper.GetDirRoot([ARG:1])
+EXT: _lib_fileiocommon_getFileInfo: DiskHelper.GetFileInfo([ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_getUserDirectory: DiskHelper.GetUserDirectory()
+EXT: _lib_fileiocommon_initializeDisk: TranslationHelper.AlwaysFalse()
+

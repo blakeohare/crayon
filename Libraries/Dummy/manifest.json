@@ -1,0 +1,10 @@
+{
+    "name": "Dummy",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/dummy",
+    "description": "The release script is not working without finding the library extensions directory but now that everything has been converted and doesn't need that anymore, I need to create a dummy file so the release script can still run so that I can test it and commit the changes to FileIOCommon that remove the last of the native library implementations.",
+
+    "cni": [
+        { "name": "lib_dummy_lol", "argc": 0 }
+    ]
+}
