@@ -78,22 +78,6 @@ namespace Build.BuildParseNodes
 
             item.RemoteDeps = remoteDeps.ToArray();
 
-            List<ImageSheet> imageSheets = new List<ImageSheet>();
-            object[] imageSheetsRaw = json.Get("imageSheets") != null ? json.GetAsList("imageSheets") : json.GetAsList("image-sheets");
-            if (imageSheetsRaw != null)
-            {
-                foreach (JsonLookup imageSheetJson in imageSheetsRaw
-                    .OfType<IDictionary<string, object>>()
-                    .Select(t => new JsonLookup(t)))
-                {
-                    ImageSheet imgSheet = new ImageSheet();
-                    imgSheet.Id = imageSheetJson.GetAsString("id");
-                    imgSheet.Prefixes = new string[] { imageSheetJson.GetAsString("prefix") };
-                    imageSheets.Add(imgSheet);
-                }
-            }
-            item.ImageSheets = imageSheets.ToArray();
-
             int windowWidth = -1;
             int windowHeight = -1;
             if (json.Get("windowSize") != null)

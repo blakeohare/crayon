@@ -118,7 +118,6 @@ namespace Build
             string version = desiredTarget.Version ?? buildInput.Version ?? "1.0";
             string jsFilePrefix = desiredTarget.JsFilePrefix ?? buildInput.JsFilePrefix;
             bool jsFullPage = NullableBoolean.ToBoolean(desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw, false);
-            ImageSheet[] imageSheets = MergeImageSheets(desiredTarget.ImageSheets, buildInput.ImageSheets);
             // TODO: maybe set this default value to true, although this does nothing as of now.
             bool minified = NullableBoolean.ToBoolean(desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw, false);
             bool exportDebugByteCode = BoolUtil.Parse(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
@@ -215,8 +214,6 @@ namespace Build
                 Description = description,
                 Version = version,
                 SourceFolders = ToFilePaths(projectDir, sources),
-                ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
-                ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 BuildVariableLookup = varLookup,
                 ProgrammingLanguage = nullableLanguage.Value,
             };
@@ -375,42 +372,7 @@ namespace Build
                 }
                 return sb.ToString();
             }
-
         }
-
-        private static ImageSheet[] MergeImageSheets(ImageSheet[] originalSheets, ImageSheet[] newSheets)
-        {
-            Dictionary<string, List<string>> prefixDirectLookup = new Dictionary<string, List<string>>();
-            List<string> order = new List<string>();
-
-            originalSheets = originalSheets ?? new ImageSheet[0];
-            newSheets = newSheets ?? new ImageSheet[0];
-
-            foreach (ImageSheet sheet in originalSheets.Concat<ImageSheet>(newSheets))
-            {
-                if (sheet.Id == null)
-                {
-                    throw new InvalidOperationException("Image sheet is missing an ID.");
-                }
-
-                if (!prefixDirectLookup.ContainsKey(sheet.Id))
-                {
-                    prefixDirectLookup.Add(sheet.Id, new List<string>());
-                    order.Add(sheet.Id);
-                }
-                prefixDirectLookup[sheet.Id].AddRange(sheet.Prefixes);
-            }
-
-            return order
-                .Select<string, ImageSheet>(
-                    id => new ImageSheet()
-                    {
-                        Id = id,
-                        Prefixes = prefixDirectLookup[id].ToArray()
-                    })
-                .ToArray();
-        }
-
 
         public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
         {

@@ -47,10 +47,8 @@ namespace Build
 
         //public FileOutput ByteCodeFile { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
-        public FileOutput ImageSheetManifestFile { get; set; }
         public FileOutput Image2ResourceManifestFile { get; set; }
 
-        public Dictionary<string, FileOutput> ImageSheetFiles { get; set; }
         public Dictionary<string, FileOutput> Image2ResourceFiles { get; set; }
 
         public List<FileOutput> AudioResources { get; set; }
@@ -80,93 +78,6 @@ namespace Build
             this.ImageResources = new List<FileOutput>();
             this.TextResources = new List<FileOutput>();
             this.FontResources = new List<FileOutput>();
-            this.ImageSheetFiles = new Dictionary<string, FileOutput>();
-        }
-
-        // TODO: move into its own helper class in the ImageSheets namespace.
-        public void AddImageSheets(IList<ImageSheets.Sheet> sheets)
-        {
-            int tileCounter = 1;
-            List<string> manifest = new List<string>();
-            int sheetCounter = 0;
-            foreach (ImageSheets.Sheet sheet in sheets)
-            {
-                manifest.Add("S," + sheetCounter++ + "," + sheet.ID);
-
-                List<ImageSheets.Chunk> jpegChunks = new List<ImageSheets.Chunk>();
-                foreach (ImageSheets.Chunk chunk in sheet.Chunks)
-                {
-                    foreach (ImageSheets.Tile tile in chunk.Tiles)
-                    {
-                        tile.GeneratedFilename = "t" + (tileCounter++) + (chunk.IsJPEG ? ".jpg" : ".png");
-                    }
-
-                    if (chunk.IsJPEG)
-                    {
-                        jpegChunks.Add(chunk);
-                        foreach (ImageSheets.Tile tile in chunk.Tiles)
-                        {
-                            this.ImageSheetFiles[tile.GeneratedFilename] = new FileOutput()
-                            {
-                                Type = FileOutputType.Copy,
-                                AbsoluteInputPath = tile.OriginalFile.AbsoluteInputPath,
-                            };
-                        }
-                    }
-                    else
-                    {
-                        int width = chunk.Width;
-                        int height = chunk.Height;
-                        if (width == 1024 && height == 1024)
-                        {
-                            width = 0;
-                            height = 0;
-                        }
-                        manifest.Add("C," + width + "," + height);
-                        foreach (ImageSheets.Tile tile in chunk.Tiles)
-                        {
-                            manifest.Add("T," + tile.GeneratedFilename + "," + tile.ChunkX + "," + tile.ChunkY + "," + tile.Width + "," + tile.Height + "," + tile.Bytes);
-
-                            if (tile.IsDirectCopy)
-                            {
-                                this.ImageSheetFiles[tile.GeneratedFilename] = new FileOutput()
-                                {
-                                    Bitmap = tile.OriginalFile.Bitmap,
-                                    Type = FileOutputType.Image,
-                                };
-                            }
-                            else
-                            {
-                                this.ImageSheetFiles[tile.GeneratedFilename] = new FileOutput()
-                                {
-                                    Bitmap = tile.Bitmap,
-                                    Type = FileOutputType.Image,
-                                };
-                            }
-                        }
-
-                        foreach (ImageSheets.Image image in chunk.Members)
-                        {
-                            manifest.Add("I," + image.ChunkX + "," + image.ChunkY + "," + image.Width + "," + image.Height + "," + image.OriginalPath);
-                        }
-                    }
-                }
-
-                foreach (ImageSheets.Chunk jpegChunk in jpegChunks)
-                {
-                    ImageSheets.Tile jpegTile = jpegChunk.Tiles[0];
-                    manifest.Add("J," + jpegTile.GeneratedFilename + "," + jpegTile.Width + "," + jpegTile.Height + "," + jpegTile.Bytes + "," + jpegTile.OriginalFile.OriginalPath);
-                }
-            }
-
-            if (manifest.Count > 0)
-            {
-                this.ImageSheetManifestFile = new FileOutput()
-                {
-                    Type = FileOutputType.Text,
-                    TextContent = string.Join("\n", manifest),
-                };
-            }
         }
 
         public void GenerateResourceMapping()

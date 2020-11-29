@@ -41,11 +41,6 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\Image2Manifest.txt\"/>");
             }
 
-            if (resDb.ImageSheetManifestFile != null)
-            {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\ImageSheetManifest.txt\"/>");
-            }
-
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"icon.ico\" />");
@@ -54,11 +49,6 @@ namespace CSharpApp
             foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageFile.CanonicalFileName + "\"/>");
-            }
-
-            foreach (string imageSheetFileName in resDb.ImageSheetFiles.Keys)
-            {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageSheetFileName + "\"/>");
             }
 
             foreach (string imageChunk in resDb.Image2ResourceFiles.Keys)
@@ -157,10 +147,6 @@ namespace CSharpApp
 
             output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
-            if (resourceDatabase.ImageSheetManifestFile != null)
-            {
-                output[baseDir + "Resources/ImageSheetManifest.txt"] = resourceDatabase.ImageSheetManifestFile;
-            }
 
             if (resourceDatabase.Image2ResourceManifestFile != null)
             {
@@ -170,11 +156,6 @@ namespace CSharpApp
             foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
             {
                 output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
-            }
-
-            foreach (string imageSheetFileName in resourceDatabase.ImageSheetFiles.Keys)
-            {
-                output[baseDir + "Resources/" + imageSheetFileName] = resourceDatabase.ImageSheetFiles[imageSheetFileName];
             }
 
             foreach (string imageFilePath in resourceDatabase.Image2ResourceFiles.Keys)

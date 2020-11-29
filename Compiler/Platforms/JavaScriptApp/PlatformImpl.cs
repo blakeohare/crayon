@@ -148,12 +148,6 @@ namespace JavaScriptApp
                 TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(byteCode) + ";",
             };
 
-            foreach (string imageResourceFile in resourceDatabase.ImageSheetFiles.Keys)
-            {
-                FileOutput file = resourceDatabase.ImageSheetFiles[imageResourceFile];
-                output["resources/images/" + imageResourceFile] = file;
-            }
-
             foreach (string imageChunk in resourceDatabase.Image2ResourceFiles.Keys)
             {
                 output["resources/images/" + imageChunk] = resourceDatabase.Image2ResourceFiles[imageChunk];

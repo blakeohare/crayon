@@ -11,10 +11,6 @@
     "iosBundlePrefix": "com.yourname.%%%PROJECT_ID%%%,%VERSION%",
     "guidSeed": "com.yourname.%%%PROJECT_ID%%%,v1,%TARGET_NAME%",
 
-    "imageSheets": [
-        { "id": "everything", "prefix": "*" }
-    ],
-
     "targets": [
         {
             "name": "android",

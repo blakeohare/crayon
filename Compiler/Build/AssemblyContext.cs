@@ -14,9 +14,7 @@ namespace Build
 
         // The following are things that ought to be on a assembly-specific object
         public FilePath[] SourceFolders { get; set; }
-        public Dictionary<string, string[]> ImageSheetPrefixesById { get; set; }
         public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; set; }
-        public string[] ImageSheetIds { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
         public ProgrammingLanguage ProgrammingLanguage { get; set; }

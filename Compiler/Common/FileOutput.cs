@@ -9,10 +9,6 @@ namespace Common
         Copy,
         Move,
         Image,
-
-        // A stub indicating the original file path of a file that was once here but is no longer
-        // present at this location. This is for things like images that are in image sheets.
-        Ghost,
     }
 
     public class FileOutput
@@ -34,11 +30,7 @@ namespace Common
 
         // Original path relative to the root of the source directory.
         // This is the virtualized location of the embedded resource.
-        // Ghost types will have this set.
         public string OriginalPath { get; set; }
-
-        // Set on images that are included as a image sheet. Type is changed to Ghost after processing.
-        public string ImageSheetId { get; set; }
 
         // An auto-assigned filename that doesn't have special characters.
         public string CanonicalFileName { get; set; }
