@@ -6731,6 +6731,10 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[valueStackSize];
                                 output = lib_fileiocommon_directoryMove(vm, arg1, arg2, arg3);
                                 break;
+                            case 107:
+                                // processCurrentId;
+                                output = buildInteger(globals, ProcessHelper.GetCurrentId());
+                                break;
                         }
                         if ((row[1] == 1))
                         {

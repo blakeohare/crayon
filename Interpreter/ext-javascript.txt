@@ -38,6 +38,7 @@ EXT: CoreFunc_NamedPipeFlush: (() => {})()
 EXT: CoreFunc_NamedPipeServerCreate: (() => {})()
 EXT: CoreFunc_NamedPipeServerClose: (() => {})()
 
+EXT: CoreFunc_ProcessCurrentId: 0
 EXT: CoreFunc_ProcessRun: (() => {})()
 
 EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:1])

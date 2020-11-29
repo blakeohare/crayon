@@ -38,6 +38,7 @@ EXT: CoreFunc_NamedPipeFlush: CoreFunctions.NamedPipeFlush([ARG:1])
 EXT: CoreFunc_NamedPipeServerCreate: CoreFunctions.NamedPipeServerCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 EXT: CoreFunc_NamedPipeServerClose: CoreFunctions.NamedPipeServerClose([ARG:1])
 
+EXT: CoreFunc_ProcessCurrentId: ProcessHelper.GetCurrentId()
 EXT: CoreFunc_ProcessRun: ProcessHelper.LaunchProcess([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 
 EXT: CoreFunc_ResourceGetText: Interpreter.ResourceReader.ReadTextResource([ARG:1])

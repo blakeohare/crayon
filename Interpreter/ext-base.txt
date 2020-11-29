@@ -38,6 +38,7 @@ EXT-TYPE: string CoreFunc_NamedPipeFlush(object pipe);
 EXT-TYPE: object CoreFunc_NamedPipeServerCreate(string name, Value startFn, Value dataFn, Value closeFn);
 EXT-TYPE: string CoreFunc_NamedPipeServerClose(object pipe);
 
+EXT-TYPE: int CoreFunc_ProcessCurrentId();
 EXT-TYPE: object CoreFunc_ProcessRun(string execPath, Array<string> args, Value onDataCb, Array<int> intOut);
 
 EXT-TYPE: string CoreFunc_ResourceGetText(string path);

@@ -102,5 +102,10 @@ namespace ProcessUtil {
                 $$$('processKill', this);
             }
         }
+
+        static function getCurrentProcessId() {
+            if (!Process.isSupported()) throw new Exception("This feature is not supported on this platform.");
+            return $$$('processCurrentId');
+        }
     }
 }
