@@ -323,6 +323,7 @@ namespace CSharpApp
             // From LangCSharp
             this.CopyResourceAsText(output, baseDir + "Vm/CoreFunctions.cs", "Resources/CoreFunctions.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/DateTimeHelper.cs", "Resources/DateTimeHelper.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/DiskHelper.cs", "Resources/DiskHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/EventLoop.cs", "Resources/EventLoop.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/ImageUtil.cs", "Resources/ImageUtil.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/JsonHelper.cs", "Resources/JsonHelper.cs", replacements);

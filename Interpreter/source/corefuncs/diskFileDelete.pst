@@ -1,0 +1,2 @@
+﻿@import("inline/2_arg.pst");
+output = lib_fileiocommon_fileDelete(vm, arg1, arg2);

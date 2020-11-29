@@ -92,6 +92,18 @@
     case 92: Core.EmitComment("processRun"); @import("corefuncs/processRun.pst"); break;
     case 93: Core.EmitComment("processKill"); @import("corefuncs/processKill.pst"); break;
     case 94: Core.EmitComment("timedCallback"); @import("corefuncs/timedCallback.pst"); break;
+    case 95: Core.EmitComment("diskGetUserDirectory"); @import("corefuncs/diskGetUserDirectory.pst"); break;
+    case 96: Core.EmitComment("diskInitializeDisk"); @import("corefuncs/diskInitializeDisk.pst"); break;
+    case 97: Core.EmitComment("diskGetCurrentDirectory"); @import("corefuncs/diskGetCurrentDirectory.pst"); break;
+    case 98: Core.EmitComment("diskFileInfo"); @import("corefuncs/diskFileInfo.pst"); break;
+    case 99: Core.EmitComment("diskFileWrite"); @import("corefuncs/diskFileWrite.pst"); break;
+    case 100: Core.EmitComment("diskFileRead"); @import("corefuncs/diskFileRead.pst"); break;
+    case 101: Core.EmitComment("diskFileDelete"); @import("corefuncs/diskFileDelete.pst"); break;
+    case 102: Core.EmitComment("diskFileMove"); @import("corefuncs/diskFileMove.pst"); break;
+    case 103: Core.EmitComment("diskDirectoryList"); @import("corefuncs/diskDirectoryList.pst"); break;
+    case 104: Core.EmitComment("diskDirectoryCreate"); @import("corefuncs/diskDirectoryCreate.pst"); break;
+    case 105: Core.EmitComment("diskDirectoryDelete"); @import("corefuncs/diskDirectoryDelete.pst"); break;
+    case 106: Core.EmitComment("diskDirectoryMove"); @import("corefuncs/diskDirectoryMove.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

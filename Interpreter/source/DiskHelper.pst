@@ -1,0 +1,383 @@
+﻿object lib_fileiocommon_getDiskObject(Value diskObjectArg) {
+    ObjectInstance objInst = (ObjectInstance) diskObjectArg.internalValue;
+    return objInst.nativeData[0];
+}
+
+object lib_fileiocommon_listToBytes(ListImpl listOfMaybeInts) {
+    Array<byte> bytes = new Array<byte>(listOfMaybeInts.size);
+    Value intValue = null;
+    int byteValue = 0;
+    for (int i = listOfMaybeInts.size - 1; i >= 0; i -= 1) {
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            intValue = listOfMaybeInts.list[i];
+        } else {
+            intValue = listOfMaybeInts.array[i];
+        }
+
+        if (intValue.type != Types.INTEGER) {
+            return null;
+        }
+        byteValue = (int) intValue.internalValue;
+        if (byteValue >= 256) return null;
+        if (byteValue < 0) {
+            if (byteValue < -128) return null;
+            byteValue += 256;
+        }
+        bytes[i] = (byte) byteValue;
+    }
+    return bytes;
+}
+
+/*
+    Initialize a virtualized disk instance if the platform uses such a thing.
+
+    args[0]: disk host object
+    args[1]: boolean
+        true -> JS platform should back the virtual disk with a localStorage dictionary
+        false -> JS should just use a normal dictionary
+        not JS? the $_lib_fileiocommon_initializeDisk no-ops, so it doesn't matter.
+
+*/
+Value lib_fileiocommon_initializeDisk(VmContext vm, Value arg1, Value arg2) {
+    ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
+    Array<object> objArray1 = new Array<object>(1);
+    objInstance1.nativeData = objArray1;
+    object object1 = Extension._lib_fileiocommon_initializeDisk((bool) arg2.internalValue);
+    objArray1[0] = object1;
+    return vm.globals.valueNull;
+}
+
+/*
+    Returns the current directory.
+    This is never called for a virtual disk.
+
+    - JavaScript: '/'
+    - Mobile: '/'
+    - Everything else: absolute path of where the host platform thinks the current directory is.
+*/
+Value lib_fileiocommon_getCurrentDirectory(VmContext vm) {
+    return buildString(vm.globals, Extension._lib_fileiocommon_getCurrentDirectory());
+}
+
+/*
+    Returns the user's home directory.
+    - Windows: "C:\Users\Cthulhu"
+    - Linux: "~"
+    - JavaScript: "/" (this is used for the virtualized disk)
+*/
+Value lib_fileiocommon_getUserDirectory(VmContext vm) {
+    return buildString(vm.globals, Extension._lib_fileiocommon_getUserDirectory());
+}
+
+/*
+    Fetch information about a file.
+
+    args[0]: disk host object
+    args[1]: well-formed and sandboxed path
+    args[2]: a bit mask of properties to fetch
+    args[3]: output list, size is already 6 containing old data.
+
+        output[0] -> bool: exists
+        output[1] -> bool: is directory?
+        output[2] -> int: file size bytes // TODO: deal with integer overflow
+        output[3] -> bool: is readonly?
+        output[4] -> float: file created timestamp
+        output[5] -> float: file modified timestamp
+
+    mask & 1 -> fetch size
+    mask & 2 -> fetch readonly
+    mask & 4 -> fetch created timestamp
+    mask & 8 -> fetch modified timestamp
+
+    directory and existence status are always fetched.
+*/
+Value lib_fileiocommon_fileInfo(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4) {
+    int mask = (int) arg3.internalValue;
+    Extension._lib_fileiocommon_getFileInfo(
+        lib_fileiocommon_getDiskObject(arg1),
+        (string) arg2.internalValue,
+        mask,
+        Core.IntBuffer16,
+        Core.FloatBuffer16);
+
+    ListImpl outputList = (ListImpl) arg4.internalValue;
+    clearList(outputList);
+    VmGlobals globals = vm.globals;
+
+    // exists
+    addToList(outputList, buildBoolean(globals, Core.IntBuffer16[0] > 0));
+
+    // is directory?
+    addToList(outputList, buildBoolean(globals, Core.IntBuffer16[1] > 0));
+
+    // size
+    if ((mask & 1) != 0) {
+        addToList(outputList, buildInteger(globals, Core.IntBuffer16[2]));
+    } else {
+        addToList(outputList, globals.valueNull);
+    }
+
+    // readonly?
+    if ((mask & 2) != 0) {
+        addToList(outputList, buildBoolean(globals, Core.IntBuffer16[3] > 0));
+    } else {
+        addToList(outputList, globals.valueNull);
+    }
+
+    // created timestamp
+    if ((mask & 4) != 0) {
+        addToList(outputList, buildFloat(globals, Core.FloatBuffer16[0]));
+    } else {
+        addToList(outputList, globals.valueNull);
+    }
+
+    // modified timestamp
+    if ((mask & 8) != 0) {
+        addToList(outputList, buildFloat(globals, Core.FloatBuffer16[1]));
+    } else {
+        addToList(outputList, globals.valueNull);
+    }
+
+    return arg4;
+}
+
+/*
+    Read data from file.
+
+    args[0]: disk host object
+    args[1]: well-formed and sandboxed path
+    args[2]: boolean (safe): read data as byte list?
+    args[3]: output list.
+        if byte mode: add bytes to this list
+        if text mode: add a single Value string to this list
+
+    Output: (int) status code (see FiocStatus enum in embed code)
+*/
+Value lib_fileiocommon_fileRead(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4) {
+    Value diskHostObject = arg1;
+    string sandboxedPath = (string) arg2.internalValue;
+    bool readDataAsBytes = (bool) arg3.internalValue;
+    ListImpl outputList = (ListImpl) arg4.internalValue;
+    List<Value> tList = new List<Value>();
+
+    // For strings requests, put the file contents into the stringOutParam
+    // For raw byte requests, put the bytes directly onto the list and pass in the INTEGERS_CACHE
+    int statusCode = Extension._lib_fileiocommon_fileRead(
+        lib_fileiocommon_getDiskObject(diskHostObject),
+        sandboxedPath,
+        readDataAsBytes,
+        Core.StringBuffer16,
+        vm.globals.positiveIntegers,
+        tList);
+
+    // If successful and this is a text request...
+    if (statusCode == 0 && !readDataAsBytes) {
+        // copy the value from stringOutParam to the list.
+        addToList(outputList, buildString(vm.globals, Core.StringBuffer16[0]));
+    } else {
+
+        // This is kind of hacky
+        // TODO: just return an int array from the native fileRead and return the
+        // status via an out parameter. Native code should NOT have to deal with
+        // the int value cache.
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            outputList.list = tList;
+        } else {
+            Value t = buildList(tList); // do list to array conversion
+            ListImpl tListImpl = (ListImpl) t.internalValue;
+            outputList.array = tListImpl.array;
+            outputList.capacity = tListImpl.capacity;
+        }
+        outputList.size = tList.Size();
+    }
+
+    return buildInteger(vm.globals, statusCode);
+}
+
+/*
+    Write data to a file.
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+    arg 3: content as either a string or a list of byte integers (unchecked)
+    arg 4: format enum
+
+    Format:
+        0 -> raw bytes
+        1 -> UTF8
+        2 -> UTF8 with BOM
+        3 -> ISO-8859
+
+*/
+Value lib_fileiocommon_fileWrite(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4) {
+    Array<Value> ints = vm.globals.positiveIntegers;
+    if (arg4.type != Types.INTEGER) return ints[3];
+
+    int statusCode = 0;
+    string contentString = null;
+    object byteArrayRef = null;
+    int format = (int) arg4.internalValue;
+    if (format == 0) {
+        byteArrayRef = lib_fileiocommon_listToBytes((ListImpl) arg3.internalValue);
+        if (byteArrayRef == null) return ints[6];
+    } else if (arg3.type != Types.STRING) {
+        return ints[6];
+    } else {
+        contentString = (string) arg3.internalValue;
+    }
+
+    if (statusCode == 0) {
+        statusCode = Extension._lib_fileiocommon_fileWrite(
+            lib_fileiocommon_getDiskObject(arg1),
+            (string) arg2.internalValue,
+            format,
+            contentString,
+            byteArrayRef);
+    }
+
+    return buildInteger(vm.globals, statusCode);
+}
+
+/*
+    Move or copy a file
+
+    args[0]: disk host object
+    args[1]: well-formed and sandboxed path of where the file currently is
+    args[2]: well-formed and sandboxed path of where to move/copy the file to
+    args[3]: bool: true for copy, false for move
+    args[4]: bool: allow overwrite?
+*/
+Value lib_fileiocommon_fileMove(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4, Value arg5) {
+    int statusCode = Extension._lib_fileiocommon_fileMove(
+        lib_fileiocommon_getDiskObject(arg1),
+        (string) arg2.internalValue,
+        (string) arg3.internalValue,
+        (bool) arg4.internalValue,
+        (bool) arg5.internalValue);
+    return buildInteger(vm.globals, statusCode);
+}
+
+/*
+    Delete a file.
+
+    args[0]: disk host object
+    args[1]: well-formed and sandboxed path
+
+*/
+Value lib_fileiocommon_fileDelete(VmContext vm, Value arg1, Value arg2) {
+
+    int statusCode = Extension._lib_fileiocommon_fileDelete(
+        lib_fileiocommon_getDiskObject(arg1),
+        (string) arg2.internalValue);
+
+    return buildInteger(vm.globals, statusCode);
+}
+
+/*
+    List the files in a directory
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+    arg 3: boolean
+        true -> include the full path
+        false -> include just the file name
+    arg 4: value list. Add files to this list.
+*/
+Value lib_fileiocommon_directoryList(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4) {
+    Value diskhost = arg1;
+    string path = (string) arg2.internalValue;
+    bool useFullPath = (bool) arg3.internalValue;
+    ListImpl outputList = (ListImpl) arg4.internalValue;
+    List<string> stringList1 = new List<string>();
+
+    int sc = Extension._lib_fileiocommon_directoryList(
+        lib_fileiocommon_getDiskObject(diskhost),
+        path,
+        useFullPath,
+        stringList1);
+    if (sc == 0) {
+        for (int i = 0; i < stringList1.Size(); i += 1) {
+            addToList(outputList, buildString(vm.globals, stringList1[i]));
+        }
+    }
+
+    return buildInteger(vm.globals, sc);
+}
+
+/*
+    Create a directory
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+    arg 3: boolean
+        true -> create all parent directories if they don't currently exist
+        false -> fail if the parent directory does not exist
+*/
+Value lib_fileiocommon_directoryCreate(VmContext vm, Value arg1, Value arg2, Value arg3) {
+    bool bool1 = false;
+    int i = 0;
+    int int1 = 0;
+    List<string> stringList1 = null;
+    Value hostObject = arg1;
+    string path = (string) arg2.internalValue;
+    if ((bool) arg3.internalValue) {
+        int1 = 0;
+        if (!Extension._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), Extension._lib_fileiocommon_getDirRoot(path))) {
+            int1 = 4;
+        } else {
+            stringList1 = new List<string>();
+            bool1 = true;
+            while (bool1 && !Extension._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), path)) {
+                stringList1.Add(path);
+                int1 = Extension._lib_fileiocommon_getDirParent(path, Core.StringBuffer16);
+                path = Core.StringBuffer16[0];
+                if (int1 != 0) {
+                    bool1 = false;
+                }
+            }
+            if (bool1) {
+                for (i = stringList1.Size() - 1; i >= 0; i -= 1) {
+                    path = stringList1[i];
+                    int1 = Extension._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
+                    if (int1 != 0) {
+                        i = -1;
+                    }
+                }
+            }
+        }
+    } else {
+        int1 = Extension._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
+    }
+    return buildInteger(vm.globals, int1);
+}
+
+/*
+    Move a directory
+
+    args[0]: disk host object
+    args[1]: well-formed and sandboxed path of where the directory currently is
+    args[2]: well-formed and sandboxed path of where to move the directory to
+*/
+Value lib_fileiocommon_directoryMove(VmContext vm, Value arg1, Value arg2, Value arg3) {
+
+    int statusCode = Extension._lib_fileiocommon_directoryMove(
+        lib_fileiocommon_getDiskObject(arg1),
+        (string) arg2.internalValue,
+        (string) arg3.internalValue);
+
+    return buildInteger(vm.globals, statusCode);
+}
+
+/*
+    Delete a directory
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+*/
+Value lib_fileiocommon_directoryDelete(VmContext vm, Value arg1, Value arg2) {
+    int sc = Extension._lib_fileiocommon_directoryDelete(
+        lib_fileiocommon_getDiskObject(arg1),
+        (string) arg2.internalValue);
+
+    return buildInteger(vm.globals, sc);
+}

@@ -6,6 +6,8 @@ namespace Interpreter.Vm
 {
     public static class CrayonWrapper
     {
+        public static bool AlwaysFalse() { return false; }
+
         private static readonly string[] PST_StringBuffer16 = new string[16];
 
         private static readonly int[] PST_IntBuffer16 = new int[16];
@@ -129,6 +131,8 @@ namespace Interpreter.Vm
             sb.Append('"');
             return sb.ToString();
         }
+
+        private static readonly double[] PST_FloatBuffer16 = new double[16];
 
         private static string PST_Base64ToString(string b64Value)
         {
@@ -6677,6 +6681,97 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[valueStackSize];
                                 EventLoop.ExecuteFunctionPointerWithDelay(arg1, (double)arg2.internalValue);
                                 break;
+                            case 95:
+                                // diskGetUserDirectory;
+                                output = lib_fileiocommon_getUserDirectory(vm);
+                                break;
+                            case 96:
+                                // diskInitializeDisk;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_initializeDisk(vm, arg1, arg2);
+                                break;
+                            case 97:
+                                // diskGetCurrentDirectory;
+                                output = lib_fileiocommon_getCurrentDirectory(vm);
+                                break;
+                            case 98:
+                                // diskFileInfo;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_fileInfo(vm, arg1, arg2, arg3, arg4);
+                                break;
+                            case 99:
+                                // diskFileWrite;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_fileWrite(vm, arg1, arg2, arg3, arg4);
+                                break;
+                            case 100:
+                                // diskFileRead;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_fileRead(vm, arg1, arg2, arg3, arg4);
+                                break;
+                            case 101:
+                                // diskFileDelete;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_fileDelete(vm, arg1, arg2);
+                                break;
+                            case 102:
+                                // diskFileMove;
+                                valueStackSize -= 5;
+                                arg5 = valueStack[(valueStackSize + 4)];
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_fileMove(vm, arg1, arg2, arg3, arg4, arg5);
+                                break;
+                            case 103:
+                                // diskDirectoryList;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_directoryList(vm, arg1, arg2, arg3, arg4);
+                                break;
+                            case 104:
+                                // diskDirectoryCreate;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_directoryCreate(vm, arg1, arg2, arg3);
+                                break;
+                            case 105:
+                                // diskDirectoryDelete;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_directoryDelete(vm, arg1, arg2);
+                                break;
+                            case 106:
+                                // diskDirectoryMove;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = lib_fileiocommon_directoryMove(vm, arg1, arg2, arg3);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -8341,6 +8436,261 @@ namespace Interpreter.Vm
                     break;
             }
             return;
+        }
+
+        public static Value lib_fileiocommon_directoryCreate(VmContext vm, Value arg1, Value arg2, Value arg3)
+        {
+            bool bool1 = false;
+            int i = 0;
+            int int1 = 0;
+            List<string> stringList1 = null;
+            Value hostObject = arg1;
+            string path = (string)arg2.internalValue;
+            if ((bool)arg3.internalValue)
+            {
+                int1 = 0;
+                if (!DiskHelper.DirectoryExists(DiskHelper.GetDirRoot(path)))
+                {
+                    int1 = 4;
+                }
+                else
+                {
+                    stringList1 = new List<string>();
+                    bool1 = true;
+                    while ((bool1 && !DiskHelper.DirectoryExists(path)))
+                    {
+                        stringList1.Add(path);
+                        int1 = DiskHelper.GetDirParent(path, PST_StringBuffer16);
+                        path = PST_StringBuffer16[0];
+                        if ((int1 != 0))
+                        {
+                            bool1 = false;
+                        }
+                    }
+                    if (bool1)
+                    {
+                        i = (stringList1.Count - 1);
+                        while ((i >= 0))
+                        {
+                            path = stringList1[i];
+                            int1 = DiskHelper.CreateDirectory(path);
+                            if ((int1 != 0))
+                            {
+                                i = -1;
+                            }
+                            i -= 1;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                int1 = DiskHelper.CreateDirectory(path);
+            }
+            return buildInteger(vm.globals, int1);
+        }
+
+        public static Value lib_fileiocommon_directoryDelete(VmContext vm, Value arg1, Value arg2)
+        {
+            int sc = DiskHelper.DeleteDirectory((string)arg2.internalValue);
+            return buildInteger(vm.globals, sc);
+        }
+
+        public static Value lib_fileiocommon_directoryList(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4)
+        {
+            Value diskhost = arg1;
+            string path = (string)arg2.internalValue;
+            bool useFullPath = (bool)arg3.internalValue;
+            ListImpl outputList = (ListImpl)arg4.internalValue;
+            List<string> stringList1 = new List<string>();
+            int sc = DiskHelper.GetDirectoryList(path, useFullPath, stringList1);
+            if ((sc == 0))
+            {
+                int i = 0;
+                while ((i < stringList1.Count))
+                {
+                    addToList(outputList, buildString(vm.globals, stringList1[i]));
+                    i += 1;
+                }
+            }
+            return buildInteger(vm.globals, sc);
+        }
+
+        public static Value lib_fileiocommon_directoryMove(VmContext vm, Value arg1, Value arg2, Value arg3)
+        {
+            int statusCode = DiskHelper.MoveDirectory((string)arg2.internalValue, (string)arg3.internalValue);
+            return buildInteger(vm.globals, statusCode);
+        }
+
+        public static Value lib_fileiocommon_fileDelete(VmContext vm, Value arg1, Value arg2)
+        {
+            int statusCode = DiskHelper.FileDelete((string)arg2.internalValue);
+            return buildInteger(vm.globals, statusCode);
+        }
+
+        public static Value lib_fileiocommon_fileInfo(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4)
+        {
+            int mask = (int)arg3.internalValue;
+            DiskHelper.GetFileInfo((string)arg2.internalValue, mask, PST_IntBuffer16, PST_FloatBuffer16);
+            ListImpl outputList = (ListImpl)arg4.internalValue;
+            clearList(outputList);
+            VmGlobals globals = vm.globals;
+            addToList(outputList, buildBoolean(globals, (PST_IntBuffer16[0] > 0)));
+            addToList(outputList, buildBoolean(globals, (PST_IntBuffer16[1] > 0)));
+            if (((mask & 1) != 0))
+            {
+                addToList(outputList, buildInteger(globals, PST_IntBuffer16[2]));
+            }
+            else
+            {
+                addToList(outputList, globals.valueNull);
+            }
+            if (((mask & 2) != 0))
+            {
+                addToList(outputList, buildBoolean(globals, (PST_IntBuffer16[3] > 0)));
+            }
+            else
+            {
+                addToList(outputList, globals.valueNull);
+            }
+            if (((mask & 4) != 0))
+            {
+                addToList(outputList, buildFloat(globals, PST_FloatBuffer16[0]));
+            }
+            else
+            {
+                addToList(outputList, globals.valueNull);
+            }
+            if (((mask & 8) != 0))
+            {
+                addToList(outputList, buildFloat(globals, PST_FloatBuffer16[1]));
+            }
+            else
+            {
+                addToList(outputList, globals.valueNull);
+            }
+            return arg4;
+        }
+
+        public static Value lib_fileiocommon_fileMove(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4, Value arg5)
+        {
+            int statusCode = DiskHelper.FileMove((string)arg2.internalValue, (string)arg3.internalValue, (bool)arg4.internalValue, (bool)arg5.internalValue);
+            return buildInteger(vm.globals, statusCode);
+        }
+
+        public static Value lib_fileiocommon_fileRead(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4)
+        {
+            Value diskHostObject = arg1;
+            string sandboxedPath = (string)arg2.internalValue;
+            bool readDataAsBytes = (bool)arg3.internalValue;
+            ListImpl outputList = (ListImpl)arg4.internalValue;
+            List<Value> tList = new List<Value>();
+            int statusCode = DiskHelper.FileRead(sandboxedPath, readDataAsBytes, PST_StringBuffer16, vm.globals.positiveIntegers, tList);
+            if (((statusCode == 0) && !readDataAsBytes))
+            {
+                addToList(outputList, buildString(vm.globals, PST_StringBuffer16[0]));
+            }
+            else
+            {
+                Value t = buildList(tList);
+                ListImpl tListImpl = (ListImpl)t.internalValue;
+                outputList.array = tListImpl.array;
+                outputList.capacity = tListImpl.capacity;
+                outputList.size = tList.Count;
+            }
+            return buildInteger(vm.globals, statusCode);
+        }
+
+        public static Value lib_fileiocommon_fileWrite(VmContext vm, Value arg1, Value arg2, Value arg3, Value arg4)
+        {
+            Value[] ints = vm.globals.positiveIntegers;
+            if ((arg4.type != 3))
+            {
+                return ints[3];
+            }
+            int statusCode = 0;
+            string contentString = null;
+            object byteArrayRef = null;
+            int format = (int)arg4.internalValue;
+            if ((format == 0))
+            {
+                byteArrayRef = lib_fileiocommon_listToBytes((ListImpl)arg3.internalValue);
+                if ((byteArrayRef == null))
+                {
+                    return ints[6];
+                }
+            }
+            else if ((arg3.type != 5))
+            {
+                return ints[6];
+            }
+            else
+            {
+                contentString = (string)arg3.internalValue;
+            }
+            if ((statusCode == 0))
+            {
+                statusCode = DiskHelper.FileWrite((string)arg2.internalValue, format, contentString, byteArrayRef);
+            }
+            return buildInteger(vm.globals, statusCode);
+        }
+
+        public static Value lib_fileiocommon_getCurrentDirectory(VmContext vm)
+        {
+            return buildString(vm.globals, DiskHelper.GetCurrentDirectory());
+        }
+
+        public static object lib_fileiocommon_getDiskObject(Value diskObjectArg)
+        {
+            ObjectInstance objInst = (ObjectInstance)diskObjectArg.internalValue;
+            return objInst.nativeData[0];
+        }
+
+        public static Value lib_fileiocommon_getUserDirectory(VmContext vm)
+        {
+            return buildString(vm.globals, DiskHelper.GetUserDirectory());
+        }
+
+        public static Value lib_fileiocommon_initializeDisk(VmContext vm, Value arg1, Value arg2)
+        {
+            ObjectInstance objInstance1 = (ObjectInstance)arg1.internalValue;
+            object[] objArray1 = new object[1];
+            objInstance1.nativeData = objArray1;
+            object object1 = TranslationHelper.AlwaysFalse();
+            objArray1[0] = object1;
+            return vm.globals.valueNull;
+        }
+
+        public static object lib_fileiocommon_listToBytes(ListImpl listOfMaybeInts)
+        {
+            byte[] bytes = new byte[listOfMaybeInts.size];
+            Value intValue = null;
+            int byteValue = 0;
+            int i = (listOfMaybeInts.size - 1);
+            while ((i >= 0))
+            {
+                intValue = listOfMaybeInts.array[i];
+                if ((intValue.type != 3))
+                {
+                    return null;
+                }
+                byteValue = (int)intValue.internalValue;
+                if ((byteValue >= 256))
+                {
+                    return null;
+                }
+                if ((byteValue < 0))
+                {
+                    if ((byteValue < -128))
+                    {
+                        return null;
+                    }
+                    byteValue += 256;
+                }
+                bytes[i] = (byte)byteValue;
+                i -= 1;
+            }
+            return bytes;
         }
 
         public static int[] listImplToBytes(ListImpl list)
