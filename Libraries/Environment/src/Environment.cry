@@ -41,4 +41,8 @@
             'implLang': t[1], // javascript | csharp
         };
     }
+
+    function isJavaScript() {
+        return $$$('environmentDescriptor').split('|')[1] == 'javascript';
+    }
 }
