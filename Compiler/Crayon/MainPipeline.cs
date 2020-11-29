@@ -197,8 +197,6 @@ namespace Crayon.Pipeline
                 JavaPackage = buildContext.JavaPackage,
                 IconPaths = buildContext.IconFilePaths,
                 LaunchScreenPath = buildContext.LaunchScreenPath,
-                WindowWidth = buildContext.WindowWidth,
-                WindowHeight = buildContext.WindowHeight,
                 Orientations = buildContext.Orientation,
             };
         }
