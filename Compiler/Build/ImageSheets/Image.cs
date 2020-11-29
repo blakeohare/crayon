@@ -1,11 +1,8 @@
 ﻿using Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Build.ImageSheets
 {
-    class Image2
+    class Image
     {
         public string Path { get; set; }
         public FileOutput File { get; set; }
