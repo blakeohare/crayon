@@ -43,7 +43,6 @@ LIBRARIES = [
 	'UserData',
 	'Web',
 	'Xml',
-	# 'Zip',
 	
 	'Dummy',
 ]
