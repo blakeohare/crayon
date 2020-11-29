@@ -83,7 +83,6 @@
             new Array<FunctionInfo>(100),
             new Dictionary<int, FunctionInfo>(),
             null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
-            new Dictionary<int, Func<Value, VmContext, Array<Value>>>(), // CNI function pointers by ID
             -1, // the global name ID for "length"
             new Array<int>(10), // primitive method to function ID fallback lookup
             0, // user code start

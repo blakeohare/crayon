@@ -117,7 +117,7 @@ var addLiteralImpl = function(vm, row, stringArg) {
 	} else if ((type == 9)) {
 		var index = vm[4][4].length;
 		vm[4][4].push(buildCommonString(g, stringArg));
-		vm[4][20][stringArg] = index;
+		vm[4][19][stringArg] = index;
 	} else if ((type == 10)) {
 		var cv = [false, row[1]];
 		vm[4][4].push([10, cv]);
@@ -130,7 +130,7 @@ var addNameImpl = function(vm, nameValue) {
 	vm[4][2][nameValue] = index;
 	vm[4][1].push(nameValue);
 	if ("length" == nameValue) {
-		vm[4][14] = index;
+		vm[4][13] = index;
 	}
 	return 0;
 };
@@ -614,7 +614,7 @@ var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	var executionContext = [0, stack, 0, 100, PST$createNewArray(100), localsStack, localsStackSet, 1, 0, false, null, false, 0, null];
 	var executionContexts = {};
 	executionContexts[0] = executionContext;
-	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, {}, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
+	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
 	return vm;
 };
 
@@ -1268,12 +1268,12 @@ var EX_UnsupportedOperation = function(ec, exMsg) {
 var finalizeInitializationImpl = function(vm, projectId, localeCount) {
 	vm[3][1] = PST$multiplyList(vm[3][2], 1);
 	vm[3][2] = null;
-	vm[4][19][2] = localeCount;
+	vm[4][18][2] = localeCount;
 	vm[4][0] = PST$multiplyList(vm[4][1], 1);
 	vm[4][3] = PST$multiplyList(vm[4][4], 1);
 	vm[4][12] = primitiveMethodsInitializeLookup(vm[4][2]);
 	vm[8] = PST$createNewArray(vm[4][0].length);
-	vm[4][17] = projectId;
+	vm[4][16] = projectId;
 	vm[4][1] = null;
 	vm[4][4] = null;
 	vm[6] = true;
@@ -1336,7 +1336,7 @@ var generateEsfData = function(byteCodeLength, esfArgs) {
 var generateException = function(vm, stack, pc, valueStackSize, ec, type, message) {
 	ec[2] = valueStackSize;
 	stack[0] = pc;
-	var mn = vm[4][19];
+	var mn = vm[4][18];
 	var generateExceptionFunctionId = mn[1];
 	var functionInfo = vm[4][10][generateExceptionFunctionId];
 	pc = functionInfo[2];
@@ -1839,7 +1839,7 @@ var initializeClass = function(pc, vm, args, className) {
 		staticFields[i] = vm[13][0];
 		i += 1;
 	}
-	var classInfo = [classId, globalNameId, baseClassId, assemblyId, staticInitializationState, staticFields, staticConstructorFunctionId, constructorFunctionId, 0, null, null, null, null, null, vm[4][21][classId], null, className];
+	var classInfo = [classId, globalNameId, baseClassId, assemblyId, staticInitializationState, staticFields, staticConstructorFunctionId, constructorFunctionId, 0, null, null, null, null, null, vm[4][20][classId], null, className];
 	var classTable = getClassTable(vm, classId);
 	classTable[classId] = classInfo;
 	var classChain = [];
@@ -1926,7 +1926,7 @@ var initializeClass = function(pc, vm, args, className) {
 		}
 	}
 	if ("Core.Exception" == className) {
-		var mn = vm[4][19];
+		var mn = vm[4][18];
 		mn[0] = classId;
 	}
 	return 0;
@@ -1989,19 +1989,19 @@ var initializeFunction = function(vm, args, currentPc, stringArg) {
 	}
 	var functionTable = getFunctionTable(vm, functionId);
 	functionTable[functionId] = [functionId, nameId, currentPc, minArgCount, maxArgCount, functionType, classId, localsCount, pcOffsetsForOptionalArgs, stringArg, null];
-	vm[4][22] = functionTable[functionId];
+	vm[4][21] = functionTable[functionId];
 	if ((nameId >= 0)) {
 		var name = vm[4][0][nameId];
 		if ("_LIB_CORE_list_filter" == name) {
-			vm[4][15][0] = functionId;
+			vm[4][14][0] = functionId;
 		} else if ("_LIB_CORE_list_map" == name) {
-			vm[4][15][1] = functionId;
+			vm[4][14][1] = functionId;
 		} else if ("_LIB_CORE_list_sort_by_key" == name) {
-			vm[4][15][2] = functionId;
+			vm[4][14][2] = functionId;
 		} else if ("_LIB_CORE_invoke" == name) {
-			vm[4][15][3] = functionId;
+			vm[4][14][3] = functionId;
 		} else if ("_LIB_CORE_generateException" == name) {
-			var mn = vm[4][19];
+			var mn = vm[4][18];
 			mn[1] = functionId;
 		}
 	}
@@ -2035,7 +2035,7 @@ var initLocTable = function(vm, row) {
 	var classId = row[0];
 	var memberCount = row[1];
 	var nameId = 0;
-	var totalLocales = vm[4][19][2];
+	var totalLocales = vm[4][18][2];
 	var lookup = {};
 	var i = 2;
 	while ((i < row.length)) {
@@ -2051,7 +2051,7 @@ var initLocTable = function(vm, row) {
 		}
 		i += memberCount;
 	}
-	vm[4][21][classId] = lookup;
+	vm[4][20][classId] = lookup;
 	return 0;
 };
 
@@ -2180,12 +2180,12 @@ var interpretImpl = function(vm, executionContextId) {
 	var arg9 = null;
 	var arg10 = null;
 	var globalNameIdToPrimitiveMethodName = vm[4][12];
-	var magicNumbers = vm[4][19];
+	var magicNumbers = vm[4][18];
 	var integerSwitchesByPc = vm[2][3];
 	var stringSwitchesByPc = vm[2][4];
 	var integerSwitch = null;
 	var stringSwitch = null;
-	var esfData = vm[4][18];
+	var esfData = vm[4][17];
 	var closure = null;
 	var parentClosure = null;
 	var intBuffer = PST$createNewArray(16);
@@ -2196,7 +2196,6 @@ var interpretImpl = function(vm, executionContextId) {
 	var localsStackOffset = stack[2];
 	var funcArgs = vm[8];
 	var pc = stack[0];
-	var nativeFp = null;
 	var debugData = vm[2][5];
 	var isBreakPointPresent = debugData[0];
 	while (true) {
@@ -3400,7 +3399,7 @@ var interpretImpl = function(vm, executionContextId) {
 												hasInterrupt = EX_InvalidArgument(ec, "list filter method requires a function pointer as its argument.");
 											} else {
 												primitiveMethodToCoreLibraryFallback = true;
-												functionId = metadata[15][0];
+												functionId = metadata[14][0];
 												funcArgs[1] = value;
 												argCount = 2;
 												output = null;
@@ -3483,7 +3482,7 @@ var interpretImpl = function(vm, executionContextId) {
 												hasInterrupt = EX_InvalidArgument(ec, "list map method requires a function pointer as its argument.");
 											} else {
 												primitiveMethodToCoreLibraryFallback = true;
-												functionId = metadata[15][1];
+												functionId = metadata[14][1];
 												funcArgs[1] = value;
 												argCount = 2;
 												output = null;
@@ -3557,7 +3556,7 @@ var interpretImpl = function(vm, executionContextId) {
 											value2 = funcArgs[0];
 											if ((value2[0] == 9)) {
 												primitiveMethodToCoreLibraryFallback = true;
-												functionId = metadata[15][2];
+												functionId = metadata[14][2];
 												funcArgs[1] = value;
 												argCount = 2;
 											} else {
@@ -3824,7 +3823,7 @@ var interpretImpl = function(vm, executionContextId) {
 										funcArgs[0] = value;
 										argCount = 2;
 										primitiveMethodToCoreLibraryFallback = true;
-										functionId = metadata[15][3];
+										functionId = metadata[14][3];
 										output = null;
 										break;
 									default:
@@ -4053,42 +4052,10 @@ var interpretImpl = function(vm, executionContextId) {
 				classTable = metadata[9];
 				break;
 			case 15:
-				// CNI_INVOKE;
-				nativeFp = metadata[13][row[0]];
-				if ((nativeFp == null)) {
-					hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");
-				} else {
-					_len = row[1];
-					valueStackSize -= _len;
-					valueArray1 = PST$createNewArray(_len);
-					i = 0;
-					while ((i < _len)) {
-						valueArray1[i] = valueStack[(valueStackSize + i)];
-						i += 1;
-					}
-					prepareToSuspend(ec, stack, valueStackSize, pc);
-					value = nativeFp(vm, valueArray1);
-					if ((row[2] == 1)) {
-						if ((valueStackSize == valueStackCapacity)) {
-							valueStack = valueStackIncreaseCapacity(ec);
-							valueStackCapacity = valueStack.length;
-						}
-						valueStack[valueStackSize] = value;
-						valueStackSize += 1;
-					}
-					if (ec[11]) {
-						prepareToSuspend(ec, stack, valueStackSize, pc);
-						ec[11] = false;
-						if ((ec[12] == 1)) {
-							return suspendInterpreter();
-						}
-					}
-				}
+				// UNUSED_CNI_INVOKE;
 				break;
 			case 16:
-				// CNI_REGISTER;
-				nativeFp = C$common$getFunction(stringArgs[pc]);
-				metadata[13][row[0]] = nativeFp;
+				// UNUSED_CNI_REGISTER;
 				break;
 			case 17:
 				// COMMAND_LINE_ARGS;
@@ -4613,7 +4580,7 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 31:
 						// projectId;
-						output = buildCommonString(globals, metadata[17]);
+						output = buildCommonString(globals, metadata[16]);
 						break;
 					case 32:
 						// isJavaScript;
@@ -5310,7 +5277,7 @@ var interpretImpl = function(vm, executionContextId) {
 				break;
 			case 20:
 				// DEBUG_SYMBOLS;
-				applyDebugSymbolData(vm, row, stringArgs[pc], metadata[22]);
+				applyDebugSymbolData(vm, row, stringArgs[pc], metadata[21]);
 				break;
 			case 21:
 				// DEF_DICT;
@@ -5513,21 +5480,21 @@ var interpretImpl = function(vm, executionContextId) {
 						}
 						break;
 					case 5:
-						if ((metadata[14] == nameId)) {
+						if ((metadata[13] == nameId)) {
 							output = buildInteger(globals, (value[1]).length);
 						} else {
 							output = null;
 						}
 						break;
 					case 6:
-						if ((metadata[14] == nameId)) {
+						if ((metadata[13] == nameId)) {
 							output = buildInteger(globals, (value[1])[1]);
 						} else {
 							output = null;
 						}
 						break;
 					case 7:
-						if ((metadata[14] == nameId)) {
+						if ((metadata[13] == nameId)) {
 							output = buildInteger(globals, (value[1])[0]);
 						} else {
 							output = null;
@@ -5676,7 +5643,7 @@ var interpretImpl = function(vm, executionContextId) {
 			case 30:
 				// ESF_LOOKUP;
 				esfData = generateEsfData(args.length, row);
-				metadata[18] = esfData;
+				metadata[17] = esfData;
 				break;
 			case 31:
 				// EXCEPTION_HANDLED_TOGGLE;
@@ -6344,7 +6311,7 @@ var interpretImpl = function(vm, executionContextId) {
 				break;
 			case 64:
 				// USER_CODE_START;
-				metadata[16] = row[0];
+				metadata[15] = row[0];
 				break;
 			case 65:
 				// VERIFY_TYPE_IS_ITERABLE;
@@ -7978,7 +7945,7 @@ var textencoding_convertTextToBytes = function(vm, arg1, arg2, arg3, arg4) {
 
 var tokenDataImpl = function(vm, row) {
 	var tokensByPc = vm[3][0];
-	var pc = (row[0] + vm[4][16]);
+	var pc = (row[0] + vm[4][15]);
 	var line = row[1];
 	var col = row[2];
 	var file = row[3];

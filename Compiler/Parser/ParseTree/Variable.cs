@@ -43,11 +43,6 @@ namespace Parser.ParseTree
                 throw new ParserException(this, "Core function invocations cannot stand alone and must be immediately invoked.");
             }
 
-            if (this.Name.StartsWith("$"))
-            {
-                throw new ParserException(this, "CNI functions must be invoked and cannot be used as function pointers.");
-            }
-
             NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(this.Name, this.TopLevelEntity);
             if (nrt != null)
             {

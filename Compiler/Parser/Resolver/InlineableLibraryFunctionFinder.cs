@@ -28,20 +28,13 @@ namespace Parser.Resolver
                         ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
                         if (returnStatement != null)
                         {
-                            Expression[] argsFromCniOrCoreFunction = null;
-                            if (returnStatement.Expression is CniFunctionInvocation)
+                            Expression[] argsFromCoreFunction = null;
+                            if (returnStatement.Expression is CoreFunctionInvocation)
                             {
-                                argsFromCniOrCoreFunction = ((CniFunctionInvocation)returnStatement.Expression).Args;
-                            }
-                            else if (returnStatement.Expression is CoreFunctionInvocation)
-                            {
-                                argsFromCniOrCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
-                            }
+                                argsFromCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
 
-                            if (argsFromCniOrCoreFunction != null)
-                            {
                                 bool allSimpleVariables = true;
-                                foreach (Expression expr in argsFromCniOrCoreFunction)
+                                foreach (Expression expr in argsFromCoreFunction)
                                 {
                                     if (!expr.IsInlineCandidate)
                                     {

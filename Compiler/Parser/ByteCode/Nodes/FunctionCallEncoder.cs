@@ -133,7 +133,7 @@ namespace Parser.ByteCode.Nodes
             FunctionDefinition embedFunctionBeingInlined,
             bool outputUsed)
         {
-            Expression coreOrLibFunctionBeingInlined = ((ReturnStatement)embedFunctionBeingInlined.Code[0]).Expression;
+            Expression coreFunctionBeingInlined = ((ReturnStatement)embedFunctionBeingInlined.Code[0]).Expression;
 
             int embedFuncLength = embedFunctionBeingInlined.ArgNames.Length;
             int userProvidedArgLength = userWrittenOuterFunctionCall.Args.Length;
@@ -163,16 +163,13 @@ namespace Parser.ByteCode.Nodes
                 userProvidedAndImplicitArgumentsByArgName[embedFunctionBeingInlined.ArgNames[i].Value] = argValue;
             }
 
-            CniFunctionInvocation cniFunctionCall = coreOrLibFunctionBeingInlined as CniFunctionInvocation;
-            CoreFunctionInvocation coreFunctionCall = coreOrLibFunctionBeingInlined as CoreFunctionInvocation;
-            if (cniFunctionCall == null && coreFunctionCall == null)
+            CoreFunctionInvocation coreFunctionCall = coreFunctionBeingInlined as CoreFunctionInvocation;
+            if (coreFunctionCall == null)
             {
-                throw new InvalidOperationException(); // This shouldn't happen. The body of the library function should have been verified by the resolver before getting to this state.
+                throw new InvalidOperationException(); // This shouldn't happen. The body of the core function should have been verified by the resolver before getting to this state.
             }
 
-            Expression[] innermostArgList = cniFunctionCall != null
-                ? cniFunctionCall.Args
-                : coreFunctionCall.Args;
+            Expression[] innermostArgList = coreFunctionCall.Args;
 
             // This is the new list of arguments that will be passed to the inner underlying lib/core function.
             List<Expression> finalArguments = new List<Expression>();
@@ -196,28 +193,14 @@ namespace Parser.ByteCode.Nodes
                 }
             }
 
-            if (cniFunctionCall != null)
-            {
-                CniFunctionInvocationEncoder.Compile(
-                    bcc,
-                    parser,
-                    buffer,
-                    cniFunctionCall,
-                    finalArguments.ToArray(),
-                    userWrittenOuterFunctionCall.ParenToken,
-                    outputUsed);
-            }
-            else
-            {
-                CoreFunctionInvocationEncoder.Compile(
-                    bcc,
-                    parser,
-                    buffer,
-                    coreFunctionCall,
-                    finalArguments.ToArray(),
-                    userWrittenOuterFunctionCall.ParenToken,
-                    outputUsed);
-            }
+            CoreFunctionInvocationEncoder.Compile(
+                bcc,
+                parser,
+                buffer,
+                coreFunctionCall,
+                finalArguments.ToArray(),
+                userWrittenOuterFunctionCall.ParenToken,
+                outputUsed);
         }
     }
 }

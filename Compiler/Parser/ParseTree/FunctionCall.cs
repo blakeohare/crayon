@@ -285,11 +285,6 @@ namespace Parser.ParseTree
 
                     return new CoreFunctionInvocation(this.FirstToken, this.Args, this.Owner);
                 }
-                else if (varName.StartsWith("$") && !varName.StartsWith("$$"))
-                {
-                    this.BatchExpressionEntityNameResolver(parser, this.Args);
-                    return new CniFunctionInvocation(this.FirstToken, this.Args, this.Owner).ResolveEntityNames(parser);
-                }
             }
 
             this.Root = this.Root.ResolveEntityNames(parser);

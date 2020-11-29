@@ -19,7 +19,6 @@ namespace Interpreter.Structs
         public FunctionInfo[] functionTable;
         public Dictionary<int, FunctionInfo> lambdaTable;
         public int[] globalNameIdToPrimitiveMethodName;
-        public Dictionary<int, System.Func<VmContext, Value[], Value>> cniFunctionsById;
         public int lengthId;
         public int[] primitiveMethodFunctionIdFallbackLookup;
         public int userCodeStart;
@@ -30,7 +29,7 @@ namespace Interpreter.Structs
         public Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
         public FunctionInfo mostRecentFunctionDef;
 
-        public VmMetadata(string[] identifiers, List<string> identifiersBuilder, Dictionary<string, int> invIdentifiers, Value[] literalTable, List<Value> literalTableBuilder, Dictionary<int, int>[] integerSwitchLookups, List<Dictionary<int, int>> integerSwitchLookupsBuilder, Dictionary<string, int>[] stringSwitchLookups, List<Dictionary<string, int>> stringSwitchLookupsBuilder, ClassInfo[] classTable, FunctionInfo[] functionTable, Dictionary<int, FunctionInfo> lambdaTable, int[] globalNameIdToPrimitiveMethodName, Dictionary<int, System.Func<VmContext, Value[], Value>> cniFunctionsById, int lengthId, int[] primitiveMethodFunctionIdFallbackLookup, int userCodeStart, string projectId, int[][] esfData, MagicNumbers magicNumbers, Dictionary<string, int> invFunctionNameLiterals, Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder, FunctionInfo mostRecentFunctionDef)
+        public VmMetadata(string[] identifiers, List<string> identifiersBuilder, Dictionary<string, int> invIdentifiers, Value[] literalTable, List<Value> literalTableBuilder, Dictionary<int, int>[] integerSwitchLookups, List<Dictionary<int, int>> integerSwitchLookupsBuilder, Dictionary<string, int>[] stringSwitchLookups, List<Dictionary<string, int>> stringSwitchLookupsBuilder, ClassInfo[] classTable, FunctionInfo[] functionTable, Dictionary<int, FunctionInfo> lambdaTable, int[] globalNameIdToPrimitiveMethodName, int lengthId, int[] primitiveMethodFunctionIdFallbackLookup, int userCodeStart, string projectId, int[][] esfData, MagicNumbers magicNumbers, Dictionary<string, int> invFunctionNameLiterals, Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder, FunctionInfo mostRecentFunctionDef)
         {
             this.identifiers = identifiers;
             this.identifiersBuilder = identifiersBuilder;
@@ -45,7 +44,6 @@ namespace Interpreter.Structs
             this.functionTable = functionTable;
             this.lambdaTable = lambdaTable;
             this.globalNameIdToPrimitiveMethodName = globalNameIdToPrimitiveMethodName;
-            this.cniFunctionsById = cniFunctionsById;
             this.lengthId = lengthId;
             this.primitiveMethodFunctionIdFallbackLookup = primitiveMethodFunctionIdFallbackLookup;
             this.userCodeStart = userCodeStart;
