@@ -43,16 +43,6 @@
             "compilerLocale": "jp"
         },
         {
-            "name": "java",
-            "source": "source",
-            "platform": "java-app"
-        },
-        {
-            "name": "python",
-            "source": "source",
-            "platform": "python-app"
-        },
-        {
             "name": "android",
             "source": "source",
             "platform": "javascript-app-android"

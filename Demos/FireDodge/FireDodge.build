@@ -21,14 +21,6 @@
             "platform": "csharp-app"
         },
         {
-            "name": "java",
-            "platform": "java-app"
-        },
-        {
-            "name": "python",
-            "platform": "python-app"
-        },
-        {
             "name": "android",
             "platform": "javascript-app-android"
         },

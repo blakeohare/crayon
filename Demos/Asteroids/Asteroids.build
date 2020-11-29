@@ -6,15 +6,8 @@
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],
 
-    "windowSize": {
-        "width": 800,
-        "height": 600
-    },
     "version": "2.9.0",
 
-    "imageSheets": [
-        { "id": "everything", "prefix": "*" }
-    ],
     "guidSeed": "org.crayonlang.demos.asteroids,%VERSION%,%TARGET_NAME%",
 
     "targets": [
@@ -26,14 +19,6 @@
         {
             "name": "csharp",
             "platform": "csharp-app"
-        },
-        {
-            "name": "java",
-            "platform": "java-app"
-        },
-        {
-            "name": "python",
-            "platform": "python-app"
         }
     ]
 }
