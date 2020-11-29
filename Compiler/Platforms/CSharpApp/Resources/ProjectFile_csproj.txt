@@ -59,9 +59,6 @@
   <ItemGroup>
     %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
-  <ItemGroup>
-    %%%DLLS_COPIED%%%
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Choose>
     <When Condition=" '$(SolutionFileName)' == '%%%PROJECT_ID%%%.sln' ">
