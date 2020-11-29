@@ -48,7 +48,7 @@
         JUMP_IF_TRUE,
         JUMP_IF_TRUE_NO_POP,
         LAMBDA,
-        LIB_DECLARATION, // 1: library reference ID#, string: name of the library
+        UNUSED_LIB_DECLARATION, // 1: library reference ID#, string: name of the library
         LIST_SLICE,
         LITERAL, // 1: literal ID in the literal table
         LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.

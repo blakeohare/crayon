@@ -26,13 +26,10 @@ namespace Parser.ByteCode
 
             ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
 
-            ByteBuffer buildLibraryDeclarations = this.BuildLibraryDeclarations(parser);
-
             ByteBuffer header = new ByteBuffer();
             header.Concat(literalsTable);
             header.Concat(tokenData);
             header.Concat(fileContent);
-            header.Concat(buildLibraryDeclarations);
             header.Concat(buildCniTable);
 
             // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
@@ -89,26 +86,6 @@ namespace Parser.ByteCode
                 }
             }
             return buffer;
-        }
-
-        private ByteBuffer BuildLibraryDeclarations(ParserContext parser)
-        {
-            ByteBuffer output = new ByteBuffer();
-
-            int id = 1;
-            foreach (CompilationScope scope in parser.ScopeManager.ImportedAssemblyScopes)
-            {
-                List<string> descriptorComponents = new List<string>()
-                {
-                    scope.Metadata.ID,
-                    scope.Metadata.Version,
-                    scope.Metadata.CniStartupFunction ?? ""
-                };
-                string libraryDescriptor = string.Join(",", descriptorComponents);
-                output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);
-            }
-
-            return output;
         }
 
         private ByteBuffer BuildLocaleNameIdTable(ParserContext parser)
