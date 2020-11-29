@@ -3,7 +3,6 @@ C$common$textResources = {};
 C$common$programData = null;
 C$common$resources = {};
 C$common$binaryResources = {};
-C$common$libraryFunctionLookups = {};
 C$common$envDescriptor = () => 'web|javascript';
 C$common$globalOptions = {};
 C$common$globalOptions['fullscreen'] = false;
@@ -57,36 +56,16 @@ function C$runInterpreterWithFunctionPointerNativeArgs(fp, args) {
 function C$handleVmResult(res) {
 	var vm = C$common$programData;
 	var status = getVmResultStatus(res);
-	while (status == 5 || status == 6) { // REINVOKE || LOAD_ASSEMBLY
-		if (status == 5) {
-			var delayMillis = Math.floor(1000 * getVmReinvokeDelay(res));
-			var execId = getVmResultExecId(res);
-			window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
-			return;
-		} else {
-			var parts = getVmResultAssemblyInfo(res).split(',');
-			var name = parts[0];
-			var version = parts[1];
-			var startupFunc = parts[2];
-			C$loadAssembly(name, version, startupFunc);
-		}
-		res = runInterpreter(vm, getVmResultExecId(res))
-		status = getVmResultStatus(res);
+	while (status == 5) { // REINVOKE
+		var delayMillis = Math.floor(1000 * getVmReinvokeDelay(res));
+		var execId = getVmResultExecId(res);
+		window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
 	}
 
 	if (status == 1 || status == 2 || status == 3) return;
 
 	throw "Unknown status";
 }
-
-C$loadAssembly = function(name, ver, startupFn) {
-	if (startupFn.length > 0) {
-		var fn = window[startupFn];
-		if (fn !== undefined) {
-			fn(C$common$programData, []);
-		}
-	}
-};
 
 C$common$readResourceText = function (path) {
 	var v = C$common$getTextRes(path);
@@ -114,18 +93,6 @@ C$common$getBinaryResBase64 = function (path) {
 
 C$common$print = function (value) {
 	console.log(value);
-};
-
-C$common$scrapeLibFuncNames = function(libname) {
-	var prefix = 'lib_' + libname + '_function_';
-	var functions = {};
-	for (var key in window) {
-		if (key.indexOf(prefix) === 0) {
-			var name = key.substring(prefix.length, key.length + prefix.length);
-			functions[name] = window[key];
-		}
-	}
-	C$common$libraryFunctionLookups[libname] = functions;
 };
 
 C$common$getFunction = function(name) {
