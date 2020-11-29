@@ -7735,10 +7735,7 @@ namespace Interpreter.Vm
                         pc += row[3];
                         break;
                     case 46:
-                        // LIB_DECLARATION;
-                        prepareToSuspend(ec, stack, valueStackSize, pc);
-                        ec.activeInterrupt = new Interrupt(4, row[0], stringArgs[pc], 0.0, null);
-                        hasInterrupt = true;
+                        // UNUSED_LIB_DECLARATION;
                         break;
                     case 47:
                         // LIST_SLICE;

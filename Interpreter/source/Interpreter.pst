@@ -317,7 +317,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.JUMP_IF_TRUE: Core.EmitComment("JUMP_IF_TRUE"); @import("ops/jump_if_true.pst"); break;
             case OpCodes.JUMP_IF_TRUE_NO_POP: Core.EmitComment("JUMP_IF_TRUE_NO_POP"); @import("ops/jump_if_true_no_pop.pst"); break;
             case OpCodes.LAMBDA: Core.EmitComment("LAMBDA"); @import("ops/lambda.pst"); break;
-            case OpCodes.LIB_DECLARATION: Core.EmitComment("LIB_DECLARATION"); @import("ops/lib_declaration.pst"); break;
+            case OpCodes.UNUSED_LIB_DECLARATION: Core.EmitComment("UNUSED_LIB_DECLARATION"); break;
             case OpCodes.LIST_SLICE: Core.EmitComment("LIST_SLICE"); @import("ops/list_slice.pst"); break;
             case OpCodes.LITERAL: Core.EmitComment("LITERAL"); @import("ops/literal.pst"); break;
             case OpCodes.LITERAL_STREAM: Core.EmitComment("LITERAL_STREAM"); @import("ops/literal_stream.pst"); break;

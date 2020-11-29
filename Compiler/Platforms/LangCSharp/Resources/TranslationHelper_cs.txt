@@ -30,8 +30,6 @@ namespace Interpreter.Vm
             }
         }
 
-        public static LibraryRegistry LibraryRegistry { get; set; }
-
         private static List<Func<string, object>> functionPointerResolvers = new List<Func<string, object>>();
 
         public static object GetFunctionPointer(string name)

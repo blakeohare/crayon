@@ -1,3 +1,0 @@
-﻿prepareToSuspend(ec, stack, valueStackSize, pc);
-ec.activeInterrupt = new Interrupt(InterruptType.LOAD_ASSEMBLY, row[0], stringArgs[pc], 0.0, null);
-hasInterrupt = true;
