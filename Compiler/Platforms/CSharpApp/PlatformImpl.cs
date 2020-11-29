@@ -118,15 +118,12 @@ namespace CSharpApp
                 { "CSHARP_APP_ICON", "<ApplicationIcon>icon.ico</ApplicationIcon>" },
                 { "EMBEDDED_RESOURCES", "<EmbeddedResource Include=\"icon.ico\" />" },
                 { "CSHARP_CONTENT_ICON", "" },
-                { "DLLS_COPIED", "" },
             };
             string baseDir = "CrayonRuntime/";
 
-            string dllsCopiedOriginal = replacements["DLLS_COPIED"];
             string embeddedResources = replacements["EMBEDDED_RESOURCES"];
             replacements["EMBEDDED_RESOURCES"] = "";
 
-            replacements["DLLS_COPIED"] = dllsCopiedOriginal;
             replacements["EMBEDDED_RESOURCES"] = embeddedResources;
             replacements["PROJECT_GUID"] = runtimeProjectGuid;
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
