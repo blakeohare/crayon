@@ -1,0 +1,52 @@
+﻿namespace FileIOCommon {
+
+    static class Internal {
+        static function getUserDirectory() {
+            return $lib_fileiocommon_getUserDirectory();
+        }
+
+        static function initializeDiskHost(diskObj, useJsLocalStorage) {
+            return $lib_fileiocommon_initializeDisk(diskObj, useJsLocalStorage == true);
+        }
+
+        static function getCurrentDirectory() {
+            return $lib_fileiocommon_getCurrentDirectory();
+        }
+
+        static function getFileInfo(diskObj, path, mask, outBuffer) {
+            return $lib_fileiocommon_fileInfo(diskObj, path, mask, outBuffer);
+        }
+
+        static function fileWrite(diskObj, path, content, format) {
+            return $lib_fileiocommon_fileWrite(diskObj, path, content, format);
+        }
+
+        static function fileRead(diskObj, path, readAsBinary, contentsOut) {
+            return $lib_fileiocommon_fileRead(diskObj, path, readAsBinary, contentsOut);
+        }
+
+        static function fileDelete(diskObj, path) {
+            return $lib_fileiocommon_fileDelete(diskObj, path);
+        }
+
+        static function fileMove(diskObj, pathFrom, pathTo, isCopy, allowOverwrite) {
+            return $lib_fileiocommon_fileMove(diskObj, pathFrom, pathTo, isCopy, allowOverwrite);
+        }
+
+        static function directoryList(diskObj, path, includeFullPath, output) {
+            return $lib_fileiocommon_directoryList(diskObj, path, includeFullPath, output);
+        }
+
+        static function directoryCreate(diskObj, path, ensureParentsExist) {
+            return $lib_fileiocommon_directoryCreate(diskObj, path, ensureParentsExist);
+        }
+
+        static function directoryDelete(diskObj, path) {
+            return $lib_fileiocommon_directoryDelete(diskObj, path);
+        }
+
+        static function directoryMove(diskObj, pathFrom, pathTo) {
+            return $lib_fileiocommon_directoryMove(diskObj, pathFrom, pathTo);
+        }
+    }
+}

@@ -1,4 +1,6 @@
-﻿namespace FileIOCommon {
+﻿import Environment;
+
+namespace FileIOCommon {
 
     class FiocHelper {
 
@@ -19,15 +21,15 @@
 
         static field USER_DIRECTORY;
 
-        static field IS_WINDOWS = $lib_fileiocommon_isWindows();
+        static field IS_WINDOWS = Environment.getEnvironment()['platform'] == 'windows';
 
         static constructor() {
-            FiocHelper.USER_DIRECTORY = $lib_fileiocommon_getUserDirectory().replace('\\', '/').split('/');
+            FiocHelper.USER_DIRECTORY = Internal.getUserDirectory().replace('\\', '/').split('/');
         }
 
         constructor(sep, virtualDiskRoot, jsUseLocalStorage) {
-            $lib_fileiocommon_initializeDisk(this.diskHost, jsUseLocalStorage);
-            this.currentDirectoryString = virtualDiskRoot ?? $lib_fileiocommon_getCurrentDirectory();
+            Internal.initializeDiskHost(this.diskHost, jsUseLocalStorage);
+            this.currentDirectoryString = virtualDiskRoot ?? Internal.getCurrentDirectory();
             this.currentDirectoryList = this.currentDirectoryString.replace('\\', '/').split('/');
             this.isWindowsDisk = FiocHelper.IS_WINDOWS;
             if (!this.isWindowsDisk || virtualDiskRoot != null) sep = '/';
@@ -148,8 +150,7 @@
             }
 
             hardwarePath = output.join('/');
-            if ((!this.isWindowsDisk && this.virtualDiskRoot == null) ||
-                $$$('isJavaScript')) {
+            if ((!this.isWindowsDisk && this.virtualDiskRoot == null) || Environment.isJavaScript()) {
                 hardwarePath = '/' + hardwarePath;
             }
 
@@ -176,7 +177,7 @@
         function getPathInfo(path, mask) {
             if (this.virtualDiskRoot != null) this.ensureVirtualRootExists();
             path = this.normalizePathToAbsolute(path);
-            return $lib_fileiocommon_fileInfo(this.diskHost, path, mask, this.infoReusable);
+            return Internal.getFileInfo(this.diskHost, path, mask, this.infoReusable);
         }
 
         function getPathInfoObj(path) {
@@ -199,7 +200,7 @@
             this.ensureVirtualRootExists();
             path = this.normalizePathToAbsolute(path);
             // content and format may be bad values.
-            return $lib_fileiocommon_fileWrite(this.diskHost, path, content, format);
+            return Internal.fileWrite(this.diskHost, path, content, format);
         }
 
         function fileWriteText(path, content, encoding) {
@@ -213,7 +214,7 @@
         function fileReadImpl(path, readAsBinary, contentsOut) {
             this.ensureVirtualRootExists();
             path = this.normalizePathToAbsolute(path);
-            return $lib_fileiocommon_fileRead(this.diskHost, path, readAsBinary, contentsOut);
+            return Internal.fileRead(this.diskHost, path, readAsBinary, contentsOut);
         }
 
         function fileReadText(path) {
@@ -232,27 +233,27 @@
 
         function fileDelete(path) {
             path = this.normalizePathToAbsolute(path);
-            return this._validateOutput($lib_fileiocommon_fileDelete(this.diskHost, path));
+            return this._validateOutput(Internal.fileDelete(this.diskHost, path));
         }
 
         function fileMoveOrCopy(pathFrom, pathTo, isCopy, allowOverwrite) {
             pathFrom = this.normalizePathToAbsolute(pathFrom);
             pathTo = this.normalizePathToAbsolute(pathTo);
-            return this._validateOutput($lib_fileiocommon_fileMove(this.diskHost, pathFrom, pathTo, isCopy, allowOverwrite));
+            return this._validateOutput(Internal.fileMove(this.diskHost, pathFrom, pathTo, isCopy, allowOverwrite));
         }
 
         function directoryList(path, includeFullPath) {
             this.ensureVirtualRootExists();
             output = [];
             path = this.normalizePathToAbsolute(path);
-            return this._validateOutput($lib_fileiocommon_directoryList(this.diskHost, path, includeFullPath, output), output);
+            return this._validateOutput(Internal.directoryList(this.diskHost, path, includeFullPath, output), output);
         }
 
         function ensureVirtualRootExists() {
             if (this.virtualDiskRoot != null) {
-                $lib_fileiocommon_fileInfo(this.diskHost, this.virtualDiskRoot, 0, this.infoReusable);
+                Internal.getFileInfo(this.diskHost, this.virtualDiskRoot, 0, this.infoReusable);
                 if (!this.infoReusable[1]) {
-                    $lib_fileiocommon_directoryCreate(this.diskHost, this.virtualDiskRoot, true);
+                    Internal.directoryCreate(this.diskHost, this.virtualDiskRoot, true);
                 }
             }
         }
@@ -260,26 +261,32 @@
         function directoryCreate(path, createParentsIfNecessary) {
             this.ensureVirtualRootExists();
             path = this.normalizePathToAbsolute(path);
-            return this._validateOutput($lib_fileiocommon_directoryCreate(this.diskHost, path, createParentsIfNecessary));
+            return this._validateOutput(Internal.directoryCreate(this.diskHost, path, createParentsIfNecessary));
         }
 
         function directoryDelete(path) {
             path = this.normalizePathToAbsolute(path);
-            return this._validateOutput($lib_fileiocommon_directoryDelete(this.diskHost, path));
+            return this._validateOutput(Internal.directoryDelete(this.diskHost, path));
         }
 
         function directoryMove(pathFrom, pathTo) {
             pathFrom = this.normalizePathToAbsolute(pathFrom);
             pathTo = this.normalizePathToAbsolute(pathTo);
-            return this._validateOutput($lib_fileiocommon_directoryMove(this.diskHost, pathFrom, pathTo));
+            return this._validateOutput(Internal.directoryMove(this.diskHost, pathFrom, pathTo));
         }
 
         function directoryGetDescendants(path, output) {
-            Core.fail("TODO: this");
+            throw new NotImplementedException();
         }
 
         static function textToLines(text) {
-            return $lib_fileiocommon_textToLines(text, []);
+            lines = text.split('\n');
+            output = [];
+            for (line : lines) {
+                output.add(line + '\n');
+            }
+            if (output[-1].length == 0) output.pop();
+            return output;
         }
     }
 }
