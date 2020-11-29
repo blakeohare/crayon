@@ -11,7 +11,6 @@ namespace Build.BuildParseNodes
         public SourceItem[] Sources { get; set; }
         public SourceItem[] SourcesNonNull { get { return this.Sources ?? new SourceItem[0]; } }
         public string Output { get; set; }
-        public ImageSheet[] ImageSheets { get; set; }
         public string JsFilePrefix { get; set; }
         public bool JsFullPage { get { return (this.JsFullPageRaw ?? new NullableBoolean(false)).Value; } }
         internal NullableBoolean JsFullPageRaw { get; set; }

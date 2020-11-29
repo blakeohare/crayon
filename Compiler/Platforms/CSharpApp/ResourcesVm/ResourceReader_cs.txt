@@ -7,7 +7,6 @@ namespace Interpreter
     public static class ResourceReader
     {
         public static string CbxDirectory { get; set; }
-        public static string ImageSheetManifest { get; set; }
         public static string TextResourcePath { get; set; }
 
         public static string ReadMetadata(string path, bool returnEmptyOnFail)

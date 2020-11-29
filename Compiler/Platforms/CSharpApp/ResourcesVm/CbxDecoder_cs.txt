@@ -45,7 +45,6 @@ namespace CrayonRuntime
 
         public string ByteCode { get { return this.GetChunk("CODE"); } }
         public string ResourceManifest { get { return this.GetChunk("RSRC") ?? ""; } }
-        public string ImageSheetManifest { get { return this.GetChunk("IMSH") ?? ""; } }
         public string ImageManifest { get { return this.GetChunk("IMGS") ?? ""; } }
         public string CbxVersion { get { return this.vMajor + "." + this.vMinor + "." + this.vRelease; } }
 

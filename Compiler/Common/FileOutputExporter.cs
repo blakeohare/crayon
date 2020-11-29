@@ -40,10 +40,7 @@ namespace Common
 
             using (new PerformanceSection("EnsureParentFolderExists"))
             {
-                if (file.Type != FileOutputType.Ghost)
-                {
-                    FileUtil.EnsureParentFolderExists(absolutePath);
-                }
+                FileUtil.EnsureParentFolderExists(absolutePath);
             }
 
             switch (file.Type)
@@ -63,10 +60,6 @@ namespace Common
 
                 case FileOutputType.Text:
                     this.ExportTextFile(absolutePath, file.TextContent, file.TrimBomIfPresent);
-                    break;
-
-                case FileOutputType.Ghost:
-                    // do nothing.
                     break;
 
                 default:

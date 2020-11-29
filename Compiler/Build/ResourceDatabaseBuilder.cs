@@ -4,7 +4,6 @@ using CommonUtil.Disk;
 using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Build
 {
@@ -22,29 +21,9 @@ namespace Build
                 // This really needs to go in a separate helper file.
                 ResourceDatabase resourceDatabase = CreateResourceDatabase(buildContext);
 
-                using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
-                {
-                    Build.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Build.ImageSheets.ImageSheetBuilder();
-                    if (buildContext.TopLevelAssembly.ImageSheetIds != null)
-                    {
-                        foreach (string imageSheetId in buildContext.TopLevelAssembly.ImageSheetIds)
-                        {
-                            imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
-
-                            foreach (string fileMatcher in buildContext.TopLevelAssembly.ImageSheetPrefixesById[imageSheetId])
-                            {
-                                imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
-                            }
-                        }
-                    }
-                    Build.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
-
-                    resourceDatabase.AddImageSheets(imageSheets);
-                }
-
                 resourceDatabase.GenerateResourceMapping();
 
-                using (new PerformanceSection("Program.PreprareResources/ImageStuff2"))
+                using (new PerformanceSection("Program.PreprareResources/ImageStuff"))
                 {
                     ImageResourceAllocator.PrepareImageResources(resourceDatabase);
                 }
