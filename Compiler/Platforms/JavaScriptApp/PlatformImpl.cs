@@ -94,7 +94,6 @@ namespace JavaScriptApp
             };
 
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
-            replacements["JS_LIB_INCLUSIONS"] = GenerateJsLibInclusionHtml(output.Keys);
 
             this.CopyResourceAsText(output, "index.html", "Resources/HostHtml.txt", replacements);
             this.CopyResourceAsText(output, "test_server.py", "Resources/TestServerPy.txt", replacements);
@@ -171,21 +170,6 @@ namespace JavaScriptApp
             }
 
             // TODO: minify JavaScript across all of output dictionary
-        }
-
-        public static string GenerateJsLibInclusionHtml(ICollection<string> filesIncluded)
-        {
-            string[] libraryPathsIncluded = filesIncluded.Where(s => s.StartsWith("libs/lib_")).OrderBy(s => s).ToArray();
-            if (libraryPathsIncluded.Length > 0)
-            {
-                return
-                    "<script type=\"text/javascript\" src=\"" +
-                    string.Join(
-                        "\"></script>\n<script type=\"text/javascript\" src=\"",
-                        libraryPathsIncluded) +
-                    "\"></script>";
-            }
-            return "";
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
