@@ -1,4 +1,4 @@
-﻿namespace U3Game {
+﻿namespace Game {
 
     @localized('en', 'EventType')
     @localized('es', 'TipoEvento')

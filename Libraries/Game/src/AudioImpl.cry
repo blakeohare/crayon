@@ -1,4 +1,4 @@
-﻿namespace U3Game {
+﻿namespace Game {
     function AudioImpl_isSupported() { return false; }
     function AudioImpl_getAudioResourcePath(path) { throw new NotImplementedException(); }
     function AudioImpl_musicStop() { throw new NotImplementedException(); }
