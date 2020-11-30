@@ -68,5 +68,8 @@
         "releaseType": "draft"
       }
     ]
+  },
+  "dependencies": {
+    "find-process": "^1.4.4"
   }
 }

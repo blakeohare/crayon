@@ -21,13 +21,12 @@ namespace U3Direct {
                 this._hub.setDebugOverrideToken('u3debug');
             } else {
                 this._hub.setDesktopInitializer(token => {
-                    currentProcessId = 0; // TODO: include the current process ID as an arg
                     cryHome = Environment.getEnvironmentVariable('CRAYON_HOME');
                     if (cryHome == null) throw new Exception("CRAYON_HOME not set.");
                     u3Executable = cryHome + '\\u3\\u3window.exe'; // TODO: check platform first
                     args = [
                         '--u3:token', token,
-                        '--u3:pid', currentProcessId + ''
+                        '--u3:pid', Process.getCurrentProcessId() + ''
                     ];
                     p = new Process()
                         .setExecutable(Environment.replaceEnvironmentVariables(u3Executable))
@@ -87,6 +86,10 @@ namespace U3Direct {
                     "height": height,
                     "initialData": initialData,
                     "keepAspectRatio": keepAspectRatio,
+
+                    // This is a duplicate with command line args, but debug mode doesn't send
+                    // command line args, so they're being sent again later here.
+                    "pid": Process.getCurrentProcessId(),
                 }, (_) => {
                     setupComplete = true;
                 });
