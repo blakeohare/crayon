@@ -1,6 +1,6 @@
 ﻿import Images;
 
-namespace U3Graphics2D {
+namespace Graphics2D {
 
     const INVALID_COLOR_ERR = "Color values must be integers from 0 to 255.";
 

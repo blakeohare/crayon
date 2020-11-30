@@ -1,4 +1,4 @@
-﻿import U3Game;
+﻿import Game;
 
 const FPS = 60;
 const SCREEN_WIDTH = 800;

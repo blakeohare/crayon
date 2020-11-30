@@ -1,6 +1,6 @@
-﻿@localized('en', 'U3Game')
+﻿@localized('en', 'Game')
 @localized('es', 'Juego')
 @localized('jp', 'JPGame')
-namespace U3Game {
+namespace Game {
 
 }

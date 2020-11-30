@@ -1,5 +1,5 @@
 ﻿import Math;
-import U3Game;
+import Game;
 
 namespace Audio {
 

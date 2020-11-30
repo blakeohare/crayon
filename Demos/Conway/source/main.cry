@@ -1,5 +1,5 @@
-﻿import U3Game;
-import U3Graphics2D;
+﻿import Game;
+import Graphics2D;
 import Math;
 import Random;
 

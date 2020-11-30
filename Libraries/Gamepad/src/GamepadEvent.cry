@@ -1,4 +1,4 @@
-﻿import U3Game;
+﻿import Game;
 
 namespace Gamepad {
 

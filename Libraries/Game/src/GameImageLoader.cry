@@ -2,7 +2,7 @@
 import Math;
 import Resources;
 
-namespace U3Game {
+namespace Game {
 
     class GameImageLoader {
         field _imagesDone = {};
