@@ -1,8 +1,10 @@
 const { app } = require('electron');
 const { createHub } = require('./messagehubclient');
 const renderwindow = require('./renderwindow.js');
+const { watchProcess } = require('./procwatcher.js');
 
 const HIDE_MENU_AND_DEBUG = false;
+let isWatchingProcess = false;
 
 let args = (() => {
     let output = {};
@@ -20,10 +22,21 @@ let args = (() => {
 
 let u3Token = args.token || 'u3debug';
 let pid = args.pid === undefined ? null : args.pid;
-if (pid <= 0) pid = null; // TODO: monitor this process ID and terminate the u3 window if the pid goes away. 
+
+let isShutdown = false;
+let shutEverythingDown = [() => { shutdown = true; }];
+let isWatching = false;
+let startWatching = id => {
+    if (isWatching) return;
+    isWatching = true;
+    watchProcess(id, () => shutEverythingDown.forEach(cb => cb()));
+};
+
+if (pid <= 0) pid = null;
+if (pid > 0) startWatching(pid);
 
 app.whenReady().then(() => {
-
+    if (isShutdown) return;
     let rwindow = null;
 
     const hub = createHub(u3Token);
@@ -31,7 +44,8 @@ app.whenReady().then(() => {
     let queuedEventBatch = [];
 
     hub.addListener('u3init', (msg, cb) => {
-        let { title, width, height, initialData } = msg;
+        let { title, width, height, initialData, pid} = msg;
+        startWatching(pid);
         rwindow = renderwindow.createWindow(
             title, 
             width, 
@@ -41,6 +55,7 @@ app.whenReady().then(() => {
             (closeBehavior) => {
                 hub.send('u3close', closeBehavior);
             });
+        shutEverythingDown.push(() => rwindow.close());
         rwindow.setListener('events', msgs => {
             hub.send('u3events', msgs);
         });
