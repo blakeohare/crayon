@@ -1,5 +1,5 @@
 {
-    "name": "Gae",
+    "name": "Game",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/game",
     "description": "Library to create a game window and manage game input."
