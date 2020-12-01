@@ -2,5 +2,5 @@
     "name": "Gamepad",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/gamepad",
-    "description": "Library for interacting with gamepads.",
+    "description": "Library for interacting with gamepads."
 }

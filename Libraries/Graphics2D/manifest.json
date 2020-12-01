@@ -1,5 +1,5 @@
 {
-    "name": "Direct",
+    "name": "Graphics2D",
     "author": "Blake O'Hare",
     "documentation": "http://crayonlang.org/docs/2.9.0/graphics2d",
     "description": "Library to draw on a Canvas instance."
