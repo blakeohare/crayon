@@ -1,4 +1,4 @@
-namespace Graphics2D {
+﻿namespace Graphics2D {
 
     class Color {
         field _c;
@@ -19,7 +19,7 @@ namespace Graphics2D {
         static field GREEN = new Color(0, 128, 0);
         static field BLUE = new Color(0, 0, 255);
         static field PURPLE = new Color(128, 0, 128);
-        
+
         static field BROWN = new Color(128, 64, 0);
         static field PINK = new Color(255, 128, 160);
         static field MAGENTA = new Color(255, 0, 255);
