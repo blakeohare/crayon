@@ -82,6 +82,8 @@ namespace CommonUtil.Resources
                 }
             }
 
+            string[] things = assembly.GetManifestResourceNames();
+
             string fullPath = assembly.GetName().Name + "." + canonicalizedPath;
             if (!nameLookup.ContainsKey(fullPath.ToLowerInvariant()))
             {

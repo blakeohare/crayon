@@ -17,6 +17,7 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
         private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
+        private static readonly string GEN_DEFAULT_PROJ_TYPE = "projType";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
         private static readonly string VERSION = "version";
 
@@ -68,6 +69,7 @@ namespace Crayon
             GEN_DEFAULT_PROJ,
             GEN_DEFAULT_PROJ_ES,
             GEN_DEFAULT_PROJ_JP,
+            GEN_DEFAULT_PROJ_TYPE,
         };
 
         private static readonly Dictionary<string, string> ALIASES = new Dictionary<string, string>()
@@ -217,6 +219,11 @@ namespace Crayon
             if (directRunArgs.Count > 0)
             {
                 throw new InvalidOperationException("Unknown argument: '" + directRunArgs[0] + "'");
+            }
+
+            if (output.ContainsKey(GEN_DEFAULT_PROJ_TYPE))
+            {
+                command.DefaultProjectType = output[GEN_DEFAULT_PROJ_TYPE].Trim().ToLowerInvariant();
             }
 
             if (output.ContainsKey(GEN_DEFAULT_PROJ))

@@ -63,7 +63,7 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
-                    new DefaultProjectGenerator().DoWorkImpl(command.DefaultProjectId, command.DefaultProjectLocale);
+                    new DefaultProjectGenerator().DoWorkImpl(command.DefaultProjectId, command.DefaultProjectLocale, command.DefaultProjectType);
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
