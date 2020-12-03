@@ -179,4 +179,14 @@
     @localized('es', 'ESObject')
     @localized('jp', 'JPObject')
     class Object { }
+
+    function newArray(size, value = null) { return [value] * size; }
+    function newArray2D(width, height, value = null) {
+        o = [];
+        a = [value];
+        while (width --> 0) {
+            o.add(height * a);
+        }
+        return o;
+    }
 }
