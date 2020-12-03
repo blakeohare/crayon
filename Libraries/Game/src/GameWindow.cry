@@ -51,8 +51,10 @@ namespace Game {
             return this;
         }
 
-        function setBackgroundColor(r, g, b) {
-            this._fields['bg'] = [r, g, b];
+        function setBackgroundColor(rOrColor, g = null, b = null) {
+            this._fields['bg'] = (rOrColor is Graphics2D.Color)
+                ? rOrColor._c.clone()[:3]
+                : [rOrColor, g, b];
             return this;
         }
 

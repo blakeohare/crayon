@@ -24,33 +24,54 @@ namespace Graphics2D {
             if (hack != DrawingContext.UNDOCUMENTED_DO_NOT_USE) throw new Exception();
         }
 
-        function fill(r, g, b) {
-            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, 3);
+        field _colR = 0;
+        field _colG = 0;
+        field _colB = 0;
+        field _colA = 0;
+
+        function _verifyColor(rOrColor, g, b, a) {
+            if (rOrColor is Color) {
+                c = rOrColor._c;
+                this._colR = c[0];
+                this._colG = c[1];
+                this._colB = c[2];
+                this._colA = c[3];
+            } else {
+                this._colR = rOrColor;
+                this._colG = g;
+                this._colB = b;
+                this._colA = a;
+            }
+            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, this._colR, this._colG, this._colB, this._colA, 4);
+        }
+
+        function fill(rOrColor, g, b) {
+            this._verifyColor(rOrColor, g, b, 255);
             this._buffer.clear();
-            this._buffer.add('F', r, g, b);
+            this._buffer.add('F', this._colR, this._colG, this._colB);
             this._bufferContainsFlush = true;
             return this;
         }
 
-        function rectangle(x, y, w, h, r, g, b, a = 255) {
-            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, a, 4);
+        function rectangle(x, y, w, h, rOrColor, g = null, b = null, a = 255) {
+            this._verifyColor(rOrColor, g, b, a);
             $$$('argVerifyNums', "Rectangle coordinates must be numbers.", x, y, w, h, 4);
-            this._buffer.add('R', r, g, b, a, x, y, w, h);
+            this._buffer.add('R', this._colR, this._colG, this._colB, this._colA, x, y, w, h);
             return this;
         }
 
-        function ellipse(x, y, w, h, r, g, b, a = 255) {
-            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, a, 4);
+        function ellipse(x, y, w, h, rOrColor, g = null, b = null, a = 255) {
+            this._verifyColor(rOrColor, g, b, a);
             $$$('argVerifyNums', "Ellipse coordinates must be numbers.", x, y, w, h, 4);
-            this._buffer.add('E', r, g, b, a, x, y, w, h);
+            this._buffer.add('E', this._colR, this._colG, this._colB, this._colA, x, y, w, h);
             return this;
         }
 
-        function line(x1, y1, x2, y2, w, r, g, b, a = 255) {
-            $$$('argVerifyIntRange', INVALID_COLOR_ERR, 0, 255, r, g, b, a, 4);
+        function line(x1, y1, x2, y2, w, rOrColor, g = null, b = null, a = 255) {
+            this._verifyColor(rOrColor, g, b, a);
             $$$('argVerifyNums', "Line coordinates must be numbers.", x1, y1, x2, y2, 4);
             $$$('argVerifyNums', "Line width must be a number.", w, 1);
-            this._buffer.add('L', r, g, b, a, x1, y1, x2, y2, w);
+            this._buffer.add('L', this._colR, this._colG, this._colB, this._colA, x1, y1, x2, y2, w);
             return this;
         }
 
