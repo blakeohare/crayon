@@ -1,0 +1,29 @@
+import Nori;
+import NoriXml;
+
+function main() {
+
+	counter = 0;
+
+	ui = NoriXml.build('
+		<StackPanel>
+			<TextBlock marginBottom="20">Hello, World of UI: button click counter</TextBlock>
+			<FlowPanel marginBottom="20">
+				<TextBlock>Times pushed: </TextBlock>
+				<TextBlock id="num" bold="true">0</TextBlock>
+			</FlowPanel>
+			<Button id="btn">Push Me</Button>
+		</StackPanel>');
+
+	ui.findElement('btn').setClickHandler(() => {
+		counter++;
+		ui.findElement('num').setText(counter);
+	});
+
+	new Frame()
+		.setWidth(400)
+		.setHeight(300)
+		.setTitle("%%%PROJECT_ID%%%")
+		.setContent(ui)
+		.show();
+}

@@ -1,0 +1,24 @@
+import Game;
+import Graphics2D;
+
+const GAME_WIDTH = 1000;
+const GAME_HEIGHT = GAME_WIDTH * 9 / 16;
+
+function main(args) {
+
+	x = 0;
+	y = 0;
+
+	new GameWindow()
+		.setTitle("%%%PROJECT_ID%%%")
+		.setGameSize(GAME_WIDTH, GAME_HEIGHT)
+		.setBackgroundColor(Color.CORNFLOWER)
+		.setRenderer(g2d => {
+			g2d.rectangle(x, y, 20, 20, Color.MAROON);
+		})
+		.setUpdater(inputState => {
+			x = (x + 1) % GAME_WIDTH;
+			y = (y + 2) % GAME_HEIGHT;
+		})
+		.show();
+}

@@ -3,7 +3,6 @@ using CommonUtil;
 using CommonUtil.Disk;
 using CommonUtil.Images;
 using CommonUtil.Resources;
-using Exporter;
 using System;
 using System.Collections.Generic;
 
@@ -11,10 +10,10 @@ namespace Crayon
 {
     public class DefaultProjectGenerator
     {
-        public void DoWorkImpl(string projectId, string projectLocale)
+        public void DoWorkImpl(string projectId, string projectLocale, string projectType)
         {
             DefaultProjectGeneratorImpl generator = new DefaultProjectGeneratorImpl(projectId, projectLocale);
-            Dictionary<string, FileOutput> project = generator.Validate().Export();
+            Dictionary<string, FileOutput> project = generator.Validate().Export(projectType ?? "basic");
 
             string directory = FileUtil.JoinPath(
                 Path.GetCurrentDirectory(),
@@ -56,7 +55,7 @@ namespace Crayon
 
             private Dictionary<string, string> replacements;
 
-            public Dictionary<string, FileOutput> Export()
+            public Dictionary<string, FileOutput> Export(string projectType)
             {
                 this.replacements = new Dictionary<string, string>()
                 {
@@ -73,12 +72,29 @@ namespace Crayon
                 output["assets/icon32.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[32] };
                 output["assets/icon256.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[256] };
 
-                foreach (string file in new string[]
-                    {
-                        "DefaultProject/BuildFile.txt|%%%PROJECT_ID%%%.build",
-                        "DefaultProject/main" + this.projectLocale.ID.ToUpperInvariant() + ".txt|source/main.cry",
-                        "DefaultProject/dotGitIgnore.txt|output/.gitignore",
-                    })
+                List<string> files = new List<string>() {
+                    "DefaultProjects/BuildFile.txt|%%%PROJECT_ID%%%.build",
+                    "DefaultProjects/dotGitIgnore.txt|output/.gitignore",
+                };
+                switch (projectType)
+                {
+                    case "basic":
+                        files.Add("DefaultProjects/main" + this.projectLocale.ID.ToUpperInvariant() + ".txt|source/main.cry");
+                        break;
+
+                    case "game":
+                        files.Add("DefaultProjects/game.txt|source/main.cry");
+                        break;
+
+                    case "ui":
+                        files.Add("DefaultProjects/ui.txt|source/main.cry");
+                        break;
+
+                    default:
+                        throw new InvalidOperationException("Unknown project type: '" + projectType + "'");
+                }
+
+                foreach (string file in files)
                 {
                     string[] parts = file.Split('|');
                     string content = new ResourceStore(typeof(DefaultProjectGenerator)).ReadAssemblyFileText(parts[0]);
@@ -90,8 +106,7 @@ namespace Crayon
                         TextContent = content,
                     };
                 }
-                // TODO: why is this here? Isn't this dead code?
-                new ResourceStore(typeof(DefaultProjectGenerator)).ReadAssemblyFileText("DefaultProject/BuildFile.txt");
+
                 return output;
             }
 

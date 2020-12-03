@@ -4,6 +4,7 @@
     {
         public string DefaultProjectId { get; set; }
         public string DefaultProjectLocale { get; set; }
+        public string DefaultProjectType { get; set; }
         public string BuildFilePath { get; set; }
         public string BuildTarget { get; set; }
         public string VmPlatform { get; set; }
