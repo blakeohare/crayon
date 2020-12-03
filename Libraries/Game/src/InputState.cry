@@ -1,0 +1,24 @@
+﻿namespace Game {
+
+    class InputState {
+
+        field _keysPressed = {};
+        field _keyPresses = [];
+        field _keyReleases = [];
+        field _mousePos = [0, 0];
+        field _newEvents = [];
+
+        constructor(pkgPrivateHack, window) {
+            // TODO: mark constructors as package private
+            if (pkgPrivateHack != Internal.HACK_packagePrivate) throw new InvalidOperationException();
+        }
+
+        function isKeyPressed(key) {
+            return this._keysPressed.get(key) == true;
+        }
+
+        function getKeyPresses() {
+            return this._keyPresses.clone();
+        }
+    }
+}

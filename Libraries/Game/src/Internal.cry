@@ -5,6 +5,7 @@ namespace Game {
     static class Internal {
         // TODO: do this lookup directly in U3 before sending values over.
         static field HACK_keyLookup = null;
+        static field HACK_packagePrivate = new Object();
 
         static function doPumpEvents(window) {
             if (Internal.HACK_keyLookup == null) {
@@ -92,13 +93,35 @@ namespace Game {
 
         static function doGameLoop(window) {
             drawingContext = window._fields['draw'];
+            inputState = new InputState(Internal.HACK_packagePrivate, window);
+
             while (window._fields['open']) {
 
                 events = Internal.doPumpEvents(window);
+                inputState._newEvents = events;
+                inputState._keyPresses.clear();
+                inputState._keyReleases.clear();
+
+                for (event : events) {
+                    switch (event.type) {
+                        case EventType.KEY_DOWN:
+                            inputState._keysPressed[event.key] = true;
+                            inputState._keyPresses.add(event.key);
+                            break;
+                        case EventType.KEY_UP:
+                            inputState._keysPressed[event.key] = false;
+                            inputState._keyReleases.add(event.key);
+                            break;
+
+                        // TODO: mouse events
+                        // TODO: gamepad events
+                        // TODO: quit events
+                    }
+                }
 
                 updater = window._fields.get('u');
                 if (updater != null) {
-                    updater(null); // TODO: inputManager
+                    updater(inputState);
                 }
 
                 Internal.fillBg(window);
