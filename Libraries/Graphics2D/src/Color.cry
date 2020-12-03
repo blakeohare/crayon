@@ -1,0 +1,36 @@
+namespace Graphics2D {
+
+    class Color {
+        field _c;
+
+        constructor(r, g, b, a = 255) {
+            this._c = [r, g, b, a];
+        }
+
+        static field TRANSPARENT = new Color(0, 0, 0, 0);
+
+        static field BLACK = new Color(0, 0, 0);
+        static field GRAY = new Color(128, 128, 128);
+        static field WHITE = new Color(255, 255, 255);
+
+        static field RED = new Color(255, 0, 0);
+        static field ORANGE = new Color(255, 128, 0);
+        static field YELLOW = new Color(255, 255, 0);
+        static field GREEN = new Color(0, 128, 0);
+        static field BLUE = new Color(0, 0, 255);
+        static field PURPLE = new Color(128, 0, 128);
+        
+        static field BROWN = new Color(128, 64, 0);
+        static field PINK = new Color(255, 128, 160);
+        static field MAGENTA = new Color(255, 0, 255);
+        static field LIME = new Color(0, 255, 0);
+        static field OLIVE = new Color(128, 128, 0);
+        static field CYAN = new Color(0, 128, 128);
+        static field TEAL = new Color(0, 255, 255);
+        static field MAROON = new Color(128, 0, 0);
+        static field PEACH = new Color(255, 196, 128);
+        static field TAN = new Color(216, 160, 128);
+        static field LAVENDAR = new Color(196, 160, 255);
+        static field CORNFLOWER = new Color(100, 149, 237);
+    }
+}
