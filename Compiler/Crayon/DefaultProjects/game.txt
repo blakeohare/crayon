@@ -1,6 +1,7 @@
 import Game;
 import Graphics2D;
 
+// The window is 1000 pixels wide, with a 16:9 aspect ratio.
 const GAME_WIDTH = 1000;
 const GAME_HEIGHT = GAME_WIDTH * 9 / 16;
 
@@ -12,13 +13,15 @@ function main(args) {
 	new GameWindow()
 		.setTitle("%%%PROJECT_ID%%%")
 		.setGameSize(GAME_WIDTH, GAME_HEIGHT)
-		.setBackgroundColor(Color.CORNFLOWER)
-		.setRenderer(g2d => {
-			g2d.rectangle(x, y, 20, 20, Color.MAROON);
-		})
+		.setBackgroundColor(Color.SKY_BLUE)
 		.setUpdater(inputState => {
+			// Update your game model in this function.
 			x = (x + 1) % GAME_WIDTH;
 			y = (y + 2) % GAME_HEIGHT;
+		})
+		.setRenderer(g2d => {
+			// Draw the state of your game to the screen in this function.
+			g2d.rectangle(x, y, 20, 20, Color.RED);
 		})
 		.show();
 }
