@@ -31,6 +31,6 @@
         static field PEACH = new Color(255, 196, 128);
         static field TAN = new Color(216, 160, 128);
         static field LAVENDAR = new Color(196, 160, 255);
-        static field CORNFLOWER = new Color(100, 149, 237);
+        static field SKY_BLUE = new Color(84, 203, 255);
     }
 }
