@@ -71,4 +71,110 @@ class LambdaAndClosureTest : Test {
             'increment': () => { value++; }
         };
     }
+
+    function testBasic() {
+        value = 10;
+
+        inc = () => {
+            value += 1;
+        };
+
+        dec = () => {
+            value -= 1;
+        };
+
+        inc();
+        inc();
+        inc();
+
+        dec();
+
+        assertThat(value).isEqualTo(12);
+    }
+
+    function testNested1() {
+
+        meow = 0;
+        blarg = () => {
+            meow = 42;
+
+            inc = () => {
+                meow += 4;
+            };
+
+            inc();
+            inc();
+
+        };
+
+        blarg();
+
+        assertThat(meow).isEqualTo(50);
+    }
+
+    function testNested2() {
+        woof = 0;
+        blarg = () => {
+
+            doThings = () => {
+                inc = () => {
+                    woof += 5;
+                };
+
+                return inc;
+            };
+
+            return doThings;
+        };
+
+        dt = blarg();
+        incr = dt();
+
+        incr();
+        incr();
+        incr();
+
+        assertThat(woof).isEqualTo(15);
+    }
+
+    function testSplit() {
+
+        x = 100;
+        y = 10;
+
+        thing = condition => {
+            if (condition == 1) {
+                x += 1;
+            } else {
+                x -= 1;
+            }
+
+            if (condition == 1) {
+                y += 1;
+            } else if (condition == 2) {
+                y -= 1;
+            } else {
+                // I do not reference y at all here.
+            }
+        };
+
+        thing(1);
+
+        assertThat(x).isEqualTo(101);
+        assertThat(y).isEqualTo(11);
+    }
+
+    function testMutateFromOutside() {
+        value = 100;
+
+        getValue = () => {
+            return value;
+        };
+
+        value *= 2;
+
+        x = getValue();
+
+        assertThat(x).isEqualTo(200);
+    }
 }
