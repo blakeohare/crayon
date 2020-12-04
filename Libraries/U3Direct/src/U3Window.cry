@@ -84,6 +84,7 @@ namespace U3Direct {
             setupComplete = false;
             this._hub.setOnReady(() => {
 
+                icon = '';
                 if (!Environment.isJavaScript()) {
                     /*
                     easyIcon = new Bitmap(64, 64);
@@ -104,7 +105,7 @@ namespace U3Direct {
 
                     // This is a duplicate with command line args, but debug mode doesn't send
                     // command line args, so they're being sent again later here.
-                    "pid": Process.getCurrentProcessId(),
+                    "pid": Process.isSupported() ? Process.getCurrentProcessId() : 0,
                     "icon": icon,
                 };
 
