@@ -1,5 +1,0 @@
-﻿if (@ext_boolean("IS_ANDROID")) {
-    output = VALUE_TRUE;
-} else {
-    output = VALUE_FALSE;
-}
