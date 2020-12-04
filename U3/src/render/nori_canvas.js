@@ -50,6 +50,10 @@ const NoriCanvas = (() => {
                     w = buffer[i + 7];
                     h = buffer[i + 8];
                     i += 9;
+                    x += w / 2;
+                    w /= 2;
+                    y += h / 2;
+                    h /= 2;
                     w = w * 4 / 3; // no idea why this needs to exist to look correct...
                     ctx.beginPath();
                     ctx.moveTo(x, y - h);
