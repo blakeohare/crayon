@@ -76,8 +76,6 @@ namespace Interpreter.Vm
                     return;
                 }
 
-                System.Console.WriteLine("Connected, I think.");
-
                 // TODO: this is based on the MessageHub format and needs to be rewritten in a more generic way.
                 // Sending individual characters is probably a bad idea performance-wise, and so some sort of
                 // batching heuristic needs to be made. This "length@payload" format needs to go into the actual
