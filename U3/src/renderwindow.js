@@ -1,9 +1,10 @@
 const { BrowserWindow } = require('electron')
 const { ipcMain } = require('electron')
+const { writeBase64ToTempFile } = require('./util.js');
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = (title, width, height, initialData, hideMenu, onCloseAttemptCb) => {
+let createWindow = async (title, width, height, initialData, hideMenu, onCloseAttemptCb, icon) => {
 
     let listeners = {};
     let mBoundMessageQueues = {};
@@ -20,14 +21,26 @@ let createWindow = (title, width, height, initialData, hideMenu, onCloseAttemptC
         }
     });
     
-    const win = new BrowserWindow({
-        width: width,
-        height: height,
+    let options = {
+        width,
+        height,
         title,
         webPreferences: {
             nodeIntegration: true
         }
-    });
+    };
+
+    let p = Promise.resolve(null);
+    if (icon) {
+        p = writeBase64ToTempFile('u3_', '.ico', icon);
+    }
+
+    let iconPath = (await p).path;
+    if (iconPath) {
+        options.icon = iconPath;
+    }
+
+    const win = new BrowserWindow(options);
 
     if (hideMenu) {
         win.setMenu(null);

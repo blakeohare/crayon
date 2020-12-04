@@ -1,6 +1,9 @@
-﻿import MessageHub;
-import ProcessUtil;
+﻿import Base64;
 import Environment;
+import IconEncoder;
+import MessageHub;
+import ProcessUtil;
+import Images;
 
 namespace U3Direct {
 
@@ -80,7 +83,17 @@ namespace U3Direct {
 
             setupComplete = false;
             this._hub.setOnReady(() => {
-                this._hub.send('u3init', {
+
+                icon = '';
+                if (!Environment.isJavaScript()) {
+                    easyIcon = new Bitmap(64, 64);
+                    blue = new Bitmap(32, 32);
+                    blue.edit().fill(0, 0, 255).finish();
+                    easyIcon.edit().drawImage(blue, 16, 16).finish();
+                    icon = bytesToBase64(new IconBuilder().addImage(easyIcon).toBytes());
+                }
+
+                initMsg = {
                     "title": title,
                     "width": width,
                     "height": height,
@@ -90,7 +103,10 @@ namespace U3Direct {
                     // This is a duplicate with command line args, but debug mode doesn't send
                     // command line args, so they're being sent again later here.
                     "pid": Process.getCurrentProcessId(),
-                }, (_) => {
+                    "icon": icon,
+                };
+
+                this._hub.send('u3init', initMsg, (_) => {
                     setupComplete = true;
                 });
             });

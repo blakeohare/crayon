@@ -43,18 +43,20 @@ app.whenReady().then(() => {
 
     let queuedEventBatch = [];
 
-    hub.addListener('u3init', (msg, cb) => {
-        let { title, width, height, initialData, pid} = msg;
+    hub.addListener('u3init', async (msg, cb) => {
+        let { title, width, height, initialData, pid, icon } = msg;
         startWatching(pid);
-        rwindow = renderwindow.createWindow(
-            title, 
-            width, 
-            height, 
+        rwindow = await renderwindow.createWindow(
+            title,
+            width,
+            height,
             initialData.length === 0 ? null : initialData,
             HIDE_MENU_AND_DEBUG,
             (closeBehavior) => {
                 hub.send('u3close', closeBehavior);
-            });
+            },
+            icon ? icon : null);
+            
         shutEverythingDown.push(() => rwindow.close());
         rwindow.setListener('events', msgs => {
             hub.send('u3events', msgs);

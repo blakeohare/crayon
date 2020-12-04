@@ -70,6 +70,7 @@
     ]
   },
   "dependencies": {
-    "find-process": "^1.4.4"
+    "find-process": "^1.4.4",
+    "temp": "^0.9.4"
   }
 }
