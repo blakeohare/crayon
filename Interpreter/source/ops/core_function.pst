@@ -31,8 +31,6 @@
     case 29: Core.EmitComment("execCounter"); @import("corefuncs/execCounter.pst"); break;
     case 30: Core.EmitComment("sleep"); @import("corefuncs/sleep.pst"); break;
     case 31: Core.EmitComment("projectId"); @import("corefuncs/projectId.pst"); break;
-    case 32: Core.EmitComment("isJavaScript"); @import("corefuncs/isJavaScript.pst"); break;
-    case 33: Core.EmitComment("isAndroid"); @import("corefuncs/isAndroid.pst"); break;
     case 34: Core.EmitComment("allocNativeData"); @import("corefuncs/allocNativeData.pst"); break;
     case 35: Core.EmitComment("setNativeData"); @import("corefuncs/setNativeData.pst"); break;
     case 36: Core.EmitComment("getExceptionTrace"); @import("corefuncs/getExceptionTrace.pst"); break;

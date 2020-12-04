@@ -35,8 +35,6 @@ namespace Parser
         EXECUTION_CONTEXT_COUNTER = 29,
         SLEEP = 30,
         PROJECT_ID = 31,
-        IS_JAVASCRIPT = 32,
-        IS_ANDROID = 33,
         ALLOC_NATIVE_DATA = 34,
         SET_NATIVE_DATA = 35,
         GET_EXCEPTION_TRACE = 36,
@@ -148,8 +146,6 @@ namespace Parser
                 case "intQueueClear": return (int)CoreFunctionID.INT_QUEUE_CLEAR;
                 case "sleep": return (int)CoreFunctionID.SLEEP;
                 case "projectId": return (int)CoreFunctionID.PROJECT_ID;
-                case "isJavaScript": return (int)CoreFunctionID.IS_JAVASCRIPT;
-                case "isAndroid": return (int)CoreFunctionID.IS_ANDROID;
                 case "allocNativeData": return (int)CoreFunctionID.ALLOC_NATIVE_DATA;
                 case "setNativeData": return (int)CoreFunctionID.SET_NATIVE_DATA;
                 case "getExceptionTrace": return (int)CoreFunctionID.GET_EXCEPTION_TRACE;

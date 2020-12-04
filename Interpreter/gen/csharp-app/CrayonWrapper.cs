@@ -6003,14 +6003,6 @@ namespace Interpreter.Vm
                                 // projectId;
                                 output = buildCommonString(globals, metadata.projectId);
                                 break;
-                            case 32:
-                                // isJavaScript;
-                                output = VALUE_FALSE;
-                                break;
-                            case 33:
-                                // isAndroid;
-                                output = VALUE_FALSE;
-                                break;
                             case 34:
                                 // allocNativeData;
                                 valueStackSize -= 2;
