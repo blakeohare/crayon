@@ -216,7 +216,12 @@ namespace Interpreter.Vm
                 {
                     // TODO: Check if root execution context has ended.
                 }
-                System.Threading.Thread.Sleep(1);
+
+                // This Sleep does not seem to be accurate. This will cause unnecesary spinning
+                // in the CPU if this is commented out, but the frame rate of games is
+                // extremely sensitive to being several milliseconds off. Re-visit this again
+                // after the .NET Core migration.
+                // System.Threading.Thread.Sleep(1);
             }
         }
 
