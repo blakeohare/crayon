@@ -1,5 +1,4 @@
 const fs = require('fs');
-const temp = require('temp');
 const os = require('os');
 const path = require('path');
 
