@@ -80,10 +80,8 @@ namespace Easing {
                 break;
         }
 
-        //print("Progress: " + progress + " type: " + type);
         indexFloat = (pts.length - 1) * progress;
         indexIntRounded = Math.floor(indexFloat + .5);
-        //print("Raw index: " + indexFloat);
         if (Math.abs(indexFloat - indexIntRounded) < 0.0000001) {
             ratio = pts[indexIntRounded];
         } else {
@@ -93,8 +91,6 @@ namespace Easing {
             diff = indexFloat - indexIntFloor;
             ratio = (right * diff) + (left * (1 - diff));
         }
-
-        // print("ratio: " + ratio);
 
         if (type == 0) {
             if (firstHalf) {
