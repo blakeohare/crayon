@@ -101,6 +101,7 @@ namespace Parser
                 requireExplicitDeclarations = parent.requireExplicitDeclarations,
                 parentScope = parent,
                 rootScope = parent.rootScope,
+                closureScope = parent.closureScope,
                 closureRootScope = parent.closureRootScope,
                 variableToUseIfNotFoundInDirectParent = parent.variableToUseIfNotFoundInDirectParent,
             };
