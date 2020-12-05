@@ -4,7 +4,7 @@ const { writeBase64ToTempFile } = require('./util.js');
 
 const AUTO_OPEN_DEV_TOOLS = false;
 
-let createWindow = async (title, width, height, initialData, hideMenu, onCloseAttemptCb, icon) => {
+let createWindow = async (title, width, height, initialData, hideMenu, onCloseAttemptCb, icon, keepAspectRatio) => {
 
     let listeners = {};
     let mBoundMessageQueues = {};
@@ -73,8 +73,8 @@ let createWindow = async (title, width, height, initialData, hideMenu, onCloseAt
         let buffers = initialData === null ? [] : [initialData];
         buffers.concat(rBoundMessageQueue);
         rBoundMessageQueue = null;
-        
-        win.webContents.send('rboundmsg', { buffers });
+        let options = { keepAspectRatio };
+        win.webContents.send('rboundmsg', { buffers, options });
     });
 
     win.on('close', event => {
