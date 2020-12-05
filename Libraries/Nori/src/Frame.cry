@@ -233,9 +233,6 @@ namespace Nori {
         function close() {
             if (this._isShown) {
                 this._isShown = false;
-
-                // Dispatcher.registerDispatcherFramework(null);
-
                 this._u3window.close();
             }
         }

@@ -113,9 +113,12 @@ namespace Game {
                             inputState._keyReleases.add(event.key);
                             break;
 
+                        case EventType.QUIT:
+                            window.close();
+                            return;
+
                         // TODO: mouse events
                         // TODO: gamepad events
-                        // TODO: quit events
                     }
                 }
 

@@ -48,7 +48,9 @@ let createWindow = async (title, width, height, initialData, hideMenu, onCloseAt
 
     const close = () => {
         forceClose = true;
-        win.close(); 
+        if (!win.isDestroyed()) {
+            win.close(); 
+        }
     };
 
     const sendToRenderer = data => {
