@@ -44,7 +44,7 @@ app.whenReady().then(() => {
     let queuedEventBatch = [];
 
     hub.addListener('u3init', async (msg, cb) => {
-        let { title, width, height, initialData, pid, icon } = msg;
+        let { title, width, height, initialData, pid, icon, keepAspectRatio } = msg;
         startWatching(pid);
         rwindow = await renderwindow.createWindow(
             title,
@@ -55,7 +55,8 @@ app.whenReady().then(() => {
             (closeBehavior) => {
                 hub.send('u3close', closeBehavior);
             },
-            icon ? icon : null);
+            icon ? icon : null,
+            keepAspectRatio);
             
         shutEverythingDown.push(() => rwindow.close());
         rwindow.setListener('events', msgs => {

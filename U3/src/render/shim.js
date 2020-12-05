@@ -33,7 +33,10 @@ function getWindowSize() {
 	return [width, height];
 }
 
-function shimInit(uiData) {
+function shimInit(uiData, options) {
+	if (options && options.keepAspectRatio) {
+		// window.alert("Options are telling me to keep the aspect ratio");
+	}
 	let noriRoot = document.getElementById('html_render_host');
 	let shownCb = () => { window.sendMessage('shown', true); };
 	let eventBatchSender = data => { window.sendMessage('eventBatch', data); };
