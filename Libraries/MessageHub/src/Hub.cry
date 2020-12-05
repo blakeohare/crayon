@@ -60,6 +60,12 @@ namespace MessageHub {
             }
         }
 
+        function disconnect() {
+            if (this._isRunning) {
+                this._isRunning = false;
+            }
+        }
+
         function send(type, payload, cb = null) {
             if (!this._isRunning) return;
             id = ++Hub._idAlloc;

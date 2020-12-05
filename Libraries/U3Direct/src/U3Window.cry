@@ -147,6 +147,7 @@ namespace U3Direct {
 
         function close() {
             this._hub.send('u3close', {});
+            this._hub.disconnect();
             return this;
         }
 

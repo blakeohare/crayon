@@ -125,6 +125,8 @@ namespace Game {
 
         function close() {
             this._fields['open'] = false;
+            frame = this._fields['win'];
+            frame.close();
             return this;
         }
     }
