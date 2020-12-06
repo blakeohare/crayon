@@ -13,6 +13,7 @@ namespace Game {
         field _prefix;
         field _renderContext = null;
         field _imageModifiers = [];
+        field _isReportedAsDoneCache = false;
 
         constructor(prefix = null) {
             this._prefix = (prefix ?? '') + '';
@@ -86,8 +87,12 @@ namespace Game {
         }
 
         function getProgress() {
+            if (this._isReportedAsDoneCache) return 1.0;
             p = this._getProgressImpl();
-            if (this._minLoadDuration == null) return p;
+            if (this._minLoadDuration == null) {
+                this._progress = p;
+                return p;
+            }
 
             now = Core.currentTime();
             lastProgress = this._progress;
@@ -109,7 +114,9 @@ namespace Game {
         }
 
         function isDone() {
-            return this._imagesRemaining != null && this._imagesRemaining.length == 0 && this._progress == 1.0;
+            if (this._isReportedAsDoneCache) return true;
+            this._isReportedAsDoneCache = this._imagesRemaining != null && this._imagesRemaining.length == 0 && this._progress >= 1.0;
+            return this._isReportedAsDoneCache;
         }
 
         function getImagesByPath() {
