@@ -101,7 +101,7 @@ namespace Interpreter.Vm
             session.Flush();
             if (x1 == x2 && y1 == y2)
             {
-                session.Bitmap.SetPixel(x1, y1, r, g, b, a);
+                session.SetPixel(x1, y1, r, g, b, a);
             }
             else
             {
@@ -118,7 +118,7 @@ namespace Interpreter.Vm
                     {
                         progress = 1.0 * (x - x1) / (x2 - x1);
                         y = (int)(progress * ydiff + .5) + y1;
-                        session.Bitmap.SetPixel(x, y, r, g, b, a);
+                        session.SetPixel(x, y, r, g, b, a);
                     }
                 }
                 else
@@ -130,11 +130,10 @@ namespace Interpreter.Vm
                     {
                         progress = 1.0 * (y - y1) / (y2 - y1);
                         x = (int)(progress * xdiff + .5) + x1;
-                        session.Bitmap.SetPixel(x, y, r, g, b, a);
+                        session.SetPixel(x, y, r, g, b, a);
                     }
                 }
             }
-            session.ReInitializeHack();
             return false;
         }
 

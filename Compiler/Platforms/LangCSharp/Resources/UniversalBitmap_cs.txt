@@ -1,314 +1,174 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Interpreter
 {
+    public enum ImageFormat
+    {
+        PNG,
+        JPEG,
+    }
+
+    /**
+     * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
+     */
     public class UniversalBitmap
     {
-        private System.Drawing.Bitmap internalBitmap;
+        private Image<Rgba32> bitmap;
 
-        private DrawingSession activeDrawingSession = null;
-        private BitLockSession activeBitLockSession = null;
+        public bool IsValid { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-        public int GlTextureId { get; set; }
-
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public bool IsValid { get; private set; }
-
-        public bool IsCairo
+        public UniversalBitmap(string filepath)
         {
-            get
-            {
-                return false;
-            }
-        }
-
-        private static readonly HashSet<UniversalBitmap> allBitmaps = new HashSet<UniversalBitmap>();
-
-        private void RegisterThis()
-        {
-            allBitmaps.Add(this);
-        }
-
-        public static void EnsureAllFreed()
-        {
-            if (allBitmaps.Count > 0)
-            {
-                foreach (UniversalBitmap bmp in allBitmaps.ToArray())
-                {
-                    bmp.Free();
-                }
-            }
-        }
-
-        public void Free()
-        {
-            this.internalBitmap.Dispose();
-            allBitmaps.Remove(this);
+            this.IsValid = true;
+            this.bitmap = Image.Load<Rgba32>(filepath.Replace('/', System.IO.Path.DirectorySeparatorChar));
+            this.Width = this.bitmap.Width;
+            this.Height = this.bitmap.Height;
         }
 
         public UniversalBitmap(byte[] bytes)
         {
-            RegisterThis();
             this.IsValid = true;
-
-            try
-            {
-                this.internalBitmap = (System.Drawing.Bitmap)System.Drawing.Image.FromStream(new System.IO.MemoryStream(bytes));
-            }
-            catch (ArgumentException)
-            {
-                this.IsValid = false;
-            }
-            this.Width = this.internalBitmap.Width;
-            this.Height = this.internalBitmap.Height;
-
-            if (this.internalBitmap.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-            {
-                System.Drawing.Bitmap newBmp = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                newBmp.SetResolution(this.internalBitmap.HorizontalResolution, this.internalBitmap.VerticalResolution);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBmp);
-                g.DrawImage(this.internalBitmap, new System.Drawing.PointF(0, 0));
-                g.Flush();
-                this.internalBitmap = newBmp;
-            }
+            // TODO: set IsValid to false if not valid
+            this.bitmap = Image.Load(bytes);
+            this.Width = this.bitmap.Width;
+            this.Height = this.bitmap.Height;
         }
-
-        private static readonly UniversalBitmap DUMMY_BITMAP = new UniversalBitmap(1, 1);
 
         public UniversalBitmap(int width, int height)
         {
-            RegisterThis();
-
+            this.IsValid = true;
             this.Width = width;
             this.Height = height;
-            this.internalBitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        }
-
-        public UniversalBitmap(UniversalFont font, char c)
-        {
-            RegisterThis();
-
-            string text = "" + c;
-            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
-            System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
-            System.Drawing.SizeF size = graphics.MeasureString(text, font.NativeFont);
-            session.Flush();
-            this.Width = (int)System.Math.Ceiling(size.Width);
-            this.Height = (int)System.Math.Ceiling(size.Height);
-            this.internalBitmap = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            session = this.GetActiveDrawingSession();
-            graphics = (System.Drawing.Graphics)session.NativeSession;
-            graphics.DrawString(text, font.NativeFont, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
-            session.Flush();
-
-            this.TextAntiAliasingCorrection();
-        }
-
-        // Must be in range
-        public void GetPixel(int x, int y, int[] colorOut)
-        {
-            System.Drawing.Color color = this.internalBitmap.GetPixel(x, y);
-            colorOut[0] = color.R;
-            colorOut[1] = color.G;
-            colorOut[2] = color.B;
-            colorOut[3] = color.A;
-        }
-
-        private void TextAntiAliasingCorrection()
-        {
-            // Drawing text leaves an anti-alias aura around the characters which is 100% opaque using a black background. This results in
-            // an ugly black border around letters that are drawn against non-black backgrounds.
-            // Because this is supposed to be RGB(255, 255, 255) with varying values of alpha, go through and set the alpha channel to the
-            // value in the red channel, and set all non-alpha channels to 255.
-
-            BitLockSession bitlock = this.GetActiveBitLockSession();
-            byte[] pixels = bitlock.GetPixels();
-            int length = pixels.Length;
-            for (int i = 0; i < length; i += 4)
-            {
-                pixels[i | 3] = pixels[i | 1];
-                pixels[i] = 255;
-                pixels[i | 1] = 255;
-                pixels[i | 2] = 255;
-            }
-
-            bitlock.WritePixels(pixels);
-            bitlock.Free();
-        }
-
-        public DrawingSession GetActiveDrawingSession()
-        {
-            if (this.activeDrawingSession == null) this.activeDrawingSession = new DrawingSession(this);
-            return this.activeDrawingSession;
-        }
-
-        public BitLockSession GetActiveBitLockSession()
-        {
-            if (this.activeBitLockSession == null) this.activeBitLockSession = new BitLockSession(this);
-            return this.activeBitLockSession;
-        }
-
-        public static bool IconSupported
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public System.Drawing.Icon GenerateIcon()
-        {
-            return System.Drawing.Icon.FromHandle(this.internalBitmap.GetHicon());
+            this.bitmap = new Image<Rgba32>(width, height);
         }
 
         public byte[] GetBytesAsPng()
         {
-            return this.GetBytesImpl("png");
+            throw new System.NotImplementedException();
         }
 
         public byte[] GetBytesAsJpeg()
         {
-            return this.GetBytesImpl("jpeg");
+            throw new System.NotImplementedException();
         }
 
-        private byte[] GetBytesImpl(string formatStr)
+        public UniversalBitmap CloneToNewSize(int width, int height)
         {
-            System.Drawing.Imaging.ImageFormat format;
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            switch (formatStr)
+            UniversalBitmap newBitmap = new UniversalBitmap(width, height);
+            DrawingSession g = newBitmap.MakeGraphics();
+            if (width == this.Width && height == this.Height)
             {
-                case "png": format = System.Drawing.Imaging.ImageFormat.Png; break;
-                case "jpeg": format = System.Drawing.Imaging.ImageFormat.Jpeg; break;
-                default: throw new System.NotImplementedException();
+                g.Blit(this, 0, 0);
             }
-            this.internalBitmap.Save(ms, format);
-            return ms.ToArray();
+            else
+            {
+                g.BlitStretched(this, 0, 0, width, height);
+            }
+            return newBitmap;
         }
 
-        public static string ToBase64(string prefix, byte[] bytes)
+        public void Save(string path)
         {
-            int[] bitPairs = new int[bytes.Length * 4 + 3];
-            int length = bytes.Length;
-            char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".ToCharArray();
-            System.Text.StringBuilder output = new System.Text.StringBuilder();
-            output.Append(prefix);
-            int j = 0;
-            for (int i = 0; i < length; ++i)
+            if (path.ToLowerInvariant().EndsWith(".ico"))
             {
-                bitPairs[j] = (bytes[i] >> 6) & 3;
-                bitPairs[j | 1] = (bytes[i] >> 4) & 3;
-                bitPairs[j | 2] = (bytes[i] >> 2) & 3;
-                bitPairs[j | 3] = bytes[i] & 3;
-                j += 4;
+                throw new System.NotImplementedException();
             }
-            length = bitPairs.Length - 3;
-            int t;
-            for (int i = 0; i < length; i += 3)
+            else
             {
-                t = (bitPairs[i] << 4) | (bitPairs[i + 1] << 2) | (bitPairs[i + 2]);
-                output.Append(alphabet[t]);
+                this.bitmap.Save(path);
             }
-            return output.ToString();
         }
 
-        public void SetPixel(int x, int y, int r, int g, int b, int a)
+        private static string FormatToExtension(ImageFormat format)
         {
-            this.internalBitmap.SetPixel(x, y, System.Drawing.Color.FromArgb(a, r, g, b));
+            switch (format)
+            {
+                case ImageFormat.PNG: return ".png";
+                case ImageFormat.JPEG: return ".jpg";
+                default: throw new System.Exception();
+            }
         }
 
-        public class BitLockSession
+        public byte[] SaveBytes(ImageFormat format)
         {
-            private UniversalBitmap bmp;
+            throw new System.NotImplementedException();
+        }
 
-            private System.Drawing.Imaging.BitmapData internalSession;
+        public DrawingSession MakeGraphics()
+        {
+            return new DrawingSession(this);
+        }
 
-            public BitLockSession(UniversalBitmap bmp)
-            {
-                this.bmp = bmp;
-                this.internalSession = bmp.internalBitmap.LockBits(
-                    new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
-                    System.Drawing.Imaging.ImageLockMode.ReadOnly,
-                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            }
+        public DrawingSession GetActiveDrawingSession()
+        {
+            throw new System.NotImplementedException();
+        }
 
-            public System.IntPtr GetPtr()
-            {
-                return this.internalSession.Scan0;
-            }
-
-            public byte[] GetPixels()
-            {
-                byte[] pixels = new byte[this.bmp.Width * this.bmp.Height * 4];
-                System.Runtime.InteropServices.Marshal.Copy(this.GetPtr(), pixels, 0, pixels.Length);
-                return pixels;
-            }
-
-            public void WritePixels(byte[] pixels)
-            {
-                System.Runtime.InteropServices.Marshal.Copy(pixels, 0, this.GetPtr(), this.bmp.Width * this.bmp.Height * 4);
-            }
-
-            public void Free()
-            {
-                this.bmp.internalBitmap.UnlockBits(this.internalSession);
-            }
+        public void GetPixel(int x, int y, int[] colorOut)
+        {
+            throw new System.NotImplementedException();
         }
 
         public class DrawingSession
         {
-            private static int activeSessions = 0;
-
             public UniversalBitmap Bitmap { get; private set; }
-
-            private System.Drawing.Graphics internalSession;
-
-            public object NativeSession
+            public DrawingSession Draw(UniversalBitmap bmp, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6)
             {
-                get
+                throw new System.NotImplementedException();
+            }
+
+            public DrawingSession SetPixel(int x, int y, int r, int g, int b, int a)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public DrawingSession Flush()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            private Image<Rgba32> target;
+
+            public DrawingSession(UniversalBitmap owner)
+            {
+                this.Bitmap = owner;
+                this.target = owner.bitmap;
+            }
+
+            public void Blit(UniversalBitmap bmp, int x, int y)
+            {
+                this.BlitStretched(bmp, x, y, bmp.Width, bmp.Height);
+            }
+
+            public void BlitStretched(UniversalBitmap bmp, int x, int y, int stretchWidth, int stretchHeight)
+            {
+                int sourceWidth = bmp.Width;
+                int sourceHeight = bmp.Height;
+                int originalTargetLeft = x;
+                int originalTargetTop = y;
+                int targetLeft = System.Math.Max(0, originalTargetLeft);
+                int targetTop = System.Math.Max(0, originalTargetTop);
+                int originalTargetRight = originalTargetLeft + stretchWidth;
+                int originalTargetBottom = originalTargetTop + stretchHeight;
+                int targetRight = System.Math.Min(this.target.Width, originalTargetRight);
+                int targetBottom = System.Math.Min(this.target.Height, originalTargetBottom);
+
+                if (stretchWidth <= 0 || stretchHeight <= 0) return;
+
+                int targetX, targetY, sourceX, sourceY;
+
+                for (targetY = targetTop; targetY < targetBottom; ++targetY)
                 {
-                    return this.internalSession;
-                }
-            }
+                    sourceY = (targetY - originalTargetTop) * sourceHeight / stretchHeight;
 
-            public DrawingSession(UniversalBitmap bmp)
-            {
-                this.Bitmap = bmp;
-                this.ReInitializeHack();
-            }
-
-            public DrawingSession Draw(UniversalBitmap bmp, int targetX, int targetY, int sourceX, int sourceY, int width, int height)
-            {
-                this.internalSession.DrawImage(
-                    bmp.internalBitmap,
-                    new System.Drawing.Rectangle(targetX, targetY, width, height),
-                    new System.Drawing.Rectangle(sourceX, sourceY, width, height),
-                    System.Drawing.GraphicsUnit.Pixel);
-                return this;
-            }
-
-            public void Flush()
-            {
-                activeSessions--;
-                this.internalSession.Flush();
-                this.internalSession.Dispose();
-                this.Bitmap.activeDrawingSession = null;
-            }
-
-            public void ReInitializeHack()
-            {
-                activeSessions++;
-                this.internalSession = System.Drawing.Graphics.FromImage(this.Bitmap.internalBitmap);
-            }
-
-            public static void VerifyCleaned()
-            {
-                if (activeSessions != 0)
-                {
-                    throw new System.Exception("");
+                    for (targetX = targetLeft; targetX < targetRight; ++targetX)
+                    {
+                        sourceX = (targetX - originalTargetLeft) * sourceWidth / stretchWidth;
+                        this.target[targetX, targetY] = bmp.bitmap[sourceX, sourceY];
+                    }
                 }
             }
         }

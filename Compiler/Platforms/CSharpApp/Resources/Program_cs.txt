@@ -16,7 +16,6 @@ namespace Interpreter
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
             // Debugger.INSTANCE.StartListening();
             EventLoop.StartInterpreter();
-            UniversalBitmap.EnsureAllFreed();
         }
     }
 }

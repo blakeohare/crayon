@@ -201,7 +201,6 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/TextEncodingHelper.cs", "Resources/TextEncodingHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalBitmap.cs", "Resources/UniversalBitmap.cs", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.cs", replacements);
 
             // Required project files
             this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.cs", replacements);
