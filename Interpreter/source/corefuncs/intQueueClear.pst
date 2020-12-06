@@ -1,9 +1,0 @@
-﻿// TODO: replace the code that uses this with a call to setNativeData
-
-@import("inline/1_arg.pst");
-
-output = VALUE_NULL;
-objInstance1 = (ObjectInstance) arg1.internalValue;
-if (objInstance1.nativeData != null) {
-    objInstance1.nativeData[1] = 0;
-}

@@ -24,15 +24,10 @@ namespace Parser
         FLOOR = 18,
         MAX = 19,
         MIN = 20,
-        NATIVE_INT = 21,
-        NATIVE_STRING = 22,
         SIGN = 23,
         SIN = 24,
         TAN = 25,
         LN = 26,
-        INT_QUEUE_CLEAR = 27,
-        INT_QUEUE_WRITE_16 = 28,
-        EXECUTION_CONTEXT_COUNTER = 29,
         SLEEP = 30,
         PROJECT_ID = 31,
         ALLOC_NATIVE_DATA = 34,
@@ -42,7 +37,6 @@ namespace Parser
         REFLECT_GET_METHODS = 38,
         REFLECT_GET_CLASS = 39,
         CONVERT_LOCAL_FLOATS_TO_INTS = 40,
-        ADD_SHUTDOWN_HANDLER = 41,
         NATIVE_TUNNEL_SEND = 42,
         NATIVE_TUNNEL_RECV = 43,
         IPC_NAMED_PIPE_CREATE = 45,
@@ -120,7 +114,6 @@ namespace Parser
                 case "print": return (int)CoreFunctionID.PRINT;
                 case "typeof": return (int)CoreFunctionID.TYPE_OF;
                 case "typeis": return (int)CoreFunctionID.TYPE_IS;
-                case "execCounter": return (int)CoreFunctionID.EXECUTION_CONTEXT_COUNTER;
                 case "execId": return (int)CoreFunctionID.EXECUTION_CONTEXT_ID;
                 case "assert": return (int)CoreFunctionID.ASSERT;
                 case "chr": return (int)CoreFunctionID.CHR;
@@ -136,14 +129,10 @@ namespace Parser
                 case "floor": return (int)CoreFunctionID.FLOOR;
                 case "max": return (int)CoreFunctionID.MAX;
                 case "min": return (int)CoreFunctionID.MIN;
-                case "nativeInt": return (int)CoreFunctionID.NATIVE_INT;
-                case "nativeString": return (int)CoreFunctionID.NATIVE_STRING;
                 case "sign": return (int)CoreFunctionID.SIGN;
                 case "sin": return (int)CoreFunctionID.SIN;
                 case "tan": return (int)CoreFunctionID.TAN;
                 case "ln": return (int)CoreFunctionID.LN;
-                case "intQueueWrite16": return (int)CoreFunctionID.INT_QUEUE_WRITE_16;
-                case "intQueueClear": return (int)CoreFunctionID.INT_QUEUE_CLEAR;
                 case "sleep": return (int)CoreFunctionID.SLEEP;
                 case "projectId": return (int)CoreFunctionID.PROJECT_ID;
                 case "allocNativeData": return (int)CoreFunctionID.ALLOC_NATIVE_DATA;
@@ -153,7 +142,6 @@ namespace Parser
                 case "reflectGetMethods": return (int)CoreFunctionID.REFLECT_GET_METHODS;
                 case "reflectGetClass": return (int)CoreFunctionID.REFLECT_GET_CLASS;
                 case "convertFloatArgsToInts": return (int)CoreFunctionID.CONVERT_LOCAL_FLOATS_TO_INTS;
-                case "addShutdownHandler": return (int)CoreFunctionID.ADD_SHUTDOWN_HANDLER;
                 case "nativeTunnelSend": return (int)CoreFunctionID.NATIVE_TUNNEL_SEND;
                 case "nativeTunnelRecv": return (int)CoreFunctionID.NATIVE_TUNNEL_RECV;
                 case "ipcNamedPipeCreate": return (int)CoreFunctionID.IPC_NAMED_PIPE_CREATE;

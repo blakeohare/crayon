@@ -20,15 +20,10 @@
     case 18: Core.EmitComment("floor"); @import("corefuncs/floor.pst"); break;
     case 19: Core.EmitComment("max"); @import("corefuncs/max.pst"); break;
     case 20: Core.EmitComment("min"); @import("corefuncs/min.pst"); break;
-    case 21: Core.EmitComment("nativeInt"); @import("corefuncs/nativeInt.pst"); break;
-    case 22: Core.EmitComment("nativeString"); @import("corefuncs/nativeString.pst"); break;
     case 23: Core.EmitComment("sign"); @import("corefuncs/sign.pst"); break;
     case 24: Core.EmitComment("sin"); @import("corefuncs/sin.pst"); break;
     case 25: Core.EmitComment("tan"); @import("corefuncs/tan.pst"); break;
     case 26: Core.EmitComment("log"); @import("corefuncs/log.pst"); break;
-    case 27: Core.EmitComment("intQueueClear"); @import("corefuncs/intQueueClear.pst"); break;
-    case 28: Core.EmitComment("intQueueWrite16"); @import("corefuncs/intQueueWrite16.pst"); break;
-    case 29: Core.EmitComment("execCounter"); @import("corefuncs/execCounter.pst"); break;
     case 30: Core.EmitComment("sleep"); @import("corefuncs/sleep.pst"); break;
     case 31: Core.EmitComment("projectId"); @import("corefuncs/projectId.pst"); break;
     case 34: Core.EmitComment("allocNativeData"); @import("corefuncs/allocNativeData.pst"); break;
@@ -38,7 +33,6 @@
     case 38: Core.EmitComment("reflectGetMethods"); @import("corefuncs/reflectGetMethods.pst"); break;
     case 39: Core.EmitComment("reflectGetClass"); @import("corefuncs/reflectGetClass.pst"); break;
     case 40: Core.EmitComment("convertFloatArgsToInts"); @import("corefuncs/convertFloatArgsToInts.pst"); break;
-    case 41: Core.EmitComment("addShutdownHandler"); @import("corefuncs/addShutdownHandler.pst"); break;
     case 42: Core.EmitComment("nativeTunnelSend"); @import("corefuncs/nativeTunnelSend.pst"); break;
     case 43: Core.EmitComment("nativeTunnelRecv"); @import("corefuncs/nativeTunnelRecv.pst"); break;
     case 45: Core.EmitComment("ipcNamedPipeCreate"); @import("corefuncs/ipcNamedPipeCreate.pst"); break;

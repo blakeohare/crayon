@@ -4422,26 +4422,6 @@ var interpretImpl = function(vm, executionContextId) {
 							output = arg2;
 						}
 						break;
-					case 21:
-						// nativeInt;
-						valueStackSize -= 2;
-						arg2 = valueStack[(valueStackSize + 1)];
-						arg1 = valueStack[valueStackSize];
-						output = buildInteger(globals, (arg1[1])[3][arg2[1]]);
-						break;
-					case 22:
-						// nativeString;
-						valueStackSize -= 3;
-						arg3 = valueStack[(valueStackSize + 2)];
-						arg2 = valueStack[(valueStackSize + 1)];
-						arg1 = valueStack[valueStackSize];
-						string1 = (arg1[1])[3][arg2[1]];
-						if (arg3[1]) {
-							output = buildCommonString(globals, string1);
-						} else {
-							output = buildString(globals, string1);
-						}
-						break;
 					case 23:
 						// sign;
 						arg1 = valueStack[--valueStackSize];
@@ -4513,54 +4493,6 @@ var interpretImpl = function(vm, executionContextId) {
 								output = buildFloat(globals, fixFuzzyFloatPrecision((Math.log(float1) * arg2[1])));
 							}
 						}
-						break;
-					case 27:
-						// intQueueClear;
-						arg1 = valueStack[--valueStackSize];
-						output = VALUE_NULL;
-						objInstance1 = arg1[1];
-						if ((objInstance1[3] != null)) {
-							objInstance1[3][1] = 0;
-						}
-						break;
-					case 28:
-						// intQueueWrite16;
-						output = VALUE_NULL;
-						int1 = row[2];
-						valueStackSize -= (int1 + 1);
-						value = valueStack[valueStackSize];
-						objArray1 = (value[1])[3];
-						intArray1 = objArray1[0];
-						_len = objArray1[1];
-						if ((_len >= intArray1.length)) {
-							intArray2 = PST$createNewArray(((_len * 2) + 16));
-							j = 0;
-							while ((j < _len)) {
-								intArray2[j] = intArray1[j];
-								j += 1;
-							}
-							intArray1 = intArray2;
-							objArray1[0] = intArray1;
-						}
-						objArray1[1] = (_len + 16);
-						i = (int1 - 1);
-						while ((i >= 0)) {
-							value = valueStack[((valueStackSize + 1) + i)];
-							if ((value[0] == 3)) {
-								intArray1[(_len + i)] = value[1];
-							} else if ((value[0] == 4)) {
-								float1 = (0.5 + value[1]);
-								intArray1[(_len + i)] = Math.floor(float1);
-							} else {
-								hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
-								i = -1;
-							}
-							i -= 1;
-						}
-						break;
-					case 29:
-						// execCounter;
-						output = buildInteger(globals, ec[8]);
 						break;
 					case 30:
 						// sleep;
@@ -4655,11 +4587,6 @@ var interpretImpl = function(vm, executionContextId) {
 							}
 							i += 1;
 						}
-						break;
-					case 41:
-						// addShutdownHandler;
-						arg1 = valueStack[--valueStackSize];
-						vm[10].push(arg1);
 						break;
 					case 42:
 						// nativeTunnelSend;

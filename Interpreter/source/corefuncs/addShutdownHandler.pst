@@ -1,2 +1,0 @@
-﻿@import("inline/1_arg.pst");
-vm.shutdownHandlers.Add(arg1);

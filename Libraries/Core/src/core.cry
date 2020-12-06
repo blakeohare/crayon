@@ -150,13 +150,6 @@
         return $$$('execId');
     }
 
-    @localized('en', 'getExecutionIterationCounter')
-    @localized('es', 'ESgetExecutionIterationCounter')
-    @localized('jp', 'JPgetExecutionIterationCounter')
-    function getExecutionIterationCounter() {
-        return $$$('execCounter');
-    }
-
     @localized('en', 'getProjectId')
     @localized('es', 'ESgetProjectId')
     @localized('jp', 'JPgetProjectId')
