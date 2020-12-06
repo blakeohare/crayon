@@ -197,6 +197,7 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/EventLoop.cs", "Resources/EventLoop.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/ImageUtil.cs", "Resources/ImageUtil.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/JsonHelper.cs", "Resources/JsonHelper.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/PixelBuffer.cs", "Resources/PixelBuffer.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/ProcessHelper.cs", "Resources/ProcessHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/TextEncodingHelper.cs", "Resources/TextEncodingHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.cs", replacements);

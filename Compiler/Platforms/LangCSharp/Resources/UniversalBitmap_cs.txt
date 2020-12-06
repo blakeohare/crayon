@@ -15,7 +15,8 @@ namespace Interpreter
     public class UniversalBitmap
     {
         private Image<Rgba32> bitmap;
-
+        private DrawingSession activeDrawingSession = null;
+        private PixelBuffer pixelBuffer = null;
         public bool IsValid { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
@@ -47,18 +48,18 @@ namespace Interpreter
 
         public byte[] GetBytesAsPng()
         {
-            throw new System.NotImplementedException();
+            return this.SaveBytes(ImageFormat.PNG);
         }
 
         public byte[] GetBytesAsJpeg()
         {
-            throw new System.NotImplementedException();
+            return this.SaveBytes(ImageFormat.JPEG);
         }
 
         public UniversalBitmap CloneToNewSize(int width, int height)
         {
             UniversalBitmap newBitmap = new UniversalBitmap(width, height);
-            DrawingSession g = newBitmap.MakeGraphics();
+            DrawingSession g = newBitmap.CreateNewDrawingSession();
             if (width == this.Width && height == this.Height)
             {
                 g.Blit(this, 0, 0);
@@ -67,75 +68,96 @@ namespace Interpreter
             {
                 g.BlitStretched(this, 0, 0, width, height);
             }
+            g.Flush();
+            newBitmap.activeDrawingSession = null;
+            newBitmap.pixelBuffer = null;
             return newBitmap;
         }
 
         public void Save(string path)
         {
-            if (path.ToLowerInvariant().EndsWith(".ico"))
-            {
-                throw new System.NotImplementedException();
-            }
-            else
-            {
-                this.bitmap.Save(path);
-            }
+            this.bitmap.Save(path);
         }
 
-        private static string FormatToExtension(ImageFormat format)
+        private byte[] SaveBytes(ImageFormat format)
         {
+            System.IO.MemoryStream stream = new System.IO.MemoryStream();
             switch (format)
             {
-                case ImageFormat.PNG: return ".png";
-                case ImageFormat.JPEG: return ".jpg";
-                default: throw new System.Exception();
+                case ImageFormat.PNG:
+                    this.bitmap.SaveAsPng(stream);
+                    break;
+                case ImageFormat.JPEG:
+                    this.bitmap.SaveAsJpeg(stream);
+                    break;
+                default:
+                    throw new System.NotImplementedException();
             }
+            return stream.ToArray();
         }
 
-        public byte[] SaveBytes(ImageFormat format)
+        public DrawingSession CreateNewDrawingSession()
         {
-            throw new System.NotImplementedException();
-        }
-
-        public DrawingSession MakeGraphics()
-        {
-            return new DrawingSession(this);
-        }
-
-        public DrawingSession GetActiveDrawingSession()
-        {
-            throw new System.NotImplementedException();
+            if (this.activeDrawingSession != null) return this.activeDrawingSession;
+            this.activeDrawingSession = new DrawingSession(this);
+            return this.activeDrawingSession;
         }
 
         public void GetPixel(int x, int y, int[] colorOut)
         {
-            throw new System.NotImplementedException();
+            Rgba32 color = this.bitmap[x, y];
+            colorOut[0] = color.R;
+            colorOut[1] = color.G;
+            colorOut[2] = color.B;
+            colorOut[3] = color.A;
+        }
+
+        public void ClearBuffer()
+        {
+            this.pixelBuffer = null;
         }
 
         public class DrawingSession
         {
-            public UniversalBitmap Bitmap { get; private set; }
-            public DrawingSession Draw(UniversalBitmap bmp, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6)
+            private PixelBuffer pixelBuffer = null;
+            public UniversalBitmap Parent { get; private set; }
+
+            public DrawingSession Draw(
+                UniversalBitmap bmp,
+                int targetX, int targetY,
+                int sourceX, int sourceY,
+                int targetWidth, int targetHeight,
+                int sourceWidth, int sourceHeight)
             {
-                throw new System.NotImplementedException();
+                if (sourceX == 0 && sourceY == 0 && sourceWidth == bmp.Width && sourceHeight == bmp.Height)
+                {
+                    // attempting to draw the whole src onto the dest
+                    this.BlitStretched(bmp, targetX, targetY, targetWidth, targetHeight);
+                }
+                else
+                {
+                    throw new System.NotImplementedException();
+                }
+                return this;
             }
 
             public DrawingSession SetPixel(int x, int y, int r, int g, int b, int a)
             {
-                throw new System.NotImplementedException();
+                this.pixelBuffer.SetPixel(x, y, new Rgba32(r, g, b, a));
+                return this;
             }
 
-            public DrawingSession Flush()
+            public void Flush()
             {
-                throw new System.NotImplementedException();
+                this.pixelBuffer.Flush();
             }
-
-            private Image<Rgba32> target;
 
             public DrawingSession(UniversalBitmap owner)
             {
-                this.Bitmap = owner;
-                this.target = owner.bitmap;
+                this.Parent = owner;
+                this.pixelBuffer = owner.pixelBuffer ?? new PixelBuffer(owner.bitmap, owner.Width, owner.Height);
+                owner.pixelBuffer = this.pixelBuffer;
+                this.pixelBuffer.Reset();
             }
 
             public void Blit(UniversalBitmap bmp, int x, int y)
@@ -145,31 +167,7 @@ namespace Interpreter
 
             public void BlitStretched(UniversalBitmap bmp, int x, int y, int stretchWidth, int stretchHeight)
             {
-                int sourceWidth = bmp.Width;
-                int sourceHeight = bmp.Height;
-                int originalTargetLeft = x;
-                int originalTargetTop = y;
-                int targetLeft = System.Math.Max(0, originalTargetLeft);
-                int targetTop = System.Math.Max(0, originalTargetTop);
-                int originalTargetRight = originalTargetLeft + stretchWidth;
-                int originalTargetBottom = originalTargetTop + stretchHeight;
-                int targetRight = System.Math.Min(this.target.Width, originalTargetRight);
-                int targetBottom = System.Math.Min(this.target.Height, originalTargetBottom);
-
-                if (stretchWidth <= 0 || stretchHeight <= 0) return;
-
-                int targetX, targetY, sourceX, sourceY;
-
-                for (targetY = targetTop; targetY < targetBottom; ++targetY)
-                {
-                    sourceY = (targetY - originalTargetTop) * sourceHeight / stretchHeight;
-
-                    for (targetX = targetLeft; targetX < targetRight; ++targetX)
-                    {
-                        sourceX = (targetX - originalTargetLeft) * sourceWidth / stretchWidth;
-                        this.target[targetX, targetY] = bmp.bitmap[sourceX, sourceY];
-                    }
-                }
+                this.pixelBuffer.BlitStretched(this.Parent.bitmap, bmp.bitmap, x, y, stretchWidth, stretchHeight);
             }
         }
     }
