@@ -143,7 +143,7 @@ namespace Interpreter
 
             public DrawingSession SetPixel(int x, int y, int r, int g, int b, int a)
             {
-                this.pixelBuffer.SetPixel(x, y, new Rgba32(r, g, b, a));
+                this.pixelBuffer.SetPixel(x, y, new Rgba32((byte)r, (byte)g, (byte)b, (byte)a));
                 return this;
             }
 
