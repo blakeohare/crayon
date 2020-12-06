@@ -42,13 +42,9 @@ namespace Interpreter
         private string FaceKey { get; set; }
         private int BinarySource { get; set; }
         private static int binarySourceCounter = 0;
-#if WINDOWS
         private System.Drawing.Font systemDrawingFont = null;
         public System.Drawing.Font NativeFont { get { return this.systemDrawingFont; } }
         private System.Drawing.FontFamily systemDrawingFontFamily = null;
-#elif OSX
-        private Cairo.FontFace cairoFontFace = null;
-#endif
         private string systemFontName = null;
 
         private static readonly Dictionary<string, UniversalFont> cache = new Dictionary<string, UniversalFont>();
@@ -73,12 +69,8 @@ namespace Interpreter
 
             font.systemFontName = this.systemFontName;
 
-#if WINDOWS
             font.systemDrawingFontFamily = this.systemDrawingFontFamily;
             font.systemDrawingFont = new System.Drawing.Font(this.systemDrawingFontFamily, size, GetStyle(isBold, isItalic));
-#elif OSX
-            font.cairoFontFace = this.cairoFontFace;
-#endif
 
             cache[key] = font;
             return font;
@@ -104,10 +96,8 @@ namespace Interpreter
 
             UniversalFont font = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic, Key = key, FaceKey = faceKey };
             font.systemFontName = name;
-#if WINDOWS
             font.systemDrawingFont = new System.Drawing.Font(name, size * 7 / 5, GetStyle(isBold, isItalic));
             font.systemDrawingFontFamily = font.systemDrawingFont.FontFamily;
-#endif
             faceCache[faceKey] = font;
             cache[key] = font;
             return font;
@@ -124,12 +114,8 @@ namespace Interpreter
             if (faceCache.TryGetValue(faceKey, out sameFaceFont))
             {
                 newFont = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic, Key = key, FaceKey = faceKey };
-#if WINDOWS
                 newFont.systemDrawingFontFamily = sameFaceFont.systemDrawingFontFamily;
                 newFont.systemDrawingFont = new System.Drawing.Font(newFont.systemDrawingFontFamily, size * 7 / 5, GetStyle(isBold, isItalic));
-#elif OSX
-                newFont.cairoFontFace = sameFaceFont.cairoFontFace;
-#endif
             }
             else
             {
@@ -148,7 +134,6 @@ namespace Interpreter
         {
             UniversalFont font = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic };
             font.BinarySource = ++binarySourceCounter;
-#if WINDOWS
             System.Drawing.Text.PrivateFontCollection fonts = new System.Drawing.Text.PrivateFontCollection();
             System.Runtime.InteropServices.GCHandle handle = System.Runtime.InteropServices.GCHandle.Alloc(bytes, System.Runtime.InteropServices.GCHandleType.Pinned);
             System.IntPtr pointer = handle.AddrOfPinnedObject();
@@ -162,9 +147,6 @@ namespace Interpreter
             }
             font.systemDrawingFontFamily = fonts.Families.FirstOrDefault();
             font.systemDrawingFont = new System.Drawing.Font(fonts.Families.FirstOrDefault(), size * 7 / 5, GetStyle(isBold, isItalic), System.Drawing.GraphicsUnit.Pixel);
-#elif OSX
-            font.cairoFontFace = FreeTypeFontFace.Create(bytes, 0, 0);
-#endif
             string faceKey = "bin:" + font.BinarySource;
             string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
             faceCache[faceKey] = font;

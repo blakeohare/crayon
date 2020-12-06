@@ -204,7 +204,6 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.cs", replacements);
 
             // Required project files
-            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.cs", replacements);
 
             // CSharpOpenTK specific stuff
@@ -250,7 +249,6 @@ namespace CSharpApp
             string projectId = replacements["PROJECT_ID"];
 
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.sln", replacements);
-            this.CopyResourceAsText(output, projectId + "OSX.sln", "Resources/SolutionFileOsx.sln", replacements);
             string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.csproj";
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
