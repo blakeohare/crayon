@@ -298,6 +298,11 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 	};
 	
 	req.open(method, url, true);
+
+	if (textContent !== null || binaryContent !== null) {
+		req.setRequestHeader('Content-Type', contentType);
+	}
+
 	req.responseType = 'blob';
 	
 	for (let i = 0; i < headersKvp.length; i += 2) {
@@ -305,7 +310,6 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 		let v = headersKvp[i + 1];
 		switch (n.toLowerCase()) {
 			// These are forbidden by the browser.
-			case 'content-type':
 			case 'content-length':
 			case 'user-agent':
 				break;
