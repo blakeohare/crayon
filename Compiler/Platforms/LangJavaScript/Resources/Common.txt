@@ -799,7 +799,7 @@ let convert = (g, v) => {
 
 let getType = (t) => {
 	if (typeof t == "string") return 'S';
-	if (!t) return t === false ? 'B' : 'N';
+	if (!t) return t === false ? 'B' : t === 0 ? 'I' : 'N';
 	if (t === true) return 'B';
 	if (typeof t == "number") return (t % 1 == 0) ? 'I' : 'F';
 	if (typeof t == 'object') return Array.isArray(t) ? 'L' : 'O';
