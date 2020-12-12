@@ -249,7 +249,7 @@ namespace CSharpApp
             string projectId = replacements["PROJECT_ID"];
 
             this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.sln", replacements);
-            string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.csproj";
+            string projectFileResource = "Resources/ProjectFile.csproj";
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
     }

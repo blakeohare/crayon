@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\MyText.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
 
