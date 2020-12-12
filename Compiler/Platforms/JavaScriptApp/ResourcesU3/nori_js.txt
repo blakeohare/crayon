@@ -40,9 +40,11 @@ function noriInit(noriRoot, uiData, shownCallback, eventBatchSender) {
 function setFrameRoot(root) {
 	ctx.noriHostDiv = root;
 	let sizer = document.createElement('div');
+	let fontLoader = document.createElement('style');
 	let content = document.createElement('div');
-	ctx.uiRoot = content;
 	ctx.textSizer = sizer;
+	ctx.fontLoader = fontLoader;
+	ctx.uiRoot = content;
 	sizer.style.position = 'absolute';
 	sizer.style.width = 'auto';
 	sizer.style.height = 'auto';
@@ -52,6 +54,7 @@ function setFrameRoot(root) {
 	content.style.width = '100%';
 	content.style.height = '100%';
 	root.appendChild(sizer);
+	root.appendChild(fontLoader);
 	root.appendChild(content);
 }
 
@@ -491,7 +494,7 @@ function flushUpdates(data) {
 			case 'FR': // Font resource
 				propertyValue = NoriUtil.decodeHex(items[i++]);
 				ctx.fontsLoading.push(NoriUtil.decodeHex(items[i++]));
-				document.getElementById('font_loader').innerHTML += "\n@import url('" + propertyValue + "');"
+				ctx.fontLoader.innerHTML += "\n@import url('" + propertyValue + "');"
 				break;
 
 			case 'PF': // property full state
@@ -677,7 +680,7 @@ function flushUpdates(data) {
 }
 
 const waitForFonts = () => {
-	let root = document.getElementById('html_render_host');
+	let root = ctx.noriHostDiv;
 	if (ctx.fontsLoading.length === 0) {
 		return Promise.resolve(true);
 	}
