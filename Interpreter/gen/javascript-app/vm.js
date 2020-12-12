@@ -8122,6 +8122,10 @@ var unrollExceptionOutput = function(vm, exceptionInstance) {
 			pcs.pop();
 		}
 	}
+	if (((trace.length > 0) && (trace[(trace.length - 1)].indexOf("[Core:exceptions.cry]") == 0))) {
+		trace.pop();
+		pcs.pop();
+	}
 	var tokensAtPc = vm[3][0][pcs[(pcs.length - 1)]];
 	if ((tokensAtPc != null)) {
 		codeFormattedPointer = "\n\n" + tokenHelperGetFormattedPointerToToken(vm, tokensAtPc[0]);

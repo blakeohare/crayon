@@ -557,6 +557,11 @@ string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
         }
     }
 
+    if (trace.Size() > 0 && trace[trace.Size() - 1].StartsWith("[Core:exceptions.cry]")) {
+        trace.Pop();
+        pcs.Pop();
+    }
+
     List<Token> tokensAtPc = vm.symbolData.tokenData[pcs[pcs.Size() - 1]];
     if (tokensAtPc != null) {
         codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(vm, tokensAtPc[0]));

@@ -10362,6 +10362,11 @@ namespace Interpreter.Vm
                     pcs.RemoveAt(pcs.Count - 1);
                 }
             }
+            if (((trace.Count > 0) && trace[(trace.Count - 1)].StartsWith("[Core:exceptions.cry]")))
+            {
+                trace.RemoveAt(trace.Count - 1);
+                pcs.RemoveAt(pcs.Count - 1);
+            }
             List<Token> tokensAtPc = vm.symbolData.tokenData[pcs[(pcs.Count - 1)]];
             if ((tokensAtPc != null))
             {
