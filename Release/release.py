@@ -233,16 +233,6 @@ def buildRelease(args):
 		targetPathRoot = copyToDir + '/libs/' + lib
 		copyDirectory(sourcePathRoot, targetPathRoot, recursive = False)
 		copyDirectory(sourcePathRoot + '/src', targetPathRoot + '/src')
-		sourceNativeDir = sourcePathRoot + '/native'
-		if path_exists(sourceNativeDir):
-			print("Generating crypkg'es for " + lib + "...")
-			log("Generate crypkg'es for " + lib)
-			for platform in list_directories(sourceNativeDir):
-				print('...' + platform)
-				target_crypkg_path = targetPathRoot + '/native/' + platform + '.crypkg'
-				ensure_directory_exists(get_parent_path(target_crypkg_path))
-				crypkgmake.make_pkg(canonicalize_sep(sourceNativeDir + '/' + platform), canonicalize_sep(target_crypkg_path))
-
 
 	# Go through the source's bin/Release directory and find all the library DLL's.
 	# Copy those to the output release directory.
@@ -284,13 +274,34 @@ def buildRelease(args):
 
 	# Now compile the generated VM source code	
 	print("Compiling VM for distribution...")
-	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')])
+	cmd = ' '.join([
+		BUILD_CMD, 
+		RELEASE_CONFIG, 
+		canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')
+	])
+	
+	dot_net_platform_name = 'osx-x64' if isMono else 'win-x64'
+	cmd = ' '.join([
+		'dotnet publish',
+		os.path.join(VM_TEMP_DIR_SOURCE, 'CrayonRuntime', 'Interpreter.csproj'),
+		'-c Release',
+		'-r', dot_net_platform_name,
+		'--self-contained true',
+		'-p:PublishTrimmed=true',
+		'-p:PublishSingleFile=true'
+	])
 	log("Compiling the VM in VmTemp using the command: " + cmd)
 	print(runCommand(cmd))
-
+	
 	# Copy the Crayon runtime
-	copyDirectory(VM_TEMP_DIR + '/Source/CrayonRuntime/bin/Release', copyToDir + '/vm', '.exe')
-
+	copyDirectory(VM_TEMP_DIR + '/Source/CrayonRuntime/bin/Release/netcoreapp3.1/' + dot_net_platform_name + '/publish', copyToDir + '/vm', '.exe')
+	if isWindows:
+		vm_from = os.sep.join((copyToDir + '/vm/Interpreter.exe').split('/'))
+		vm_to = vm_from.split(os.sep)
+		vm_to.pop()
+		vm_to.append('CrayonRuntime.exe')
+		vm_to = os.sep.join(vm_to)
+		os.rename(vm_from, vm_to)
 	# Copy U3 window
 	if isWindows:
 		copyDirectory(u3_dir, copyToDir + '/u3')
