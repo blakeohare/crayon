@@ -2,6 +2,10 @@
 
     const Button_Text = 'btn.text';
     const Button_OnClick = 'btn.onclick';
+    const Button_GradientTop = 'btn.gradtop';
+    const Button_GradientBottom = 'btn.gradbottom';
+    const Button_Bevel = 'btn.bevel';
+    const Button_Radius = 'btn.radius';
 
     class Button : Element {
 
@@ -12,6 +16,12 @@
         function getText() { return this._getStringProperty(Button_Text); }
         function setText(value) { return this._setStringProperty(Button_Text, value); }
 
+        function getRadius() { return this._getIntProperty(Button_Radius); }
+        function setRadius(value) {
+            if (value < 0) throw new InvalidArgumentException("Radius cannot be negative");
+            return this._setIntProperty(Button_Radius, value);
+        }
+
         function setClickHandler(fn) {
             return this._setEventHandler(Button_OnClick, fn);
         }
@@ -20,8 +30,20 @@
             return this._clearEventHandler(Button_OnClick);
         }
 
+        // TODO: this should probably be made more general in Element
+        // TODO: ...and allow for arbitrary stops and directions. For now, this will unblock most use cases.
+        function getGradientTop() { return this._getColorProperty(Button_GradientTop); }
+        function setGradientTop(r, g, b, a = 255) { return this._setColorProperty(Button_GradientTop, r, g, b, a); }
+        function getGradientBottom() { return this._getColorProperty(Button_GradientBottom); }
+        function setGradientBottom(r, g, b, a = 255) { return this._setColorProperty(Button_GradientBottom, r, g, b, a); }
+
         function setAttributeWithString(name, strValue) {
             switch (name) {
+                case 'gradientTop': return this._setColorWithString(Button_GradientTop, strValue);
+                case 'gradientBottom': return this._setColorWithString(Button_GradientBottom, strValue);
+                case 'bevel': return this._setBooleanAsString(Button_Bevel, strValue);
+                case 'radius': return this._setGeneralPurposeIntegerWithString(Button_Radius, strValue);
+
                 case '<content>':
                 case 'text':
                     return this.setText(strValue);

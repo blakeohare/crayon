@@ -258,7 +258,18 @@ function setProperty(e, key, value) {
 
 		case 'btn.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
 		case 'btn.onclick': e.firstChild.onclick = NoriEvents.buildEventHandler(value, e, key, ''); break;
-		
+		case 'btn.bevel': e.firstChild.style.borderWidth = value ? 'auto' : '0px'; break;
+		case 'btn.radius': e.firstChild.style.borderRadius = value + 'px'; break;
+
+		case 'btn.gradtop':
+		case 'btn.gradbottom':
+			if (!e.NORI_gradient) e.NORI_gradient = {};
+			e.NORI_gradient[key === 'btn.gradtop' ? 'top' : 'bottom'] = value;
+			if (e.NORI_gradient.top && e.NORI_gradient.bottom) {
+				e.firstChild.style.background = 'linear-gradient(' + e.NORI_gradient.top + ',' + e.NORI_gradient.bottom + ')';
+			}
+			break;
+
 		case 'txtblk.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
 		case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
 		

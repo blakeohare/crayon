@@ -44,8 +44,13 @@ namespace Nori {
 
         static field ID_ALLOC = 0;
 
+        // TODO: this is a pain to maintain, both here and in nori.js. Consider using a
+        // prefix in the property name itself to indicate type. This would also save a
+        // function call for the type specific property setter wrapper.
         static field STRING_PROPERTIES = {
             Button_Text: true,
+            Button_GradientTop: true,
+            Button_GradientBottom: true,
             TextBlock_Text: true,
             Border_LeftColor: true,
             Border_TopColor: true,
@@ -198,6 +203,12 @@ namespace Nori {
             }
             if (num == null || num < 0) throw new InvalidArgumentException("Invalid pixel or percent value: " + strValue);
             return this._setIntProperty(fieldName, num * multiplier);
+        }
+
+        function _setGeneralPurposeIntegerWithString(fieldName, strValue) {
+            v = Core.parseInt(strValue);
+            if (v == null) throw new InvalidArgumentException("Invalid integer value: '" + strValue + "'");
+            return this._setIntProperty(fieldName, v);
         }
 
         function setAttributeWithString(name, strValue) {

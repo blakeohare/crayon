@@ -12,6 +12,8 @@ const ctx = {
 	isTextProperty: {
 		// Note: color properties count as text properties.
 		'btn.text': true,
+		'btn.gradtop': true,
+		'btn.gradbottom': true,
 		'txtblk.text': true,
 		'border.leftcolor': true,
 		'border.topcolor': true,
