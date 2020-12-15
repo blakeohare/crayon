@@ -282,9 +282,13 @@ function setProperty(e, key, value) {
 			switch (e.NORI_type) {
 				case 'PasswordBox':
 				case 'TextBox':
-				case 'CheckBox':
 					if (e.firstChild.value != value) {
 						e.firstChild.value = value;
+					}
+					break;
+				case 'CheckBox':
+					if (!e.firstChild.checked != !value) {
+						e.firstChild.checked = !!value;
 					}
 					break;
 					
