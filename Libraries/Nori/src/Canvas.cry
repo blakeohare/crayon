@@ -17,5 +17,13 @@
         function setCanvasHeight(value) {
             return this._setIntProperty(Canvas_Height, value);
         }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'canvasWidth': return this._setIntProperty(Canvas_Width, Core.parseInt(strValue));
+                case 'canvasHeight': return this._setIntProperty(Canvas_Height, Core.parseInt(strValue));
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
     }
 }
