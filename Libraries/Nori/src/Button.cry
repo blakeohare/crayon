@@ -30,6 +30,9 @@
             return this._clearEventHandler(Button_OnClick);
         }
 
+        function setBevel(v) { return this._setBoolProperty(Button_Bevel, v == true); }
+        function getBevel() { return this._getBoolProperty(Button_Bevel); }
+
         // TODO: this should probably be made more general in Element
         // TODO: ...and allow for arbitrary stops and directions. For now, this will unblock most use cases.
         function getGradientTop() { return this._getColorProperty(Button_GradientTop); }
