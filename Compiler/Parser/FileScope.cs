@@ -41,7 +41,17 @@ namespace Parser
                 string message = "No class named '" + name + "' was found.";
                 if (name.Contains("."))
                 {
-                    message += " Did you forget to import a library?";
+                    string[] nameParts = name.Split('.');
+                    string rootNamespace = nameParts[0];
+                    object didTheyImportTheNamespace = this.FileScopeEntityLookup.DoLookupImpl(rootNamespace, fromWhere);
+                    if (didTheyImportTheNamespace == null)
+                    {
+                        message += " Did you forget to import a library?";
+                    }
+                    else
+                    {
+                        message = "The namespace '" + rootNamespace + "' does not include a class named '" + (nameParts.Length == 2 ? nameParts[1] : name) + "'.";
+                    }
                 }
                 throw new ParserException(nameToken, message);
             }
