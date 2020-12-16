@@ -16,7 +16,7 @@ namespace Nori {
 
         constructor() : base('Image') { }
 
-        function setSource(bitmap) {
+        function setSource(bitmap, useNearestNeighbor = false) {
             d = this._imageData;
             oldBmp = d['bmp'];
             if (bitmap == null) {
@@ -31,7 +31,7 @@ namespace Nori {
                 d['bmp'] = bitmap;
                 d['b64'] = bitmap._lastPng ?? bitmap.toBase64(Images.ImageFormat.PNG);
 
-                return this._setStringProperty(Image_Source, d['b64']);
+                return this._setStringProperty(Image_Source, (useNearestNeighbor ? 'NN' : 'BL') + '@' + d['b64']);
             }
             return this;
         }
