@@ -243,6 +243,11 @@ function setProperty(e, key, value) {
 			}
 			break;
 		
+		case 'el.onclick':
+			(e.NORI_type == 'Button' ? e.firstChild : e).addEventListener('click', 
+				NoriEvents.buildEventHandler(value, e, key, ''));
+			break;
+			
 		case 'border.radius': e.style.borderRadius = value + 'px'; e.firstChild.style.borderRadius = value + 'px'; break;
 		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
@@ -257,7 +262,6 @@ function setProperty(e, key, value) {
 		case 'cv.width': e.firstChild.width = value; break;
 
 		case 'btn.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
-		case 'btn.onclick': e.firstChild.onclick = NoriEvents.buildEventHandler(value, e, key, ''); break;
 		case 'btn.bevel': e.firstChild.style.borderWidth = value ? 'auto' : '0px'; break;
 		case 'btn.radius': e.firstChild.style.borderRadius = value + 'px'; break;
 

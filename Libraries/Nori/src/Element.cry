@@ -20,6 +20,7 @@ namespace Nori {
     const Element_MouseDown = 'el.onmousedown';
     const Element_MouseUp = 'el.onmouseup';
     const Element_MouseMove = 'el.onmousemove';
+    const Element_Click = 'el.onclick';
     const Element_Bold = 'el.bold';
     const Element_Italic = 'el.italic';
     const Element_FontColor = 'el.fontcolor';
@@ -304,6 +305,14 @@ namespace Nori {
         function setMouseDownHandler(fn) { return this._setEventHandler(Element_MouseDown, fn, MouseEventArg.parseFromArg); }
         function setMouseUpHandler(fn) { return this._setEventHandler(Element_MouseUp, fn, MouseEventArg.parseFromArg); }
         function setMouseMoveHandler(fn) { return this._setEventHandler(Element_MouseMove, fn, MouseEventArg.parseFromArg); }
+
+        function setClickHandler(fn) {
+            return this._setEventHandler(Element_Click, fn);
+        }
+
+        function clearClickHandler() {
+            return this._clearEventHandler(Element_Click);
+        }
 
         static function _ensureCallback(fn) {
             oops = "Did you accidentally call the function when you passed it as a callback?";

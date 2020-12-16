@@ -1,7 +1,6 @@
 ﻿namespace Nori {
 
     const Button_Text = 'btn.text';
-    const Button_OnClick = 'btn.onclick';
     const Button_GradientTop = 'btn.gradtop';
     const Button_GradientBottom = 'btn.gradbottom';
     const Button_Bevel = 'btn.bevel';
@@ -20,14 +19,6 @@
         function setRadius(value) {
             if (value < 0) throw new InvalidArgumentException("Radius cannot be negative");
             return this._setIntProperty(Button_Radius, value);
-        }
-
-        function setClickHandler(fn) {
-            return this._setEventHandler(Button_OnClick, fn);
-        }
-
-        function clearClickHandler() {
-            return this._clearEventHandler(Button_OnClick);
         }
 
         function setBevel(v) { return this._setBoolProperty(Button_Bevel, v == true); }
