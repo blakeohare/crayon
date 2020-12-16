@@ -203,7 +203,7 @@ function setProperty(e, key, value) {
 			break;
 		
 		case 'el.bold': 
-			e.style.fontWeight = value ? 'bold' : 'normal';
+			(e.NORI_type == 'Button' ? e.firstChild : e).style.fontWeight = value ? 'bold' : 'normal';
 			e.NORI_font = e.NORI_font || {};
 			e.NORI_font.bold = e.style.fontWeight;
 			break;
