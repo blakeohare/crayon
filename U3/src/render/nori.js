@@ -181,6 +181,24 @@ function setProperty(e, key, value) {
 		case 'el.bottommargin': e.NORI_margin[3] = value; break;
 		case 'el.dock': e.NORI_dock = 'WNES'.charAt(value); break;
 
+		case 'el.cursor':
+			t = e.firstChild.style; 
+			switch (value) {
+				case 0: t.cursor = 'auto'; break;
+				case 1: t.cursor = 'pointer'; break;
+				case 2: t.cursor = 'ew-resize'; break;
+				case 3: t.cursor = 'ns-resize'; break;
+				case 4: t.cursor = 'not-allowed'; break;
+				case 5: t.cursor = 'grab'; break;
+				case 6: t.cursor = 'text'; break;
+				case 7: t.cursor = 'wait'; break;
+				case 8: t.cursor = 'crosshair'; break;
+				case 9: t.cursor = 'zoom-in'; break;
+				case 10: t.cursor = 'zoom-out'; break;
+				case 11: t.cursor = 'help'; break;
+			}
+			break;
+
 		case 'el.onmousedown':
 		case 'el.onmouseup':
 		case 'el.onmousemove':

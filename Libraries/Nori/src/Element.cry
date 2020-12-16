@@ -26,6 +26,7 @@ namespace Nori {
     const Element_FontColor = 'el.fontcolor';
     const Element_Font = 'el.font';
     const TextBlock_FontSize = 'txtblk.sz';
+    const Element_Cursor = 'el.cursor';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -39,6 +40,21 @@ namespace Nori {
         TOP = 1,
         CENTER = 2,
         BOTTOM = 3,
+    }
+
+    enum CursorType {
+        NORMAL = 0,
+        POINTING_HAND = 1,
+        H_RESIZE = 2,
+        V_RESIZE = 3,
+        NOT_ALLOWED = 4,
+        OPEN_HAND = 5,
+        TEXT = 6,
+        HOURGLASS = 7,
+        CROSSHAIR = 8,
+        ZOOM_IN = 9,
+        ZOOM_OUT = 10,
+        HELP = 11,
     }
 
     class Element {
@@ -277,7 +293,10 @@ namespace Nori {
         function setVerticalAlignment(value) { return this._setEnumProperty(Element_VAlign, value, 0, VerticalAlignment.length - 1); }
 
         function getDock() { return this._getIntProperty(Element_Dock); }
-        function setDock(value) { return this._setEnumProperty(Element_Dock, value, 0, 3); }
+        function setDock(value) { return this._setEnumProperty(Element_Dock, value, 0, DockDirection.max); }
+
+        function getCursor(value) { return this._getIntProperty(Element_Cursor); }
+        function setCursor(value) { return this._setEnumProperty(Element_Cursor, value, 0, CursorType.max); }
 
         function setMargin(value) {
             value = Math.floor(value);

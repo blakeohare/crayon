@@ -33,6 +33,20 @@ namespace Nori {
                 'e': DockDirection.EAST,
                 'w': DockDirection.WEST,
             },
+            Element_Cursor: {
+                'normal': CursorType.NORMAL,
+                'pointingHand': CursorType.POINTING_HAND,
+                'hResize': CursorType.H_RESIZE,
+                'vResize': CursorType.V_RESIZE,
+                'notAllowed': CursorType.NOT_ALLOWED,
+                'openHand': CursorType.OPEN_HAND,
+                'text': CursorType.TEXT,
+                'hourglass': CursorType.HOURGLASS,
+                'crosshair': CursorType.CROSSHAIR,
+                'zoomIn': CursorType.ZOOM_IN,
+                'zoomOut': CursorType.ZOOM_OUT,
+                'help': CursorType.HELP,
+            },
         };
 
         static constructor() {
