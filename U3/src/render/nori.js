@@ -155,6 +155,7 @@ function createElement(id, type) {
 		case 'DockPanel':
 		case 'FlowPanel':
 		case 'StackPanel':
+			wrapper.style.overflow = 'hidden';
 			break;
 		
 		default:
