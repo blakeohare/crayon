@@ -234,6 +234,11 @@ namespace Parser.ParseTree
                         throw new ParserException(cd.FirstToken, "The class '" + cd.NameToken.Value + "' cannot have an implicit constructor since it needs to pass arguments to the base constructor of '" + cd.BaseClass.NameToken.Value + "'.");
                     }
 
+                    if (this.BaseToken == null)
+                    {
+                        throw new ParserException(this, "You are missing a call to the base constructor, which is required because class '" + baseConstructor.ClassOwner.NameToken.Value + "' requires arguments for its constructor.");
+                    }
+
                     throw new ParserException(this, "Incorrect number of arguments passed to base constructor.");
                 }
 
