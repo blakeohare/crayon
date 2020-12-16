@@ -96,7 +96,11 @@ namespace CrayonRuntime
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
             vm.environment.stdoutPrefix = usePrefixes ? "STDOUT" : null;
             vm.environment.stacktracePrefix = usePrefixes ? "STACKTRACE" : null;
-            vm.environment.showLibStack = showLibStack;
+
+            // TODO: need to revisit this once libraries become modules. Core modules should not have stack traces shown.
+            // vm.environment.showLibStack = showLibStack;
+            CrayonWrapper.vmEnableLibStackTrace(vm);
+
             // Debugger.INSTANCE.StartListening();
             TranslationHelper.ProgramData = vm;
             EventLoop.StartInterpreter();
