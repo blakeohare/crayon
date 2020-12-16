@@ -21,6 +21,10 @@ namespace Build
                     {
                         throw new InvalidOperationException("Build file contains a variable without a name attribute.");
                     }
+                    if (firstPass.ContainsKey(rootVar.Id))
+                    {
+                        throw new InvalidOperationException("The build variable '" + rootVar.Id + "' is included twice in the same variable list.");
+                    }
                     firstPass.Add(rootVar.Id, rootVar);
                 }
             }
