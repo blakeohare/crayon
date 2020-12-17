@@ -592,8 +592,8 @@ function flushUpdates(data) {
 				break;
 			
 			case 'FR': // Font resource
-				propertyValue = NoriUtil.decodeHex(items[i++]);
-				ctx.fontsLoading.push(NoriUtil.decodeHex(items[i++]));
+				propertyValue = NoriUtil.decodeB64(items[i++]);
+				ctx.fontsLoading.push(NoriUtil.decodeB64(items[i++]));
 				ctx.fontLoader.innerHTML += "\n@import url('" + propertyValue + "');"
 				break;
 
@@ -611,7 +611,7 @@ function flushUpdates(data) {
 					propertyKey = items[i + j];
 					propertyValue = items[i + j + propertyCount];
 					if (isTextProperty[propertyKey]) {
-						propertyValue = NoriUtil.decodeHex(propertyValue);
+						propertyValue = NoriUtil.decodeB64(propertyValue);
 					} else {
 						propertyValue = parseInt(propertyValue);
 					}
@@ -637,7 +637,7 @@ function flushUpdates(data) {
 					propertyKey = items[i + j];
 					propertyValue = items[i + j + propertyCount];
 					if (isTextProperty[propertyKey]) {
-						propertyValue = NoriUtil.decodeHex(propertyValue);
+						propertyValue = NoriUtil.decodeB64(propertyValue);
 					} else {
 						propertyValue = parseInt(propertyValue);
 					}

@@ -383,7 +383,7 @@ namespace Nori {
                 for (key : keys) {
                     value = this._properties[key];
                     if (Element.STRING_PROPERTIES.get(key, false)) {
-                        value = Frame.escapeStringToHex(value);
+                        value = Frame.escapeStringB64(value);
                     }
                     q.add(value);
                 }
@@ -403,7 +403,7 @@ namespace Nori {
                         this._properties[k] = v;
                         setKeys.add(k);
                         if (Element.STRING_PROPERTIES.get(k, false)) {
-                            v = Frame.escapeStringToHex(v);
+                            v = Frame.escapeStringB64(v);
                         }
                         setValues.add(v);
                     }

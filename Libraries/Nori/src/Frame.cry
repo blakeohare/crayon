@@ -1,6 +1,7 @@
-﻿//import Dispatcher;
-import Math;
+﻿import Math;
 import U3Direct;
+import TextEncoding;
+import Base64;
 
 namespace Nori {
 
@@ -125,7 +126,7 @@ namespace Nori {
             // It will pause execution of the flush until the font is loaded.
             if (this._fontResourceLinks.length > 0) {
                 for (f : this._fontResourceLinks) {
-                    wireData.add('FR', 0, Frame.escapeStringToHex(f[1]), Frame.escapeStringToHex(f[0]));
+                    wireData.add('FR', 0, Frame.escapeStringB64(f[1]), Frame.escapeStringB64(f[0]));
                 }
                 this._fontResourceLinks.clear();
             }
@@ -237,14 +238,9 @@ namespace Nori {
             }
         }
 
-        static function escapeStringToHex(str) {
-            hex = '0123456789abcdef';
-            output = [];
-            for (c : str) {
-                code = Core.ord(c);
-                output.add(hex[(code >> 4) & 15], hex[code & 15]);
-            }
-            return output.join('');
+        static function escapeStringB64(str) {
+            bytes = convertTextToBytes(str, TextFormat.UTF8);
+            return bytesToBase64(bytes);
         }
 
         function _maybeFireOnLoadHandlers() {
