@@ -7,10 +7,23 @@ namespace Build
     class BuildVarParser
     {
         internal static Dictionary<string, BuildVarCanonicalized> GenerateBuildVars(
+            string projectDirectory,
             BuildItem root,
             BuildItem target,
             Dictionary<string, string> replacements)
         {
+            string envFile = target.EnvFile ?? root.EnvFile;
+            IDictionary<string, object> envValues = new Dictionary<string, object>();
+
+            if (envFile != null)
+            {
+                string envPath = System.IO.Path.Combine(projectDirectory, envFile);
+                if (!System.IO.File.Exists(envPath)) throw new InvalidOperationException("envFile does not exist: '" + envFile + "'");
+                string text = System.IO.File.ReadAllText(envPath);
+                CommonUtil.Json.JsonParser envParser = new CommonUtil.Json.JsonParser(text);
+                envValues = envParser.ParseAsDictionary();
+            }
+
             Dictionary<string, BuildVar> firstPass = new Dictionary<string, BuildVar>();
 
             if (root.Var != null)
@@ -45,6 +58,8 @@ namespace Build
 
             foreach (BuildVar rawElement in firstPass.Values)
             {
+                if (rawElement.EnvFileReference != null) rawElement.ResolveEnvFileReference(envValues);
+
                 string id = rawElement.Id;
                 object value = rawElement.Value;
                 VarType type = rawElement.Type;

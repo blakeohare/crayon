@@ -94,7 +94,7 @@ namespace Build
             Dictionary<string, string> replacements = new Dictionary<string, string>() {
                 { "TARGET_NAME", targetName }
             };
-            varLookup = BuildVarParser.GenerateBuildVars(buildInput, desiredTarget, replacements);
+            varLookup = BuildVarParser.GenerateBuildVars(projectDir, buildInput, desiredTarget, replacements);
 
             if (desiredTarget.HasLegacyIcon || buildInput.HasLegacyIcon)
             {

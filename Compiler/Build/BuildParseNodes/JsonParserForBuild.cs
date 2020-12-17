@@ -55,6 +55,7 @@ namespace Build.BuildParseNodes
             item.IconFilePaths = (json.GetAsList("icons") ?? new object[0]).OfType<string>().ToArray();
             item.HasLegacyIcon = json.GetAsString("icon") != null;
             item.DelegateMainTo = json.GetAsString("delegateMainTo") ?? json.GetAsString("delegate-main-to");
+            item.EnvFile = json.GetAsString("envFile");
 
             List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();
@@ -104,19 +105,15 @@ namespace Build.BuildParseNodes
                 if (value == null && varJson.GetAsString("env") != null)
                 {
                     bv.Value = CommonUtil.Environment.EnvironmentVariables.Get(varJson.GetAsString("env")) ?? "";
-                    bv.Type = VarType.STRING;
+                }
+                else if (value == null && varJson.GetAsString("envFile") != null)
+                {
+                    bv.EnvFileReference = varJson.GetAsString("envFile");
                 }
                 else
                 {
                     bv.Value = value;
-                    if (bv.Value is bool) bv.Type = VarType.BOOLEAN;
-                    else if (bv.Value is int) bv.Type = VarType.INT;
-                    else if (bv.Value is float || bv.Value is double) bv.Type = VarType.FLOAT;
-                    else if (bv.Value is string) bv.Type = VarType.STRING;
-                    else
-                    {
-                        throw new System.InvalidOperationException("Complex types are not allowed for build variables.");
-                    }
+                    bv.EnsureTypeValid();
                 }
                 buildVars.Add(bv);
             }

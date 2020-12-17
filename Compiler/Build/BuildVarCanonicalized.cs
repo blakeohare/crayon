@@ -2,10 +2,12 @@
 {
     public enum VarType
     {
+        NULL,
         BOOLEAN,
         INT,
         FLOAT,
-        STRING
+        STRING,
+        UNKNOWN,
     }
 
     public class BuildVarCanonicalized
