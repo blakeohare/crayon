@@ -48,9 +48,8 @@ const NoriUtil = (() => {
         HEX_LOOKUP['ABCDEF'.charAt(i)] = i + 10;
     }
 
-    // TODO: rename this to decodeB64() before committing
-    let decodeHex = (str) => {
-        return decodeURIComponent(atob(str).split('').map(c => {
+    let decodeB64 = (str) => {
+        return decodeURIComponent(atob(str).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
@@ -59,7 +58,7 @@ const NoriUtil = (() => {
         noopFn,
         promiseWait,
         escapeHtml,
-        decodeHex,
+        decodeB64,
         encodeHex,
     };
 })();

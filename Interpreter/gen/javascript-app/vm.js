@@ -7825,7 +7825,7 @@ var textencoding_convertBytesToText = function(vm, arg1, arg2, arg3) {
 		unwrappedBytes[i] = c;
 		i += 1;
 	}
-	var sc = C$textencoding.bytesToText(unwrappedBytes, format, strOut);
+	var sc = C$textEncoding.bytesToText(unwrappedBytes, format, strOut);
 	if ((sc == 0)) {
 		addToList(output, buildString(vm[13], strOut[0]));
 	}
@@ -7839,7 +7839,7 @@ var textencoding_convertTextToBytes = function(vm, arg1, arg2, arg3, arg4) {
 	var output = arg4[1];
 	var byteList = [];
 	var intOut = PST$intBuffer16;
-	var sc = C$textencoding.textToBytes(value, includeBom, format, byteList, vm[13][9], intOut);
+	var sc = C$textEncoding.textToBytes(value, includeBom, format, byteList, vm[13][9], intOut);
 	var swapWordSize = intOut[0];
 	if ((swapWordSize != 0)) {
 		var i = 0;
