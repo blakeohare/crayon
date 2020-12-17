@@ -21,6 +21,7 @@ namespace Nori {
     const Element_MouseUp = 'el.onmouseup';
     const Element_MouseMove = 'el.onmousemove';
     const Element_Click = 'el.onclick';
+    const Element_ScrollIntoView = 'el.onscrollintoview';
     const Element_Bold = 'el.bold';
     const Element_Italic = 'el.italic';
     const Element_FontColor = 'el.fontcolor';
@@ -346,6 +347,8 @@ namespace Nori {
         function setClickHandler(fn) {
             return this._setEventHandler(Element_Click, fn);
         }
+
+        function setScrollIntoViewHandler(fn) { return this._setEventHandler(Element_ScrollIntoView, fn, b => [b == '1']); }
 
         function clearClickHandler() {
             return this._clearEventHandler(Element_Click);

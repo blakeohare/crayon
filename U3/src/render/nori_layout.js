@@ -14,15 +14,25 @@ const NoriLayout = (() => {
         calculateRequiredSize(ctx.rootElement);
         let width = ctx.frameSize[0];
         let height = ctx.frameSize[1];
-        spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S');
+        spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S', null);
+    };
+
+    let getScrollParent = e => {
+        let walker = e.parentNode;
+        while (walker) {
+            if (walker.NORI_type === 'ScrollPanel') return walker;
+            walker = walker.parentNode;
+        }
+        return null;
     };
 
     let spaceAllocation = (
         elementId,
         xOffset, yOffset, // this includes the top-left margin
         usableWidth, usableHeight, // these already have margins taken out
-        halign, valign) => { // these contain either the original element's alignment or are overridden by the panel logic.
-        
+        halign, valign, // these contain either the original element's alignment or are overridden by the panel logic.
+        scrollParent) => { // the next parent up that is a scroll panel
+
         let e = ctx.elementById[elementId];
 
         let x;
@@ -284,7 +294,17 @@ const NoriLayout = (() => {
     };
 
     let calculateRequiredSize = (e) => {
+        if (e.NORI_scrollIntoViewHandler) {
+            let scrollParent = getScrollParent(e);
+            if (scrollParent) scrollParent.NORI_scrollHandlerChildren.push(e);
+        }
+
         if (e.NORI_isPanel) {
+
+            if (e.NORI_type === 'ScrollPanel') {
+                e.NORI_scrollHandlerChildren = [];
+            }
+
             let elementById = ctx.elementById;
             let children = e.NORI_childrenIdList;
             let child;

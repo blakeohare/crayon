@@ -124,7 +124,6 @@ const NoriEvents = (() => {
         return 'unknown:' + c;
     };
 
-    
     let buildEventHandler = (value, e, eventName, argsOrFunc) => {
         if (value === 0) return NoriUtil.noopFn;
         let isFunc = typeof argsOrFunc === 'function';

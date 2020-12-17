@@ -155,6 +155,24 @@ function createElement(id, type) {
 		
 		case 'ScrollPanel':
 			wrapper.NORI_scrollpanel = ['none', 'none'];
+			wrapper.NORI_scrollHandlerChildren = [];
+			wrapper.addEventListener('scroll', () => {
+				let listeners = wrapper.NORI_scrollHandlerChildren;
+				if (listeners.length > 0) {
+					let scrollRect = wrapper.getBoundingClientRect();
+					for (let item of listeners) {
+						let rect = item.getBoundingClientRect();
+						let isInView = !(scrollRect.left > rect.right ||
+							scrollRect.right < rect.left ||
+							scrollRect.top > rect.bottom ||
+							scrollRect.bottom < rect.top);
+						if (item.NORI_scrollHandlerTriggered !== isInView) {
+							item.NORI_scrollIntoViewHandler(isInView ? '1' : '0');
+							item.NORI_scrollHandlerTriggered = isInView;
+						}
+					}
+				}
+			});
 			break;
 			
 		case 'Border':
@@ -256,6 +274,11 @@ function setProperty(e, key, value) {
 			});
 			break;
 		
+		case 'el.onscrollintoview':
+			e.NORI_scrollIntoViewHandler = NoriEvents.buildEventHandler(value, e, key, arg => arg);
+			e.NORI_scrollHandlerTriggered = false;
+			break;
+
 		case 'el.bold': 
 			(e.NORI_type == 'Button' ? e.firstChild : e).style.fontWeight = value ? 'bold' : 'normal';
 			e.NORI_font = e.NORI_font || {};
