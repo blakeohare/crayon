@@ -97,7 +97,13 @@ function createElement(id, type) {
 		s.height = '100%';
 		s.position = 'relative';
 		
-		if (type == 'Border') wrapper.NORI_borders = [0, 0, 0, 0];
+		if (type == 'Border') {
+			wrapper.NORI_borders = [0, 0, 0, 0];
+		}
+
+		if (type != 'ScrollPanel') {
+			s.overflow = 'hidden';
+		}
 	}
 	
 	wrapper.style.position = 'absolute';
@@ -155,7 +161,6 @@ function createElement(id, type) {
 		case 'DockPanel':
 		case 'FlowPanel':
 		case 'StackPanel':
-			wrapper.style.overflow = 'hidden';
 			break;
 		
 		default:
@@ -165,6 +170,19 @@ function createElement(id, type) {
 	wrapper.appendChild(inner);
 	
 	return wrapper;
+}
+
+function updateShadow(e) {
+	let shadow = e.NORI_shadow;
+	let color = shadow.color;
+	let blur = shadow.blur === undefined ? 0 : shadow.blur;
+	let { x, y } = shadow;
+	e.style.boxShadow = [
+		x || 0, 'px ',
+		y || 0, 'px ',
+		blur, 'px ',
+		'rgba(', color[0], ',', color[1], ',', color[2], ',', color[3] / 255, ')',
+	].join('');
 }
 
 function setProperty(e, key, value) {
@@ -180,6 +198,23 @@ function setProperty(e, key, value) {
 		case 'el.rightmargin': e.NORI_margin[2] = value; break;
 		case 'el.bottommargin': e.NORI_margin[3] = value; break;
 		case 'el.dock': e.NORI_dock = 'WNES'.charAt(value); break;
+
+		case 'el.shadowcolor': 
+			e.NORI_shadow = e.NORI_shadow || {};
+			e.NORI_shadow.color = value.split(',').map(n => parseInt(n));
+			updateShadow(e);
+			break;
+		case 'el.shadowblur':
+			e.NORI_shadow = e.NORI_shadow || {};
+			e.NORI_shadow.blur = value;
+			updateShadow(e);
+			break;
+		case 'el.shadowx':
+		case 'el.shadowy':
+			e.NORI_shadow = e.NORI_shadow || {};
+			e.NORI_shadow[key == 'el.shadowx' ? 'x' : 'y'] = value;
+			updateShadow(e);
+			break;
 
 		case 'el.cursor':
 			t = e.firstChild.style; 

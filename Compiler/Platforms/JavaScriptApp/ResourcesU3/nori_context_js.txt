@@ -22,6 +22,7 @@ const ctx = {
 		'el.bgcolor': true,
 		'el.fontcolor': true,
 		'el.font': true,
+		'el.shadowcolor': true,
 		'img.src': true,
 		'input.value': true,
 	},

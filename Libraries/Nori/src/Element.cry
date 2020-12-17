@@ -27,6 +27,10 @@ namespace Nori {
     const Element_Font = 'el.font';
     const TextBlock_FontSize = 'txtblk.sz';
     const Element_Cursor = 'el.cursor';
+    const Element_ShadowColor = 'el.shadowcolor';
+    const Element_ShadowBlur = 'el.shadowblur';
+    const Element_ShadowX = 'el.shadowx';
+    const Element_ShadowY = 'el.shadowy';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -76,6 +80,7 @@ namespace Nori {
             Element_BackgroundColor: true,
             Element_FontColor: true,
             Element_Font: true,
+            Element_ShadowColor: true,
             Image_Source: true,
             InputElement_Value: true,
         };
@@ -247,6 +252,10 @@ namespace Nori {
                 case 'bold': return this._setBooleanAsString(Element_Bold, strValue);
                 case 'italic': return this._setBooleanAsString(Element_Italic, strValue);
                 case 'font': return this._setStringProperty(Element_Font, strValue);
+                case 'shadowColor': return this._setStringProperty(Element_ShadowColor, NoriUtil._parseColor(strValue).join(','));
+                case 'shadowBlur': return this._setIntProperty(Element_ShadowBlur, parseInt(strValue));
+                case 'shadowX': return this._setIntProperty(Element_ShadowX, parseInt(strValue));
+                case 'shadowY': return this._setIntProperty(Element_ShadowY, parseInt(strValue));
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
@@ -297,6 +306,15 @@ namespace Nori {
 
         function getCursor(value) { return this._getIntProperty(Element_Cursor); }
         function setCursor(value) { return this._setEnumProperty(Element_Cursor, value, 0, CursorType.max); }
+
+        function getShadowColor() { return this._getColorProperty(Element_ShadowColor); }
+        function setShadowColor(r, g, b, a = 255) { return this._setStringProperty(Element_ShadowColor, [r, g, b, a].join(',')); }
+        function getShadowBlur() { return this._getIntProperty(Element_ShadowBlur); }
+        function setShadowBlur(value) { return this._setIntProperty(Element_ShadowBlur, Math.floor(value)); }
+        function getShadowX() { return this._getIntProperty(Element_ShadowX); }
+        function setShadowX(value) { return this._setIntProperty(Element_ShadowX, Math.floor(value)); }
+        function getShadowY() { return this._getIntProperty(Element_ShadowY); }
+        function setShadowY(value) { return this._setIntProperty(Element_ShadowY, Math.floor(value)); }
 
         function setMargin(value) {
             value = Math.floor(value);
