@@ -9,12 +9,22 @@ const NoriLayout = (() => {
 		crop: 'hidden'
     };
     
+    let isFirstPass = true;
+    let textWrapsFound = false;
     let doLayoutPass = () => {
         if (ctx.rootElementId === null) return;
+        isFirstPass = true;
+        textWrapsFound = false;
         calculateRequiredSize(ctx.rootElement);
         let width = ctx.frameSize[0];
         let height = ctx.frameSize[1];
-        spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S', null);
+        spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S');
+
+        if (textWrapsFound) {
+            isFirstPass = false;
+            calculateRequiredSize(ctx.rootElement);
+            spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S');
+        }
     };
 
     let getScrollParent = e => {
@@ -30,8 +40,7 @@ const NoriLayout = (() => {
         elementId,
         xOffset, yOffset, // this includes the top-left margin
         usableWidth, usableHeight, // these already have margins taken out
-        halign, valign, // these contain either the original element's alignment or are overridden by the panel logic.
-        scrollParent) => { // the next parent up that is a scroll panel
+        halign, valign) => { // these contain either the original element's alignment or are overridden by the panel logic.
 
         let e = ctx.elementById[elementId];
 
@@ -67,7 +76,6 @@ const NoriLayout = (() => {
             ratioY = originalHeight / -100000.0;
             perHeight = Math.floor(ratioY * usableHeight);
         }
-        let margin = e.NORI_margin;
         
         if (e.NORI_flexibleText) {
             let sz;
@@ -80,17 +88,18 @@ const NoriLayout = (() => {
                 sz = calculateTextSize(text, e, usableWidth);
                 // if it doesn't reach the end, don't use the full width.
             }
+
+            if (isFirstPass) {
+                e.NORI_textAvailableWrapWidth = sz[0];
+                textWrapsFound = true;
+            }
             
             // regardless of how the width was determined, treat the new measurement as required width.
             pxWidth = sz[0];
             if (pxHeight !== null) {
                 pxHeight = sz[1];
-                
-            } else {
-                
             }
             ratioX = null;
-            
         }
         
         // calculated width and height if there is no stretch
@@ -190,7 +199,6 @@ const NoriLayout = (() => {
         let child;
         let dock;
         let margin;
-        let reqSize;
         let t;
         let pixelsConsumed;
         let usableWidth;
@@ -198,7 +206,6 @@ const NoriLayout = (() => {
         for (let i = 0; i < length; ++i) {
             child = ctx.elementById[childrenIds[i]];
             margin = child.NORI_margin;
-            reqSize = child.NORI_requiredSize;
             dock = overrideChildDock == null ? child.NORI_dock : overrideChildDock;
             usableWidth = availableWidth - margin[0] - margin[2];
             usableHeight = availableHeight - margin[1] - margin[3];
@@ -388,21 +395,25 @@ const NoriLayout = (() => {
                     e.NORI_flexibleText = false;
                     if (!e.NORI_wrap) {
                         sz = calculateTextSize(t, e, null);
-                    } else if (w != null) {
-                        if (w > 0) {
-                            sz = calculateTextSize(t, e, w);
-                        } else {
-                            // the element has a fixed width, but this is based on a percent
-                            // and can only be determined at spaceAllocation time.
-                            sz = [0, h == null ? 0 : h];
-                            e.NORI_flexibleText = '%';
-                        }
                     } else {
-                        // The element has no fixed width. The width of the element ought to be
-                        // determined during the space allocation phase based on what's available,
-                        // but could possibly wrap if there's not enough space.
-                        sz = [0, h == null ? 0 : h];
-                        e.NORI_flexibleText = 'wrap';
+                        if (w == null && !isFirstPass) w = e.NORI_textAvailableWrapWidth || 100; // erroneous but non-crashing fallback
+
+                        if (w != null) {
+                            if (w > 0) {
+                                sz = calculateTextSize(t, e, w);
+                            } else {
+                                // the element has a fixed width, but this is based on a percent
+                                // and can only be determined at spaceAllocation time.
+                                sz = [0, h == null ? 0 : h];
+                                e.NORI_flexibleText = '%';
+                            }
+                        } else {
+                            // The element has no fixed width. The width of the element ought to be
+                            // determined during the space allocation phase based on what's available,
+                            // but could possibly wrap if there's not enough space.
+                            sz = [0, h == null ? 0 : h];
+                            e.NORI_flexibleText = 'wrap';
+                        }
                     }
                     if (w == null || sz[0] > w) w = sz[0];
                     if (h == null || sz[1] > h) h = sz[1];

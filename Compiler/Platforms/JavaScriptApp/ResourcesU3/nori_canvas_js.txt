@@ -17,7 +17,7 @@ const NoriCanvas = (() => {
             r = buffer[i + 1];
             g = buffer[i + 2];
             b = buffer[i + 3];
-            hex = NoriUtil.encodeHex(r, g, b);
+            hex = NoriUtil.encodeHexColor(r, g, b);
             switch (buffer[i]) {
                 case 'F':
                     i += 4;
