@@ -37,16 +37,7 @@ const NoriUtil = (() => {
     })();
     let TO_HEX_HASH = TO_HEX.map(t => '#' + t);
     
-    let encodeHex = (r, g, b) => TO_HEX_HASH[r] + TO_HEX[g] + TO_HEX[b];
-
-    let HEX_LOOKUP = {};
-    for (let i = 0; i < 10; ++i) {
-        HEX_LOOKUP[i + ''] = i;
-    }
-    for (let i = 0; i < 6; ++i) {
-        HEX_LOOKUP['abcdef'.charAt(i)] = i + 10;
-        HEX_LOOKUP['ABCDEF'.charAt(i)] = i + 10;
-    }
+    let encodeHexColor = (r, g, b) => TO_HEX_HASH[r] + TO_HEX[g] + TO_HEX[b];
 
     let decodeB64 = (str) => {
         return decodeURIComponent(atob(str).split('').map(function(c) {
@@ -59,6 +50,6 @@ const NoriUtil = (() => {
         promiseWait,
         escapeHtml,
         decodeB64,
-        encodeHex,
+        encodeHexColor,
     };
 })();
