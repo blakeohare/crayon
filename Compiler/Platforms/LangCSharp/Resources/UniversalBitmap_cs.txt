@@ -23,19 +23,35 @@ namespace Interpreter
 
         public UniversalBitmap(string filepath)
         {
-            this.IsValid = true;
-            this.bitmap = Image.Load<Rgba32>(filepath.Replace('/', System.IO.Path.DirectorySeparatorChar));
-            this.Width = this.bitmap.Width;
-            this.Height = this.bitmap.Height;
+            SafeLoad(filepath, null);
         }
 
         public UniversalBitmap(byte[] bytes)
         {
-            this.IsValid = true;
-            // TODO: set IsValid to false if not valid
-            this.bitmap = Image.Load(bytes);
-            this.Width = this.bitmap.Width;
-            this.Height = this.bitmap.Height;
+            SafeLoad(null, bytes);
+        }
+
+        private void SafeLoad(string path, byte[] orBytesIfYouPrefer)
+        {
+            if (path != null) path = path.Replace('/', System.IO.Path.DirectorySeparatorChar);
+            try
+            {
+                if (path != null)
+                {
+                    this.bitmap = Image.Load<Rgba32>(path);
+                }
+                else
+                {
+                    this.bitmap = Image.Load(orBytesIfYouPrefer);
+                }
+                this.IsValid = true;
+                this.Width = this.bitmap.Width;
+                this.Height = this.bitmap.Height;
+            }
+            catch (System.Exception)
+            {
+                this.IsValid = false;
+            }
         }
 
         public UniversalBitmap(int width, int height)
