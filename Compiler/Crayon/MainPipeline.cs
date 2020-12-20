@@ -108,7 +108,27 @@ namespace Crayon.Pipeline
                         ? command.OutputDirectoryOverride
                         : buildContext.OutputFolder;
                     IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopesMetadata;
-                    ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+
+                    ResourceDatabase resourceDatabase;
+                    if (isRelease)
+                    {
+                        try
+                        {
+                            resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+                        }
+                        catch (InvalidOperationException ioe)
+                        {
+                            return new Result()
+                            {
+                                Errors = new Error[] { new Error() { Message = ioe.Message } },
+                            };
+                        }
+                    }
+                    else
+                    {
+                        resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+                    }
+
                     ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
                     ExportResponse response = CbxVmBundleExporter.Run(
                             buildContext.Platform.ToLowerInvariant(),
@@ -230,8 +250,28 @@ namespace Crayon.Pipeline
             }
 
             Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
-            ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext);
-            resDb.PopulateFileOutputContextForCbx(outputFiles);
+
+            ResourceDatabase resourceDatabase;
+            if (isRelease)
+            {
+                try
+                {
+                    resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    return new ExportResponse()
+                    {
+                        Errors = new Error[] { new Error() { Message = ioe.Message } },
+                    };
+                }
+            }
+            else
+            {
+                resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+            }
+
+            resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
 
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
             outputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
@@ -242,8 +282,8 @@ namespace Crayon.Pipeline
                 outputFolder,
                 compilation.ByteCode,
                 compilation.AllScopesMetadata,
-                resDb.ResourceManifestFile.TextContent,
-                resDb.Image2ResourceManifestFile == null ? null : resDb.Image2ResourceManifestFile.TextContent);
+                resourceDatabase.ResourceManifestFile.TextContent,
+                resourceDatabase.Image2ResourceManifestFile == null ? null : resourceDatabase.Image2ResourceManifestFile.TextContent);
             return new ExportResponse()
             {
                 CbxOutputPath = cbxLocation,

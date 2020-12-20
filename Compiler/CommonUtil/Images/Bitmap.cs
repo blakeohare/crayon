@@ -23,16 +23,40 @@ namespace CommonUtil.Images
 
         public Bitmap(string filepath)
         {
-            this.bitmap = Image.Load<Rgba32>(filepath.Replace('/', System.IO.Path.DirectorySeparatorChar));
+            this.bitmap = SafeLoad(filepath, null);
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
         }
 
         public Bitmap(byte[] bytes)
         {
-            this.bitmap = Image.Load(bytes);
+            this.bitmap = SafeLoad(null, bytes);
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
+        }
+
+        private static Image<Rgba32> SafeLoad(string path, byte[] orBytesIfYouPrefer)
+        {
+            if (path != null) path = path.Replace('/', System.IO.Path.DirectorySeparatorChar);
+            try
+            {
+                if (path != null)
+                {
+                    return Image.Load<Rgba32>(path);
+                }
+                else
+                {
+                    return Image.Load(orBytesIfYouPrefer);
+                }
+            }
+            catch (System.Exception) { }
+
+            if (path != null)
+            {
+                throw new System.InvalidOperationException("The following image resource is invalid: '" + path + "'");
+            }
+
+            throw new System.InvalidOperationException("An invalid image was loaded from bytes.");
         }
 
         public Bitmap(int width, int height)
