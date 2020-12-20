@@ -11,19 +11,127 @@ const NoriLayout = (() => {
     
     let isFirstPass = true;
     let textWrapsFound = false;
+
+    // add to this as FloatPanels are found in each pass.
+    let roots = [];
+    let currentRoot = null;
+
+    let layoutPassNum = 0;
+
     let doLayoutPass = () => {
+        layoutPassNum++;
         if (ctx.rootElementId === null) return;
+        roots = [ctx.rootElement];
+        for (let i = 0; i < roots.length; ++i) {
+            currentRoot = roots[i];
+            doLayoutPassImpl(currentRoot);
+        }
+    };
+
+    let getFloatPanelParent = e => {
+        let walker = e;
+        while (walker) {
+            if (walker.NORI_type === 'ScrollPanel') {
+                return walker;
+            }
+            if (walker.NORI_id == ctx.rootElementId) {
+                return walker;
+            }
+            walker = walker.parentNode;
+        }
+        return null;
+    };
+
+    let parseAnchor = (s, e, sp) => {
+        if (!s) return null;
+        let t = s.split(':');
+        let refElement;
+        switch (t[1]) {
+            case 'O': refElement = e; break;
+            case 'H': refElement = sp; break;
+            default:
+                let eId = parseInt(t[1]);
+                refElement = ctx.elementById[eId] || e;
+                break;
+        }
+        let side = t[0] === '?' ? 'L' : t[0]; // L, R, or C
+        let distance = parseInt(t[2]);
+        return { refElement, side, distance, origin: e };
+    };
+
+    let resolveAnchor = (anchor, isXDimension) => {
+        let rect = anchor.refElement.getBoundingClientRect();
+        let pos;
+        if (isXDimension) {
+            pos = anchor.side === 'L' ? rect.left : anchor.side === 'R' ? rect.right : Math.floor((rect.left + rect.right) / 2);
+        } else {
+            pos = anchor.side === 'L' ? rect.top : anchor.size === 'R' ? rect.bottom : Math.floor((rect.top + rect.bottom) / 2);
+        }
+        pos += anchor.distance;
+        let oRect = anchor.origin.getBoundingClientRect();
+
+        return isXDimension ? (pos - oRect.left) : (pos - oRect.top);
+    };
+
+    let doFloatChildCalc = fp => {
+        let anc = fp.NORI_floatAnchors;
+        let scrollParent = getFloatPanelParent(fp); // either the next scroll parent up or the frame's internal Border instance
+
+        let left = parseAnchor(anc[0], fp, scrollParent);
+        let right = parseAnchor(anc[2], fp, scrollParent);
+        let top = parseAnchor(anc[1], fp, scrollParent);
+        let bottom = parseAnchor(anc[3], fp, scrollParent);
+
+        let size = fp.NORI_requiredSize.slice(0);
+        if (!left && !right) left = parseAnchor('?:O:0', fp, scrollParent);
+        if (!top && !bottom) top = parseAnchor('?:O:0', fp, scrollParent);
+        if (left && right) size[0] = null;
+        if (top && bottom) size[1] = null;
+
+        let leftX = left ? resolveAnchor(left, true) : null;
+        let rightX = right ? resolveAnchor(right, true) : null;
+        let topY = top ? resolveAnchor(top, false) : null;
+        let bottomY = bottom ? resolveAnchor(bottom, false) : null;
+        let width = size[0];
+        let height = size[1];
+        if (rightX !== null) {
+            if (width !== null) { leftX = rightX - width; }
+            else { width = rightX - leftX; }
+        }
+        if (bottomY !== null) {
+            if (height !== null) { topY = bottomY - height; }
+            else { height = bottomY - topY; }
+        }
+        return { width, height, left: leftX, top: topY };
+    };
+
+    let doLayoutPassImpl = (root) => {
         isFirstPass = true;
         textWrapsFound = false;
-        calculateRequiredSize(ctx.rootElement);
+        let isFloatPanel = root.NORI_type === 'FloatPanel';
+        calculateRequiredSize(root);
         let width = ctx.frameSize[0];
         let height = ctx.frameSize[1];
-        spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S');
+        let halign = 'S';
+        let valign = 'S';
+        let x = 0;
+        let y = 0;
+        
+        if (isFloatPanel) {
+            let t = doFloatChildCalc(root);
+            width = t.width;
+            height = t.height;
+            halign = 'L';
+            valign = 'T';
+            x = t.left;
+            y = t.top;
+        }
+        spaceAllocation(root.NORI_id, x, y, width, height, halign, valign);
 
         if (textWrapsFound) {
             isFirstPass = false;
-            calculateRequiredSize(ctx.rootElement);
-            spaceAllocation(ctx.rootElementId, 0, 0, width, height, 'S', 'S');
+            calculateRequiredSize(root);
+            spaceAllocation(root.NORI_id, x, y, width, height, halign, valign);
         }
     };
 
@@ -146,7 +254,8 @@ const NoriLayout = (() => {
                 break;
         }
         
-        let s = e.style;
+        let s = (e.NORI_floatAnchors && (currentRoot === e)) ? e.firstChild.style : e.style;
+
         s.width = width + 'px';
         s.height = height + 'px';
         s.left = x + 'px';
@@ -292,15 +401,22 @@ const NoriLayout = (() => {
     childrenLayoutFnByType['DockPanel'] = docLayoutFn;
     childrenLayoutFnByType['Border'] = docLayoutFn;
     childrenLayoutFnByType['ScrollPanel'] = docLayoutFn;
-
     childrenLayoutFnByType['StackPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
         doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, 'N', false);
     };
     childrenLayoutFnByType['FlowPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
         doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, 'W', false);
     };
+    childrenLayoutFnByType['FloatPanel'] = (panel, xOffset, yOffset, availableWidth, availableHeight) => {
+        if (panel !== currentRoot) {
+            roots.push(panel);
+        } else {
+            docLayoutFn(panel, xOffset, yOffset, availableWidth, availableHeight);
+        }
+    };
 
     let calculateRequiredSize = (e) => {
+        e.NORI_layoutSetInPass = layoutPassNum;
         if (e.NORI_scrollIntoViewHandler) {
             let scrollParent = getScrollParent(e);
             if (scrollParent) scrollParent.NORI_scrollHandlerChildren.push(e);
@@ -371,6 +487,16 @@ const NoriLayout = (() => {
                         ySize = Math.max(ySize, childHeight);
                         break;
                         
+                    case 'FloatPanel':
+                        if (e === currentRoot) {
+                            xSize += childWidth;
+                            ySize += childHeight;
+                        } else {
+                            xSize = 0;
+                            ySize = 0;
+                        }
+                        break;
+
                     default:
                         throw "calculateRequiredSize not implemented for " + e.NORI_type;
                 }
