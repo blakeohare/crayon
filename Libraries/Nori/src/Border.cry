@@ -11,6 +11,7 @@ namespace Nori {
     const Border_RightColor = 'border.rightcolor';
     const Border_BottomColor = 'border.bottomcolor';
     const Border_Radius = 'border.radius';
+    const Border_Crop = 'border.crop';
 
     class Border : Panel {
         constructor() : base('Border', true) { }
@@ -19,6 +20,9 @@ namespace Nori {
             if (this._children.length > 0) throw new InvalidArgumentException("Cannot add multiple elements to a border.");
             return base.addChild(e);
         }
+
+        function getCrop() { return this._getBoolProperty(Border_Crop); }
+        function setCrop(value) { return this._setBoolProperty(Border_Crop, value); }
 
         function getRadius() { return this._getIntProperty(Border_Radius); }
 
@@ -62,6 +66,7 @@ namespace Nori {
 
         function setAttributeWithString(name, strValue) {
             switch (name) {
+                case 'crop': return this._setBooleanAsString(Border_Crop, strValue);
                 case 'radius': return this._setIntProperty(Border_Radius, Core.parseInt(strValue));
                 case 'color':
                     c = NoriUtil._parseColor(strValue);

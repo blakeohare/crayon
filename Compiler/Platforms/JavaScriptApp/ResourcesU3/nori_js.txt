@@ -109,7 +109,7 @@ function createElement(id, type) {
 			wrapper.style.height = '0px';
 			wrapper.NORI_floatAnchors = [null, null, null, null];
 		} else {
-			s.overflow = 'hidden';
+			// s.overflow = 'hidden';
 		}
 	}
 	
@@ -338,6 +338,7 @@ function setProperty(e, key, value) {
 		case 'float.anchorright': e.NORI_floatAnchors[2] = value; break;
 		case 'float.anchorbottom': e.NORI_floatAnchors[3] = value; break;
 
+		case 'border.crop': e.style.overflow = value ? 'hidden' : 'auto'; break;
 		case 'border.radius': e.style.borderRadius = value + 'px'; e.firstChild.style.borderRadius = value + 'px'; break;
 		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
