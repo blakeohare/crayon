@@ -1,0 +1,88 @@
+﻿namespace Nori {
+
+    const FloatPanel_AnchorRight = 'float.anchorright';
+    const FloatPanel_AnchorLeft = 'float.anchorleft';
+    const FloatPanel_AnchorBottom = 'float.anchorbottom';
+    const FloatPanel_AnchorTop = 'float.anchortop';
+
+    enum HorizontalAnchorEdge {
+        LEFT = 0,
+        CENTER = 1,
+        RIGHT = 2,
+    }
+
+    enum VerticalAnchorEdge {
+        TOP = 0,
+        CENTER = 1,
+        BOTTOM = 2,
+    }
+
+    /*
+        Float panels consume 0 x 0  pixels in the layout engine but their inner div is positioned
+        floating above the layout according to its properties
+
+        In each direction either anchor right or left can be set or both.
+        However, if both are set, width is ignored
+        If one is set, then width/height is used to determine the other
+        If width/height is not set, then minimum capacity is used.
+
+        Format of the anchor[dir] property:
+
+        ?:O:{num pixels} --> number of pixels to the right of the float panel origin. Use negative for left. First arg is ignored.
+        L:{id}:{num pixels} --> number of pixels to the right of Element with ID's left edge
+        R:{id}:{num pixels} --> same as above but right edge
+        C:{id}:{num pixels} --> same as above but center
+        L:H:{num pixels} --> number of pixels to the right of the left edge of the next scroll panel or frame above this panel in the parent hierarchy
+
+        T and B are not used for the transverse direction. Just pretend L and R are "leading" and "rear".
+
+        Layout is calculated from the root first and layout for floating panel children is deferred until the
+        outer tree is finished.
+
+        Floating panels can refer to other floating panels, however this only refers to the origin
+        point and only works if the floating panel is not nested within another floating panel (referring
+        to floating panel contents in the direct parent chain is okay.
+    */
+    class FloatPanel : Panel {
+
+        constructor() : base('FloatPanel', true) { }
+
+        static field _edgeConvert = {
+            0: 'L',
+            1: 'C',
+            2: 'R',
+        };
+
+        function _setAnchor(k, pixels, edge, element) {
+
+            if (Core.typeof(pixels) != Type.INTEGER) throw new InvalidArgumentException("Pixels must be an integer.");
+
+            if (element != null && edge == null) {
+                if (k == FloatPanel_AnchorLeft || k == FloatPanel_AnchorTop) {
+                    edge = HorizontalAnchorEdge.LEFT;
+                } else {
+                    edge = HorizontalAnchorEdge.RIGHT;
+                }
+            }
+
+            if (edge == null) return this._setStringProperty(k, '?:O:' + pixels);
+
+            edge = FloatPanel._edgeConvert.get(edge);
+
+            if (edge == null) throw new InvalidArgumentException("Invalid edge value.");
+
+            if (element == null) return this._setStringProperty(k, edge + ':H:' + pixels);
+
+            if (element is Frame) element = element._internalBorder;
+
+            if (!(element is Element)) throw new InvalidArgumentException("The relative element must be an Element or Frame instance.");
+
+            return this._setStringProperty(k, edge + ':' + element._id + ':' + pixels);
+        }
+
+        function setAnchorLeft(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorLeft, pixels, edge, element); }
+        function setAnchorTop(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorTop, pixels, edge, element); }
+        function setAnchorRight(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorRight, pixels, edge, element); }
+        function setAnchorBottom(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorBottom, pixels, edge, element); }
+    }
+}

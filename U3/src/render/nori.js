@@ -101,7 +101,14 @@ function createElement(id, type) {
 			wrapper.NORI_borders = [0, 0, 0, 0];
 		}
 
-		if (type != 'ScrollPanel') {
+		if (type == 'ScrollPanel') {
+			// nothing special
+		} else if (type == 'FloatPanel') {
+			wrapper.style.position = 'absolute';
+			wrapper.style.width = '0px';
+			wrapper.style.height = '0px';
+			wrapper.NORI_floatAnchors = [null, null, null, null];
+		} else {
 			s.overflow = 'hidden';
 		}
 	}
@@ -179,6 +186,7 @@ function createElement(id, type) {
 		case 'DockPanel':
 		case 'FlowPanel':
 		case 'StackPanel':
+		case 'FloatPanel':
 			break;
 		
 		default:
@@ -325,6 +333,11 @@ function setProperty(e, key, value) {
 				NoriEvents.buildEventHandler(value, e, key, ''));
 			break;
 			
+		case 'float.anchorleft': e.NORI_floatAnchors[0] = value; break;
+		case 'float.anchortop': e.NORI_floatAnchors[1] = value; break;
+		case 'float.anchorright': e.NORI_floatAnchors[2] = value; break;
+		case 'float.anchorbottom': e.NORI_floatAnchors[3] = value; break;
+
 		case 'border.radius': e.style.borderRadius = value + 'px'; e.firstChild.style.borderRadius = value + 'px'; break;
 		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;

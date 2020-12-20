@@ -82,6 +82,10 @@ namespace Nori {
             Element_FontColor: true,
             Element_Font: true,
             Element_ShadowColor: true,
+            FloatPanel_AnchorLeft: true,
+            FloatPanel_AnchorTop: true,
+            FloatPanel_AnchorRight: true,
+            FloatPanel_AnchorBottom: true,
             Image_Source: true,
             InputElement_Value: true,
         };

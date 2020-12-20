@@ -23,15 +23,20 @@ const ctx = {
 		'el.fontcolor': true,
 		'el.font': true,
 		'el.shadowcolor': true,
+		'float.anchorleft': true,
+		'float.anchortop': true,
+		'float.anchorright': true,
+		'float.anchorbottom': true,
 		'img.src': true,
 		'input.value': true,
 	},
 	isPanelType: {
 		'Border': true,
 		'DockPanel': true,
+		'FloatPanel': true,
 		'FlowPanel': true,
 		'ScrollPanel': true,
-		'StackPanel': true
+		'StackPanel': true,
 	},
 	scrollEnumLookup: ['none', 'auto', 'scroll', 'crop'],
 
