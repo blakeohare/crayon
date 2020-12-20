@@ -78,7 +78,7 @@ namespace AssemblyResolver
                 throw new System.InvalidOperationException(this.Directory + " is missing a 'src' directory");
             }
             string[] srcFiles = FileUtil.GetAllFilePathsRelativeToRoot(srcDir);
-            foreach (string srcFile in srcFiles)
+            foreach (string srcFile in srcFiles.Where(name => name.ToLowerInvariant().EndsWith(".cry")))
             {
                 string code = this.ReadFile(false, "src/" + srcFile, false);
                 output[this.ID + ":" + srcFile] = code;
