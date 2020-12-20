@@ -217,11 +217,15 @@ namespace Interpreter.Vm
                     // TODO: Check if root execution context has ended.
                 }
 
-                // This Sleep does not seem to be accurate. This will cause unnecesary spinning
-                // in the CPU if this is commented out, but the frame rate of games is
-                // extremely sensitive to being several milliseconds off. Re-visit this again
-                // after the .NET Core migration.
-                // System.Threading.Thread.Sleep(1);
+                if (invocation == null)
+                {
+                    // This is about half a millisecond I have determined on this particular computer I'm
+                    // sitting at right now. I may want to derive this at runtime, though.
+                    // Thread.Sleep() is inaccurate because the OS thread scheduler takes a non-trivial
+                    // amount of time.
+                    int aboutHalfAMillisecond = 100000;
+                    System.Threading.Thread.SpinWait(aboutHalfAMillisecond);
+                }
             }
         }
 
