@@ -253,6 +253,34 @@ C$interop$callbackReturn = (id, valueStr) => {
 	fn(retVal);
 };
 
+C$b64$decode = (() => { // It's late 2020, but in Android WebView it's still 2009!
+    let lu = {};
+    lu['+'] = 62;
+    lu['/'] = 63;
+    lu['-'] = 62;
+    lu['_'] = 63;
+    let letters = 'abcdefghijklmnopqrstuvwxyz';
+    for (let i = 0; i < 26; ++i) {
+        lu[letters.charAt(i).toUpperCase()] = i;
+        lu[letters.charAt(i)] = i + 26;
+        lu[i + ''] = 52 + i;
+    }
+    return s => {
+        let pairs = [];
+        let len = s.length;
+        let c;
+        for (let i = 0; i < len; ++i) {
+            c = lu[s.charAt(i)];
+            if (c !== '=') pairs.push(c >> 4, (c >> 2) & 3, c & 3);
+        }
+        let buf = [];
+        for (let i = 0; i + 3 < pairs.length; i += 4) {
+            buf.push((pairs[i] << 6) + (pairs[i + 1] << 4) + (pairs[i + 2] << 2) + (pairs[i + 3]));
+        }
+        return buf;
+    };
+})();
+
 C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent, headersKvp, bytesObj, bytesObjNativeData) => {
 	let req = new XMLHttpRequest();
 	
@@ -267,16 +295,30 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 			headers.push(value);
 			if (name.toLowerCase() == 'content-type') ct = value;
 		}
-		
-		req.response.arrayBuffer().then(buf => {
+
+        let byteArrayPr = req.response.arrayBuffer ?
+            req.response.arrayBuffer().then(buf => {
+                return new Uint8Array(buf);
+            }) : (async () => {
+                let res = null;
+                let p = new Promise(r => { res = r; });
+                let fileReader = new FileReader();
+                fileReader.readAsDataURL(req.response);
+                fileReader.onloadend = () => {
+                    let b64Value = fileReader.result.split('base64,')[1];
+                    let bytes = C$b64$decode(b64Value);
+                    res(new Uint8Array(bytes));
+                };
+                return p;
+            })();
+
+		byteArrayPr.then(arr => {
 			let nd = [];
-			let arr = new Uint8Array(buf);
 			let bl = arr.length;
 			for (let i = 0; i < bl; ++i) {
 				nd.push(arr[i]);
 			}
 			bytesObjNativeData[0] = nd;
-			
 			let text = null;
 			try {
 				text = new TextDecoder().decode(arr);
