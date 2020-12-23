@@ -1,10 +1,13 @@
 ﻿using Parser.Resolver;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.ParseTree
 {
     internal class Variable : Expression
     {
+        public Node DirectOwner { get; set; }
+
         public override bool IsInlineCandidate { get { return true; } }
 
         public override bool CanAssignTo { get { return true; } }
@@ -123,12 +126,16 @@ namespace Parser.ParseTree
                         throw new ParserException(this, "The expression '" + name + "' is not defined. Are you missing a const definition?");
                     }
 
-                    // TODO: But if it's being called like a function then...
-                    // - give a better error message "function 'foo' is not defined"
-                    // - give an even better error message when there's a class or instance function with the same name
-                    //   e.g. "'foo' is a static function and must be invoked with the class name: FooClass.foo(...)
-                    // - if there's a method, suggest using "this."
-                    // - if the variable name matches a library that is available, suggest it as a missing import.
+                    if (this.DirectOwner != null && this.DirectOwner is FunctionCall)
+                    {
+                        throw new ParserException(this.FirstToken, "Function '" + name + "' is not defined.");
+                    }
+
+                    if (this.CompilationScope.Dependencies.Where(dep => dep.Name == name).FirstOrDefault() != null)
+                    {
+                        throw new ParserException("The library '" + name + "' is referenced here, but it has not been imported in this file. Add 'import " + name + "' to use it.");
+                    }
+
                     throw new ParserException(this, "The variable '" + name + "' is used but is never assigned to.");
                 }
             }

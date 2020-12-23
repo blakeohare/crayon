@@ -422,6 +422,8 @@ namespace Parser.ParseTree
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
+                if (this.Root is Variable) ((Variable)this.Root).DirectOwner = this;
+
                 this.Root.ResolveVariableOrigins(parser, varIds, phase);
                 foreach (Expression arg in this.Args)
                 {
