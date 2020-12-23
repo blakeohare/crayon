@@ -1,4 +1,6 @@
-﻿namespace Images {
+﻿import Math;
+
+namespace Images {
 
     function _throwFinished() {
         throw new Exception("This edit session has been closed.");
@@ -42,6 +44,24 @@
                 y = y2;
             }
             Images.Internal.ImagesHelper.pixelError(sc, x, y, this._bitmap.width, this._bitmap.height);
+        }
+
+        function drawRect(x, y, w, h, rOrColor, g = null, b = null, a = 255) {
+            if (this._finished) _throwFinished();
+            right = Math.min(this._bitmap.width, x + w);
+            bottom = Math.min(this._bitmap.height, y + h);
+            left = x < 0 ? 0 : x;
+            top = y < 0 ? 0 : y;
+
+            if (w < h) {
+                for (x = left; x < right; ++x) {
+                    $$$('imageSetPixel', this, x, top, x, bottom - 1, rOrColor, g, b, a);
+                }
+            } else {
+                for (y = top; y < bottom; ++y) {
+                    $$$('imageSetPixel', this, left, y, right - 1, y, rOrColor, g, b, a);
+                }
+            }
         }
 
         function fill(r, g, b, a = 255) {
