@@ -177,4 +177,9 @@ class LambdaAndClosureTest : Test {
 
         assertThat(x).isEqualTo(200);
     }
+
+    function testInstantInvoke() {
+        value = (a => { return a * a; })(4);
+        assertThat(value).isEqualTo(16);
+    }
 }
