@@ -74,7 +74,7 @@ namespace Crayon
 
                 List<string> files = new List<string>() {
                     "DefaultProjects/BuildFile.txt|%%%PROJECT_ID%%%.build",
-                    "DefaultProjects/dotGitIgnore.txt|output/.gitignore",
+                    "DefaultProjects/dotGitIgnore.txt|.gitignore",
                 };
                 switch (projectType)
                 {
