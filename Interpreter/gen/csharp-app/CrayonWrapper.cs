@@ -6545,7 +6545,15 @@ namespace Interpreter.Vm
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                EventLoop.ExecuteFunctionPointerWithDelay(arg1, (double)arg2.internalValue);
+                                if ((arg2.type == 3))
+                                {
+                                    float1 = (double)(int)arg2.internalValue;
+                                }
+                                else
+                                {
+                                    float1 = (double)arg2.internalValue;
+                                }
+                                EventLoop.ExecuteFunctionPointerWithDelay(arg1, float1);
                                 break;
                             case 95:
                                 // diskGetUserDirectory;

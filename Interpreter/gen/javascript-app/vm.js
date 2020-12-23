@@ -5091,7 +5091,12 @@ var interpretImpl = function(vm, executionContextId) {
 						valueStackSize -= 2;
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						C$common$timedCallback(arg1, arg2[1]);
+						if ((arg2[0] == 3)) {
+							float1 = arg2[1];
+						} else {
+							float1 = arg2[1];
+						}
+						C$common$timedCallback(arg1, float1);
 						break;
 					case 95:
 						// diskGetUserDirectory;
