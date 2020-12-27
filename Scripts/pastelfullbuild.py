@@ -70,9 +70,13 @@ def main(args):
     lib_filter = args[0]
 
   pastel_sln = os.path.join(pastelSource, 'Source', 'Pastel.sln')
-  pastel_exe = os.path.join(pastelSource, 'Source', 'bin', 'Release', 'Pastel.exe')
-  cmd = MSBUILD + ' ' + os.path.abspath(pastel_sln) + ' ' + RELEASE_CONFIG
-  pastel_exe = os.path.abspath(pastel_exe)
+  pastel_exe = os.path.join(pastelSource, 'Source', 'bin', 'Release', 'netcoreapp3.1', 'Pastel.exe')
+  cmd = ' '.join([
+    'dotnet build',
+    pastel_sln,
+    '-c Release',
+  ])
+
   print(run_command(cmd))
   print(cmd)
   things = get_libraries()
