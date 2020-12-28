@@ -21,6 +21,7 @@ LIBRARIES = [
 	'Game',
 	'Gamepad',
 	'Graphics2D',
+	'Graphics2DText',
 	'Http',
 	'IconEncoder',
 	'Images',

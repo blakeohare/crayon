@@ -1,0 +1,6 @@
+{
+    "name": "Graphics2DText",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/graphics2dtext",
+    "description": "Library to draw text on a canvas."
+}

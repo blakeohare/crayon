@@ -1,0 +1,143 @@
+﻿namespace Graphics2DText {
+
+    class TextRun {
+
+        field _styleStack = [];
+        field _chunks = [];
+        field _wrapWidth = -1;
+        field _alignment = TextAlignment.LEFT;
+        field _allStylesUsed = {};
+        field _instructions = null;
+
+        field _defaultStyle = style()
+            .setColor(255, 255, 255)
+            .setFont("Arial")
+            .setSize(12)
+            .setBold(false)
+            .setItalic(false)
+            .setBaselineOffset(0)
+            .setKerning(1.0);
+
+        constructor() {
+            this.pushStyle(this._defaultStyle);
+        }
+
+        function getDefaultStyle() { return this._defaultStyle; }
+
+        function pushStyle(s) {
+            if (!(s is TextStyle)) throw new InvalidArgumentException();
+            this._styleStack.add(s);
+            this._allStylesUsed[s] = s._version;
+            return this;
+        }
+
+        function popStyle() {
+            // cannot pop the default style
+            if (this._styleStack.length < 2) throw new InvalidOperationException("Stack is empty");
+            this._styleStack.pop();
+            return this; // still returns self for chaining. Doesn't make sense to get the style back.
+        }
+
+        function addText(value) {
+            if (value != '') {
+                this._chunks.add([
+                    value + '',
+                    this._styleStack[::-1], // clones list of style REFERENCES
+                ]);
+            }
+            this._instructions = null;
+            return this;
+        }
+
+        function setAlignment(a) {
+            this._alignment = a;
+            this._instructions = null;
+            return this;
+        }
+
+        function setWrapWidth(px) {
+            this._wrapWidth = px;
+            this._instructions = null;
+            return this;
+        }
+
+        // Because the size is calculated on the nori side of things, this can only be performed asynchronously
+        function calculateSize(cb) {
+            throw new NotImplementedException();
+        }
+
+        /*
+            Generates a magic string that can be sent to the U3 renderer.
+
+            This string is a list of comma-separated values. This list is a
+            sequence of pairs where the first item in each pair is a single
+            letter indicating some sort of action and the second item in each
+            pair is a value for that operation.
+
+            Most of these set font values.
+
+            Because the style stack always begins with the default style, all
+            style properties are set to non-nnull default values before any
+            text is provided.
+
+            W - Number of pixels for the width that this text should wrap. This
+                is always provided as the first pair.
+            A - Text alignment. Value is 0-3 representing left, center, right, and
+                justified, respectively.
+            T - Actual text to render. The argument is the text to write to the
+                canvas with the current style settings. This text will lack commas
+            M - Comma. Works like 'T' except it's just a comma. The argument is blank
+            C - Color. The argument is the RGBA values separated by /'s
+            F - Font name. The next argument is a string of the font name.
+            S - Font size
+            B - Bold. The argument is either 1 or 0.
+            I - Italic. The argument is either 1 or 0.
+            E - Baseline offset. This is an integer number of pixels to move the
+                character up. Negative for down.
+            K - Kerning ratio. This is a ratio to adjust the kerning. Default is 1.0.
+                0.0 means the letters are piling on top of each other.
+        */
+        function _serializeToInstructions() {
+            if (this._instructions != null) {
+                for (s : this._allStylesUsed.keys()) {
+                    if (s._version != this._allStylesUsed[s]) {
+                        this._instructions = null;
+                    }
+                }
+                if (this._instructions != null) return this._instructions;
+            }
+
+            instructions = [
+                'W', this._wrapWidth,
+            ];
+            font = {};
+
+            keys = ['C', 'F', 'S', 'B', 'I', 'E', 'K'];
+
+            for (chunk : this._chunks) {
+                text = chunk[0];
+                activeStyle = chunk[1];
+                for (k : keys) {
+                    for (s : activeStyle) {
+                        value = s._properties.get(k);
+                        if (value != null) {
+                            if (value != font.get(k)) {
+                                font[k] = value;
+                                instructions.add(k, value);
+                            }
+                            break;
+                        }
+                    }
+                }
+                parts = text.split(',');
+                for (i = 0; i < parts.length; ++i) {
+                    if (i > 0) instructions.add('M', '');
+                    instructions.add('T', parts[i]);
+                }
+            }
+
+            this._instructions = instructions.join(',');
+            return this._instructions;
+        }
+    }
+}

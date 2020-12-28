@@ -1,0 +1,57 @@
+import Math;
+
+namespace Graphics2DText {
+
+    function style() { return new TextStyle(); }
+
+    class TextStyle {
+
+        field _properties = {};
+        field _version = 0;
+
+        constructor() { }
+
+        // TODO: check argument types for all of these.
+
+        function setColor(r, g, b, a = 255) {
+            return this._setProperty('C', [r, g, b, a].join('/'));
+        }
+
+        function setFont(name) {
+            // Fonts shouldn't have commas in them but if they are passed in, it'll mess things up with the Nori protocol
+            return this._setProperty('F', ((name ?? 'Arial') + '').replace(',', ''));
+        }
+
+        function setSize(value) {
+            return this._setProperty('S', value * 1.0);
+        }
+
+        function setBold(value) {
+            return this._setProperty('B', value == true ? 1 : 0);
+        }
+
+        function setItalic(value) {
+            return this._setProperty('I', value == true ? 1 : 0);
+        }
+
+        function setBaselineOffset(value) {
+            return this._setProperty('A', value * 1.0);
+        }
+
+        function setKerning(value) {
+            return this._setProperty('K', Math.floor(value * 1000.0) / 1000);
+        }
+
+        function _setProperty(k, v) {
+            this._properties[k] = v + '';
+            this._version++;
+            return this;
+        }
+
+        function clone() {
+            c = new TextStyle();
+            c._properties = this._properties.clone();
+            return c;
+        }
+    }
+}

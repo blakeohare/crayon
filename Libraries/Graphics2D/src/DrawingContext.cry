@@ -1,4 +1,5 @@
 ﻿import Images;
+import Graphics2DText;
 
 namespace Graphics2D {
 
@@ -102,6 +103,13 @@ namespace Graphics2D {
                 this._submitImageData(image);
             }
             this._buffer.add('I3', 0, 0, 0, image._versionKey, centerX, centerY, angle);
+            return this;
+        }
+
+        function drawText(text, x, y) {
+            if (!(text is TextRun)) throw new InvalidArgumentException("First argument must be a Graphics2DText.TextRun instance.");
+            $$$('argVerifyNums', "x and y must be numbers.", x, y, 2);
+            this._buffer.add('TX', 0, 0, 0, text._serializeToInstructions(), x, y);
             return this;
         }
 
