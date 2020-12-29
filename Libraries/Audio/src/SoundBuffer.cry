@@ -1,0 +1,50 @@
+﻿import Math;
+
+namespace Audio {
+
+    class SoundBuffer {
+
+        field _channels = [];
+        field _freq;
+
+        constructor(channels = 1, frequency = 44100) {
+            this.setFrequency(frequency);
+
+            if (channels < 1) throw new InvalidArgumentException("Channel count must be a positive number.");
+            if (channels > 2) throw new InvalidArgumentException("Channel count too large.");
+
+            while (this._channels.length < channels) this._channels.add([]);
+        }
+
+        function getChannelBuffer(index) {
+            return this._channels[index];
+        }
+
+        function getFrequency() {
+            return this._freq;
+        }
+
+        function setFrequency(frequency) {
+            allowed = [8000, 11025, 22050, 44100, 48000, 96000, 192000];
+            if (!allowed.contains(frequency)) {
+                throw new InvalidArgumentException("Only the following frequencies are allowed: " + allowed.join(', '));
+            }
+            this._freq = frequency;
+            return this;
+        }
+
+        function setDuration(seconds) {
+            length = Math.floor(seconds * this._freq + .5);
+            for (channel : this._channels) {
+                if (channel.length < length) {
+                    channel.concat([0] * (length - channel.length));
+                } else if (channel.length >= length) {
+                    while (channel.length >= length) {
+                        channel.pop();
+                    }
+                }
+            }
+            return this;
+        }
+    }
+}

@@ -1,0 +1,131 @@
+﻿namespace U3Direct {
+
+    enum AudioType {
+        DISK_FILE,
+        URI,
+        SAMPLES,
+        RESOURCE,
+    }
+
+    enum AudioLoadStatus {
+        NOT_LOADED,
+        LOADING,
+        LOADED,
+    }
+
+    class U3AudioEntity {
+        static field idAlloc = 0;
+
+        field id;
+        field window;
+        field type;
+        field loadStatus = AudioLoadStatus.NOT_LOADED;
+        field arg;
+        field onload = [];
+
+        static field isAudioReady = false;
+        static field onAudioReadyCallbacks = [];
+
+        static function markAudioAsReady() {
+            if (!U3AudioEntity.isAudioReady) {
+                U3AudioEntity.isAudioReady = true;
+                for (cb : U3AudioEntity.onAudioReadyCallbacks) {
+                    Core.timedCallback(cb, 0);
+                }
+            }
+        }
+
+        constructor(window, type, arg) {
+            this.id = ++U3AudioEntity.idAlloc;
+            this.window = window;
+            this.type = type;
+            this.arg = arg;
+            this.window.registerAudio(this);
+        }
+
+        function sendData(data, forced = false) {
+            if (U3AudioEntity.isAudioReady || forced) {
+                this.window.sendData(['AU', this.id] + data);
+                return true;
+            }
+            return false;
+        }
+
+        function load(cb) {
+            if (this.loadStatus == AudioLoadStatus.LOADED) {
+                Core.timedCallback(cb, 0);
+            } else {
+                this.onload.add(cb);
+                if (this.loadStatus == AudioLoadStatus.NOT_LOADED) {
+                    this.loadStatus = AudioLoadStatus.LOADING;
+                    data = null;
+                    switch (this.type) {
+                        case AudioType.URI:
+                            data = ['URI', this.arg];
+                            break;
+                        case AudioType.SAMPLES:
+                            freq = this.arg[0];
+                            channels = this.arg[1];
+                            soundLength = channels[0].length;
+                            data = [freq, channels.length, soundLength];
+                            for (channel : channels) {
+                                if (channel.length != soundLength) throw new Exception(); // verified input expected so exception is unfriendly.
+                                data.concat(channel);
+                            }
+                            data = ['SAMPLES', data.join(',')]; // TODO: more compact encoding, such as hex/b64, but this needs to be done as a core function.
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    this.sendData(data, true);
+                }
+            }
+        }
+
+        function markAsLoaded() {
+            if (U3AudioEntity.isAudioReady) {
+                this.loadStatus = AudioLoadStatus.LOADED;
+                for (cb : this.onload) {
+                    Core.timedCallback(cb, 0);
+                }
+            } else {
+                U3AudioEntity.onAudioReadyCallbacks.add(() => {
+                    this.markAsLoaded();
+                });
+            }
+        }
+
+        function play(isLoop = null, fadeIn = null) {
+            return this.sendData(['PLAY', isLoop == true ? '1' : '0', fadeIn == null ? '0' : fadeIn]);
+        }
+
+        function pause(fade = null) {
+            return this.sendData(['PAUSE', fade == null ? '0' : fade]);
+        }
+
+        function stop(fade = null) {
+            return this.sendData(['STOP', fade == null ? '0' : fade]);
+        }
+
+        function getPosition(cb) {
+            // TODO: this.
+            // When the response comes back it should include both the position and the timestamp.
+            // Compare to the current timestamp and figure out what the current position is.
+            // This can be cached and used to give synchronous reponses in the future. Clear the
+            // cache when the position passes the end OR if one of the methods is invoked.
+            throw new NotImplementedException();
+        }
+
+        function setPosition(n) {
+            return this.sendData(['SETPOS', n]);
+        }
+
+        function setPan(value, fadeDuration = null, fadeSpeed = null) {
+            return this.sendData(['SETPAN', value, fadeDuration ?? 'n', fadeSpeed ?? 'n']);
+        }
+
+        function setVolume(value, fadeDuration = null, fadeSpeed = null) {
+            return this.sendData(['SETVOL', value, fadeDuration ?? 'n', fadeSpeed ?? 'n']);
+        }
+    }
+}

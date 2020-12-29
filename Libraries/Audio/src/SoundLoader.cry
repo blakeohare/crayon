@@ -1,0 +1,90 @@
+﻿import Base64;
+import Environment;
+import Math;
+import Nori;
+import Resources;
+import U3Direct;
+
+namespace Audio {
+
+    class SoundLoader {
+        field _frame;
+        field _lastEntity;
+
+        constructor(frame) {
+            if (!(frame is Nori.Frame)) {
+                throw new InvalidArgumentException("A Nori.Frame instance is required for instantiating a SoundLoader.");
+            }
+            this._frame = frame;
+        }
+
+        function loadFromResource(path, onReady, onError = null) {
+            this._lastEntity = null;
+            node = Resources._getNode(path);
+            if (node == null) throw new InvalidArgumentException("Resource not found: " + path);
+            if (node.type != ResourceNodeType.SOUND) throw new InvalidArgumentException("Resource is not a sound file: " + path);
+
+            if (Environment.isJavaScript()) {
+                entity = new U3AudioEntity(this._frame._u3window, AudioType.URI, node.realPath);
+                this._lastEntity = entity;
+            } else {
+                // TODO: get bytes from resource and pass as a Data URI
+                throw new NotImplementedException();
+            }
+        }
+
+        function loadFromBytes(bytes, onReady, onError = null) {
+            this._lastEntity = null;
+            b64 = Base64.bytesToBase64(bytes);
+            if (bytes[0] == ord('O') && bytes[1] == ord('g')) mime = 'audio/ogg';
+            else mime = 'audio/mp3'; // TODO: fill this out for other formats, don't just fall back to MP3
+
+            dataUri = 'data:' + mime + ';base64,' + b64;
+            entity = new U3AudioEntity(this._frame._u3window, AudioType.URI, dataUri);
+            this._lastEntity = entity;
+            SoundLoader._loadEntity(entity, onReady, onError);
+        }
+
+        function loadFromSamples(samples, onReady, onError = null) {
+            channels = samples._channels;
+            len = 0;
+            for (c : channels) {
+                len = Math.max(len, c.length);
+            }
+            // make sure they're all the same length, but don't modify the original input.
+            channelCopies = [];
+            for (c : channels) {
+                channelCopies.add(c + [0] * (len - c.length));
+            }
+            entity = new U3AudioEntity(this._frame._u3window, AudioType.SAMPLES, [samples._freq, channelCopies]);
+            SoundLoader._loadEntity(entity, onReady, onError);
+        }
+
+        static function _loadEntity(entity, cb, cbErr) {
+            entity.load(() => { cb(Sound._u3wrap(entity)); });
+        }
+
+        function _awaitLoad(bytes, samples, resource) {
+            if (!this._frame._isShown) throw new InvalidOperationException("Cannot await load of sound if UI frame is not shown.");
+            output = null;
+            error = null;
+            onReady = snd => { output = snd; };
+            onError = err => { error = err; };
+            if (bytes != null) this.loadFromBytes(bytes, onReady, onError);
+            else if (samples != null) this.loadFromSamples(samples, onReady, onError);
+            else if (resource != null) this.loadFromResource(resource, onReady, onError);
+            else throw new NotImplementedException();
+
+            while (output == null && error == null) {
+                Core.sleep(0.01);
+            }
+
+            if (error != null) throw new Exception(error + '');
+            return output;
+        }
+
+        function awaitLoadFromBytes(bytes) { return this._awaitLoad(bytes, null, null); }
+        function awaitLoadFromSamples(samples) { return this._awaitLoad(null, samples, null); }
+        function awaitLoadFromResource(path) { return this._awaitLoad(null, null, path); }
+    }
+}

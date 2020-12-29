@@ -43,7 +43,22 @@ namespace U3Direct {
                     eventType = msg['eventName'];
                     id = msg['id'];
                     arg = msg['arg'];
-                    eventListener(eventType, id, arg);
+                    if (eventType == 'audio') {
+                        parts = arg.split(':');
+                        switch (parts[0]) {
+                            case 'ready':
+                                U3AudioEntity.markAudioAsReady();
+                                break;
+                            case 'loaded':
+                                t = this.audioEntitiesById.get(id);
+                                t.markAsLoaded();
+                                break;
+                            default:
+                                throw new NotImplementedException(parts[0]);
+                        }
+                    } else {
+                        eventListener(eventType, id, arg);
+                    }
                 }
             });
 
@@ -73,6 +88,11 @@ namespace U3Direct {
             this._hub.setOnClose(() => {
                 if (onClose != null) onClose();
             });
+        }
+
+        field audioEntitiesById = {};
+        function registerAudio(audioEntity) {
+            this.audioEntitiesById[audioEntity.id] = audioEntity;
         }
 
         function overrideCloseBehavior(cb) {

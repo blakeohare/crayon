@@ -11,6 +11,7 @@ def main():
 
   for file in [
     'nori.js',
+    'nori_audio.js',
     'nori_canvas.js',
     'nori_context.js',
     'nori_events.js',

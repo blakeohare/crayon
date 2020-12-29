@@ -1,121 +1,39 @@
-﻿import Math;
-import Game;
+﻿namespace Audio {
 
-namespace Audio {
-
-    @localized('en', 'SoundPlayState')
-    @localized('es', 'ESSoundPlayState')
-    @localized('jp', 'JPSoundPlayState')
-    enum SoundPlayState {
-        PLAYING = 1,
-        PAUSED = 2,
-        STOPPED = 3,
-    }
-
-    /*
-        nativeData[0] -> mixer channel identifier or whatever is necessary to identify this particular playing instance.
-    */
-    @localized('en', 'Sound')
-    @localized('es', 'ESSound')
-    @localized('jp', 'JPSound')
     class Sound {
-        field _soundResource;
-        field _id;
 
-        field _isStopped = false; // set to stopped to indicate the sound should never be resumable again.
-        field _volume;
-        field _pan;
+        // Sound objects are just wrappers for U3AudioEntity and can only be
+        // created by the SoundLoader which provides this internal reference.
+        // Additionally, sounds do NOT get instantiated until the AudioElement is
+        // ready to be invoked.
+        field _u3entity;
+        @private constructor(e) { this._u3entity = e; }
+        static function _u3wrap(audioEntity) { return new Sound(audioEntity); }
 
-        // constructs and fires event
-        constructor(resource, volume, pan) {
-            this._soundResource = resource;
-            this._id = resource._id;
-            this._volume = volume;
-            this._pan = pan;
-
-            // This call will set the native data.
-            // Also, it'll just mark the sound as stopped if there's an error.
-            // TODO: maybe a better indicator of an error playing the sound.
-            this._isStopped = Game.AudioImpl_sfxPlay(this, resource, volume, pan) == 1;
+        function play() {
+            print(".play() called on Sound instance.");
+            this._u3entity.play(false);
+            return this;
         }
 
-        @localized('en', 'getState')
-        @localized('es', 'ESgetState')
-        @localized('jp', 'JPgetState')
-        function getState() {
-            // ensures that it also returns STOPPED if the channel is playing a different sound.
-            t = Game.AudioImpl_sfxGetState(this);
-            if (t == SoundPlayState.STOPPED) this._isStopped = true;
-            return t;
+        function playInLoop() {
+            this._u3entity.play(true);
+            return this;
         }
 
-        @localized('en', 'resume')
-        @localized('es', 'ESresume')
-        @localized('jp', 'JPresume')
-        function resume() {
-            if (this.getState() == SoundPlayState.PAUSED) {
-                Game.AudioImpl_sfxResume(this);
-            }
+        function fadeIn(duration) {
+            this._u3entity.play(false, duration * 1.0);
+            return this;
         }
 
-        @localized('en', 'stop')
-        @localized('es', 'ESstop')
-        @localized('jp', 'JPstop')
-        function stop() {
-            t = this.getState();
-            if (t != SoundPlayState.STOPPED) {
-                Game.AudioImpl_sfxStop(this, t, false);
-            }
+        function stop(fadeDuration = null) {
+            this._u3entity.stop(fadeDuration);
+            return this;
         }
 
-        @localized('en', 'pause')
-        @localized('es', 'ESpause')
-        @localized('jp', 'JPpause')
-        function pause() {
-            if (this.getState() == SoundPlayState.PLAYING) {
-                Game.AudioImpl_sfxStop(this, SoundPlayState.PLAYING, true);
-            }
+        function pause(fadeDuration = null) {
+            this._u3entity.pause(fadeDuration);
+            return this;
         }
-
-        @localized('en', 'getResource')
-        @localized('es', 'ESgetResource')
-        @localized('jp', 'JPgetResource')
-        function getResource() {
-            return this._soundResource;
-        }
-
-        /*
-            -1.0 -> left speaker only
-            1.0 -> right speaker only
-            0.0 -> balanced
-        */
-        @localized('en', 'setPan')
-        @localized('es', 'ESsetPan')
-        @localized('jp', 'JPsetPan')
-        function setPan(value) {
-            this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
-            Game.AudioImpl_sfxSetPan(this);
-        }
-
-        @localized('en', 'getPan')
-        @localized('es', 'ESgetPan')
-        @localized('jp', 'JPgetPan')
-        function getPan() { return this._pan; }
-
-        /*
-            ratio from 0.0 to 1.0
-        */
-        @localized('en', 'setVolume')
-        @localized('es', 'ESsetVolume')
-        @localized('jp', 'JPsetVolume')
-        function setVolume(ratio) {
-            this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
-            Game.AudioImpl_sfxSetVolume(this);
-        }
-
-        @localized('en', 'getVolume')
-        @localized('es', 'ESgetVolume')
-        @localized('jp', 'JPgetVolume')
-        function getVolume() { return this._volume; }
     }
 }

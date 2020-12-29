@@ -56,6 +56,10 @@ function setFrameRoot(root) {
 	root.appendChild(sizer);
 	root.appendChild(fontLoader);
 	root.appendChild(content);
+
+	root.addEventListener('click', () => {
+		NoriAudio.interactionOccurred();
+	});
 }
 
 function setFrameSize(width, height) {
@@ -782,8 +786,14 @@ function flushUpdates(data) {
 				NoriEvents.flushEventBatches();
 				break;
 
+			case 'AU': // Audio event
+				propertyKey = items[i++];
+				j = NoriAudio.handleAudioEvent(id, propertyKey, items, i);
+				i += j;
+				break;
+
 			default:
-				throw "Unknown command";
+				throw new Error("Unknown command: " + instruction);
 		}
 	}
 	
