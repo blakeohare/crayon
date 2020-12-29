@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 
 namespace Graphics2DText {
 
