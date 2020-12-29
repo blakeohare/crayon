@@ -133,7 +133,7 @@ namespace Parser.ParseTree
 
                     if (this.CompilationScope.Dependencies.Where(dep => dep.Name == name).FirstOrDefault() != null)
                     {
-                        throw new ParserException("The library '" + name + "' is referenced here, but it has not been imported in this file. Add 'import " + name + "' to use it.");
+                        throw new ParserException(this.FirstToken, "The library '" + name + "' is referenced here, but it has not been imported in this file. Add 'import " + name + "' to use it.");
                     }
 
                     throw new ParserException(this, "The variable '" + name + "' is used but is never assigned to.");
