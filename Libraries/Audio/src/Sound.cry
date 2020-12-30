@@ -11,7 +11,6 @@
         static function _u3wrap(audioEntity) { return new Sound(audioEntity); }
 
         function play() {
-            print(".play() called on Sound instance.");
             this._u3entity.play(false);
             return this;
         }

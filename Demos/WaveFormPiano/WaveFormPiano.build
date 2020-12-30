@@ -1,0 +1,33 @@
+{
+    "id": "WaveFormPiano",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "title": "Wave Form Piano",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
+    "version": "1.0",
+    "iosBundlePrefix": "org.crayonlang.waveformpiano,%VERSION%",
+    "guidSeed": "org.crayonlang.waveformpiano,v1,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "android",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "platform": "javascript-app-ios"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "jsFilePrefix": "/"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}

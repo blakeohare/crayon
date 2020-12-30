@@ -1,0 +1,252 @@
+﻿import Audio;
+import Graphics2D;
+import Math;
+import Nori;
+import NoriXml;
+import Random;
+
+function main() {
+
+    // TODO: centering items
+
+    ui = NoriXml.build('
+        <StackPanel backgroundColor="80, 80, 80">
+
+            <TextBlock fontColor="255,255,0" fontSize="24" bold="yes" margin="30">Wave Form Piano</TextBlock>
+
+            <StackPanel marginLeft="30">
+                <FlowPanel id="white_keys">
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_c5">C</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_d5">D</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_e5">E</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_f5">F</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_g5">G</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_a5">A</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_b5">B</Button>
+                    <Button backgroundColor="255,255,255" width="60" height="160" id="key_c6">C</Button>
+                </FlowPanel>
+
+                <FloatPanel id="black_keys">
+                    <FlowPanel height="100">
+                        <Button backgroundColor="0,0,0" fontColor="255,255,255" width="40" height="100" id="key_cs5" marginLeft="40">C#</Button>
+                        <Button backgroundColor="0,0,0" fontColor="255,255,255" width="40" height="100" id="key_ds5" marginLeft="20">Eb</Button>
+                        <Button backgroundColor="0,0,0" fontColor="255,255,255" width="40" height="100" id="key_fs5" marginLeft="80">F#</Button>
+                        <Button backgroundColor="0,0,0" fontColor="255,255,255" width="40" height="100" id="key_gs5" marginLeft="20">Ab</Button>
+                        <Button backgroundColor="0,0,0" fontColor="255,255,255" width="40" height="100" id="key_as5" marginLeft="20">Bb</Button>
+                    </FlowPanel>
+                </FloatPanel>
+            </StackPanel>
+
+            <Canvas margin="30" id="wave_form" width="600" height="200" canvasWidth="600" canvasHeight="200"/>
+
+            <FlowPanel margin="30">
+                <TextBlock>Load:</TextBlock>
+                <Button id="wf_empty">Empty</Button>
+                <Button id="wf_sine">Sine</Button>
+                <Button id="wf_square">Square</Button>
+                <Button id="wf_sawtooth">Sawtooth</Button>
+                <Button id="wf_random">Random</Button>
+                <Button id="wf_piano">Piano</Button>
+            </FlowPanel>
+
+            <FlowPanel>
+                <CheckBox id="taper" width="20" height="20" marginRight="10"/>
+                <TextBlock>Taper</TextBlock>
+            </FlowPanel>
+
+            <Button id="smooth">Smooth</Button>
+        </StackPanel>');
+
+    blackKeys = ui.findElement('black_keys');
+    whiteKeys = ui.findElement('white_keys');
+    blackKeys.setAnchorTop(0, whiteKeys, VerticalAnchorEdge.TOP);
+
+    taperCheckbox = ui.findElement('taper');
+
+    waveFormCanvas = ui.findElement('wave_form');
+    g2d = Graphics2D.createGraphicsContext(waveFormCanvas);
+    points = [0] * 150;
+
+    ui.findElement('smooth').setClickHandler(() => {
+        for (offset = 0; offset < 4; ++offset) {
+            for (i = 0; i < points.length; i += 1) {
+                left = (i - 1 + offset) % points.length;
+                current = i + offset;
+                right = (i + 1 + offset) % points.length;
+                points[i] = points[i] * .5 + points[left] * .25 + points[right] * .25;
+            }
+        }
+        updateCanvas(g2d, points);
+    });
+
+    mousePressed = false;
+    waveFormCanvas.setMouseDownHandler(e => { mousePressed = true; drawAt(e.x, e.y, g2d, points); });
+    waveFormCanvas.setMouseUpHandler(e => { mousePressed = false; });
+    waveFormCanvas.setMouseMoveHandler(e => {
+        if (mousePressed) {
+            drawAt(e.x, e.y, g2d, points);
+        }
+    });
+
+    // TODO: Writing to the back buffer while the window isn't loaded yet isn't implemented yet.
+    ui.setLoadHandler(() => {
+        loadWaveForm('sine', points, g2d, taperCheckbox);
+    });
+
+    frame = new Frame()
+        .setWidth(900)
+        .setHeight(700)
+        .setTitle("Wave Form Piano")
+        .setContent(ui);
+
+    soundLoader = new SoundLoader(frame);
+
+    buttonsToFrequency = assignFrequencies(ui);
+
+    for (btn : buttonsToFrequency.keys()) {
+        assignHandler(btn, buttonsToFrequency[btn], soundLoader, points, taperCheckbox);
+    }
+
+    ui.findElement('wf_empty').setClickHandler(() => { loadWaveForm('empty', points, g2d, taperCheckbox); });
+    ui.findElement('wf_sine').setClickHandler(() => { loadWaveForm('sine', points, g2d, taperCheckbox); });
+    ui.findElement('wf_square').setClickHandler(() => { loadWaveForm('square', points, g2d, taperCheckbox); });
+    ui.findElement('wf_sawtooth').setClickHandler(() => { loadWaveForm('sawtooth', points, g2d, taperCheckbox); });
+    ui.findElement('wf_random').setClickHandler(() => { loadWaveForm('random', points, g2d, taperCheckbox); });
+    ui.findElement('wf_piano').setClickHandler(() => { loadWaveForm('piano', points, g2d, taperCheckbox); });
+
+    frame.show();
+}
+
+function drawAt(x, y, g2d, points) {
+    index = Math.ensureRange(Math.floor(x * points.length / 600), 0, points.length);
+    amp = Math.ensureRange(y / 100.0 - 1, -1.0, 1.0);
+    points[index] = amp;
+    updateCanvas(g2d, points);
+}
+function updateCanvas(g2d, points) {
+    g2d.fill(255, 255, 255);
+    width = 600;
+    for (i = 1; i < points.length; ++i) {
+        left = points[i - 1];
+        right = points[i];
+        x1 = (i - 1) * 600 / 150;
+        x2 = i * 600 / 150;
+        y1 = Math.floor(points[i - 1] * 100 + 100);
+        y2 = Math.floor(points[i] * 100 + 100);
+        top = Math.min(y1, y2);
+        bottom = Math.max(y1, y2) + 1;
+        height = bottom - top;
+
+        // TODO: Using rectangle right now because line isn't implemented yet.
+        g2d.rectangle(x1, top, x2 - x1, height, 0, 128, 255);
+    }
+    g2d.flush();
+}
+
+function assignHandler(btn, freq, soundLoader, points, taperCheckbox) {
+    cachedSnd = null;
+    btn.setClickHandler(() => {
+        longTaper = taperCheckbox.isChecked();
+        if (cachedSnd != null) {
+            cachedSnd.play();
+            return;
+        }
+        buffer = new SoundBuffer(1);
+        channel = buffer.getChannelBuffer(0);
+        sampleRate = buffer.getFrequency();
+        buffer.setDuration(.5);
+        len = channel.length;
+        period = Math.floor(sampleRate / freq);
+        for (i = 0; i < len; ++i) {
+            r = (0.0 + (i % period)) / period;
+            indexF = points.length * r;
+            indexLeft = Math.floor(indexF);
+            indexRight = (indexLeft + 1) % points.length;
+            vLeft = points[indexLeft];
+            vRight = points[indexRight];
+            r = indexF % 1;
+            v = vLeft * (1 - r) + vRight * r;
+            channel[i] = Math.floor(v * 32000);
+        }
+
+        taperIn = Math.min(sampleRate / 70, channel.length);
+        for (i = 0; i < taperIn; ++i) {
+            channel[i] *= 1.0 * i / taperIn;
+        }
+
+        taperOut = longTaper
+            ? channel.length // (channel.length - sampleRate * .03)
+            : (sampleRate / 20);
+        taperOut = Math.floor(Math.ensureRange(taperOut, 0, channel.length));
+        for (i = 0; i < taperOut; ++i) {
+            channel[channel.length - i - 1] *= 1.0 * i / taperOut;
+        }
+
+        soundLoader.loadFromSamples(buffer, snd => {
+            // now I want it to regenerate every time.
+            // cachedSnd = snd;
+            snd.play();
+        }, err => {
+            print(err);
+        });
+    });
+}
+
+function assignFrequencies(ui) {
+
+    frequenciesByButton = {};
+    notes = 'c cs d ds e f fs g gs a as b'.split(' ');
+    octave = 5;
+    offset = -9.0 / 12;
+    for (octave = 5;; octave++) {
+        for (note : notes) {
+            btn = ui.findElement('key_' + note + octave);
+            if (btn == null) return frequenciesByButton;
+            freq = 440 * (2 ** offset);
+            frequenciesByButton[btn] = freq;
+            offset += 1.0 / 12;
+        }
+    }
+}
+
+function loadWaveFormFunc(points, fn) {
+    len = points.length + 0.0;
+    for (i = 0; i < points.length; ++i) {
+        points[i] = fn(i / len) * -1.0;
+    }
+}
+
+function loadWaveForm(id, points, g2d, taperCheckbox) {
+    isChecked = false;
+    switch (id) {
+        case 'sine': loadWaveFormFunc(points, r => Math.sin(r * 2 * Math.PI) * .9); break;
+        case 'square': loadWaveFormFunc(points, r => r > .5 ? .9 : -.9); break;
+        case 'empty': loadWaveFormFunc(points, r => 0.0); break;
+        case 'sawtooth': loadWaveFormFunc(points, r => 1.8 * r - .9); break;
+        case 'random': loadWaveFormFunc(points, r => Random.randomFloat() * 1.8 - .9); break;
+        case 'piano':
+            isChecked = true;
+            loadWaveFormFunc(points, r => {
+                // https://dsp.stackexchange.com/questions/46598/mathematical-equation-for-the-sound-wave-that-a-piano-makes
+                t = Math.PI * 2 * r;
+                v = Math.sin(t) * (Math.E ** (-0.0004 * t));
+                v += Math.sin(2 * t) * (Math.E ** (-0.0004 * t)) / 2;
+                v += Math.sin(3 * t) * (Math.E ** (-0.0004 * t)) / 4;
+                v += Math.sin(4 * t) * (Math.E ** (-0.0004 * t)) / 8;
+                v += Math.sin(5 * t) * (Math.E ** (-0.0004 * t)) / 16;
+                v += Math.sin(6 * t) * (Math.E ** (-0.0004 * t)) / 32;
+
+                v += v ** 3;
+                v /= 6;
+
+                return Math.ensureRange(v, -1.0, 1.0);
+            });
+            break;
+    }
+
+    if (taperCheckbox.isChecked() != isChecked) {
+        taperCheckbox.toggleCheck();
+    }
+
+    updateCanvas(g2d, points);
+}
