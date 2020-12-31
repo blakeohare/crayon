@@ -4,6 +4,7 @@ import IconEncoder;
 import MessageHub;
 import ProcessUtil;
 import Images;
+import TextEncoding;
 
 namespace U3Direct {
 
@@ -16,6 +17,7 @@ namespace U3Direct {
         field _hub;
         field _inputBuffer = [];
         field _overrideClose = null;
+        field _gamepads = [];
 
         constructor(eventListener, onClose = null) {
             this._hub = new Hub();
@@ -56,6 +58,8 @@ namespace U3Direct {
                             default:
                                 throw new NotImplementedException(parts[0]);
                         }
+                    } else if (eventType == 'gamepad') {
+                        this.applyGamepadData(arg.split(':'));
                     } else {
                         eventListener(eventType, id, arg);
                     }
@@ -175,6 +179,53 @@ namespace U3Direct {
             b = this._inputBuffer;
             this._inputBuffer = [];
             return b;
+        }
+
+        field _newDeviceCallback = null;
+        field _deviceTouchedCallback = null;
+
+        function applyGamepadData(args) {
+            switch (args[0]) {
+                case 'device':
+                    // a new device has been found
+                    index = parseInt(args[1]);
+                    name = TextEncoding.convertBytesToText(Base64.base64ToBytes(args[2]), TextFormat.UTF8);
+                    axisCount = parseInt(args[3]);
+                    btnCount = parseInt(args[4]);
+
+                    while (index >= this._gamepads.length) { this._gamepads.add(null); }
+                    this._gamepads[index] = {
+                        'name': name,
+                        'axes': [0.0] * axisCount,
+                        'buttons': [false] * btnCount,
+                        'dirty': [], // pairs will be pushed to this list indicating changes
+                    };
+                    if (this._newDeviceCallback != null) this._newDeviceCallback();
+                    break;
+                case 'state':
+                    cb = this._deviceTouchedCallback;
+                    for (i = 1; i < args.length; ++i) {
+                        t = args[i].split('|');
+                        device = this._gamepads[parseInt(t[0])];
+                        type = t[1];
+                        itemIndex = parseInt(t[2]);
+                        if (type == 'A') {
+                            newValue = parseInt(t[3]) / 1000.0;
+                            device['axes'][itemIndex] = newValue;
+                        } else {
+                            newValue = t[3] == '1';
+                            device['buttons'][itemIndex] = newValue;
+                        }
+
+                        if (cb != null) {
+                            device['dirty'].add(type, itemIndex);
+                        }
+                    }
+                    if (cb != null) {
+                        cb();
+                    }
+                    break;
+            }
         }
     }
 }

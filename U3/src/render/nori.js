@@ -792,6 +792,10 @@ function flushUpdates(data) {
 				i += j;
 				break;
 
+			case 'GP':
+				NoriGamepad.init();
+				break;
+
 			default:
 				throw new Error("Unknown command: " + instruction);
 		}

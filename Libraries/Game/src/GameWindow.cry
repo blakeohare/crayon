@@ -1,5 +1,6 @@
-﻿import Nori; // Temporary. Use U3Direct.
+﻿import Nori;
 import Graphics2D;
+import Gamepad;
 
 namespace Game {
 
@@ -81,16 +82,21 @@ namespace Game {
             this._fields['open'] = true;
             canvas = new Canvas();
             this._fields['draw'] = Graphics2D.createGraphicsContext(canvas);
+
+            frame = new Frame();
+
             canvas
                 .setCanvasWidth(this._fields['w'])
                 .setCanvasHeight(this._fields['h'])
                 .setLoadHandler(() => {
+
+                    Gamepad.initializeGamepads(frame, newDevice => { });
+
                     if (block) {
                         Game.Internal.doGameLoop(this);
                     }
                 });
 
-            frame = new Frame();
             this._fields['win'] = frame;
             frame
                 .setTitle(this._fields['t'])
