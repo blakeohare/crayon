@@ -103,6 +103,8 @@ C$common$getFunction = function(name) {
 	return null;
 };
 
+C$common$timedCallback = (fn, delay) => { setTimeout(() => C$runInterpreterWithFunctionPointer(fn, []), Math.floor(delay * 1000 + .5)); };
+
 LIB$datetime$utcTimeZone = {
 	name: "utc",
 	isLocal: false,

@@ -32,9 +32,11 @@ namespace JavaScriptApp
         private static readonly string[] noriFiles = new string[] {
             "messagehub.js",
             "nori.js",
+            "nori_audio.js",
             "nori_canvas.js",
             "nori_context.js",
             "nori_events.js",
+            "nori_gamepad.js",
             "nori_layout.js",
             "nori_util.js",
             "shim.js",

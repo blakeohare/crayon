@@ -45,11 +45,39 @@ const NoriUtil = (() => {
         }).join(''));
     };
     
+    let encodeB64 = (str) => {
+        if (window.Buffer) return Buffer.from(str).toString('base64');
+        // TODO: this is currently ASCII-centric
+        let charCodes = str.split('').map(c => Math.min(c.charCodeAt(0), 127));
+        let pairs = [];
+        for (let cc of charCodes) {
+            pairs.push(
+                (cc >> 6) & 3,
+                (cc >> 4) & 3,
+                (cc >> 2) & 3,
+                (cc) & 3);
+        }
+
+        let sb = [];
+        let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+        for (let i = 0; i < pairs.length; i += 3) {
+            let n = pairs[i];
+            n *= 4;
+            if (i + 1 < pairs.length) n += pairs[i + 1];
+            n *= 4;
+            if (i + 2 < pairs.length) n += pairs[i + 2];
+            sb.push(alphabet[n]);
+        }
+        while (sb.length % 4 != 0) sb.push('=');
+        return sb.join('');
+    };
+
     return {
         noopFn,
         promiseWait,
         escapeHtml,
         decodeB64,
+        encodeB64,
         encodeHexColor,
     };
 })();
