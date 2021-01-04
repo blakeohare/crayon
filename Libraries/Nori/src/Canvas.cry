@@ -8,15 +8,13 @@
         field _u3canvas = null;
 
         constructor() : base('Canvas') {
-
+            this.setCanvasWidth(100).setCanvasHeight(100);
         }
 
-        function setCanvasWidth(value) {
-            return this._setIntProperty(Canvas_Width, value);
-        }
-        function setCanvasHeight(value) {
-            return this._setIntProperty(Canvas_Height, value);
-        }
+        function getCanvasWidth() { return this._getIntProperty(Canvas_Width); }
+        function setCanvasWidth(value) { return this._setIntProperty(Canvas_Width, value); }
+        function getCanvasHeight() { return this._getIntProperty(Canvas_Height); }
+        function setCanvasHeight(value) { return this._setIntProperty(Canvas_Height, value); }
 
         function setAttributeWithString(name, strValue) {
             switch (name) {
