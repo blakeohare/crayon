@@ -5,10 +5,10 @@ namespace Audio {
     class SoundBuffer {
 
         field _channels = [];
-        field _freq;
+        field _sampleRate;
 
-        constructor(channels = 1, frequency = 44100) {
-            this.setFrequency(frequency);
+        constructor(channels = 1, sampleRate = 44100) {
+            this.setSampleRate(sampleRate);
 
             if (channels < 1) throw new InvalidArgumentException("Channel count must be a positive number.");
             if (channels > 2) throw new InvalidArgumentException("Channel count too large.");
@@ -20,21 +20,21 @@ namespace Audio {
             return this._channels[index];
         }
 
-        function getFrequency() {
-            return this._freq;
+        function getSampleRate() {
+            return this._sampleRate;
         }
 
-        function setFrequency(frequency) {
+        function setSampleRate(sampleRate) {
             allowed = [8000, 11025, 22050, 44100, 48000, 96000, 192000];
-            if (!allowed.contains(frequency)) {
-                throw new InvalidArgumentException("Only the following frequencies are allowed: " + allowed.join(', '));
+            if (!allowed.contains(sampleRate)) {
+                throw new InvalidArgumentException("Only the following sample rates are allowed: " + allowed.join(', '));
             }
-            this._freq = frequency;
+            this._sampleRate = sampleRate;
             return this;
         }
 
         function setDuration(seconds) {
-            length = Math.floor(seconds * this._freq + .5);
+            length = Math.floor(seconds * this._sampleRate + .5);
             for (channel : this._channels) {
                 if (channel.length < length) {
                     channel.concat([0] * (length - channel.length));

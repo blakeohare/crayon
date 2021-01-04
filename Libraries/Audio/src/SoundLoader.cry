@@ -56,7 +56,7 @@ namespace Audio {
             for (c : channels) {
                 channelCopies.add(c + [0] * (len - c.length));
             }
-            entity = new U3AudioEntity(this._frame._u3window, AudioType.SAMPLES, [samples._freq, channelCopies]);
+            entity = new U3AudioEntity(this._frame._u3window, AudioType.SAMPLES, [samples._sampleRate, channelCopies]);
             SoundLoader._loadEntity(entity, onReady, onError);
         }
 
