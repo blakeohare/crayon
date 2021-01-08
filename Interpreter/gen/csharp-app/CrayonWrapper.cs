@@ -4687,15 +4687,21 @@ namespace Interpreter.Vm
                                                     }
                                                     else
                                                     {
+                                                        bool1 = true;
                                                         if ((value.type == 3))
                                                         {
                                                             i = (int)value.internalValue;
                                                         }
-                                                        else
+                                                        else if ((value.type == 8))
                                                         {
                                                             i = ((ObjectInstance)value.internalValue).objectId;
                                                         }
-                                                        if (dictImpl.intToIndex.ContainsKey(i))
+                                                        else
+                                                        {
+                                                            bool1 = false;
+                                                            output = VALUE_FALSE;
+                                                        }
+                                                        if ((bool1 && dictImpl.intToIndex.ContainsKey(i)))
                                                         {
                                                             output = VALUE_TRUE;
                                                         }

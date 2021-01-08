@@ -3603,12 +3603,16 @@ var interpretImpl = function(vm, executionContextId) {
 													output = VALUE_TRUE;
 												}
 											} else {
+												bool1 = true;
 												if ((value[0] == 3)) {
 													i = value[1];
-												} else {
+												} else if ((value[0] == 8)) {
 													i = (value[1])[1];
+												} else {
+													bool1 = false;
+													output = VALUE_FALSE;
 												}
-												if ((dictImpl[4][i] !== undefined)) {
+												if ((bool1 && (dictImpl[4][i] !== undefined))) {
 													output = VALUE_TRUE;
 												}
 											}

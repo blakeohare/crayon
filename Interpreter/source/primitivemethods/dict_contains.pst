@@ -8,13 +8,17 @@
             output = VALUE_TRUE;
         }
     } else {
+        bool1 = true;
         if (value.type == Types.INTEGER) {
             i = (int) value.internalValue;
-        } else {
+        } else if (value.type == Types.INSTANCE) {
             i = Core.ForceParens((ObjectInstance) value.internalValue).objectId;
+        } else {
+            bool1 = false;
+            output = VALUE_FALSE;
         }
 
-        if (dictImpl.intToIndex.Contains(i)) {
+        if (bool1 && dictImpl.intToIndex.Contains(i)) {
             output = VALUE_TRUE;
         }
     }
