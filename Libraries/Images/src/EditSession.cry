@@ -62,6 +62,7 @@ namespace Images {
                     $$$('imageSetPixel', this, left, y, right - 1, y, rOrColor, g, b, a);
                 }
             }
+            return this;
         }
 
         function fill(r, g, b, a = 255) {
