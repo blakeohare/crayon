@@ -194,6 +194,10 @@ namespace Interpreter.Vm
                         EventLoop.ExecuteFunctionPointer(failCb, new Value[0]);
                         return;
                     }
+                    else if (we.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        // This is fine, it's just a non-2XX status code. Let it go through the other getters as-is.
+                    }
                     else
                     {
                         throw new NotImplementedException();
