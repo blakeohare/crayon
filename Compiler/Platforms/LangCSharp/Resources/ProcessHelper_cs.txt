@@ -13,7 +13,7 @@ namespace Interpreter.Vm
             return System.Diagnostics.Process.GetCurrentProcess().Id;
         }
 
-        internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut)
+        internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut, string cwd)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
             List<string> actualArgs = new List<string>() { "/C", execName };
@@ -27,6 +27,7 @@ namespace Interpreter.Vm
             startInfo.RedirectStandardError = true;
             startInfo.UseShellExecute = false;
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            if (cwd != null) startInfo.WorkingDirectory = cwd;
             p.OutputDataReceived += (sender, e) => { EmitToBuffer(callbackFp, unifiedStream, "S", e.Data); };
             p.ErrorDataReceived += (sender, e) => { EmitToBuffer(callbackFp, unifiedStream, "E", e.Data); };
             p.EnableRaisingEvents = true;
@@ -60,7 +61,7 @@ namespace Interpreter.Vm
             bool newFlushTriggerRequired = false;
             lock (unifiedStream)
             {
-                newFlushTriggerRequired = unifiedStream.Count > 0;
+                newFlushTriggerRequired = unifiedStream.Count == 0;
                 foreach (string line in lines)
                 {
                     unifiedStream.Add(streamName);

@@ -5077,12 +5077,13 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 92:
 						// processRun;
-						valueStackSize -= 4;
+						valueStackSize -= 5;
+						arg5 = valueStack[(valueStackSize + 4)];
 						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						output = buildInteger(globals, ProcessHelper_processRun(arg1[1], arg2[1], arg3[1], arg4));
+						output = buildInteger(globals, ProcessHelper_processRun(arg1[1], arg2[1], arg3[1], arg4, arg5[1]));
 						break;
 					case 93:
 						// processKill;
@@ -7127,7 +7128,10 @@ var printToStdOut = function(prefix, line) {
 var ProcessHelper_kill = function(wrapper) {
 };
 
-var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb) {
+var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb, cwd) {
+	if ((cwd.length == 0)) {
+		cwd = null;
+	}
 	var intOut = PST$createNewArray(1);
 	wrapper[3] = PST$createNewArray(1);
 	wrapper[3][0] = (() => {})();

@@ -6533,12 +6533,13 @@ namespace Interpreter.Vm
                                 break;
                             case 92:
                                 // processRun;
-                                valueStackSize -= 4;
+                                valueStackSize -= 5;
+                                arg5 = valueStack[(valueStackSize + 4)];
                                 arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                output = buildInteger(globals, ProcessHelper_processRun((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4));
+                                output = buildInteger(globals, ProcessHelper_processRun((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4, (string)arg5.internalValue));
                                 break;
                             case 93:
                                 // processKill;
@@ -9149,11 +9150,15 @@ namespace Interpreter.Vm
         {
         }
 
-        public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb)
+        public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb, string cwd)
         {
+            if ((cwd.Length == 0))
+            {
+                cwd = null;
+            }
             int[] intOut = new int[1];
             wrapper.nativeData = new object[1];
-            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(exPath, listImplToStringArray(args), onDataCb, intOut);
+            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(exPath, listImplToStringArray(args), onDataCb, intOut, cwd);
             return intOut[0];
         }
 

@@ -14,6 +14,7 @@ namespace ProcessUtil {
         field _isRunning = false;
         field _isFinished = false;
         field _pid = null;
+        field _cwd = null;
 
         constructor() {
             if (!Process.isSupported()) throw new Exception("Launching processes are not supported on this platform.");
@@ -37,6 +38,11 @@ namespace ProcessUtil {
                 }
             }
             this._args = args.clone();
+            return this;
+        }
+
+        function setWorkingDirectory(cwd) {
+            this._cwd = cwd;
             return this;
         }
 
@@ -78,7 +84,7 @@ namespace ProcessUtil {
                     if (handler != null) handler(str);
                 }
             };
-            this._pid = $$$('processRun', this, this._executable, this._args ?? [], onData);
+            this._pid = $$$('processRun', this, this._executable, this._args ?? [], onData, (this._cwd ?? '') + '');
             // TODO: return status codes as negative numbers.
             if (this._pid == -1) throw new Exception("An error occurred while launching the process.");
             return this._pid;

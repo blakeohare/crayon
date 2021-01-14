@@ -2,11 +2,13 @@
     ObjectInstance wrapper,
     string exPath,
     ListImpl args,
-    Value onDataCb) {
+    Value onDataCb,
+    string cwd) {
 
+    if (cwd.Size() == 0) cwd = null;
     Array<int> intOut = new Array<int>(1);
     wrapper.nativeData = new Array<object>(1);
-    wrapper.nativeData[0] = Extension.CoreFunc_ProcessRun(exPath, listImplToStringArray(args), onDataCb, intOut);
+    wrapper.nativeData[0] = Extension.CoreFunc_ProcessRun(exPath, listImplToStringArray(args), onDataCb, intOut, cwd);
 
     return intOut[0];
 }

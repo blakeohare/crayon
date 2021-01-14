@@ -1,18 +1,19 @@
 ﻿namespace ProcessUtil {
-    function runSimpleProcess(exec, args, onFinish) {
+    function runSimpleProcess(exec, args, onFinish, cwd = null) {
         buffer = [];
         return new Process()
             .setExecutable(exec)
             .setArgs(args)
+            .setWorkingDirectory(cwd)
             .onStdOut(str => buffer.add(str))
             .onStdErr(str => buffer.add(str))
             .onFinish(_ => onFinish(buffer.join('')))
             .run();
     }
 
-    function awaitSimpleProcess(exec, args) {
+    function awaitSimpleProcess(exec, args, cwd = null) {
         output = null;
-        runSimpleProcess(exec, args, str => { output = str; });
+        runSimpleProcess(exec, args, str => { output = str; }, cwd);
         while (output == null) {
             Core.sleep(0.01);
         }
