@@ -5088,8 +5088,7 @@ var interpretImpl = function(vm, executionContextId) {
 					case 93:
 						// processKill;
 						arg1 = valueStack[--valueStackSize];
-						ProcessHelper_kill(arg1[1]);
-						output = VALUE_NULL;
+						output = buildBoolean(globals, ProcessHelper_kill(arg1[1]));
 						break;
 					case 94:
 						// timedCallback;
@@ -5197,6 +5196,10 @@ var interpretImpl = function(vm, executionContextId) {
 					case 107:
 						// processCurrentId;
 						output = buildInteger(globals, 0);
+						break;
+					case 108:
+						// processList;
+						output = buildString(globals, "");
 						break;
 				}
 				if ((row[1] == 1)) {
@@ -7125,7 +7128,8 @@ var printToStdOut = function(prefix, line) {
 	return 0;
 };
 
-var ProcessHelper_kill = function(wrapper) {
+var ProcessHelper_kill = function(pid) {
+	return false;
 };
 
 var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb, cwd) {

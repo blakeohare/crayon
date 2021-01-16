@@ -1,5 +1,2 @@
 ﻿@import("inline/1_arg.pst");
-
-ProcessHelper_kill((ObjectInstance) arg1.internalValue);
-
-output = VALUE_NULL;
+output = buildBoolean(globals, ProcessHelper_kill((int) arg1.internalValue));

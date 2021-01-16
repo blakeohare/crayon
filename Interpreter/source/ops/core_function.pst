@@ -97,6 +97,7 @@
     case 105: Core.EmitComment("diskDirectoryDelete"); @import("corefuncs/diskDirectoryDelete.pst"); break;
     case 106: Core.EmitComment("diskDirectoryMove"); @import("corefuncs/diskDirectoryMove.pst"); break;
     case 107: Core.EmitComment("processCurrentId"); @import("corefuncs/processCurrentId.pst"); break;
+    case 108: Core.EmitComment("processList"); @import("corefuncs/processList.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

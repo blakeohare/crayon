@@ -13,6 +13,34 @@ namespace Interpreter.Vm
             return System.Diagnostics.Process.GetCurrentProcess().Id;
         }
 
+        internal static string ListProcesses()
+        {
+            System.Diagnostics.Process[] processes = System.Diagnostics.Process.GetProcesses();
+            List<string> rows = new List<string>();
+            foreach (System.Diagnostics.Process proc in processes)
+            {
+                int id = proc.Id;
+                string name = proc.ProcessName;
+                rows.Add(id + ":" + name);
+            }
+            return string.Join('\n', rows);
+        }
+
+        internal static bool KillProcess(int pid)
+        {
+            System.Diagnostics.Process p = System.Diagnostics.Process.GetProcessById(pid);
+            if (p == null) return false;
+            try
+            {
+                p.Kill();
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut, string cwd)
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();

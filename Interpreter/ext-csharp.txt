@@ -40,6 +40,8 @@ EXT: CoreFunc_NamedPipeServerClose: CoreFunctions.NamedPipeServerClose([ARG:1])
 
 EXT: CoreFunc_ProcessCurrentId: ProcessHelper.GetCurrentId()
 EXT: CoreFunc_ProcessRun: ProcessHelper.LaunchProcess([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: CoreFunc_ProcessList: ProcessHelper.ListProcesses()
+EXT: CoreFunc_ProcessKill: ProcessHelper.KillProcess([ARG:1])
 
 EXT: CoreFunc_ResourceGetText: Interpreter.ResourceReader.ReadTextResource([ARG:1])
 

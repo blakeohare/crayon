@@ -13,6 +13,6 @@
     return intOut[0];
 }
 
-void ProcessHelper_kill(ObjectInstance wrapper) {
-
+bool ProcessHelper_kill(int pid) {
+    return Extension.CoreFunc_ProcessKill(pid);
 }

@@ -6544,8 +6544,7 @@ namespace Interpreter.Vm
                             case 93:
                                 // processKill;
                                 arg1 = valueStack[--valueStackSize];
-                                ProcessHelper_kill((ObjectInstance)arg1.internalValue);
-                                output = VALUE_NULL;
+                                output = buildBoolean(globals, ProcessHelper_kill((int)arg1.internalValue));
                                 break;
                             case 94:
                                 // timedCallback;
@@ -6656,6 +6655,10 @@ namespace Interpreter.Vm
                             case 107:
                                 // processCurrentId;
                                 output = buildInteger(globals, ProcessHelper.GetCurrentId());
+                                break;
+                            case 108:
+                                // processList;
+                                output = buildString(globals, ProcessHelper.ListProcesses());
                                 break;
                         }
                         if ((row[1] == 1))
@@ -9146,8 +9149,9 @@ namespace Interpreter.Vm
             return 0;
         }
 
-        public static void ProcessHelper_kill(ObjectInstance wrapper)
+        public static bool ProcessHelper_kill(int pid)
         {
+            return ProcessHelper.KillProcess(pid);
         }
 
         public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb, string cwd)

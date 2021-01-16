@@ -19,4 +19,31 @@
         }
         return output;
     }
+
+    class ProcessInfo {
+        field name;
+        field id;
+    }
+
+    function listProcesses(searchString = null) {
+        list = $$$('processList');
+        lines = list.split('\n');
+        output = [];
+        for (item : list.split('\n')) {
+            t = item.split(':');
+            if (t.length == 2) {
+                if (searchString == null || t[1].contains(searchString)) {
+                    p = new ProcessInfo();
+                    p.name = t[1];
+                    p.id = parseInt(t[0]);
+                    output.add(p);
+                }
+            }
+        }
+        return output;
+    }
+
+    function killProcess(pid) {
+        return $$$('processKill', pid) == true;
+    }
 }

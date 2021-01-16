@@ -40,6 +40,8 @@ EXT: CoreFunc_NamedPipeServerClose: (() => {})()
 
 EXT: CoreFunc_ProcessCurrentId: 0
 EXT: CoreFunc_ProcessRun: (() => {})()
+EXT: CoreFunc_ProcessList: ""
+EXT: CoreFunc_ProcessKill: false
 
 EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:1])
 
