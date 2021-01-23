@@ -124,4 +124,13 @@ namespace Math {
     function sign(num) {
         return $$$('sign', num);
     }
+
+    @localized('en', 'round')
+    @localized('es', 'ESround')
+    @localized('jp', 'JPround')
+    function round(num, d = 0) {
+        // TODO: create a core function implementation
+        b = 10.0 ** d;
+        return $$$('floor', num * b + .5) / b;
+    }
 }

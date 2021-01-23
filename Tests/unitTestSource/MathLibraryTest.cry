@@ -1,0 +1,25 @@
+﻿import CrayonUnit;
+import Math;
+
+class MathLibraryTest : Test {
+
+    constructor() : base() { }
+
+    // TODO: test the others!
+
+    function testRound() {
+        assertThat(Math.round(Math.PI) + '').isEqualTo('3.0');
+        assertThat(Math.round(Math.PI, 0) + '').isEqualTo('3.0');
+        assertThat(Math.round(Math.PI, 1) + '').isEqualTo('3.1');
+        assertThat(Math.round(Math.PI, 2) + '').isEqualTo('3.14');
+        assertThat(Math.round(Math.PI, 3) + '').isEqualTo('3.142');
+        assertThat(Math.round(Math.PI, 4) + '').isEqualTo('3.1416');
+        assertThat(Math.round(Math.PI, 5) + '').isEqualTo('3.14159');
+
+        x = 197591571;
+        assertThat(Math.round(x) + '').isEqualTo('197591571.0');
+        assertThat(Math.round(x, 1) + '').isEqualTo('197591571.0');
+        assertThat(Math.round(x, -1) + '').isEqualTo('197591570.0');
+        assertThat(Math.round(x, -2) + '').isEqualTo('197591600.0');
+    }
+}
