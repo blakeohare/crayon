@@ -25,6 +25,10 @@ namespace ProcessUtil {
             return env['type'] == 'desktop';
         }
 
+        function getId() {
+            return this._pid;
+        }
+
         function setExecutable(e) {
             this._executable = e + '';
             return this;
