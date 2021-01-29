@@ -37,6 +37,7 @@ namespace Crayon.Pipeline
                     case VarType.FLOAT: compileRequest.AddCompileTimeFloat(key, buildVar.FloatValue); break;
                     case VarType.INT: compileRequest.AddCompileTimeInteger(key, buildVar.IntValue); break;
                     case VarType.STRING: compileRequest.AddCompileTimeString(key, buildVar.StringValue); break;
+                    case VarType.NULL: throw new InvalidOperationException("The build variable '" + key + "' does not have a value assigned to it.");
                     default: throw new Exception(); // this should not happen.
                 }
             }
