@@ -93,6 +93,8 @@ namespace Nori {
         field _id;
         field _type;
 
+        field dataContext = null; // a field the user can assign to freely.
+
         field _userDefinedId = null;
         field _parent = null;
         field _frame = null;
