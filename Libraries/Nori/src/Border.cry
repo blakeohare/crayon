@@ -16,9 +16,9 @@ namespace Nori {
     class Border : Panel {
         constructor() : base('Border', true) { }
 
-        function addChild(e) {
+        function addChild(e, ignore = null) {
             if (this._children.length > 0) throw new InvalidArgumentException("Cannot add multiple elements to a border.");
-            return base.addChild(e);
+            return base.addChild(e, ignore); // if ignore is set, it will throw
         }
 
         function getCrop() { return this._getBoolProperty(Border_Crop); }

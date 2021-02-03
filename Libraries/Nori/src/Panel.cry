@@ -23,7 +23,11 @@
             return this.addChild(e);
         }
 
-        function addChild(e) {
+        function addChildBeforeElement(e, addBeforeElement) {
+            return this.addChild(e, addBeforeElement);
+        }
+
+        function addChild(e, addBeforeElement = null) {
             if (e._parent != null) {
                 throw new Exception("Element already added to a parent.");
             }
@@ -33,8 +37,29 @@
             }
 
             e._parent = this;
-            this._children.add(e);
-            this._childrenIds.add(e._id);
+            if (addBeforeElement == null) {
+                this._children.add(e);
+                this._childrenIds.add(e._id);
+            } else {
+                index = -1;
+                if (this._children.length > 0) {
+                    if (this._children[-1] == addBeforeElement) {
+                        index = this._children.length - 1;
+                    } else {
+                        len = this._children.length - 1;
+                        for (i = 0; i < len; ++i) {
+                            if (this._children[i] == addBeforeElement) {
+                                index = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (index == -1) throw new InvalidArgumentException("Element to add before could not be found in this panel.");
+                this._canFlushIncrementally = false;
+                this._children.insert(index, e);
+                this._childrenIds.insert(index, e);
+            }
 
             if (this._canFlushIncrementally) {
                 this._childrenIdsAdded.add(e._id);
