@@ -146,6 +146,8 @@ function createElement(id, type) {
 		
 		case 'PasswordBox':
 		case 'TextBox':
+			// Any properties set here must also be added to the multiline property setter, which toggles
+			// between Textarea and input[type=text] elements for the inner element.
 			inner = document.createElement('input');
 			inner.type = type == 'TextBox' ? 'text' : 'password';
 			inner.spellcheck = false;
@@ -312,7 +314,7 @@ function setProperty(e, key, value) {
 			e.NORI_font = e.NORI_font || {};
 			e.NORI_font.face = t;
 			break;
-		case 'txtblk.sz':
+		case 'txtblk.sz': // TODO: rename this to el.fontsz
 			t = (value / 1000) + 'pt';
 			e.firstChild.style.fontSize = t;
 			e.NORI_font = e.NORI_font || {};
@@ -398,6 +400,26 @@ function setProperty(e, key, value) {
 		
 		case 'tb.border':
 			e.firstChild.style.borderWidth = value ? '' : '0px';
+			break;
+		case 'tb.multiline':
+			t = e.firstChild;
+			e.removeChild(e.firstChild);
+			if (value) {
+				e.append(document.createElement('textarea'));
+			} else {
+				e.append(document.createElement('input'));
+				e.firstChild.type = 'text';
+			}
+			e.firstChild.spellcheck = false;
+			e.firstChild.style.width = '100%';
+			e.firstChild.style.height = '100%';
+
+			// Transfer visual properties
+			e.firstChild.style.borderWidth = t.style.borderWidth;
+			e.firstChild.style.backgroundColor = t.style.backgroundColor;
+
+			// TODO: the event handlers ought to be saved in some e.NORI_... property for easy
+			// access to transfer to new elements.
 			break;
 
 		case 'input.onfocus':

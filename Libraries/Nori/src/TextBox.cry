@@ -1,6 +1,7 @@
 ﻿namespace Nori {
 
     const TextBox_HasBorder = 'tb.border';
+    const TextBox_MultiLine = 'tb.multiline';
 
     class AbstractTextBox : InputElement {
 
@@ -37,7 +38,18 @@
 
     class TextBox : AbstractTextBox {
         constructor() : base('TextBox') { }
+
+        function setMultiLine(value) { return this._setBoolProperty(TextBox_MultiLine, value); }
+        function isMultiLine() { return this._getBoolProperty(TextBox_MultiLine); }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'multiline': return this._setBooleanAsString(TextBox_MultiLine, strValue);
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
     }
+
     class PasswordBox : AbstractTextBox {
         constructor() : base('PasswordBox') { }
     }
