@@ -7,7 +7,7 @@
 	<namespace name="Random">
 		<function name="randomInt">
 			<arg name="minInclOrMax" type="int" description="Minimum number that randomInt will return."/>
-			<arg name="optionalMax" type="int" description="Maximum number that randomInt will return." optional="true"/>
+			<arg name="optionalExclMax" type="int" description="Exclusive upper bound that randomInt will return." optional="true"/>
 			<description>
 				Generates a random integer within the given range. 
 				There are two ways randomInt can be called. 
