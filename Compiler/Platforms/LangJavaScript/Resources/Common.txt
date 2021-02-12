@@ -323,7 +323,9 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 			bytesObjNativeData[0] = nd;
 			let text = null;
 			try {
-				text = new TextDecoder().decode(arr);
+				let textArr = nd.slice(0);
+				while (textArr.length && textArr[textArr.length - 1] === 0) textArr.pop();
+				text = new TextDecoder().decode(new Uint8Array(textArr));
 			} catch (_) { }
 			
 			C$runInterpreterWithFunctionPointer(cb, [
