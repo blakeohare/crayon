@@ -8,7 +8,7 @@ const NoriUtil = (() => {
         });
     };
 
-    function escapeHtml(text) {
+    function escapeHtml(text, preserveWhitespace) {
         let o = [];
         let len = text.length;
         let c;
@@ -19,6 +19,8 @@ const NoriUtil = (() => {
                 case '>': c = '&gt;'; break;
                 case '&': c = '&amp;'; break;
                 case '"': c = '&quot;'; break;
+                case '\r': c = ''; break;
+                case '\n': c = preserveWhitespace ? '<br/>' : '\n'; break;
             }
             o.push(c);
         }

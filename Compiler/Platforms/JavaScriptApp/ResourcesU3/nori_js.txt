@@ -371,7 +371,7 @@ function setProperty(e, key, value) {
 			}
 			break;
 
-		case 'txtblk.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
+		case 'txtblk.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value, true); break;
 		case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
 		
 		case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
