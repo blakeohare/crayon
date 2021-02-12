@@ -263,6 +263,7 @@ namespace Nori {
                 case 'shadowBlur': return this._setIntProperty(Element_ShadowBlur, parseInt(strValue));
                 case 'shadowX': return this._setIntProperty(Element_ShadowX, parseInt(strValue));
                 case 'shadowY': return this._setIntProperty(Element_ShadowY, parseInt(strValue));
+                case 'cursor': return this._setEnumWithString(Element_Cursor, strValue);
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
