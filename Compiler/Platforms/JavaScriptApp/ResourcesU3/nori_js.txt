@@ -670,7 +670,6 @@ function flushUpdates(data) {
 				break;
 			
 			case 'PI': // property incremental updates
-				performLayoutPass = true;
 				element = elementById[id];
 				
 				// delete properties
@@ -678,6 +677,9 @@ function flushUpdates(data) {
 				for (j = 0; j < propertyDeletionCount; ++j) {
 					propertyKey = items[i + j];
 					unsetProperty(element, propertyKey);
+					if (!performLayoutPass && !ctx.layoutExemptProperties[propertyKey]) {
+						performLayoutPass = true;
+					}
 				}
 				i += propertyDeletionCount;
 				
@@ -685,6 +687,9 @@ function flushUpdates(data) {
 				for (j = 0; j < propertyCount; ++j) {
 					propertyKey = items[i + j];
 					propertyValue = items[i + j + propertyCount];
+					if (!performLayoutPass && !ctx.layoutExemptProperties[propertyKey]) {
+						performLayoutPass = true;
+					}
 					if (isTextProperty[propertyKey]) {
 						propertyValue = NoriUtil.decodeB64(propertyValue);
 					} else {
