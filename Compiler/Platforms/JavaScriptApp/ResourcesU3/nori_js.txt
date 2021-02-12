@@ -339,6 +339,10 @@ function setProperty(e, key, value) {
 			}
 			break;
 		
+		case 'el.opacity':
+			e.style.opacity = Math.min(1, Math.max(0, value / 1024.0));
+			break;
+		
 		case 'el.onclick':
 			(e.NORI_type == 'Button' ? e.firstChild : e).addEventListener('click', 
 				NoriEvents.buildEventHandler(value, e, key, ''));

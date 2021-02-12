@@ -34,6 +34,7 @@ namespace Nori {
     const Element_ShadowBlur = 'el.shadowblur';
     const Element_ShadowX = 'el.shadowx';
     const Element_ShadowY = 'el.shadowy';
+    const Element_Opacity = 'el.opacity';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -144,6 +145,11 @@ namespace Nori {
             if (this._frame != null && this._isClean) this._markPropertiesDirty();
             return this;
         }
+        function _setFloatProperty(id, value) {
+            this._newProperties[id] = Math.floor(1024 * value);
+            if (this._frame != null && this._isClean) this._markPropertiesDirty();
+            return this;
+        }
         function _setBoolProperty(id, value) {
             return this._setIntProperty(id, value ? 1 : 0);
         }
@@ -167,6 +173,12 @@ namespace Nori {
             np = this._newProperties.get(id, false);
             if (np == false) return this._properties.get(id, 0);
             return np ?? 0;
+        }
+        function _getFloatProperty(id, defaultValue = 0.0) {
+            np = this._newProperties.get(id, false);
+            if (np == false) np = this._properties.get(id, defaultValue);
+            np = np ?? defaultValue;
+            return np / 1024.0;
         }
         function _getNullableIntProperty(id) {
             np = this._newProperties.get(id, false);
@@ -266,6 +278,7 @@ namespace Nori {
                 case 'shadowX': return this._setIntProperty(Element_ShadowX, parseInt(strValue));
                 case 'shadowY': return this._setIntProperty(Element_ShadowY, parseInt(strValue));
                 case 'cursor': return this._setEnumWithString(Element_Cursor, strValue);
+                case 'opacity': return this._setFloatProperty(Element_Opacity, parseFloat(strValue));
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
@@ -348,6 +361,9 @@ namespace Nori {
         function getBackgroundColor() { return this._getColorProperty(Element_BackgroundColor); }
         function setFontColor(r, g, b, a = 255) { return this._setColorProperty(Element_FontColor, r, g, b, a); }
         function setBackgroundColor(r, g, b, a = 255) { return this._setColorProperty(Element_BackgroundColor, r, g, b, a); }
+
+        function getOpacity() { return this._getFloatProperty(Element_Opacity, 1.0); }
+        function setOpacity(value) { return this._setFloatProperty(Element_Opacity, value); }
 
         function setMouseDownHandler(fn) { return this._setEventHandler(Element_MouseDown, fn, MouseEventArg.parseFromArg); }
         function setMouseUpHandler(fn) { return this._setEventHandler(Element_MouseUp, fn, MouseEventArg.parseFromArg); }
