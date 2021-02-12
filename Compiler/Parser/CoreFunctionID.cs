@@ -102,6 +102,8 @@ namespace Parser
         DISK_DIRECTORY_MOVE = 106,
         PROCESS_CURRENT_ID = 107,
         PROCESS_LIST = 108,
+        COOKIE_GET = 109,
+        COOKIE_SET = 110,
     }
 
     internal static class CoreFunctionIDHelper
@@ -208,6 +210,8 @@ namespace Parser
                 case "diskDirectoryMove": return (int)CoreFunctionID.DISK_DIRECTORY_MOVE;
                 case "processCurrentId": return (int)CoreFunctionID.PROCESS_CURRENT_ID;
                 case "processList": return (int)CoreFunctionID.PROCESS_LIST;
+                case "cookieGet": return (int)CoreFunctionID.COOKIE_GET;
+                case "cookieSet": return (int)CoreFunctionID.COOKIE_SET;
 
                 default: return -1;
             }

@@ -5201,6 +5201,25 @@ var interpretImpl = function(vm, executionContextId) {
 						// processList;
 						output = buildString(globals, "");
 						break;
+					case 109:
+						// cookieGet;
+						arg1 = valueStack[--valueStackSize];
+						string1 = C$cookie$get(arg1[1]);
+						if ((string1 == null)) {
+							output = VALUE_NULL;
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
+					case 110:
+						// cookieSet;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						C$cookie$set(arg1[1], arg2[1], arg3[1]);
+						output = VALUE_NULL;
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

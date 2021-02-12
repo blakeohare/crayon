@@ -1,4 +1,7 @@
 
+EXT-TYPE: string Cookie_Get(string name);
+EXT-TYPE: void Cookie_Set(string name, string value, int expiration);
+
 EXT-TYPE: void CoreFunc_DateTimeParseDate(Array<int> intOut, object nativeTz, int year, int month, int day, int hour, int minute, int microseconds);
 EXT-TYPE: bool CoreFunc_DateTimeUnixToStructured(Array<int> intOut, object nativeTz, double unixTimestamp);
 EXT-TYPE: object CoreFunc_DateTimeGetDataForLocalTimeZone(Array<string> strOut, Array<int> intOut);

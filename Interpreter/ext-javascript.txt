@@ -1,4 +1,7 @@
 
+EXT: Cookie_Get: C$cookie$get([ARG:1])
+EXT: Cookie_Set: C$cookie$set([ARG:1], [ARG:2], [ARG:3])
+
 EXT: CoreFunc_DateTimeParseDate: LIB$datetime$parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
 EXT: CoreFunc_DateTimeUnixToStructured: LIB$datetime$unixToStructured([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_DateTimeGetDataForLocalTimeZone: LIB$datetime$getDataForLocalTimeZone([ARG:1], [ARG:2])

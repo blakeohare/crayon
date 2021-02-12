@@ -1,4 +1,7 @@
 
+EXT: Cookie_Get: null
+EXT: Cookie_Set: TranslationHelper.Noop()
+
 EXT: CoreFunc_DateTimeParseDate: DateTimeHelper.ParseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
 EXT: CoreFunc_DateTimeUnixToStructured: DateTimeHelper.UnixToStructured([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_DateTimeGetDataForLocalTimeZone: DateTimeHelper.GetDataForLocalTimeZone([ARG:1], [ARG:2])

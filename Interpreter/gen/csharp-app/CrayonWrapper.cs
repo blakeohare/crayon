@@ -6660,6 +6660,19 @@ namespace Interpreter.Vm
                                 // processList;
                                 output = buildString(globals, ProcessHelper.ListProcesses());
                                 break;
+                            case 109:
+                                // cookieGet;
+                                arg1 = valueStack[--valueStackSize];
+                                output = VALUE_NULL;
+                                break;
+                            case 110:
+                                // cookieSet;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = VALUE_NULL;
+                                break;
                         }
                         if ((row[1] == 1))
                         {

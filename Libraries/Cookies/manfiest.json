@@ -1,0 +1,6 @@
+{
+    "name": "Cookies",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/cookies",
+    "description": "Library for accessing and setting cookies in web based platforms, or simulated functionality wrapping UserData."
+}

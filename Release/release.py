@@ -8,6 +8,7 @@ VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 LIBRARIES = [
 	'Audio',
 	'Base64',
+	'Cookies',
 	'Core',
 	'CrayonUnit',
 	'CryptoCommon',

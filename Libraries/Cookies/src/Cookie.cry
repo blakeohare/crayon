@@ -1,0 +1,79 @@
+﻿import Environment;
+import UserData;
+import Json;
+
+namespace Cookies {
+
+    const COOKIES_FILE = '.crykies.json';
+    const ONE_YEAR = 365 * 24 * 60 * 60;
+    const EMPTY_COOKIE_NAME_ERR = "Cookies with empty names are invalid.";
+
+    function getCookie(name) {
+        k = ((name ?? '') + '').trim();
+        if (k.length == 0) throw new InvalidArgumentException(EMPTY_COOKIE_NAME_ERR);
+
+        e = Environment.getEnvironment();
+        if (e['type'] == 'web') {
+            return $$$('cookieGet', k);
+        }
+
+        if (UserData.fileExists(COOKIES_FILE)) {
+            t = UserData.fileReadText(COOKIES_FILE);
+            d = Json.parseJson(t);
+            if (d != null) {
+                entry = d.get(name);
+                if (entry != null) {
+                    exp = entry['exp'];
+                    if (exp < Core.currentTime()) {
+                        deleteCookie(name);
+                    } else {
+                        return (entry['value'] ?? '') + '';
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    function setCookie(name, value, duration = null) {
+
+        k = ((name ?? '') + '').trim();
+        if (k.length == 0) throw new InvalidArgumentException(EMPTY_COOKIE_NAME_ERR);
+
+        now = Core.currentTime();
+        expiration = now + (duration ?? ONE_YEAR);
+        expired = expiration <= now || value == null;
+        if (expired) {
+            value = '';
+            expiration = expiration < 0 ? expiration : (now - ONE_YEAR);
+        } else {
+            value = value + '';
+        }
+
+        e = Environment.getEnvironment();
+        if (e['type'] == 'web') {
+            // removal of cookies is based on setting a lapsed expiration time.
+            $$$('cookieSet', k, value, expiration);
+        } else {
+            data = {};
+            if (UserData.fileExists(COOKIES_FILE)) {
+                t = UserData.fileReadText(COOKIES_FILE);
+                d = Json.parseJson(t);
+                data = d ?? data;
+            }
+            data[k] = {
+                'exp': expiration,
+                'value': value,
+            };
+            if (value == null || expired) {
+                data.remove(k);
+            }
+
+            UserData.fileWriteText(COOKIES_FILE, Json.serializeJson(data));
+        }
+    }
+
+    function deleteCookie(name) {
+        setCookie(name, null);
+    }
+}

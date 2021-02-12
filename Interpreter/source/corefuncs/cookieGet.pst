@@ -1,0 +1,12 @@
+﻿@import("inline/1_arg.pst");
+
+if (@ext_boolean("IS_JAVASCRIPT")) {
+    string1 = Extension.Cookie_Get((string) arg1.internalValue);
+    if (string1 == null) {
+        output = VALUE_NULL;
+    } else {
+        output = buildString(globals, string1);
+    }
+} else {
+    output = VALUE_NULL;
+}

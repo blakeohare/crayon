@@ -1,0 +1,11 @@
+﻿@import("inline/3_arg.pst");
+
+if (@ext_boolean("IS_JAVASCRIPT")) {
+    // This code doesn't run on mobile due to Environment.getEnvironment() checks in the byte code.
+    Extension.Cookie_Set(
+        (string) arg1.internalValue,
+        (string) arg2.internalValue,
+        (int) arg3.internalValue);
+}
+
+output = VALUE_NULL;
