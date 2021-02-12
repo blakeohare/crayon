@@ -269,23 +269,28 @@ function setProperty(e, key, value) {
 		case 'el.onmousedown':
 		case 'el.onmouseup':
 		case 'el.onmousemove':
+		case 'el.onmouseenter':
+		case 'el.onmouseleave':
 			// TODO: this may be inaccurate for certain types of elements. Need to thoroughly test this
 			// on various element types.
-			e.firstChild[key.split('.')[1]] = NoriEvents.buildEventHandler(value, e, key, ev => {
+			// TODO: figure out why I made the above comment when I originally wrote this. It's been a while
+			// and I don't know what would go wrong here.
+			t = key.split('.')[1].substr(2);
+			if (t == 'mouseenter') t = 'mouseover';
+			else if (t == 'mouseleave') t = 'mouseout';
+			e.firstChild.addEventListener(t, NoriEvents.buildEventHandler(value, e, key, ev => {
 				let r = e.getBoundingClientRect();
 				let x = ev.clientX - r.left;
 				let y = ev.clientY - r.top;
 				let btn = '';
-				if (key !== 'el.onmousemove') {
-					switch (ev.button) {
-						case 0: btn = 'primary'; break;
-						case 1: btn = 'aux'; break;
-						case 2: btn = 'secondary'; break;
-						default: btn = '?'; break;
-					}
+				switch (ev.button) {
+					case 0: btn = 'primary'; break;
+					case 1: btn = 'aux'; break;
+					case 2: btn = 'secondary'; break;
+					default: btn = '?'; break;
 				}
 				return x + '|' + y + '|' + (x / r.width) + '|' + (y / r.height) + '|' + btn;
-			});
+			}));
 			break;
 		
 		case 'el.onscrollintoview':

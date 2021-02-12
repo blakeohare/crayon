@@ -20,6 +20,8 @@ namespace Nori {
     const Element_MouseDown = 'el.onmousedown';
     const Element_MouseUp = 'el.onmouseup';
     const Element_MouseMove = 'el.onmousemove';
+    const Element_MouseEnter = 'el.onmouseenter';
+    const Element_MouseLeave = 'el.onmouseleave';
     const Element_Click = 'el.onclick';
     const Element_ScrollIntoView = 'el.onscrollintoview';
     const Element_Bold = 'el.bold';
@@ -350,6 +352,8 @@ namespace Nori {
         function setMouseDownHandler(fn) { return this._setEventHandler(Element_MouseDown, fn, MouseEventArg.parseFromArg); }
         function setMouseUpHandler(fn) { return this._setEventHandler(Element_MouseUp, fn, MouseEventArg.parseFromArg); }
         function setMouseMoveHandler(fn) { return this._setEventHandler(Element_MouseMove, fn, MouseEventArg.parseFromArg); }
+        function setMouseEnterHandler(fn) { return this._setEventHandler(Element_MouseEnter, fn, MouseEventArg.parseFromArg); }
+        function setMouseLeaveHandler(fn) { return this._setEventHandler(Element_MouseLeave, fn, MouseEventArg.parseFromArg); }
 
         function setClickHandler(fn) {
             return this._setEventHandler(Element_Click, fn);
