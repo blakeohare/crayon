@@ -42,6 +42,8 @@
         }
     }
 
+    function throwInvalidArgumentException(msg) { throw new InvalidArgumentException(msg); }
+
     @localized('en', 'Exception')
     @localized('es', 'ESException')
     @localized('jp', 'JPException')

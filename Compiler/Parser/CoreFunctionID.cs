@@ -104,6 +104,7 @@ namespace Parser
         PROCESS_LIST = 108,
         COOKIE_GET = 109,
         COOKIE_SET = 110,
+        VALUE_TO_FLOAT_OR_NULL = 111,
     }
 
     internal static class CoreFunctionIDHelper
@@ -212,6 +213,7 @@ namespace Parser
                 case "processList": return (int)CoreFunctionID.PROCESS_LIST;
                 case "cookieGet": return (int)CoreFunctionID.COOKIE_GET;
                 case "cookieSet": return (int)CoreFunctionID.COOKIE_SET;
+                case "valueToFloatOrNull": return (int)CoreFunctionID.VALUE_TO_FLOAT_OR_NULL;
 
                 default: return -1;
             }

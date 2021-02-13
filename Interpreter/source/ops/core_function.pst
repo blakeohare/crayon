@@ -100,6 +100,7 @@
     case 108: Core.EmitComment("processList"); @import("corefuncs/processList.pst"); break;
     case 109: Core.EmitComment("cookieGet"); @import("corefuncs/cookieGet.pst"); break;
     case 110: Core.EmitComment("cookieSet"); @import("corefuncs/cookieSet.pst"); break;
+    case 111: Core.EmitComment("valueToFloatOrNull"); @import("corefuncs/valueToFloatOrNull.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

@@ -47,8 +47,9 @@ namespace DateTime {
         }
 
         static function fromTimestamp(unixTime, tz = null) {
+            unixTime = $$$('valueToFloatOrNull', unixTime) ?? throwInvalidArgumentException('Timestamp must be a number.');
             dt = new Moment(tz);
-            dt.unixTime = unixTime * 1.0;
+            dt.unixTime = unixTime;
             return dt._populateFields();
         }
 

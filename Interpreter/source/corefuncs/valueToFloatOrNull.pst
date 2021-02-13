@@ -1,0 +1,17 @@
+﻿@import("inline/1_arg.pst");
+
+int1 = arg1.type;
+if (int1 == Types.FLOAT) {
+    output = arg1;
+} else if (int1 == Types.INTEGER) {
+    int2 = (int) arg1.internalValue;
+    if (int2 == 0) {
+        output = globals.floatZero;
+    } else if (int2 == 1) {
+        output = globals.floatOne;
+    } else {
+        output = new Value(Types.FLOAT, int2 + 0.0);
+    }
+} else {
+    output = VALUE_NULL;
+}

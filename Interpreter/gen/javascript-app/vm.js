@@ -5220,6 +5220,25 @@ var interpretImpl = function(vm, executionContextId) {
 						C$cookie$set(arg1[1], arg2[1], arg3[1]);
 						output = VALUE_NULL;
 						break;
+					case 111:
+						// valueToFloatOrNull;
+						arg1 = valueStack[--valueStackSize];
+						int1 = arg1[0];
+						if ((int1 == 4)) {
+							output = arg1;
+						} else if ((int1 == 3)) {
+							int2 = arg1[1];
+							if ((int2 == 0)) {
+								output = globals[6];
+							} else if ((int2 == 1)) {
+								output = globals[7];
+							} else {
+								output = [4, (int2 + 0.0)];
+							}
+						} else {
+							output = VALUE_NULL;
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

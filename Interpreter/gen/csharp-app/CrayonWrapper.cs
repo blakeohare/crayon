@@ -6673,6 +6673,35 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[valueStackSize];
                                 output = VALUE_NULL;
                                 break;
+                            case 111:
+                                // valueToFloatOrNull;
+                                arg1 = valueStack[--valueStackSize];
+                                int1 = arg1.type;
+                                if ((int1 == 4))
+                                {
+                                    output = arg1;
+                                }
+                                else if ((int1 == 3))
+                                {
+                                    int2 = (int)arg1.internalValue;
+                                    if ((int2 == 0))
+                                    {
+                                        output = globals.floatZero;
+                                    }
+                                    else if ((int2 == 1))
+                                    {
+                                        output = globals.floatOne;
+                                    }
+                                    else
+                                    {
+                                        output = new Value(4, (int2 + 0.0));
+                                    }
+                                }
+                                else
+                                {
+                                    output = VALUE_NULL;
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {
