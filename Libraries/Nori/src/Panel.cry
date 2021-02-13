@@ -16,6 +16,7 @@
         }
 
         function setChild(e) {
+            if (e == null) throwInvalidArgumentException('Passed null to .setChild()');
             if (!this._singleChild) throw new Exception("setChild is not valid for this type of panel. Use addChild");
             if (this._children.length == 1) {
                 this.removeChild(this._children[0]);
@@ -28,6 +29,7 @@
         }
 
         function addChild(e, addBeforeElement = null) {
+            if (e == null) throwInvalidArgumentException('Passed null to .addChild()');
             if (e._parent != null) {
                 throw new Exception("Element already added to a parent.");
             }
@@ -95,6 +97,7 @@
         }
 
         function removeChild(child) {
+            child = child ?? throwInvalidArgumentException('Passed null to .removeChild()');
             index = this.findChildIndex(child);
             if (index == -1) throw new Exception("Attempted to remove a non-existent child element.");
 
