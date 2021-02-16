@@ -259,8 +259,8 @@ namespace Nori {
                 case 'id': this._userDefinedId = strValue; return this;
                 case 'width': return this._setPixelsOrPercentAsString(Element_Width, strValue);
                 case 'height': return this._setPixelsOrPercentAsString(Element_Height, strValue);
-                case 'horizontalAlignment': return this._setEnumWithString(Element_HAlign, strValue);
-                case 'verticalAlignment': return this._setEnumWithString(Element_VAlign, strValue);
+                case 'halign': case 'horizontalAlignment': return this._setEnumWithString(Element_HAlign, strValue);
+                case 'valign': case 'verticalAlignment': return this._setEnumWithString(Element_VAlign, strValue);
                 case 'dock': return this._setEnumWithString(Element_Dock, strValue);
                 case 'margin': return this._setDirectionalIntWithString(Element_MarginLeft, Element_MarginTop, Element_MarginRight, Element_MarginBottom, strValue);
                 case 'marginLeft': return this.setMarginLeft(parseInt(strValue));
