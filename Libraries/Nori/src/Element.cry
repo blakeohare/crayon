@@ -28,7 +28,7 @@ namespace Nori {
     const Element_Italic = 'el.italic';
     const Element_FontColor = 'el.fontcolor';
     const Element_Font = 'el.font';
-    const TextBlock_FontSize = 'txtblk.sz';
+    const Element_FontSize = 'el.fontsize';
     const Element_Cursor = 'el.cursor';
     const Element_ShadowColor = 'el.shadowcolor';
     const Element_ShadowBlur = 'el.shadowblur';
@@ -289,8 +289,8 @@ namespace Nori {
         function setItalic(value) { return this._setBoolProperty(Element_Italic, value); }
         function getFont() { return this._getStringProperty(Element_Font); }
         function setFont(value) { return this._setStringProperty(Element_Font, value); }
-        function setFontSize(value) { return this._setIntProperty(TextBlock_FontSize, Math.floor(value * 1000)); }
-        function getFontSize() { return this._getIntProperty(TextBlock_FontSize) / 1000.0; }
+        function setFontSize(value) { return this._setIntProperty(Element_FontSize, Math.floor(value * 1000)); }
+        function getFontSize() { return this._getIntProperty(Element_FontSize) / 1000.0; }
 
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }

@@ -53,9 +53,12 @@ function setFrameRoot(root) {
 	content.style.position = 'absolute';
 	content.style.width = '100%';
 	content.style.height = '100%';
+	content.style.fontFamily = '"Arial", sans-serif;';
+	content.style.fontSize = '12pt';
 	root.appendChild(sizer);
 	root.appendChild(fontLoader);
 	root.appendChild(content);
+	ctx.uiRoot.NORI_font = { size: '12pt', bold: 'normal', italic: 'normal', color: '#000', face: 'Arial' };
 
 	root.addEventListener('click', () => {
 		NoriAudio.interactionOccurred();
@@ -313,7 +316,7 @@ function setProperty(e, key, value) {
 			e.NORI_font = e.NORI_font || {};
 			e.NORI_font.face = t;
 			break;
-		case 'txtblk.sz': // TODO: rename this to el.fontsz
+		case 'el.fontsize':
 			t = (value / 1000) + 'pt';
 			e.firstChild.style.fontSize = t;
 			e.NORI_font = e.NORI_font || {};
