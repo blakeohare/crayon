@@ -557,8 +557,10 @@ const NoriLayout = (() => {
     };
 
     let calculateTextSize = (html, element, width) => {
+        if (html === '') return [1, 1];
         let font = {};
         let fieldCount = 0;
+        // TODO: caching
         while (element && fieldCount != 4) {
             if (element.NORI_font) {
                 let props = element.NORI_font;
@@ -571,7 +573,7 @@ const NoriLayout = (() => {
         }
         let sizer = ctx.textSizer;
         let style = sizer.style;
-        style.fontSize = font.size || '10pt';
+        style.fontSize = font.size || '12pt';
         style.fontWeight = font.bold || 'normal';
         style.fontStyle = font.italic || 'normal';
         style.fontFamily = font.face || 'Arial';
