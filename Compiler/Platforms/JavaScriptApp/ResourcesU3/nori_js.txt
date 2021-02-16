@@ -82,6 +82,7 @@ function createElement(id, type) {
 	
 	wrapper.NORI_requiredSize = [0, 0];
 	wrapper.NORI_allocatedSize = [0, 0];
+	wrapper.NORI_handlers = { outer: {}, inner: {}};
 	
 	// The following properties are set when the corresponding property is set
 	// and are faster lookups than the string keys in NORI_properties.
@@ -271,14 +272,7 @@ function setProperty(e, key, value) {
 		case 'el.onmousemove':
 		case 'el.onmouseenter':
 		case 'el.onmouseleave':
-			// TODO: this may be inaccurate for certain types of elements. Need to thoroughly test this
-			// on various element types.
-			// TODO: figure out why I made the above comment when I originally wrote this. It's been a while
-			// and I don't know what would go wrong here.
-			t = key.split('.')[1].substr(2);
-			if (t == 'mouseenter') t = 'mouseover';
-			else if (t == 'mouseleave') t = 'mouseout';
-			e.firstChild.addEventListener(t, NoriEvents.buildEventHandler(value, e, key, ev => {
+			NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, ev => {
 				let r = e.getBoundingClientRect();
 				let x = ev.clientX - r.left;
 				let y = ev.clientY - r.top;
@@ -294,7 +288,7 @@ function setProperty(e, key, value) {
 			break;
 		
 		case 'el.onscrollintoview':
-			e.NORI_scrollIntoViewHandler = NoriEvents.buildEventHandler(value, e, key, arg => arg);
+			NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, arg => arg));
 			e.NORI_scrollHandlerTriggered = false;
 			break;
 
@@ -344,8 +338,7 @@ function setProperty(e, key, value) {
 			break;
 		
 		case 'el.onclick':
-			(e.NORI_type == 'Button' ? e.firstChild : e).addEventListener('click', 
-				NoriEvents.buildEventHandler(value, e, key, ''));
+			NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, ''));
 			break;
 			
 		case 'float.anchorleft': e.NORI_floatAnchors[0] = value; break;
@@ -423,60 +416,25 @@ function setProperty(e, key, value) {
 			e.firstChild.style.width = '100%';
 			e.firstChild.style.height = '100%';
 
+			e.firstChild.value = t.value;
+
 			// Transfer visual properties
 			e.firstChild.style.borderWidth = t.style.borderWidth;
 			e.firstChild.style.backgroundColor = t.style.backgroundColor;
 
-			// TODO: the event handlers ought to be saved in some e.NORI_... property for easy
-			// access to transfer to new elements.
+			for (let jsEv of Object.keys(e.NORI_handlers.inner)) {
+				e.firstChild.addEventListener(jsEv, e.NORI_handlers.inner[jsEv]);
+			}
+
 			break;
 
 		case 'input.onfocus':
 		case 'input.onblur':
-			e.firstChild[key == 'input.onfocus' ? 'onfocus' : 'onblur'] = NoriEvents.buildEventHandler(value, e, key, '');
+			NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, ''))
 			break;
 
 		case 'input.changed':
-		
-			let eh;
-			if (value === 0) eh = NoriUtil.noopFn;
-			else {
-				eh = function() {
-					let input = e.firstChild;
-					let inputValue;
-					switch (e.NORI_type) {
-						case 'PasswordBox':
-						case 'TextBox':
-							inputValue = input.value;
-							break;
-						case 'CheckBox':
-							inputValue = input.checked ? '1' : '';
-							break;
-						default:
-							throw "unknown: " + e.NORI_type;
-					}
-					if (!inputValue) inputValue = '';
-					if (e.NORI_prev_input_value !== inputValue) {
-						e.NORI_prev_input_value = inputValue;
-						platformSpecificHandleEvent(e.NORI_id, 'input.changed', inputValue);
-					}
-				};
-			}
-			switch (e.NORI_type) {
-				case 'PasswordBox':
-				case 'TextBox':
-					e.firstChild.onchange = eh;
-					e.firstChild.oninput = eh;
-					break;
-					
-				case 'CheckBox':
-					e.firstChild.onchange = eh;
-					e.firstChild.onclick = eh;
-					break;
-					
-				default:
-					throw e.NORI_type;
-			}
+			NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, 'ignored'));
 			break;
 		
 		default:

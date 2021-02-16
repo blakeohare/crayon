@@ -129,8 +129,95 @@ const NoriEvents = (() => {
         let isFunc = typeof argsOrFunc === 'function';
         return function(ev) {
             let args = isFunc ? argsOrFunc(ev) : argsOrFunc;
-            platformSpecificHandleEvent(e.NORI_id, eventName, args);
+
+            let inputValue = null;
+            let isInput = false;
+            switch (e.NORI_type) {
+                case 'PasswordBox':
+                case 'TextBox':
+                    isInput = true;
+                    console.log("Text field content changed: |" + e.firstChild.value + "|");
+                    inputValue = e.firstChild.value;
+                    break;
+                case 'CheckBox':
+                    isInput = true;
+                    inputValue = e.firstChild.checked ? '1' : '';
+                    break;
+            }
+            
+            if (isInput) {
+                if (!inputValue) inputValue = '';
+                if (e.NORI_prev_input_value !== inputValue) {
+                    e.NORI_prev_input_value = inputValue;
+                    platformSpecificHandleEvent(e.NORI_id, 'input.changed', inputValue);
+                }
+            } else {
+                platformSpecificHandleEvent(e.NORI_id, eventName, args);
+            }
         };
+    };
+
+    let applyEventHandler = (e, propertyName, handler) => {
+        let fc = e.firstChild;
+        let jsName = '';
+        switch (propertyName) {
+            case 'el.onclick':
+                if (e.NORI_type === 'Button') {
+                    e.NORI_handlers.inner['click'] = handler;
+                    e.firstChild.addEventListener('click', handler);
+                } else {
+                    e.NORI_handlers.outer['click'] = handler;
+                    e.addEventListener('click', handler);
+                }
+                break;
+                
+            case 'el.onmousedown':
+            case 'el.onmouseup':
+            case 'el.onmousemove':
+            case 'el.onmouseenter':
+            case 'el.onmouseleave':
+                jsName = propertyName.split('.')[1].substr(2);
+                if (jsName == 'mouseenter') jsName = 'mouseover';
+                else if (jsName == 'mouseleave') jsName = 'mouseout';
+                
+                e.NORI_handlers.inner[jsName] = handler;
+                e.firstChild.addEventListener(jsName, handler);
+                break;
+
+            case 'el.onscrollintoview':
+                e.NORI_handlers.outer['scrollintoview'] = handler;
+                e.NORI_scrollIntoViewHandler = handler;
+                break;
+            case 'input.onfocus':
+            case 'input.onblur':
+                jsName = propertyName.split('.')[1].substr(2);
+                e.NORI_handlers.inner[jsName] = handler;
+                fc[jsName] = handler;
+                break;
+            case 'input.changed':
+                e.NORI_handlers.inner['change'] = handler;
+                switch (e.NORI_type) {
+                    case 'PasswordBox':
+                    case 'TextBox':
+                        fc.onchange = handler;
+                        fc.oninput = handler;
+                        e.NORI_handlers.inner['input'] = handler;
+                        break;
+                        
+                    case 'CheckBox':
+                        fc.onchange = handler;
+                        fc.onclick = handler;
+                        e.NORI_handlers.inner['click'] = handler;
+                        break;
+                        
+                    default:
+                        throw Error("Input changed handler logic not defined for '" + e.NORI_type + "'");
+                }
+                break;
+
+            default:
+                throw Error("event handler application not defined for '" + propertyName + "'");
+        }
     };
 
     return {
@@ -139,5 +226,6 @@ const NoriEvents = (() => {
         flushEventBatches,
         enableBatchMode: () => { batchModeEnabled = true; },
         setBatchMessageSender: sender => { sendBatchMessage = sender; },
+        applyEventHandler,
     };
 })();
