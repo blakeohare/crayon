@@ -19,6 +19,9 @@ const NoriLayout = (() => {
     let layoutPassNum = 0;
 
     let doLayoutPass = () => {
+        textSizeL2Cache = textSizeL1Cache;
+        textSizeL1Cache = {};
+
         layoutPassNum++;
         if (ctx.rootElementId === null) return;
         roots = [ctx.rootElement];
@@ -26,6 +29,7 @@ const NoriLayout = (() => {
             currentRoot = roots[i];
             doLayoutPassImpl(currentRoot);
         }
+        ctx.textSizer.innerHTML = '';
     };
 
     let getFloatPanelParent = e => {
@@ -556,38 +560,64 @@ const NoriLayout = (() => {
         }
     };
 
+    let textSizeL1Cache = {};
+    let textSizeL2Cache = {};
+    
     let calculateTextSize = (html, element, width) => {
         if (html === '') return [1, 1];
         let font = {};
         let fieldCount = 0;
-        // TODO: caching
-        while (element && fieldCount != 4) {
-            if (element.NORI_font) {
-                let props = element.NORI_font;
+        
+        let walker = element;
+        while (walker && fieldCount != 4) {
+            if (walker.NORI_font) {
+                let props = walker.NORI_font;
                 if (props.bold && !font.bold) { fieldCount++; font.bold = props.bold; }
                 if (props.italic && !font.italic) { fieldCount++; font.italic = props.italic; }
                 if (props.size && !font.size) { fieldCount++; font.size = props.size; }
                 if (props.face && !font.face) { fieldCount++; font.face = props.face; }
             }
-            element = element.parentNode;
+            walker = walker.parentNode;
         }
-        let sizer = ctx.textSizer;
-        let style = sizer.style;
-        style.fontSize = font.size || '12pt';
-        style.fontWeight = font.bold || 'normal';
-        style.fontStyle = font.italic || 'normal';
-        style.fontFamily = font.face || 'Arial';
-        if (width === null) {
-            style.whiteSpace = 'nowrap';
-            style.width = 'auto';
+
+        // Per element caching is redundant with L2 caching at the moment. Eventually, I
+        // want to introduce limited layout updates when updates occur to segments of the
+        // frame that don't affect other items, e.g. layout properties on items in scroll
+        // panels shouldn't necessitate a layout pass outside of the scroll panel.
+        // TODO: ^ that
+        let key = [font.bold, font.italic, font.size, font.face, width === null ? '' : width, html].join('|');
+        let sz;
+        if (element.NORI_textSizeCache && element.NORI_textSizeCache[0] === key) {
+            sz = element.NORI_textSizeCache[1];
+            textSizeL1Cache[key] = sz;
+        } else if (textSizeL1Cache[key]) {
+            sz = textSizeL1Cache[key];
+            element.NORI_textSizeCache = [key, sz];
+        } else if (textSizeL2Cache[key]) {
+            sz = textSizeL2Cache[key];
+            textSizeL1Cache[key] = sz;
+            element.NORI_textSizeCache = [key, sz];
         } else {
-            style.whiteSpace = 'normal';
-            style.width = width + 'px';
+            let sizer = ctx.textSizer;
+            let style = sizer.style;
+            style.fontSize = font.size || '12pt';
+            style.fontWeight = font.bold || 'normal';
+            style.fontStyle = font.italic || 'normal';
+            style.fontFamily = font.face || 'Arial';
+            if (width === null) {
+                style.whiteSpace = 'nowrap';
+                style.width = 'auto';
+            } else {
+                style.whiteSpace = 'normal';
+                style.width = width + 'px';
+            }
+            sizer.innerHTML = html;
+            sz = [Math.max(1, sizer.clientWidth) + 1, Math.max(1, sizer.clientHeight) + 1];
+            sizer.innerHTML = '';
+            element.NORI_textSizeCache = [key, sz];
+            textSizeL1Cache[key] = element.NORI_textSizeCache[1];
         }
-        sizer.innerHTML = html;
-        let sz = [Math.max(1, sizer.clientWidth) + 1, Math.max(1, sizer.clientHeight) + 1];
-        sizer.innerHTML = '';
-        return sz;
+        return sz.slice(0);
     };
   
     return {

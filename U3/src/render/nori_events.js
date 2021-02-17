@@ -136,7 +136,6 @@ const NoriEvents = (() => {
                 case 'PasswordBox':
                 case 'TextBox':
                     isInput = true;
-                    console.log("Text field content changed: |" + e.firstChild.value + "|");
                     inputValue = e.firstChild.value;
                     break;
                 case 'CheckBox':
