@@ -412,6 +412,7 @@ function setProperty(e, key, value) {
 			if (value) {
 				e.append(document.createElement('textarea'));
 				e.firstChild.style.resize = 'none';
+				e.firstChild.style.fontFamily = 'sans-serif';
 			} else {
 				e.append(document.createElement('input'));
 				e.firstChild.type = 'text';
