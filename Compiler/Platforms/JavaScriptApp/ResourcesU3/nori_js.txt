@@ -411,6 +411,7 @@ function setProperty(e, key, value) {
 			e.removeChild(e.firstChild);
 			if (value) {
 				e.append(document.createElement('textarea'));
+				e.firstChild.style.resize = 'none';
 			} else {
 				e.append(document.createElement('input'));
 				e.firstChild.type = 'text';
