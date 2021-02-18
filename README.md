@@ -41,11 +41,10 @@ the latest from master and give it a whirl!
 [![Build Status](https://travis-ci.org/blakeohare/crayon.svg?branch=master)](https://travis-ci.org/blakeohare/crayon)
 
 # Copyright
-Copyright 2020 crayonlang.org, All rights reserved.
+Copyright 2021 crayonlang.org, All rights reserved.
 
 # Licenses
 Crayon is released under the MIT license.
-OpenTK & Tao license information can be found at http://www.opentk.com/project/license
 
 See the LICENSE.txt file included with this release for further information.
 
@@ -61,7 +60,14 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 # New in 2.9
 The following have been added since 2.1
 
+## 2.9.0
 * Removed Python, Java, and PHP support for exporting projects.
+* Overhauled the Game and UI libraries. These are now based on a JavaScript project called U3 that runs in both the browser and in Electron and can render arbitrary UI to a window.
+* The built-in event loop is now truly built in to the VM and no longer requires a dispatcher in whichever UI framework is currently running or manual flushing of the event queue to run. The Dispatcher library has been deleted.
+* Image Sheets have been removed entirely. The resource atlas-ification of images is now managed automatically both during compilation and at access-time. The ImageResources library has been removed in favor of a more versatile Images library that allows for the modification of bitmap objects with or without UI.
+* Both the compiler and VM of Crayon have been upgraded from .NET Standard to .NET Core.
+* Eliminated all CNI calls from libraries and instead just use Core Libraries. Libraries can no longer import native code.
+* Implement a collection of IPC functionality in a library that can be used in lieu of CNI.
 
 # Setting up and Running Crayon
 If you have downloaded Crayon from crayonlang.org/download (recommended) please read the instructions on the site (linked from download
