@@ -14,6 +14,7 @@ LIBRARIES = [
 	'CryptoCommon',
 	'CryptoMd5',
 	'CryptoSha1',
+	'Csv',
 	'DateTime',
 	'Easing',
 	'Environment',

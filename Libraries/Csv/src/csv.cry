@@ -1,0 +1,132 @@
+﻿namespace Csv {
+
+    function parseCsvEntries(text) {
+        rows = Csv.parseCsvGrid(text);
+        schema = rows[0];
+        rowSize = schema.length;
+        output = [];
+        for (i = 0; i < rows.length; ++i) {
+            entry = {};
+            for (col = 0; col < rowSize; ++col) {
+                entry[schema[col]] = rows[i][col];
+            }
+            if (i == 0) {
+                if (rowSize != entry.length) throw new InvalidArgumentException("Duplicate column names in first row of CSV.");
+            } else {
+                output.add(entry);
+            }
+        }
+        return output;
+    }
+
+    function parseCsvGrid(text) {
+        rows = Csv.parseCsvRows(text);
+        rowLength = rows[0].length;
+        for (i = 0; i < rows.length; ++i) {
+            if (rows[i].length != rowLength) {
+                throw new InvalidArgumentException("Not all rows are the same length. Row " + i + " did not match row 1");
+            }
+        }
+        return rows;
+    }
+
+    function parseCsvRows(text) {
+
+        lastNonSpace = '\n';
+        text = text.replace('\r\n', '\n').trim() + '\n';
+        if (text == '\n') return [[]];
+        len = text.length;
+        tokens = [];
+        activeToken = [];
+        inQuote = false;
+
+        for (i = 0; i < len; ++i) {
+            c = text[i];
+            switch (c) {
+                case ' ':
+                case '\t':
+                    break;
+                case ',':
+                    tokens.add(false, ',');
+                    break;
+                case '\n':
+                    if (tokens.length > 0 && tokens[-1] != '\n') {
+                        tokens.add(false, '\n');
+                    }
+                    break;
+                case '"':
+                    end = false;
+                    for (j = i + 1; j < len; ++j) {
+                        d = text[j];
+                        if (d == '"') {
+                            tokens.add(true, activeToken.join(''));
+                            activeToken.clear();
+                            end = true;
+                            i = j;
+                            break;
+                        } else {
+                            activeToken.add(d);
+                        }
+                    }
+                    if (!end) {
+                        throw new InvalidArgumentException("CSV file contained an unclosed quote.");
+                    }
+                    break;
+                default:
+                    for (j = i; j < len; ++j) {
+                        d = text[j];
+                        if (d == ',' || d == '\n') { // always encountered because of the \n suffix
+                            i = j - 1;
+                            value = activeToken.join('').rtrim();
+                            if (value.length > 0) {
+                                tokens.add(true, value);
+                            }
+                            activeToken.clear();
+                            break;
+                        } else {
+                            activeToken.add(d);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        newTokens = [];
+        tokenLen = tokens.length;
+        sb = [];
+        for (i = 0; i < tokenLen; i += 2) {
+            if (tokens[i]) { // is string
+                sb.add(tokens[i + 1]);
+            } else { // is control character
+                newTokens.add(sb.join('"'));
+                sb.clear();
+                c = tokens[i + 1];
+                if (c == '\n') { // no need to push commas now that strings are concatenated into final tokens
+                    newTokens.add('\n');
+                }
+            }
+        }
+        // no need to check if sb has any in the last row since \n will always be last.
+
+        tokens = newTokens;
+        while (tokens.length > 0 && tokens[-1] == '\n') {
+            tokens.pop();
+        }
+
+        rows = [];
+        row = [];
+        for (token : tokens) {
+            if (token == '\n') {
+                rows.add(row);
+                row = [];
+            } else {
+                row.add(token);
+            }
+        }
+        if (row.length > 0) {
+            rows.add(row);
+        }
+
+        return rows;
+    }
+}
