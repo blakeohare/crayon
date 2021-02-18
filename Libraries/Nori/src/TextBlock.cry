@@ -8,7 +8,7 @@ namespace Nori {
     class TextBlock : Element {
 
         constructor() : base('TextBlock') {
-            this.setText('text').setWrap(false);
+            this.setText('').setWrap(false);
         }
 
         function setText(value) { return this._setStringProperty(TextBlock_Text, value); }
