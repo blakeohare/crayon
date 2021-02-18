@@ -33,6 +33,7 @@ const ctx = {
 	layoutExemptProperties: {
 		'el.bgcolor': true,
 		'el.cursor': true,
+		'el.focus': true,
 		'el.fontcolor': true,
 		'el.onmousedown': true,
 		'el.onclick': true,

@@ -35,6 +35,7 @@ namespace Nori {
     const Element_ShadowX = 'el.shadowx';
     const Element_ShadowY = 'el.shadowy';
     const Element_Opacity = 'el.opacity';
+    const Element_Focus = 'el.focus';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -380,6 +381,9 @@ namespace Nori {
         function clearClickHandler() {
             return this._clearEventHandler(Element_Click);
         }
+
+        // propagates to U3 like a property
+        function focus() { return this._setIntProperty(Element_Focus, 1); }
 
         static function _ensureCallback(fn) {
             oops = "Did you accidentally call the function when you passed it as a callback?";

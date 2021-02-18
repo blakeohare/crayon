@@ -343,6 +343,10 @@ function setProperty(e, key, value) {
 		case 'el.onclick':
 			NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, ''));
 			break;
+
+		case 'el.focus':
+			if (value) e.firstChild.focus();
+			break;
 			
 		case 'float.anchorleft': e.NORI_floatAnchors[0] = value; break;
 		case 'float.anchortop': e.NORI_floatAnchors[1] = value; break;
