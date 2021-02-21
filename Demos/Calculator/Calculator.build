@@ -11,7 +11,7 @@
     "guidSeed": "org.crayonlang.demos.calculator,%VERSION%,%TARGET_NAME%",
 
     "vars": [
-        { "name": "CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE", "value": true }
+        { "name": "CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE", "value": false }
     ],
 
     "targets": [
