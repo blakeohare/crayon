@@ -1,6 +1,5 @@
 ﻿import Game;
 import Gamepad;
-import GameGifCap;
 
 const FPS = 60;
 
@@ -9,27 +8,32 @@ const GAME_HEIGHT = 600;
 
 function main() {
 
-    window = new GameWindow('Asteroids!', FPS, GAME_WIDTH, GAME_HEIGHT);
+    window = new GameWindow()
+        .setTitle('Asteroids!')
+        .setFps(60)
+        .setGameSize(GAME_WIDTH, GAME_HEIGHT)
+        .show();
+
+    Draw.setGraphicsInstance(window.getDrawingContext());
 
     activeScene = new TitleScene();
-
 
     pressedKeys = {};
     pressedThisFrame = {};
 
     gamepad = null;
 
-    gifRec = new GifRecorder(60);
-
     while (true) {
 
         if (gamepad == null) {
+            /*
             GamepadManager.refreshDevices();
             if (GamepadManager.getDeviceCount() > 0) {
                 gamepad = GamepadManager.getDeviceByIndex(0);
                 gamepad.setId('player');
                 gamepad.pushAutoConfigure();
             }
+            */
         }
 
         pressedThisFrame.clear();
@@ -42,27 +46,13 @@ function main() {
                 case EventType.KEY_DOWN:
                     pressedThisFrame[event.key] = true;
                     pressedKeys[event.key] = true;
-                    switch (event.key) {
-                        case KeyboardKey.S:
-                            if (!gifRec.isRecording()) {
-                                print("Recording");
-                                gifRec.record();
-                            } else {
-                                print("Paused");
-                                gifRec.pause();
-                            }
-                            break;
-                        case KeyboardKey.F:
-                            print("Saved GIF");
-                            gifRec.save("C:\\Users\\Blake\\Desktop\\Asteroids.gif");
-                            break;
-                    }
                     break;
 
                 case EventType.KEY_UP:
                     pressedKeys[event.key] = false;
                     break;
 
+                /*
                 case EventType.GAMEPAD:
                     if (event.deviceId == 'player') {
                         switch (event.buttonId) {
@@ -91,6 +81,7 @@ function main() {
                         }
                     }
                     break;
+                //*/
             }
         }
 

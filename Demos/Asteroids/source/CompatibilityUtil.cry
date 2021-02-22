@@ -1,0 +1,55 @@
+﻿/*
+    Utility to handle conversions from Crayon 2.1 to 2.9. Eventually this should be
+    rolled inline with the code, but for now, this just gets the game running again
+*/
+
+import Graphics2DText;
+
+static class Draw {
+    static field g;
+
+    static field rectangle;
+    static field line;
+    static field fill;
+
+    static function setGraphicsInstance(g) {
+        Draw.g = g;
+        Draw.rectangle = g.rectangle;
+        Draw.line = g.line;
+        Draw.fill = g.fill;
+    }
+
+}
+
+class TextSurface {
+    static field _cache = {};
+
+    static function get(text, size) {
+        k = size + ':' + text;
+        ts = TextSurface._cache.get(k);
+        if (ts == null) ts = new TextSurface(text, size);
+        TextSurface._cache[k] = ts;
+        return ts;
+    }
+
+    field textRun;
+    field width;
+    field height;
+
+    constructor(text, size) {
+        pt = 'small';
+        switch (size) {
+            case 'small': pt = 10; break;
+            case 'medium': pt = 14; break;
+            case 'large': pt = 18; break;
+            default: throw new InvalidArgumentException("SIZE: " + size);
+        }
+        this.textRun = new TextRun()
+            .pushStyle(new TextStyle().setSize(pt))
+            .addText(text);
+    }
+
+    function draw(x, y) {
+        throw new NotImplementedException();
+    }
+}

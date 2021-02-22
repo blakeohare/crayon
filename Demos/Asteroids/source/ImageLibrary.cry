@@ -1,5 +1,5 @@
 ﻿import Graphics2D;
-import ImageResources;
+import Images;
 
 class ImageLibrary {
     static field images = {};
@@ -10,10 +10,7 @@ class ImageLibrary {
     static function get(path) {
         img = ImageLibrary.images.get(path);
         if (img == null) {
-            if (ImageLibrary.imageSheet == null) {
-                ImageLibrary.imageSheet = ImageSheet.loadFromResources('everything');
-            }
-            img = GraphicsTexture.load(ImageLibrary.imageSheet.getImage('images/' + path));
+            img = Bitmap.fromResource('images/' + path);
             ImageLibrary.images[path] = img;
         }
         return img;
