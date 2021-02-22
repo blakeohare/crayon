@@ -1,4 +1,4 @@
-const NoriCanvas = (() => {
+﻿const NoriCanvas = (() => {
 
     let handleCanvasData = (canvas, buffer, start, len) => {
         let ctx = canvas.getContext('2d');
@@ -24,7 +24,7 @@ const NoriCanvas = (() => {
                     ctx.fillStyle = hex;
                     ctx.fillRect(0, 0, cvWidth, cvHeight);
                     break;
-                
+
                 case 'R':
                     a = buffer[i + 4];
                     x = buffer[i + 5];
@@ -42,7 +42,7 @@ const NoriCanvas = (() => {
                         ctx.fillRect(x, y, w, h);
                     }
                     break;
-                
+
                 case 'E':
                     a = buffer[i + 4];
                     x = buffer[i + 5];
@@ -65,7 +65,7 @@ const NoriCanvas = (() => {
                         x - w, y + h,
                         x - w, y - h,
                         x, y - h);
-                    
+
                     ctx.fillStyle = hex;
                     if (a !== 255) {
                         ctx.globalAlpha = a / 255;
@@ -77,7 +77,7 @@ const NoriCanvas = (() => {
                         ctx.closePath();
                     }
                     break;
-                
+
                 case 'L':
                     a = buffer[i + 4];
                     x = buffer[i + 5];
@@ -88,7 +88,7 @@ const NoriCanvas = (() => {
                     i += 10;
                     // TODO: this
                     break;
-                
+
                 case 'ImgData':
                     r = buffer[i + 4]; // version key
                     g = buffer[i + 5]; // resource ID
@@ -118,7 +118,7 @@ const NoriCanvas = (() => {
                     }
                     i += 7;
                     break;
-                
+
                 case 'I2':
                     r = buffer[i + 4]; // version key
                     img = imgLookup[r];
@@ -226,7 +226,7 @@ const NoriCanvas = (() => {
             recentTextCache[rawInstruction] = img;
             return img;
         }
-        
+
         let parts = rawInstruction.split(',');
         let wrapWidth = 0;
         let alignment = 'L';
@@ -261,7 +261,7 @@ const NoriCanvas = (() => {
                     largestSize = Math.max(largestSize, value);
                     newInstructions.push(['S', value]);
                     break;
-                case 'C': 
+                case 'C':
                     value = value.split('/');
                     newInstructions.push(['C', NoriUtil.encodeHexColor(
                         parseInt(value[0]), parseInt(value[1]), parseInt(value[2]))]);
@@ -287,5 +287,5 @@ const NoriCanvas = (() => {
     return {
         handleCanvasData,
     };
-    
+
 })();

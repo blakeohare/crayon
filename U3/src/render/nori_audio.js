@@ -1,4 +1,4 @@
-const NoriAudio = (() => {
+﻿const NoriAudio = (() => {
 
     let audioContext = null;
     let acCbQueue = [];
@@ -36,7 +36,7 @@ const NoriAudio = (() => {
             }
             channels.push(channel);
         }
-        
+
         getAudioContext(ctx => {
             let buffer = ctx.createBuffer(channelCount, length, freq);
             let source = ctx.createBufferSource();
@@ -50,7 +50,7 @@ const NoriAudio = (() => {
                 }
             }
             source.connect(ctx.destination);
-            
+
             soundById[id] = {
                 id,
                 type: 'samples',
@@ -85,10 +85,10 @@ const NoriAudio = (() => {
             default: throw new Error("Unknown audio command: " + cmd);
         }
     };
-    
-	return {
+
+    return {
         handleAudioEvent,
         interactionOccurred,
         play,
-	};
+    };
 })();

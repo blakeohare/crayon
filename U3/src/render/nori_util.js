@@ -1,10 +1,10 @@
-const NoriUtil = (() => {
+﻿const NoriUtil = (() => {
 
     let noopFn = () => { };
 
     let promiseWait = ms => {
         return new Promise(res => {
-           window.setTimeout(() => res(true), ms); 
+           window.setTimeout(() => res(true), ms);
         });
     };
 
@@ -26,7 +26,7 @@ const NoriUtil = (() => {
         }
         return o.join('');
     }
-    
+
     let TO_HEX = (() => {
         let h = '0123456789abcdef'.split('');
         let arr = [];
@@ -38,7 +38,7 @@ const NoriUtil = (() => {
         return arr;
     })();
     let TO_HEX_HASH = TO_HEX.map(t => '#' + t);
-    
+
     let encodeHexColor = (r, g, b) => TO_HEX_HASH[r] + TO_HEX[g] + TO_HEX[b];
 
     let decodeB64 = (str) => {
@@ -46,7 +46,7 @@ const NoriUtil = (() => {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
-    
+
     let encodeB64 = (str) => {
         if (window.Buffer) return Buffer.from(str).toString('base64');
         // TODO: this is currently ASCII-centric
