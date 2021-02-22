@@ -1,7 +1,7 @@
-const NoriEvents = (() => {
+﻿const NoriEvents = (() => {
     let isKeyPressed = {};
     let sendBatchMessage = null;
-    
+
     window.addEventListener('keydown', e => {
         handleKeyEvent(e, true);
     });
@@ -59,7 +59,7 @@ const NoriEvents = (() => {
             case '|': return 'PIPE';
             case 'Enter': return '\n';
             case 'Tab': return '\t';
-            
+
             default:
                 if (c.length > 1) return '';
                 break;
@@ -104,7 +104,7 @@ const NoriEvents = (() => {
             case 'CapsLock':
             case 'Enter':
             case 'Tab':
-            case 'Space': 
+            case 'Space':
             case 'Escape':
             case 'F10':
             case 'F11':
@@ -143,7 +143,7 @@ const NoriEvents = (() => {
                     inputValue = e.firstChild.checked ? '1' : '';
                     break;
             }
-            
+
             if (isInput) {
                 if (!inputValue) inputValue = '';
                 if (e.NORI_prev_input_value !== inputValue) {
@@ -169,7 +169,7 @@ const NoriEvents = (() => {
                     e.addEventListener('click', handler);
                 }
                 break;
-                
+
             case 'el.onmousedown':
             case 'el.onmouseup':
             case 'el.onmousemove':
@@ -178,7 +178,7 @@ const NoriEvents = (() => {
                 jsName = propertyName.split('.')[1].substr(2);
                 if (jsName == 'mouseenter') jsName = 'mouseover';
                 else if (jsName == 'mouseleave') jsName = 'mouseout';
-                
+
                 e.NORI_handlers.inner[jsName] = handler;
                 e.firstChild.addEventListener(jsName, handler);
                 break;
@@ -202,13 +202,13 @@ const NoriEvents = (() => {
                         fc.oninput = handler;
                         e.NORI_handlers.inner['input'] = handler;
                         break;
-                        
+
                     case 'CheckBox':
                         fc.onchange = handler;
                         fc.onclick = handler;
                         e.NORI_handlers.inner['click'] = handler;
                         break;
-                        
+
                     default:
                         throw Error("Input changed handler logic not defined for '" + e.NORI_type + "'");
                 }

@@ -1,4 +1,4 @@
-window.addEventListener('load', () => {
+﻿window.addEventListener('load', () => {
 
     let initialized = false;
     let handleMessageBuffer = (buffer, options) => {
@@ -9,7 +9,7 @@ window.addEventListener('load', () => {
             flushUpdates(buffer);
         }
     };
-    
+
     registerMessageListener(data => {
         if (data.buffer) {
             handleMessageBuffer(data.buffer, data.options);
