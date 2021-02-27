@@ -1,6 +1,49 @@
 ﻿const NoriCanvas = (() => {
 
     let handleCanvasData = (canvas, buffer, start, len) => {
+        if (len > 0 && buffer[start] === 'ImgData') {
+            handleCanvasDataLoad(canvas, buffer, start, len, () => {
+                handleCanvasDataImpl(canvas, buffer, start, len);
+            });
+        } else {
+            handleCanvasDataImpl(canvas, buffer, start, len);
+        }
+    };
+
+    let handleCanvasDataLoad = (canvas, buffer, start, len, completeCb) => {
+        let imgLookup = canvas._NORI_imgLookup;
+        let i = start;
+        let end = start + len;
+        let completions = [];
+
+        while (i < end && buffer[i] === 'ImgData') {
+            let versionKey = buffer[i + 4]; // version key
+            // resId = buffer[i + 5]; // resource ID not needed, it seems
+            let imageDataB64 = buffer[i + 6]; // actual image data
+            ((imageData, versionKey) => {
+                let resolver = null;
+                completions.push(new Promise(res => {
+                    resolver = res;
+                }));
+                let imgLoader = new Image();
+                imgLoader.onload = () => {
+                    let newImg = document.createElement('canvas');
+                    newImg.width = imgLoader.width;
+                    newImg.height = imgLoader.height;
+                    let ctx = newImg.getContext('2d');
+                    ctx.drawImage(imgLoader, 0, 0);
+                    imgLookup[versionKey] = newImg;
+                    resolver(1);
+                };
+                imgLoader.src = 'data:image/png;base64,' + imageData;
+            })(imageDataB64, versionKey);
+            i += 7;
+        }
+
+        Promise.all(completions).then(() => { completeCb(); });
+    };
+
+    let handleCanvasDataImpl = (canvas, buffer, start, len) => {
         let ctx = canvas.getContext('2d');
         let cvWidth = canvas.width;
         let cvHeight = canvas.height;
@@ -19,6 +62,10 @@
             b = buffer[i + 3];
             hex = NoriUtil.encodeHexColor(r, g, b);
             switch (buffer[i]) {
+                case 'ImgData':
+                    i += 7;
+                    break;
+
                 case 'F':
                     i += 4;
                     ctx.fillStyle = hex;
@@ -125,25 +172,6 @@
                         }
                         if (a < 255) ctx.globalAlpha = 1;
                     }
-                    break;
-
-                case 'ImgData':
-                    r = buffer[i + 4]; // version key
-                    g = buffer[i + 5]; // resource ID
-                    b = buffer[i + 6]; // actual image data
-                    ((imageData, versionKey) => {
-                        let imgLoader = new Image();
-                        imgLoader.onload = () => {
-                            let newImg = document.createElement('canvas');
-                            newImg.width = imgLoader.width;
-                            newImg.height = imgLoader.height;
-                            let ctx = newImg.getContext('2d');
-                            ctx.drawImage(imgLoader, 0, 0);
-                            imgLookup[versionKey] = newImg;
-                        };
-                        imgLoader.src = 'data:image/png;base64,' + imageData;
-                    })(b, r);
-                    i += 7;
                     break;
 
                 case 'I1':
