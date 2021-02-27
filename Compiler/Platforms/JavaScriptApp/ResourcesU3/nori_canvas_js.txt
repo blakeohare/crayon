@@ -86,7 +86,45 @@
                     y2 = buffer[i + 8];
                     lineWidth = buffer[i + 9];
                     i += 10;
-                    // TODO: this
+                    if (a > 0) {
+                        if (a < 255) ctx.globalAlpha = a / 255;
+
+                        if (x === x2) {
+                            x -= Math.floor(lineWidth / 2);
+                            ctx.fillStyle = hex;
+                            ctx.fillRect(x, Math.min(y, y2), lineWidth, Math.abs(y - y2));
+                        } else if (y === y2) {
+                            y -= Math.floor(lineWidth / 2) ;
+                            ctx.fillStyle = hex;
+                            ctx.fillRect(Math.min(x, x2), y, Math.abs(x - x2), lineWidth);
+                        } else {
+                            // first, arrange points from left to right.
+                            if (x2 < x) {
+                                tx = x;
+                                x = x2;
+                                x2 = tx;
+                                ty = y;
+                                y = y2;
+                                y2 = ty;
+                            }
+
+                            tw = x2 - x;
+                            th = y2 - y;
+                            scale = lineWidth / 2 / Math.sqrt(tx * tx + ty * ty);
+                            tx = x + th * scale;
+                            ty = y - tw * scale;
+                            sx = x - th * scale;
+                            sy = y + tw * scale;
+                            ctx.fillStyle = hex;
+                            ctx.beginPath();
+                            ctx.moveTo(sx, sy);
+                            ctx.lineTo(tx, ty);
+                            ctx.lineTo(tx + tw, ty + th);
+                            ctx.lineTo(sx + tw, sy + th);
+                            ctx.fill();
+                        }
+                        if (a < 255) ctx.globalAlpha = 1;
+                    }
                     break;
 
                 case 'ImgData':
