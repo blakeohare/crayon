@@ -122,9 +122,9 @@ namespace Interpreter
                             weight2 = color.A;
                             totalWeight = weight1 + weight2;
                             this.pixels[index] = new Rgba32(
-                                (byte)(underColor.R * weight1 + color.R * weight2) / totalWeight,
-                                (byte)(underColor.G * weight1 + color.G * weight2) / totalWeight,
-                                (byte)(underColor.B * weight1 + color.B * weight2) / totalWeight,
+                                (byte)((underColor.R * weight1 + color.R * weight2) / totalWeight),
+                                (byte)((underColor.G * weight1 + color.G * weight2) / totalWeight),
+                                (byte)((underColor.B * weight1 + color.B * weight2) / totalWeight),
                                 (byte)(255 - (255 - weight1) * (255 - weight2) / 255));
                         }
                         this.counters[index] = counter;
