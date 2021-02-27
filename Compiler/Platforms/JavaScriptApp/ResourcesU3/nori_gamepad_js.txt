@@ -1,4 +1,4 @@
-const NoriGamepad = (() => {
+﻿const NoriGamepad = (() => {
 
     let gamepads = [];
     let isInitialized = false;

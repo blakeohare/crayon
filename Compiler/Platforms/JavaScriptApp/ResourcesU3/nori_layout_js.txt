@@ -1,14 +1,14 @@
-const NoriLayout = (() => {
-    
+﻿const NoriLayout = (() => {
+
     let childrenLayoutFnByType = {};
 
     let scrollToCss = {
-		none: 'visible',
-		auto: 'auto',
-		scroll: 'scroll',
-		crop: 'hidden'
+        none: 'visible',
+        auto: 'auto',
+        scroll: 'scroll',
+        crop: 'hidden'
     };
-    
+
     let isFirstPass = true;
     let textWrapsFound = false;
 
@@ -120,7 +120,7 @@ const NoriLayout = (() => {
         let valign = 'S';
         let x = 0;
         let y = 0;
-        
+
         if (isFloatPanel) {
             let t = doFloatChildCalc(root);
             width = t.width;
@@ -160,11 +160,11 @@ const NoriLayout = (() => {
         let y;
         let width;
         let height;
-        
+
         // Raw size value applied from bridge (could be pixels or negative percent notation)
         let originalWidth = e.NORI_size[0];
         let originalHeight = e.NORI_size[1];
-        
+
         // minimum required explicit size.
         // Note that requiredSize is always non-0 and so pxWidth/Height gets set to null only in
         // the event of a percent setting.
@@ -174,7 +174,7 @@ const NoriLayout = (() => {
         // 0 to 1 ratio of size consumption of available space
         let ratioX = null;
         let ratioY = null;
-        
+
         // ratio of size consumption converted to final pixels
         let perWidth = null;
         let perHeight = null;
@@ -188,7 +188,7 @@ const NoriLayout = (() => {
             ratioY = originalHeight / -100000.0;
             perHeight = Math.floor(ratioY * usableHeight);
         }
-        
+
         if (e.NORI_flexibleText) {
             let sz;
             let text = e.firstChild.innerHTML;
@@ -205,7 +205,7 @@ const NoriLayout = (() => {
                 e.NORI_textAvailableWrapWidth = sz[0];
                 textWrapsFound = true;
             }
-            
+
             // regardless of how the width was determined, treat the new measurement as required width.
             pxWidth = sz[0];
             if (pxHeight !== null) {
@@ -213,11 +213,11 @@ const NoriLayout = (() => {
             }
             ratioX = null;
         }
-        
+
         // calculated width and height if there is no stretch
         let calcWidth = pxWidth === null ? perWidth : pxWidth;
         let calcHeight = pxHeight === null ? perHeight : pxHeight;
-        
+
         switch (halign) {
             case 'S':
                 width = usableWidth;
@@ -237,7 +237,7 @@ const NoriLayout = (() => {
                 x = Math.floor(centerX - width / 2);
                 break;
         }
-        
+
         switch (valign) {
             case 'S':
                 height = usableHeight;
@@ -257,7 +257,7 @@ const NoriLayout = (() => {
                 y = Math.floor(centerY - height / 2);
                 break;
         }
-        
+
         let s = (e.NORI_floatAnchors && (currentRoot === e)) ? e.firstChild.style : e.style;
 
         s.width = width + 'px';
@@ -279,20 +279,20 @@ const NoriLayout = (() => {
 
         e.NORI_allocatedSize[0] = width;
         e.NORI_allocatedSize[1] = height;
-        
+
         if (e.NORI_isPanel) {
-            
+
             if (e.NORI_borders) {
                 let b = e.NORI_borders;
                 width -= b[0] + b[2];
                 height -= b[1] + b[3];
             }
-            
+
             if (e.NORI_scrollpanel) {
                 s.overflowX = scrollToCss[e.NORI_scrollpanel[0]];
                 s.overflowY = scrollToCss[e.NORI_scrollpanel[1]];
             }
-            
+
             childrenLayoutFnByType[e.NORI_type](e, 0, 0, width, height);
         }
     };
@@ -305,7 +305,7 @@ const NoriLayout = (() => {
         availableHeight,
         overrideChildDock,
         useTransverseStretch) => {
-            
+
         let childrenIds = panel.NORI_childrenIdList;
         let length = childrenIds.length - 1; // the last one just takes what's left, regardless of dock direction.
         if (length == -1) return;
@@ -325,7 +325,7 @@ const NoriLayout = (() => {
             switch (dock) {
                 case 'N':
                     spaceAllocation(
-                        child.NORI_id, 
+                        child.NORI_id,
                         xOffset + margin[0], yOffset + margin[1],
                         usableWidth, usableHeight,
                         useTransverseStretch ? 'S' : child.NORI_align[0], 'T');
@@ -333,7 +333,7 @@ const NoriLayout = (() => {
                     yOffset += pixelsConsumed;
                     availableHeight -= pixelsConsumed;
                     break;
-                
+
                 case 'S':
                     spaceAllocation(
                         child.NORI_id,
@@ -343,7 +343,7 @@ const NoriLayout = (() => {
                     pixelsConsumed = margin[1] + margin[3] + child.NORI_allocatedSize[1];
                     availableHeight -= pixelsConsumed;
                     break;
-                
+
                 case 'W':
                     spaceAllocation(
                         child.NORI_id,
@@ -354,7 +354,7 @@ const NoriLayout = (() => {
                     xOffset += pixelsConsumed;
                     availableWidth -= pixelsConsumed;
                     break;
-                
+
                 case 'E':
                     spaceAllocation(
                         child.NORI_id,
@@ -371,7 +371,7 @@ const NoriLayout = (() => {
         t = panel.NORI_type;
         let ha = useTransverseStretch ? 'S' : t == 'FlowPanel' ? 'L' : null;
         let va = useTransverseStretch ? 'S' : t == 'StackPanel' ? 'T' : null;
-        
+
         if (panel.NORI_scrollpanel) {
             let xscroll = panel.NORI_scrollpanel[0];
             let yscroll = panel.NORI_scrollpanel[1];
@@ -447,16 +447,16 @@ const NoriLayout = (() => {
                 id = children[i];
                 child = elementById[id];
                 calculateRequiredSize(child);
-                
+
                 childWidth = child.NORI_requiredSize[0] + child.NORI_margin[0] + child.NORI_margin[2];
                 childHeight = child.NORI_requiredSize[1] + child.NORI_margin[1] + child.NORI_margin[3];
                 switch (e.NORI_type) {
-                    
+
                     case 'Border':
                         xSize = childWidth + e.NORI_borders[0] + e.NORI_borders[2];
                         ySize = childHeight + e.NORI_borders[1] + e.NORI_borders[3];
                         break;
-                    
+
                     case 'DockPanel':
                         if (i == length - 1) {
                             xSize = childWidth;
@@ -475,22 +475,22 @@ const NoriLayout = (() => {
                             }
                         }
                         break;
-                    
+
                     case 'ScrollPanel':
                         xSize = e.NORI_scrollpanel[0] == 'none' ? childWidth : 0;
                         ySize = e.NORI_scrollpanel[1] == 'none' ? childHeight : 0;
                         break;
-                    
+
                     case 'StackPanel':
                         xSize = Math.max(xSize, childWidth);
                         ySize += childHeight;
                         break;
-                    
+
                     case 'FlowPanel':
                         xSize += childWidth;
                         ySize = Math.max(ySize, childHeight);
                         break;
-                        
+
                     case 'FloatPanel':
                         if (e === currentRoot) {
                             xSize += childWidth;
@@ -519,7 +519,7 @@ const NoriLayout = (() => {
                         if (h == null) h = 6 + sz[1];
                     }
                     break;
-                    
+
                 case 'TextBlock':
                     t = e.firstChild.innerHTML;
                     e.NORI_flexibleText = false;
@@ -548,13 +548,13 @@ const NoriLayout = (() => {
                     if (w == null || sz[0] > w) w = sz[0];
                     if (h == null || sz[1] > h) h = sz[1];
                     break;
-                    
+
                 default:
                     if (w == null) w = 0;
                     if (h == null) h = 0;
                     break;
             }
-            
+
             e.NORI_requiredSize[0] = w;
             e.NORI_requiredSize[1] = h;
         }
@@ -562,12 +562,12 @@ const NoriLayout = (() => {
 
     let textSizeL1Cache = {};
     let textSizeL2Cache = {};
-    
+
     let calculateTextSize = (html, element, width) => {
         if (html === '') return [1, 1];
         let font = {};
         let fieldCount = 0;
-        
+
         let walker = element;
         while (walker && fieldCount != 4) {
             if (walker.NORI_font) {
@@ -619,7 +619,7 @@ const NoriLayout = (() => {
         }
         return sz.slice(0);
     };
-  
+
     return {
         doLayoutPass,
     };
