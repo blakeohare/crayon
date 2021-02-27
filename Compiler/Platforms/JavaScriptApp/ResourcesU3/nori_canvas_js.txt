@@ -1,6 +1,7 @@
 ﻿const NoriCanvas = (() => {
 
     let handleCanvasData = (canvas, buffer, start, len) => {
+        canvas._NORI_imgLookup = canvas._NORI_imgLookup || {};
         if (len > 0 && buffer[start] === 'ImgData') {
             handleCanvasDataLoad(canvas, buffer, start, len, () => {
                 handleCanvasDataImpl(canvas, buffer, start, len);
@@ -52,10 +53,6 @@
         let tx, ty, sx, sy, tw, th, sw, sh;
         let i = start;
         let imgLookup = canvas._NORI_imgLookup;
-        if (!imgLookup) {
-            imgLookup = {};
-            canvas._NORI_imgLookup = imgLookup;
-        }
         while (i < end) {
             r = buffer[i + 1];
             g = buffer[i + 2];
