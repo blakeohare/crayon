@@ -1,0 +1,16 @@
+﻿import CrayonUnit;
+
+const BACKSLASH = '\\';
+
+class StringsTest : Test {
+
+    function testRaw() {
+        assertThat(@"Hello, World!").isEqualTo("Hello, World!");
+        assertThat(@"\'").isEqualTo(BACKSLASH + "'");
+        assertThat(@'\"').isEqualTo(BACKSLASH + '"');
+        assertThat(@"\").isEqualTo(BACKSLASH);
+        assertThat(@'\').isEqualTo(BACKSLASH);
+        assertThat(@'\\ \').isEqualTo(BACKSLASH + BACKSLASH + ' ' + BACKSLASH);
+        assertThat(@"\\ \").isEqualTo(BACKSLASH + BACKSLASH + ' ' + BACKSLASH);
+    }
+}

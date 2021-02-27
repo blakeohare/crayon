@@ -27,11 +27,18 @@ namespace Parser.ParseTree
 
             if (input % 1 == 0)
             {
-                double intCheck = System.Math.Pow(b, output) % 1;
-                if (intCheck > 0.5) intCheck = 1.0 - intCheck;
-                if (intCheck < 0.000000000000001)
+                // There are situations where you want a bonafied integer back without
+                // floating point errors. For example computing the log10 of 1 billion should
+                // equal EXACTLY 9.0, not 8.99999999999999999998
+                // In order to protect from errors like this, perform the reverse calculation.
+                // Take the output of the log, round it, and raise the original base by that power.
+                // If you get the original input, then return the rounded whole number as the result.
+
+                int roundedOutput = (int)(output + .5);
+                int reverseInt = (int)System.Math.Pow(b, roundedOutput);
+                if (reverseInt == input)
                 {
-                    return System.Math.Floor(output + .1);
+                    return roundedOutput;
                 }
             }
 

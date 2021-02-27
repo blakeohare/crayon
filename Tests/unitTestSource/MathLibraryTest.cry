@@ -1,6 +1,15 @@
 ﻿import CrayonUnit;
 import Math;
 
+// Because this is a constant, this ensures that the inlining for these math functions doesn't regress.
+// For the trickier ones that need to have whole number results in specific situations, ensure that the compile-time computation is the same as the runtime.
+const MATH_INLINE_1 = Math.log10(1000000000);
+const MATH_INLINE_2 = Math.log2(16777216);
+const MATH_INLINE_3 = Math.ln(Math.E);
+const MATH_INLINE_4 = Math.arccos(.5);
+const MATH_INLINE_5 = Math.arcsin(.5);
+const MATH_INLINE_6 = Math.floor(1.5);
+
 class MathLibraryTest : Test {
 
     constructor() : base() { }
@@ -22,4 +31,18 @@ class MathLibraryTest : Test {
         assertThat(Math.round(x, -1) + '').isEqualTo('197591570.0');
         assertThat(Math.round(x, -2) + '').isEqualTo('197591600.0');
     }
+
+    function testInliningMatchesRuntimeValues() {
+        assertThat(MATH_INLINE_1 + '').isEqualTo('' + Math.log10(this.wrap(1000000000)));
+        assertThat(MATH_INLINE_1 + '').isEqualTo('9.0');
+        assertThat(MATH_INLINE_2 + '').isEqualTo('' + Math.log2(this.wrap(16777216)));
+        assertThat(MATH_INLINE_2 + '').isEqualTo('24.0');
+        assertThat(MATH_INLINE_3 + '').isEqualTo('' + Math.ln(this.wrap(Math.E)));
+        assertThat(MATH_INLINE_3 + '').isEqualTo('1.0');
+        assertThat(MATH_INLINE_4 + '').isEqualTo('' + Math.arccos(this.wrap(.5)));
+        assertThat(MATH_INLINE_5 + '').isEqualTo('' + Math.arcsin(this.wrap(.5)));
+        assertThat(MATH_INLINE_6).isEqualTo(1);
+    }
+
+    function wrap(x) { return x; }
 }

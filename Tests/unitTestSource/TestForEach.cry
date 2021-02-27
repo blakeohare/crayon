@@ -32,4 +32,24 @@ class TestForEach : Test {
         }
         assertThat(x).isEqualTo(10);
     }
+
+    function testForeachFromPolarityRegressions() {
+
+        buffer = [];
+        for (i : [1, 2, 3]) {
+            buffer.add(i);
+        }
+
+        try {
+            for (i : [1, 2, 3]) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            buffer.add('CAUGHT');
+        } finally {
+            buffer.add('FINALLY');
+        }
+
+        assertThat(buffer.join(' ')).isEqualTo('1 2 3 CAUGHT FINALLY');
+    }
 }
