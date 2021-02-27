@@ -96,6 +96,16 @@ namespace Graphics2D {
             return this;
         }
 
+        function drawImageAdvanced(image, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight, alpha = 255, rotation = 0) {
+            if (!(image is Images.Bitmap)) this._notAnImage();
+            $$$('argVerifyNums', "Arguments must be numbers.", targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight, alpha, rotation, 10);
+            if (this._transferredImageVersionKeys.get(image._versionKey) == null) {
+                this._submitImageData(image);
+            }
+            this._buffer.add('IA', 0, 0, 0, image._versionKey, targetX, targetY, targetWidth, targetHeight, sourceX, sourceY, sourceWidth, sourceHeight, alpha, rotation);
+            return this;
+        }
+
         function drawImageRotated(image, centerX, centerY, angle) {
             if (!(image is Images.Bitmap)) this._notAnImage();
             $$$('argVerifyNums', "Arguments must be numbers.", centerX, centerY, angle, 3);

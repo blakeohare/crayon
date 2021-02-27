@@ -5,7 +5,7 @@
         let cvWidth = canvas.width;
         let cvHeight = canvas.height;
         let end = start + len;
-        let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex, img;
+        let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex, img, theta;
         let tx, ty, sx, sy, tw, th, sw, sh;
         let i = start;
         let imgLookup = canvas._NORI_imgLookup;
@@ -158,6 +158,36 @@
                         ctx.restore();
                     }
                     i += 8;
+                    break;
+
+                case 'IA':
+                    r = buffer[i + 4]; // version key
+                    img = imgLookup[r];
+                    a = buffer[i + 13];
+                    if (img && a > 0) {
+                        tx = buffer[i + 5];
+                        ty = buffer[i + 6];
+                        tw = buffer[i + 7];
+                        th = buffer[i + 8];
+                        sx = buffer[i + 9];
+                        sy = buffer[i + 10];
+                        sw = buffer[i + 11];
+                        sh = buffer[i + 12];
+                        theta = buffer[i + 14];
+
+                        if (a < 255) ctx.globalAlpha = a / 255;
+                        if (theta !== 0) {
+                            ctx.save();
+                            ctx.translate(tx + tw / 2, ty + th / 2);
+                            ctx.rotate(theta);
+                            ctx.drawImage(img, sx, sy, sw, sh, -tw / 2, -th / 2, tw, th);
+                            ctx.restore();
+                        } else {
+                            ctx.drawImage(img, sx, sy, sw, sh, tx, ty, tw, th);
+                        }
+                        if (a < 255) ctx.globalAlpha = 1;
+                    }
+                    i += 15;
                     break;
 
                 case 'TX':
