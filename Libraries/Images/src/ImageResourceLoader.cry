@@ -1,12 +1,14 @@
 ﻿namespace Images {
+
     class ImageResourceLoader {
 
         field prefix = null;
         field filename = null;
         field module = null;
 
-        field onProgress = null;
-        field onDone = null;
+        field _onProgress = null; // (ratio) => ...
+        field _onDone = null; // () => ...
+        field _onImage = null; // (path, bitmap) => ...
         field loaded = false;
 
         constructor() { }
@@ -17,18 +19,60 @@
         }
 
         function setOnProgress(fn) {
-            this.onProgress = fn;
+            this._onProgress = fn;
+            return this;
+        }
+
+        function setOnImageLoaded(fn) {
+            this._onImage = fn;
             return this;
         }
 
         function setOnComplete(fn) {
-            this.onDone = fn;
+            this._onDone = fn;
             return this;
         }
 
         function load() {
+            files = Internal.ResourceManifest.files;
+            paths = Internal.ResourceManifest.filePaths;
+            print("PATHS: " + paths);
+            loadThese = [];
+            prefix = '@:' + (this.prefix ?? '');
+            for (path : paths) {
+                if (path.startsWith(prefix)) {
+                    loadThese.add(path);
+                }
+            }
 
-            throw new NotImplementedException();
+            Core.timedCallback(() => {
+                this._loadImpl(loadThese);
+            }, 0.001);
+        }
+
+        function _loadImpl(files) {
+            lastYield = Core.currentTime();
+            totalLoaded = 0;
+            for (file : files) {
+                print("Loading " + file);
+                img = Bitmap.fromResource(file);
+                totalLoaded++;
+                if (this._onImage != null) {
+                    this._onImage(file, img);
+                }
+                if (this._onProgress != null) {
+                    this._onProgress(1.0 * totalLoaded / files.length);
+                }
+                now = Core.currentTime();
+                diff = now - lastYield;
+                if (diff > 0.01) {
+                    Core.sleep(0.001);
+                }
+            }
+            this.loaded = true;
+            if (this._onDone != null) {
+                this._onDone();
+            }
         }
 
         function awaitLoad() {
