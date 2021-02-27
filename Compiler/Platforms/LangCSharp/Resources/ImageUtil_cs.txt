@@ -38,20 +38,11 @@ namespace Interpreter.Vm
         public static object Scale(object rawBmp, int newWidth, int newHeight, int algo)
         {
             if (algo != 1) throw new NotImplementedException();
-            UniversalBitmap bmp = (UniversalBitmap)rawBmp;
-            int oldWidth = bmp.Width;
-            int oldHeight = bmp.Height;
-
-            if (oldWidth == newWidth && oldHeight == newHeight)
-            {
-                // Scale is used for 1:1 cloning
-                UniversalBitmap clone = new UniversalBitmap(newWidth, newHeight);
-                clone.CreateNewDrawingSession().Draw(bmp, 0, 0, 0, 0, newWidth, newHeight, newWidth, newHeight).Flush();
-                clone.ClearBuffer();
-                return clone;
-            }
-
-            throw new NotImplementedException();
+            UniversalBitmap original = (UniversalBitmap)rawBmp;
+            UniversalBitmap target = new UniversalBitmap(newWidth, newHeight);
+            target.CreateNewDrawingSession().Draw(original, 0, 0, 0, 0, newWidth, newHeight, original.Width, original.Height).Flush();
+            target.ClearBuffer();
+            return target;
         }
 
         public static object StartEditSession(object bmpObj)
