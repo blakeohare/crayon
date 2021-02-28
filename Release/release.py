@@ -8,6 +8,7 @@ VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 LIBRARIES = [
 	'Audio',
 	'Base64',
+	'BrowserInterop',
 	'Cookies',
 	'Core',
 	'CrayonUnit',
@@ -44,7 +45,6 @@ LIBRARIES = [
 	'U3Direct',
 	'UrlUtil',
 	'UserData',
-	'Web',
 	'Xml',
 ]
 

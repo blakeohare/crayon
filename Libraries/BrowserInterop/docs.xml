@@ -1,8 +1,8 @@
-<library name="Web">
+<library name="BrowserInterop">
 	<description>
-		Library for interacting with the local browser
+		Library for interacting with the browser
 	</description>
-	<namespace name="Web">
+	<namespace name="BrowserInterop">
 		<function name="launchBrowser">
 			<description>Launches the user's default browser (or creates a new tab) and points it to a URL.</description>
 			<arg name="url" type="string" description="URL to open the browser to."/>

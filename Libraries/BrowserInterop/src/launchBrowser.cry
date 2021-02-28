@@ -1,4 +1,4 @@
-﻿namespace Web {
+﻿namespace BrowserInterop {
     function launchBrowser(url) {
         if (Core.typeof(url) != Core.Type.STRING) throw new InvalidArgumentException("URL must be a string.");
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
