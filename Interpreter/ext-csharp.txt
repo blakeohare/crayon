@@ -29,7 +29,7 @@ EXT: CoreFunc_ImageStartEditSession: ImageUtil.StartEditSession([ARG:1])
 
 EXT: CoreFunc_JsonParse: JsonHelper.ParseJsonIntoValue([ARG:1], [ARG:2])
 
-EXT: CoreFunc_LaunchBrowser: System.Diagnostics.Process.Start([ARG:1])
+EXT: CoreFunc_LaunchBrowser: System.Diagnostics.Process.Start("cmd", "/C start " + [ARG:1])
 
 EXT: JsInterop_CallbackReturn: TranslationHelper.Noop()
 EXT: JsInterop_Invoke: TranslationHelper.AlwaysFalse()

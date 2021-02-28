@@ -6478,7 +6478,7 @@ namespace Interpreter.Vm
                             case 85:
                                 // launchBrowser;
                                 arg1 = valueStack[--valueStackSize];
-                                System.Diagnostics.Process.Start((string)arg1.internalValue);
+                                System.Diagnostics.Process.Start("cmd", "/C start " + (string)arg1.internalValue);
                                 output = vm.globalNull;
                                 break;
                             case 86:
