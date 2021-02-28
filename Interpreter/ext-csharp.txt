@@ -1,4 +1,6 @@
 
+EXT: BrowserInterop_GetUrlPath: null
+EXT: BrowserInterop_SetUrlPath: TranslationHelper.Noop()
 EXT: Cookie_Get: null
 EXT: Cookie_Set: TranslationHelper.Noop()
 

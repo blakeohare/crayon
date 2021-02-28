@@ -67,3 +67,6 @@ PST$registerExtensibleCallback('nativeTunnelRecv', arr => {
     arr[3] = first.isRecurring;
     return true;
 });
+
+C$setUrlPath = (path) => { };
+C$getUrlPath = () => null;

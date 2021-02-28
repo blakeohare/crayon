@@ -1,4 +1,6 @@
 
+EXT: BrowserInterop_GetUrlPath: C$getUrlPath()
+EXT: BrowserInterop_SetUrlPath: C$setUrlPath([ARG:1])
 EXT: Cookie_Get: C$cookie$get([ARG:1])
 EXT: Cookie_Set: C$cookie$set([ARG:1], [ARG:2], [ARG:3])
 

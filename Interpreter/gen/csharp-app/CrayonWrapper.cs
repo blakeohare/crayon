@@ -6702,6 +6702,15 @@ namespace Interpreter.Vm
                                     output = VALUE_NULL;
                                 }
                                 break;
+                            case 112:
+                                // browserInteropGetUrlPath;
+                                output = VALUE_NULL;
+                                break;
+                            case 113:
+                                // browserInteropSetUrlPath;
+                                arg1 = valueStack[--valueStackSize];
+                                output = VALUE_NULL;
+                                break;
                         }
                         if ((row[1] == 1))
                         {

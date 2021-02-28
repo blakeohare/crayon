@@ -1416,3 +1416,6 @@ LIB$fileiocommon$fakedisk$textToLines = function(text, stringOut) {
 	}
 	stringOut.push(sb.join(''));
 };
+
+let C$setUrlPath = (path) => { history.pushState(path, '', path); };
+let C$getUrlPath = () => document.location.pathname;

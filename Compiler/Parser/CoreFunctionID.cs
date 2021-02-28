@@ -105,6 +105,8 @@ namespace Parser
         COOKIE_GET = 109,
         COOKIE_SET = 110,
         VALUE_TO_FLOAT_OR_NULL = 111,
+        BROWSER_INTEROP_GET_URL_PATH = 112,
+        BROWSER_INTEROP_SET_URL_PATH = 113,
     }
 
     internal static class CoreFunctionIDHelper
@@ -214,6 +216,8 @@ namespace Parser
                 case "cookieGet": return (int)CoreFunctionID.COOKIE_GET;
                 case "cookieSet": return (int)CoreFunctionID.COOKIE_SET;
                 case "valueToFloatOrNull": return (int)CoreFunctionID.VALUE_TO_FLOAT_OR_NULL;
+                case "browserInteropGetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_GET_URL_PATH;
+                case "browserInteropSetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_SET_URL_PATH;
 
                 default: return -1;
             }

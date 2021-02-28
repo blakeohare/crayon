@@ -52,3 +52,6 @@ function sendMessage(name, value) {
             throw "Unknown message type: " + name;
     }
 }
+
+C$setUrlPath = (path) => { };
+C$getUrlPath = () => null;

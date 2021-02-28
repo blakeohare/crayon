@@ -101,6 +101,8 @@
     case 109: Core.EmitComment("cookieGet"); @import("corefuncs/cookieGet.pst"); break;
     case 110: Core.EmitComment("cookieSet"); @import("corefuncs/cookieSet.pst"); break;
     case 111: Core.EmitComment("valueToFloatOrNull"); @import("corefuncs/valueToFloatOrNull.pst"); break;
+    case 112: Core.EmitComment("browserInteropGetUrlPath"); @import("corefuncs/browserInteropGetUrlPath.pst"); break;
+    case 113: Core.EmitComment("browserInteropSetUrlPath"); @import("corefuncs/browserInteropSetUrlPath.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

@@ -1,0 +1,7 @@
+﻿output = VALUE_NULL;
+if (@ext_boolean("IS_JAVASCRIPT")) {
+    string1 = Extension.BrowserInterop_GetUrlPath();
+    if (string1 != null) {
+        output = buildString(globals, string1);
+    }
+}

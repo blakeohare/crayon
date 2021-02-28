@@ -1,4 +1,6 @@
 
+EXT-TYPE: string BrowserInterop_GetUrlPath();
+EXT-TYPE: void BrowserInterop_SetUrlPath(string path);
 EXT-TYPE: string Cookie_Get(string name);
 EXT-TYPE: void Cookie_Set(string name, string value, int expiration);
 

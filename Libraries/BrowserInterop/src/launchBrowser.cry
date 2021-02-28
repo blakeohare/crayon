@@ -6,4 +6,13 @@
         }
         $$$('launchBrowser', url);
     }
+
+    static class BrowserNavigation {
+        static function setPath(path) {
+            $$$('browserInteropSetUrlPath', path);
+        }
+        static function getPath() {
+            return $$$('browserInteropGetUrlPath');
+        }
+    }
 }

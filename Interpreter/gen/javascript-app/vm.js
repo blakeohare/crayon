@@ -5239,6 +5239,20 @@ var interpretImpl = function(vm, executionContextId) {
 							output = VALUE_NULL;
 						}
 						break;
+					case 112:
+						// browserInteropGetUrlPath;
+						output = VALUE_NULL;
+						string1 = C$getUrlPath();
+						if ((string1 != null)) {
+							output = buildString(globals, string1);
+						}
+						break;
+					case 113:
+						// browserInteropSetUrlPath;
+						arg1 = valueStack[--valueStackSize];
+						output = VALUE_NULL;
+						C$setUrlPath(arg1[1]);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

@@ -1,0 +1,6 @@
+﻿@import("inline/1_arg.pst");
+
+output = VALUE_NULL;
+if (@ext_boolean("IS_JAVASCRIPT")) {
+    Extension.BrowserInterop_SetUrlPath((string) arg1.internalValue);
+}
