@@ -280,8 +280,28 @@ namespace Nori {
                 case 'shadowY': return this._setIntProperty(Element_ShadowY, parseInt(strValue));
                 case 'cursor': return this._setEnumWithString(Element_Cursor, strValue);
                 case 'opacity': return this._setFloatProperty(Element_Opacity, parseFloat(strValue));
+                case 'fill': return NoriUtil.parseBoolean(strValue) ? this.enableFill() : this;
+                case 'hfill': return NoriUtil.parseBoolean(strValue) ? this.enableFill('h') : this;
+                case 'vfill': return NoriUtil.parseBoolean(strValue) ? this.enableFill('v') : this;
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
+        }
+
+        function enableHFill() { return this.enableFill('h'); }
+        function enableVFill() { return this.enableFill('v'); }
+
+        function enableFill(align = null) {
+            if (align == null || align == 'h') {
+                this
+                    .setWidthPercent(100)
+                    .setHorizontalAlignment(HorizontalAlignment.STRETCH);
+            }
+            if (align == null || align == 'v') {
+                this
+                    .setHeightPercent(100)
+                    .setVerticalAlignment(VerticalAlignment.STRETCH);
+            }
+            return this;
         }
 
         function isBold() { return this._getBoolProperty(Element_Bold); }

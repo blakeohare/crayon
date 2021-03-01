@@ -232,7 +232,7 @@
                 x = xOffset + usableWidth - width;
                 break;
             case 'C':
-                let centerX = xOffset + calcWidth / 2;
+                let centerX = usableWidth / 2;
                 width = calcWidth;
                 x = Math.floor(centerX - width / 2);
                 break;
@@ -252,7 +252,7 @@
                 y = yOffset + usableHeight - height;
                 break;
             case 'C':
-                let centerY = yOffset + calcHeight / 2;
+                let centerY = usableHeight / 2;
                 height = calcHeight;
                 y = Math.floor(centerY - height / 2);
                 break;
@@ -369,8 +369,12 @@
         child = ctx.elementById[childrenIds[length]];
         margin = child.NORI_margin;
         t = panel.NORI_type;
-        let ha = useTransverseStretch ? 'S' : t == 'FlowPanel' ? 'L' : null;
-        let va = useTransverseStretch ? 'S' : t == 'StackPanel' ? 'T' : null;
+        let ha = null;
+        let va = null;
+        if (t !== 'Border' || panel === ctx.rootElement) {
+            ha = useTransverseStretch ? 'S' : t === 'FlowPanel' ? 'L' : null;
+            va = useTransverseStretch ? 'S' : t === 'StackPanel' ? 'T' : null;
+        }
 
         if (panel.NORI_scrollpanel) {
             let xscroll = panel.NORI_scrollpanel[0];
