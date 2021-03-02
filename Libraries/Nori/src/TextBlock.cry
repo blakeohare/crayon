@@ -11,8 +11,8 @@ namespace Nori {
             this.setText('').setWrap(false);
         }
 
-        function setText(value) { return this._setStringProperty(TextBlock_Text, value); }
-        function getText() { return this._getStringProperty(TextBlock_Text); }
+        function setText(value) { return this._setStringProperty(TextBlock_Text, '0' + value); }
+        function getText() { return this._getStringProperty(TextBlock_Text)[1:]; }
 
         function setWrap(value) { return this._setBoolProperty(TextBlock_Wrap, value); }
         function getWrap(value) { return this._getBoolProperty(TextBlock_Wrap); }

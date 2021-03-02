@@ -1,0 +1,98 @@
+﻿import Base64;
+import Math;
+import TextEncoding;
+
+namespace NoriRichText {
+
+    class RichTextRun {
+
+        field _attribute;
+        field _children;
+
+        constructor(attr, children) {
+            this._attribute = attr;
+            this._children = RichTextRun._verify(children, true);
+        }
+
+        function append(child) {
+            this._children.concat(RichTextRun._verify(child, false));
+            return this;
+        }
+
+        static function _verify(values, clone) {
+            if (values == null) return [];
+            if (typeof(values) != Core.Type.LIST) values = [values];
+            for (child : values) {
+                t = typeof(child);
+                if (t != Core.Type.STRING &&
+                    !(t == Core.Type.OBJECT && child is RichTextRun)) {
+
+                    throw new InvalidArgumentException("Only RichTextRun instances and strings can be added to rich text.");
+                }
+            }
+            return clone ? values.clone() : values;
+        }
+
+        static function _colorSerialize(rgba) {
+            if (typeof(rgba) == Type.LIST && rgba.length >= 3 && rgba.length <= 4) {
+                ok = true;
+                for (c : rgba) {
+                    t = typeof(c);
+                    if (t == Type.FLOAT) c = Math.floor(c);
+                    else if (t != Type.INTEGER) ok = false;
+
+                    if (ok) {
+                        if (c < 0 || c > 255) ok = false;
+                    }
+                }
+                if (ok) {
+                    return rgba.join('-');
+                }
+            }
+            throw new InvalidArgumentException("Invalid color value: " + rgba);
+        }
+
+        static function _simpleB64(text) {
+            b = TextEncoding.convertTextToBytes(text + '', TextFormat.UTF8);
+            return Base64.bytesToBase64(b);
+        }
+
+        static function _serializeToWireFormat(run, sb = null) {
+            if (sb == null) {
+                sb = ['1']; // prefix to indicate that this is rich text
+                RichTextRun._serializeToWireFormat(run, sb);
+                return sb.join('');
+            }
+
+            sb.add('@', run._attribute, '@');
+            for (child : run._children) {
+                if (typeof(child) == Type.STRING) {
+                    parts = child.split('@');
+                    if (parts.length == 1) {
+                        sb.add(parts[0]);
+                    } else {
+                        for (i = 0; i < parts.length; ++i) {
+                            if (i > 0) sb.add('@a@');
+                            sb.add(parts[i]);
+                        }
+                    }
+                } else {
+                    RichTextRun._serializeToWireFormat(child, sb);
+                }
+            }
+            sb.add('@@');
+        }
+    }
+
+    function text(values) { return new RichTextRun('tx', values); }
+    function bold(values) { return new RichTextRun('b', values); }
+    function italic(values) { return new RichTextRun('i', values); }
+    function underline(values) { return new RichTextRun('u', values); }
+    function supertext(values) { return new RichTextRun('sup', values); }
+    function subtext(values) { return new RichTextRun('sub', values); }
+    function strikethrough(values) { return new RichTextRun('s', values); }
+    function size(fixedSize, values) { return new RichTextRun('sz-' + fixedSize, values); }
+    function link(name, values) { return new RichTextRun('link-' + RichTextRun._simpleB64(name), values); }
+    function color(rgba, values) { return new RichTextRun('col-' + RichTextRun._colorSerialize(rgba), values); }
+    function bgcolor(rgba, values) { return new RichTextRun('bg-' + RichTextRun._colorSerialize(rgba), values); }
+}

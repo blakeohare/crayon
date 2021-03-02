@@ -36,6 +36,7 @@ LIBRARIES = [
 	'MessageHub',
 	'NativeTunnel',
 	'Nori',
+	'NoriRichText',
 	'NoriXml',
 	'ProcessUtil',
 	'Random',

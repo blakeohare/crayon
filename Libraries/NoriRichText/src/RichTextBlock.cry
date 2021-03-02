@@ -1,0 +1,45 @@
+﻿import Nori;
+
+namespace NoriRichText {
+
+    class RichTextBlock : TextBlock {
+
+        field _savedRichTextRef = null;
+
+        constructor() : base() { }
+
+        function setRichText(value) {
+            if (value == null || value == '') {
+                return this._setStringProperty(TextBlock_Text, '0');
+            }
+            if (typeof(value) == Type.STRING) {
+                return this._setStringProperty(TextBlock_Text, '0' + value);
+            }
+            if (typeof(value) == Type.LIST) value = text(value);
+
+            if (!(value is RichTextRun)) {
+                throw new InvalidArgumentException("Value must be a RichTextRun, string, or a list of such.");
+            }
+
+            this._savedRichTextRef = value;
+            return this._setStringProperty(TextBlock_Text, RichTextRun._serializeToWireFormat(value));
+        }
+
+        function getRichText(value) {
+            return this._savedRichTextRef;
+        }
+
+        function setText(value) { return this._setStringProperty(TextBlock_Text, '1' + value); }
+        function getText() { return this._getStringProperty(TextBlock_Text)[1:]; }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case '<content>':
+                case 'text':
+                    throw new InvalidArgumentException("Rich text cannot be set in this fashion.");
+
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
+    }
+}

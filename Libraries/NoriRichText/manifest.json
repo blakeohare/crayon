@@ -1,0 +1,6 @@
+{
+    "name": "NoriRichText",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/noririchtext",
+    "description": "Library for creating rich text in Nori."
+}
