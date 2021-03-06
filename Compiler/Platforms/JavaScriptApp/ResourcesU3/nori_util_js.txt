@@ -74,10 +74,100 @@
         return sb.join('');
     };
 
+    let convertRichText = (txt, element) => {
+        let rawTokens = txt.split('@');
+        let tokens = [];
+        let tokenValue = null;
+        for (let i = 0; i < rawTokens.length; i++) {
+            tokenValue = rawTokens[i];
+            if (i % 2 === 0) {
+                if (tokenValue.length > 0) {
+                    tokens.push({ type: 'str', value: tokenValue });
+                }
+            } else {
+                if (tokenValue.length > 0) {
+                    if (tokenValue === 'a') {
+                        tokens.push({ type: 'str', value: '@' });
+                    } else {
+                        tokens.push({ type: 'command', value: tokenValue.split('-') });
+                    }
+                } else {
+                    tokens.push({ type: 'close' });
+                }
+            }
+        }
+        let index = [0];
+        let output = document.createElement('span');
+        convertRichTextImpl(tokens, index, output, element);
+        return output;
+    };
+
+    let convertRichTextImpl = (tokens, index, output, element) => {
+        let nested = null;
+        while (index[0] < tokens.length) {
+            let token = tokens[index[0]++];
+            switch (token.type) {
+                case 'str':
+                    output.append(token.value);
+                    break;
+                case 'command':
+                    nested = document.createElement('span');
+                    switch (token.value[0]) {
+                        case 'b': nested.style.fontWeight = 'bold'; break;
+                        case 'i': nested.style.fontStyle = 'italic'; break;
+                        case 'u': nested.style.textDecoration = 'underline'; break;
+                        case 'sup': nested = document.createElement('sup'); break;
+                        case 'sub': nested = document.createElement('sub'); break;
+                        case 'tx': break;
+                        case 'link':
+                            (linkId => {
+                                nested = document.createElement('a');
+                                nested.href = 'javascript:void(0)'; // without this, the link does not display
+                                nested.addEventListener('click', () => {
+                                    //let handler = element.NORI_handlers.outer['link'];
+                                    // if (handler) {
+                                        console.log("TODO: event handlers for links. ID was " + decodeB64(linkId));
+                                    // }
+                                });
+                            })(token.value[1]);
+                            break;
+                        case 'sz': nested.style.fontSize = token.value[1] + 'pt'; break;
+                        case 'col':
+                        case 'bg':
+                            let rgba = token.value.slice(1);
+                            let color;
+                            if (rgba.length === 4) {
+                                rgba[3] /= 255;
+                                color = 'rgba(' + rgba.join(',') + ')';
+                            } else {
+                                color = 'rgb(' + rgba.join(',') + ')';
+                            }
+                            if (token.value[0] === 'col') {
+                                nested.style.color = color;
+                            } else {
+                                nested.style.backgroundColor = color;
+                            }
+                            break;
+
+                        default:
+                            throw new Error();
+
+                    }
+                    output.append(nested);
+                    convertRichTextImpl(tokens, index, nested);
+                    break;
+                case 'close':
+                    return;
+                default: throw new Error();
+            }
+        }
+    };
+
     return {
         noopFn,
         promiseWait,
         escapeHtml,
+        convertRichText,
         decodeB64,
         encodeB64,
         encodeHexColor,

@@ -380,7 +380,18 @@ function setProperty(e, key, value) {
             }
             break;
 
-        case 'txtblk.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value, true); break;
+        case 'txtblk.text':
+            switch (value.charAt(0)) {
+                case '0':
+                    e.firstChild.innerHTML = NoriUtil.escapeHtml(value.substr(1), true);
+                    break;
+                case '1':
+                    while (e.firstChild.firstChild) e.removeChild(e.firstChild.firstChild);
+                    e.firstChild.append(NoriUtil.convertRichText(value.substr(1)));
+                    break;
+            }
+
+            break;
         case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
 
         case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
