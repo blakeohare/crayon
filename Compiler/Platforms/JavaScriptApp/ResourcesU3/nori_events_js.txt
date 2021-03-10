@@ -160,6 +160,10 @@
         let fc = e.firstChild;
         let jsName = '';
         switch (propertyName) {
+            case 'rtb.onlink':
+                e.NORI_handlers.outer['link'] = handler;
+                break;
+
             case 'el.onclick':
                 if (e.NORI_type === 'Button') {
                     e.NORI_handlers.inner['click'] = handler;

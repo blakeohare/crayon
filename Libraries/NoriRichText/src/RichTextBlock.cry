@@ -1,6 +1,10 @@
-﻿import Nori;
+﻿import Base64;
+import Nori;
+import TextEncoding;
 
 namespace NoriRichText {
+
+    const RichTextBox_LinkClick = 'rtb.onlink';
 
     class RichTextBlock : TextBlock {
 
@@ -40,6 +44,14 @@ namespace NoriRichText {
 
                 default: return base.setAttributeWithString(name, strValue);
             }
+        }
+
+        function setLinkHandler(handler) {
+            return this._setEventHandler(RichTextBox_LinkClick, handler, idB64 => {
+                bytes = Base64.base64ToBytes(idB64);
+                id = TextEncoding.convertBytesToText(bytes, TextFormat.UTF8);
+                return [id];
+            });
         }
     }
 }

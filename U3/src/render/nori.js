@@ -270,6 +270,10 @@ function setProperty(e, key, value) {
             }
             break;
 
+        case 'rtb.onlink':
+            NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, arg => arg));
+            break;
+
         case 'el.onmousedown':
         case 'el.onmouseup':
         case 'el.onmousemove':
@@ -387,8 +391,8 @@ function setProperty(e, key, value) {
                     e.firstChild.innerHTML = NoriUtil.escapeHtml(value.substr(1), true);
                     break;
                 case '1':
-                    while (e.firstChild.firstChild) e.removeChild(e.firstChild.firstChild);
-                    e.firstChild.append(NoriUtil.convertRichText(value.substr(1)));
+                    while (e.firstChild.firstChild) e.firstChild.removeChild(e.firstChild.firstChild);
+                    e.firstChild.append(NoriUtil.convertRichText(value.substr(1), e));
                     break;
             }
 

@@ -120,14 +120,14 @@
                         case 'sub': nested = document.createElement('sub'); break;
                         case 'tx': break;
                         case 'link':
-                            (linkId => {
+                            (linkIdB64 => {
                                 nested = document.createElement('a');
                                 nested.href = 'javascript:void(0)'; // without this, the link does not display
                                 nested.addEventListener('click', () => {
-                                    //let handler = element.NORI_handlers.outer['link'];
-                                    // if (handler) {
-                                        console.log("TODO: event handlers for links. ID was " + decodeB64(linkId));
-                                    // }
+                                    let handler = element.NORI_handlers.outer['link'];
+                                    if (handler) {
+                                        handler(linkIdB64);
+                                    }
                                 });
                             })(token.value[1]);
                             break;
@@ -154,7 +154,7 @@
 
                     }
                     output.append(nested);
-                    convertRichTextImpl(tokens, index, nested);
+                    convertRichTextImpl(tokens, index, nested, element);
                     break;
                 case 'close':
                     return;
