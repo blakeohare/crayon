@@ -120,16 +120,18 @@
                         case 'sub': nested = document.createElement('sub'); break;
                         case 'tx': break;
                         case 'link':
-                            (linkIdB64 => {
+                            ((linkIdB64, href) => {
                                 nested = document.createElement('a');
-                                nested.href = 'javascript:void(0)'; // without this, the link does not display
-                                nested.addEventListener('click', () => {
+                                hasHref = !!href;
+                                nested.href = hasHref ? decodeB64(href) : 'javascript:void(0)'; // without this, the link does not display
+                                nested.addEventListener('click', e => {
+                                    if (hasHref) e.preventDefault();
                                     let handler = element.NORI_handlers.outer['link'];
                                     if (handler) {
                                         handler(linkIdB64);
                                     }
                                 });
-                            })(token.value[1]);
+                            })(token.value[1], token.value[2]);
                             break;
                         case 'sz': nested.style.fontSize = token.value[1] + 'pt'; break;
                         case 'col':

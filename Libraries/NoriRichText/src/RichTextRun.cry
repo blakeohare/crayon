@@ -92,7 +92,11 @@ namespace NoriRichText {
     function subtext(values) { return new RichTextRun('sub', values); }
     function strikethrough(values) { return new RichTextRun('s', values); }
     function size(fixedSize, values) { return new RichTextRun('sz-' + fixedSize, values); }
-    function link(name, values) { return new RichTextRun('link-' + RichTextRun._simpleB64(name), values); }
     function color(rgba, values) { return new RichTextRun('col-' + RichTextRun._colorSerialize(rgba), values); }
     function bgcolor(rgba, values) { return new RichTextRun('bg-' + RichTextRun._colorSerialize(rgba), values); }
+    function link(name, values, fallbackHref = null) {
+        c = 'link-' + RichTextRun._simpleB64(name);
+        if (fallbackHref != null) c += '-' + RichTextRun._simpleB64(fallbackHref);
+        return new RichTextRun(c, values);
+    }
 }
