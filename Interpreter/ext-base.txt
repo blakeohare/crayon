@@ -31,7 +31,7 @@ EXT-TYPE: object CoreFunc_ImageStartEditSession(object bmp);
 
 EXT-TYPE: Value CoreFunc_JsonParse(VmGlobals globals, string text);
 
-EXT-TYPE: void CoreFunc_LaunchBrowser(string url);
+EXT-TYPE: void CoreFunc_LaunchBrowser(string url, int frame, string frameName);
 
 EXT-TYPE: void JsInterop_CallbackReturn(int callbackId, string returnJson);
 EXT-TYPE: bool JsInterop_Invoke(string name, string argsJson, Value nullableCallback);

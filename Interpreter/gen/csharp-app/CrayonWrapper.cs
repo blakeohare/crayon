@@ -6477,7 +6477,10 @@ namespace Interpreter.Vm
                                 break;
                             case 85:
                                 // launchBrowser;
-                                arg1 = valueStack[--valueStackSize];
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
                                 System.Diagnostics.Process.Start("cmd", "/C start " + (string)arg1.internalValue);
                                 output = vm.globalNull;
                                 break;

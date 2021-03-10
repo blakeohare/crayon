@@ -70,3 +70,4 @@ PST$registerExtensibleCallback('nativeTunnelRecv', arr => {
 
 C$setUrlPath = (path) => { };
 C$getUrlPath = () => null;
+C$common$launchBrowser = (url, fr, name) => { console.log("TODO: Open URLs (" + url + ")"); };

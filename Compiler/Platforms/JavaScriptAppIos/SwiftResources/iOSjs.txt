@@ -55,3 +55,4 @@ function sendMessage(name, value) {
 
 C$setUrlPath = (path) => { };
 C$getUrlPath = () => null;
+C$common$launchBrowser = (url, fr, name) => { console.log("TODO: Open URLs (" + url + ")"); };

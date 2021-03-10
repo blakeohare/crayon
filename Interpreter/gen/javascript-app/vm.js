@@ -5023,8 +5023,11 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 85:
 						// launchBrowser;
-						arg1 = valueStack[--valueStackSize];
-						window.open(arg1[1]);
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						C$common$launchBrowser(arg1[1], arg2[1], arg3[1]);
 						output = vm[14];
 						break;
 					case 86:

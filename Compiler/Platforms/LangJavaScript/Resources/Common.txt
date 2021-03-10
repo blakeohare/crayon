@@ -1419,3 +1419,6 @@ LIB$fileiocommon$fakedisk$textToLines = function(text, stringOut) {
 
 let C$setUrlPath = (path) => { history.pushState(path, '', path); };
 let C$getUrlPath = () => document.location.pathname;
+let C$common$launchBrowser = (url, fr, name) => {
+	window.open(url, ['_parent', '_blank', '_self', '_top', name][fr - 1])
+};
