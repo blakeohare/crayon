@@ -370,6 +370,7 @@ function setProperty(e, key, value) {
         case 'btn.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
         case 'btn.bevel': e.firstChild.style.borderWidth = value ? 'auto' : '0px'; break;
         case 'btn.radius': e.firstChild.style.borderRadius = value + 'px'; break;
+        case 'btn.disabled': e.firstChild.disabled = !!value; break;
 
         case 'btn.gradtop':
         case 'btn.gradbottom':
