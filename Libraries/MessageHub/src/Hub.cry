@@ -13,6 +13,8 @@ namespace MessageHub {
         field _onCloseHandler = null;
         field _desktopInitHandler = null;
         field _isRunning = false;
+        field _isReady = false;
+        field _sendQueue = [];
 
         static field _idAlloc = 0;
         field _callbacks = {};
@@ -80,7 +82,22 @@ namespace MessageHub {
             if (cb != null) {
                 this._callbacks[id] = cb;
             }
-            this._impl.sendString(Json.serialize(msg));
+
+            this._sendQueue.add(Json.serialize(msg));
+            if (this._isReady) {
+                this._flushSendQueue();
+            }
+            return this;
+        }
+
+        function _flushSendQueue() {
+            if (this._isReady) {
+                for (i = 0; i < this._sendQueue.length; ++i) {
+                    item = this._sendQueue[i];
+                    this._impl.sendString(item);
+                }
+                this._sendQueue.clear();
+            }
             return this;
         }
 
@@ -150,6 +167,8 @@ namespace MessageHub {
         }
 
         function _onReady() {
+            this._isReady = true;
+            this._flushSendQueue();
             if (this._onReadyHandler != null) this._onReadyHandler();
         }
 

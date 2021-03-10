@@ -18,6 +18,7 @@ namespace U3Direct {
         field _inputBuffer = [];
         field _overrideClose = null;
         field _gamepads = [];
+        field _hubSendQueue = [];
 
         constructor(eventListener, onClose = null) {
             this._hub = new Hub();
@@ -136,6 +137,13 @@ namespace U3Direct {
                 this._hub.send('u3init', initMsg, (_) => {
                     setupComplete = true;
                 });
+
+                // The message hub will put these in the queue, if present.
+                // The important thing is that u3init is first in the queue.
+                for (item : this._hubSendQueue) {
+                    this.sendData(item);
+                }
+                this._hubSendQueue = null;
             });
 
             if (isBlocking) {
@@ -150,7 +158,11 @@ namespace U3Direct {
         }
 
         function sendData(items) {
-            this._hub.send('u3data', { "buffer": items });
+            if (this._hubSendQueue != null) {
+                this._hubSendQueue.add(items);
+            } else {
+                this._hub.send('u3data', { "buffer": items });
+            }
             return this;
         }
 
