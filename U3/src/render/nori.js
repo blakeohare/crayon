@@ -371,6 +371,11 @@ function setProperty(e, key, value) {
         case 'cv.height': e.firstChild.height = value; break;
         case 'cv.width': e.firstChild.width = value; break;
 
+        case 'img.nn':
+        case 'cv.nn':
+            e.firstChild.style.imageRendering = value ? 'pixelated' : 'auto';
+            break;
+
         case 'btn.text': e.firstChild.innerHTML = NoriUtil.escapeHtml(value); break;
         case 'btn.bevel': e.firstChild.style.borderWidth = value ? 'auto' : '0px'; break;
         case 'btn.radius': e.firstChild.style.borderRadius = value + 'px'; break;
@@ -484,17 +489,13 @@ function unsetProperty(e, key) {
 function setImageSource(e, rawValue) {
     let canvas = e.firstChild;
     let imgObj = new Image();
-    let t = rawValue.split('@');
-    let b64 = t.length == 2 ? t[1] : t.slice(1).join('@');
-    let algo = t[0];
     imgObj.onload = () => {
         canvas.width = imgObj.width;
         canvas.height = imgObj.height;
-        canvas.style.imageRendering = algo == 'NN' ? 'pixelated' : 'auto';
         let ctx = canvas.getContext('2d');
         ctx.drawImage(imgObj, 0, 0);
     };
-    imgObj.src = "data:image/png;base64," + b64;
+    imgObj.src = "data:image/png;base64," + rawValue;
 }
 
 function syncChildIds(e, childIds, startIndex, endIndex) {

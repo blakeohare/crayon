@@ -3,6 +3,7 @@
 namespace Nori {
 
     const Image_Source = 'img.src';
+    const Image_NearestNeighbor = 'img.nn';
 
     class Image : Element {
 
@@ -16,7 +17,10 @@ namespace Nori {
 
         constructor() : base('Image') { }
 
-        function setSource(bitmap, useNearestNeighbor = false) {
+        function isNearestNeighbor() { return this._getBoolProperty(Image_NearestNeighbor); }
+        function setNearestNeighbor(value) { return this._setBoolProperty(Image_NearestNeighbor, value); }
+
+        function setSource(bitmap) {
             d = this._imageData;
             oldBmp = d['bmp'];
             if (bitmap == null) {
@@ -31,13 +35,20 @@ namespace Nori {
                 d['bmp'] = bitmap;
                 d['b64'] = bitmap._lastPng ?? bitmap.toBase64(Images.ImageFormat.PNG);
 
-                return this._setStringProperty(Image_Source, (useNearestNeighbor ? 'NN' : 'BL') + '@' + d['b64']);
+                return this._setStringProperty(Image_Source, d['b64']);
             }
             return this;
         }
 
         function refreshImage() {
             return this.setSource(this._imageData['bmp']);
+        }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'nearestNeighbor': return this._setBooleanAsString(Image_NearestNeighbor, strValue);
+                default: return base.setAttributeWithString(name, strValue);
+            }
         }
     }
 }
