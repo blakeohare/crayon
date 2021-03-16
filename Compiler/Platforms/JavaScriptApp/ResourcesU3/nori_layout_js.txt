@@ -69,7 +69,7 @@
         if (isXDimension) {
             pos = anchor.side === 'L' ? rect.left : anchor.side === 'R' ? rect.right : Math.floor((rect.left + rect.right) / 2);
         } else {
-            pos = anchor.side === 'L' ? rect.top : anchor.size === 'R' ? rect.bottom : Math.floor((rect.top + rect.bottom) / 2);
+            pos = anchor.side === 'L' ? rect.top : anchor.side === 'R' ? rect.bottom : Math.floor((rect.top + rect.bottom) / 2);
         }
         pos += anchor.distance;
         let oRect = anchor.origin.getBoundingClientRect();
