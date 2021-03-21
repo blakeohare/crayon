@@ -2338,6 +2338,8 @@ var interpretImpl = function(vm, executionContextId) {
 							}
 						}
 					}
+				} else if ((type == 1)) {
+					hasInterrupt = EX_NullReference(ec, "Cannot assign to an index or key on null.");
 				} else {
 					hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.");
 				}

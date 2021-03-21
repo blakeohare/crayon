@@ -119,7 +119,12 @@ if (type == Types.LIST) {
         }
     }
 } else {
-    hasInterrupt = EX_UnsupportedOperation(ec, Core.StringConcatAll(getTypeFromId(type), " type does not support assigning to an index."));
+    if (type == Types.NULL) {
+        // TODO: the token here is of the = and not the [
+        hasInterrupt = EX_NullReference(ec, "Cannot assign to an index or key on null.");
+    } else {
+        hasInterrupt = EX_UnsupportedOperation(ec, Core.StringConcatAll(getTypeFromId(type), " type does not support assigning to an index."));
+    }
 }
 
 // This shouldn't hurt even when there's an interrupt.
