@@ -57,6 +57,9 @@ namespace Build.BuildParseNodes
             item.DelegateMainTo = json.GetAsString("delegateMainTo") ?? json.GetAsString("delegate-main-to");
             item.EnvFile = json.GetAsString("envFile");
 
+            object removeSymbols = json.Get("removeSymbols");
+            item.RemoveSymbols = removeSymbols == null ? null : new NullableBoolean(removeSymbols is bool && (bool)removeSymbols);
+
             List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();
             foreach (string depPath in (json.GetAsList("deps") ?? new object[0]).OfType<string>())

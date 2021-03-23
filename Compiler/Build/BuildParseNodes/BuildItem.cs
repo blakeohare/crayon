@@ -26,6 +26,7 @@ namespace Build.BuildParseNodes
         public bool HasLegacyTitle { get; set; }
         public string DelegateMainTo { get; set; }
         public string EnvFile { get; set; }
+        public NullableBoolean RemoveSymbols { get; set; }
 
         // comma-delimited list of values
         // { portrait | upsidedown | landscape | landscapeleft | landscaperight | all }

@@ -19,9 +19,13 @@ namespace Parser.ByteCode
 
             ByteBuffer literalsTable = ByteBuffer.FromLiteralLookup(parser.LiteralLookup);
 
-            ByteBuffer tokenData = this.BuildTokenData(userCode);
+            ByteBuffer tokenData = parser.CompileRequest.BuildContext.RemoveSymbols
+                ? new ByteBuffer()
+                : this.BuildTokenData(userCode);
 
-            ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
+            ByteBuffer fileContent = parser.CompileRequest.BuildContext.RemoveSymbols
+                ? new ByteBuffer()
+                : this.BuildFileContent(parser.GetFilesById());
 
             ByteBuffer header = new ByteBuffer();
             header.Concat(literalsTable);
@@ -203,7 +207,6 @@ namespace Parser.ByteCode
 
             int size = tokens.Length;
             ByteBuffer output = new ByteBuffer();
-            // TODO: add command line flag for excluding token data. In that case, just return here.
 
             Token token;
             for (int i = 0; i < size; ++i)

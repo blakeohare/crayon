@@ -37,6 +37,7 @@ namespace Build
         public Locale CompilerLocale { get; set; }
         public string[] IconFilePaths { get; set; }
         public string DelegateMainTo { get; set; }
+        public bool RemoveSymbols { get; set; }
 
         private static Target FindTarget(string targetName, IList<Target> targets)
         {
@@ -133,6 +134,7 @@ namespace Build
             string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
             string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
             string delegateMainTo = desiredTarget.DelegateMainTo ?? buildInput.DelegateMainTo;
+            bool removeSymbols = NullableBoolean.ToBoolean(desiredTarget.RemoveSymbols ?? buildInput.RemoveSymbols, false);
 
             if (output == null)
             {
@@ -196,6 +198,7 @@ namespace Build
                 JsFullPage = jsFullPage,
                 CompilerLocale = Locale.Get(compilerLocale),
                 DelegateMainTo = delegateMainTo,
+                RemoveSymbols = removeSymbols,
             };
 
             ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(programmingLanguage);
