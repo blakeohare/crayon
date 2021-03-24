@@ -14,12 +14,8 @@ namespace Parser.ByteCode.Nodes
 
             if (falseCode.Size == 0)
             {
-                if (trueCode.Size == 0) buffer.Add(ifStatement.Condition.FirstToken, OpCode.POP);
-                else
-                {
-                    buffer.Add(ifStatement.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueCode.Size);
-                    buffer.Concat(trueCode);
-                }
+                buffer.Add(ifStatement.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueCode.Size);
+                buffer.Concat(trueCode);
             }
             else
             {
