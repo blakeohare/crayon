@@ -103,6 +103,7 @@
     case 111: Core.EmitComment("valueToFloatOrNull"); @import("corefuncs/valueToFloatOrNull.pst"); break;
     case 112: Core.EmitComment("browserInteropGetUrlPath"); @import("corefuncs/browserInteropGetUrlPath.pst"); break;
     case 113: Core.EmitComment("browserInteropSetUrlPath"); @import("corefuncs/browserInteropSetUrlPath.pst"); break;
+    case 114: Core.EmitComment("base64FromBytes"); @import("corefuncs/base64FromBytes.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

@@ -233,6 +233,59 @@ namespace Interpreter.Vm
             return 0;
         }
 
+        public static bool Base64Helper_bytesToB64(Value userByteList, ListImpl output, ListImpl stringsByInt)
+        {
+            if ((userByteList.type != 6))
+            {
+                return false;
+            }
+            int[] bytes = listImplToBytes((ListImpl)userByteList.internalValue);
+            if ((bytes == null))
+            {
+                return false;
+            }
+            int byteCount = bytes.Length;
+            int pairCount = (byteCount * 4);
+            while (((pairCount % 3) != 0))
+            {
+                pairCount += 1;
+            }
+            int[] pairs = new int[pairCount];
+            int b = 0;
+            int j = 0;
+            int i = 0;
+            i = 0;
+            while ((i < byteCount))
+            {
+                pairs[j] = (bytes[i] >> 6);
+                pairs[(j + 1)] = ((bytes[i] >> 4) & 3);
+                pairs[(j + 2)] = ((bytes[i] >> 2) & 3);
+                pairs[(j + 3)] = (bytes[i] & 3);
+                j += 4;
+                i += 1;
+            }
+            while ((j < pairCount))
+            {
+                pairs[j] = 0;
+                j += 1;
+            }
+            int strLen = (pairCount) / (3);
+            Value[] lookupArray = stringsByInt.array;
+            output.capacity = (strLen + 2);
+            Value[] itemsArray = new Value[(strLen + 2)];
+            output.array = itemsArray;
+            j = 0;
+            i = 0;
+            while ((i < pairCount))
+            {
+                itemsArray[j] = lookupArray[(((pairs[i] << 4)) + ((pairs[(i + 1)] << 2)) + pairs[(i + 2)])];
+                j += 1;
+                i += 3;
+            }
+            output.size = strLen;
+            return true;
+        }
+
         public static Value buildBoolean(VmGlobals g, bool value)
         {
             if (value)
@@ -6717,6 +6770,18 @@ namespace Interpreter.Vm
                                 // browserInteropSetUrlPath;
                                 arg1 = valueStack[--valueStackSize];
                                 output = VALUE_NULL;
+                                break;
+                            case 114:
+                                // base64FromBytes;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                output = VALUE_NULL;
+                                if (Base64Helper_bytesToB64(arg1, (ListImpl)arg2.internalValue, (ListImpl)arg3.internalValue))
+                                {
+                                    output = arg2;
+                                }
                                 break;
                         }
                         if ((row[1] == 1))

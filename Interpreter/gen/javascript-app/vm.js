@@ -1,11 +1,11 @@
-PST$clearList = function(v) {
-	v.length = 0;
-};
-
 PST$createNewArray = function(s) {
 	var o = [];
 	while (s-- > 0) o.push(null);
 	return o;
+};
+
+PST$clearList = function(v) {
+	v.length = 0;
 };
 
 PST$multiplyList = function(l, n) {
@@ -142,6 +142,48 @@ var addToList = function(list, item) {
 
 var applyDebugSymbolData = function(vm, opArgs, stringData, recentlyDefinedFunction) {
 	return 0;
+};
+
+var Base64Helper_bytesToB64 = function(userByteList, output, stringsByInt) {
+	if ((userByteList[0] != 6)) {
+		return false;
+	}
+	var bytes = listImplToBytes(userByteList[1]);
+	if ((bytes == null)) {
+		return false;
+	}
+	var byteCount = bytes.length;
+	var pairCount = (byteCount * 4);
+	while (((pairCount % 3) != 0)) {
+		pairCount += 1;
+	}
+	var pairs = PST$createNewArray(pairCount);
+	var b = 0;
+	var j = 0;
+	var i = 0;
+	i = 0;
+	while ((i < byteCount)) {
+		pairs[j] = (bytes[i] >> 6);
+		pairs[(j + 1)] = ((bytes[i] >> 4) & 3);
+		pairs[(j + 2)] = ((bytes[i] >> 2) & 3);
+		pairs[(j + 3)] = (bytes[i] & 3);
+		j += 4;
+		i += 1;
+	}
+	while ((j < pairCount)) {
+		pairs[j] = 0;
+		j += 1;
+	}
+	var strLen = Math.floor(pairCount / 3);
+	var lookupList = stringsByInt[2];
+	var itemsList = output[2];
+	i = 0;
+	while ((i < pairCount)) {
+		itemsList.push(lookupList[(((pairs[i] << 4)) + ((pairs[(i + 1)] << 2)) + pairs[(i + 2)])]);
+		i += 3;
+	}
+	output[1] = strLen;
+	return true;
 };
 
 var buildBoolean = function(g, value) {
@@ -5257,6 +5299,17 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						output = VALUE_NULL;
 						C$setUrlPath(arg1[1]);
+						break;
+					case 114:
+						// base64FromBytes;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						output = VALUE_NULL;
+						if (Base64Helper_bytesToB64(arg1, arg2[1], arg3[1])) {
+							output = arg2;
+						}
 						break;
 				}
 				if ((row[1] == 1)) {

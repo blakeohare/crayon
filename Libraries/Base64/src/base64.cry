@@ -13,24 +13,9 @@ namespace Base64 {
         alphabet = _ensureAlphabet(alphabet);
         usePadding = usePadding == true;
 
-        pairs = [];
-        for (b : bytes) {
-            pairs.add((b >> 6) & 3, (b >> 4) & 3, (b >> 2) & 3, b & 3);
-        }
+        chars = $$$('base64FromBytes', bytes, [], alphabet._numToChar);
 
-        while (pairs.length % 3 != 0) {
-            pairs.add(0);
-        }
-
-        chars = [];
-        lookup = alphabet._numToChar;
-
-        for (i = 0; i < pairs.length; i += 3) {
-            chars.add(lookup[
-                (pairs[i] << 4) |
-                (pairs[i + 1] << 2) |
-                (pairs[i + 2])]);
-        }
+        if (chars == null) throw new InvalidArgumentException("Byte list was invalid.");
 
         p = alphabet._padding;
         while (p.length == 1 && usePadding && chars.length % 4 != 0) {
@@ -94,7 +79,7 @@ namespace Base64 {
 
     class Base64Alphabet {
 
-        field _numToChar = {};
+        field _numToChar;
         field _charToNum = {};
         field _padding = '=';
 
@@ -119,6 +104,7 @@ namespace Base64 {
             }
             if (chars.length != 64) throw new InvalidArgumentException(B64_ALPHA_ERR);
 
+            this._numToChar = 64 * [''];
             for (i = 0; i < 64; ++i) {
                 this._numToChar[i] = chars[i];
                 this._charToNum[chars[i]] = i;

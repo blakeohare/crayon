@@ -107,6 +107,7 @@ namespace Parser
         VALUE_TO_FLOAT_OR_NULL = 111,
         BROWSER_INTEROP_GET_URL_PATH = 112,
         BROWSER_INTEROP_SET_URL_PATH = 113,
+        BASE_64_FROM_BYTES = 114,
     }
 
     internal static class CoreFunctionIDHelper
@@ -218,6 +219,7 @@ namespace Parser
                 case "valueToFloatOrNull": return (int)CoreFunctionID.VALUE_TO_FLOAT_OR_NULL;
                 case "browserInteropGetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_GET_URL_PATH;
                 case "browserInteropSetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_SET_URL_PATH;
+                case "base64FromBytes": return (int)CoreFunctionID.BASE_64_FROM_BYTES;
 
                 default: return -1;
             }

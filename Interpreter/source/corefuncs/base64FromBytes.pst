@@ -1,0 +1,12 @@
+﻿@import("inline/3_arg.pst");
+
+output = VALUE_NULL; // return null if the input is invalid
+
+if (Base64Helper_bytesToB64(
+    arg1, // value provided by user that is probably a list of valid bytes, but unchecked
+    (ListImpl) arg2.internalValue, // output list, currently empty, provided by library
+    (ListImpl) arg3.internalValue)) { // list of strings for this b64 alphabet, provided by library
+
+    // return the output list if valid
+    output = arg2;
+}

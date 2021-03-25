@@ -1,6 +1,7 @@
 ﻿@import("Constants.pst");
 @import("Structs.pst");
 
+@import("Base64Helper.pst");
 @import("BinaryOpsUtil.pst");
 @import("ByteCodeLoader.pst");
 @import("CoreFuncsHelper.pst");
