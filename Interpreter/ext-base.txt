@@ -13,6 +13,7 @@ EXT-TYPE: Array<object> CoreFunc_DateTimeInitializeTimeZoneList();
 
 EXT-TYPE: string CoreFunc_EnvironmentDescriptor();
 EXT-TYPE: string CoreFunc_EnvironmentGetVariable(string name);
+EXT-TYPE: bool CoreFunc_EnvironmentIsMobile();
 
 EXT-TYPE: void CoreFunc_HttpSend(Value callback, Value failCallback, string url, string method, string contentType, Array<int> contentBinary, string contentText, Array<string> headerKvp, Value bytesObj, Array<object> bytesObjNativeData);
 

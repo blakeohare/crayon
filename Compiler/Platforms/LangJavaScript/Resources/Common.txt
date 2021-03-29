@@ -1417,6 +1417,21 @@ LIB$fileiocommon$fakedisk$textToLines = function(text, stringOut) {
 	stringOut.push(sb.join(''));
 };
 
+let C$common$envIsMobile = (() => {
+	let mob = null;
+	let check = () => {
+		let ua = navigator.userAgent;
+		for (let v of 'Android,iPhone,iPod,iPad,iPod,Nintendo'.split(',')) {
+			if (ua.includes(v)) return 1;
+		}
+		return { BlackBerry: 1, webOS: 1, PSP: 1 }[navigator.platform];
+	};
+	return () => {
+		if (mob === null) mob = !!check();
+		return mob;
+	};
+})();
+
 let C$setUrlPath = (path) => { history.pushState(path, '', path); };
 let C$getUrlPath = () => document.location.pathname;
 let C$common$launchBrowser = (url, fr, name) => {

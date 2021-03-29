@@ -68,6 +68,8 @@ PST$registerExtensibleCallback('nativeTunnelRecv', arr => {
     return true;
 });
 
+C$common$envIsMobile = () => true;
+
 C$setUrlPath = (path) => { };
 C$getUrlPath = () => null;
 C$common$launchBrowser = (url, fr, name) => { console.log("TODO: Open URLs (" + url + ")"); };

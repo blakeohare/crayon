@@ -5311,6 +5311,10 @@ var interpretImpl = function(vm, executionContextId) {
 							output = arg2;
 						}
 						break;
+					case 115:
+						// environmentIsMobile;
+						output = buildBoolean(globals, C$common$envIsMobile());
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

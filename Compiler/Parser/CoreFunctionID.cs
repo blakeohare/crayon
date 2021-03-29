@@ -108,6 +108,7 @@ namespace Parser
         BROWSER_INTEROP_GET_URL_PATH = 112,
         BROWSER_INTEROP_SET_URL_PATH = 113,
         BASE_64_FROM_BYTES = 114,
+        ENVIRONMENT_IS_MOBILE = 115,
     }
 
     internal static class CoreFunctionIDHelper
@@ -220,6 +221,7 @@ namespace Parser
                 case "browserInteropGetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_GET_URL_PATH;
                 case "browserInteropSetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_SET_URL_PATH;
                 case "base64FromBytes": return (int)CoreFunctionID.BASE_64_FROM_BYTES;
+                case "environmentIsMobile": return (int)CoreFunctionID.ENVIRONMENT_IS_MOBILE;
 
                 default: return -1;
             }

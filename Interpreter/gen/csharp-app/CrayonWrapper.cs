@@ -6783,6 +6783,10 @@ namespace Interpreter.Vm
                                     output = arg2;
                                 }
                                 break;
+                            case 115:
+                                // environmentIsMobile;
+                                output = buildBoolean(globals, false);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
