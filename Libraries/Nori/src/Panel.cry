@@ -60,7 +60,7 @@
                 if (index == -1) throw new InvalidArgumentException("Element to add before could not be found in this panel.");
                 this._canFlushIncrementally = false;
                 this._children.insert(index, e);
-                this._childrenIds.insert(index, e);
+                this._childrenIds.insert(index, e._id);
             }
 
             if (this._canFlushIncrementally) {
