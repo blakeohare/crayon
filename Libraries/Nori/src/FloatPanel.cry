@@ -84,5 +84,9 @@
         function setAnchorTop(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorTop, pixels, edge, element); }
         function setAnchorRight(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorRight, pixels, edge, element); }
         function setAnchorBottom(pixels, element = null, edge = null) { return this._setAnchor(FloatPanel_AnchorBottom, pixels, edge, element); }
+        function clearAnchorLeft() { return this._setStringProperty(FloatPanel_AnchorLeft, ''); }
+        function clearAnchorRight() { return this._setStringProperty(FloatPanel_AnchorRight, ''); }
+        function clearAnchorTop() { return this._setStringProperty(FloatPanel_AnchorTop, ''); }
+        function clearAnchorBottom() { return this._setStringProperty(FloatPanel_AnchorBottom, ''); }
     }
 }
