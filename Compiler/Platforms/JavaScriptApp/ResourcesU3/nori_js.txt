@@ -407,6 +407,21 @@ function setProperty(e, key, value) {
         case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
         case 'scroll.y': e.NORI_scrollpanel[1] = ctx.scrollEnumLookup[value]; break;
 
+        case 'scroll.gox':
+        case 'scroll.goy':
+            if (!e.NORI_scrollpanelCounter) e.NORI_scrollpanelCounter = {};
+            t = value.split(',');
+            if (e.NORI_scrollpanelCounter[key] !== t[1]) {
+                e.NORI_scrollpanelCounter[key] = t[1];
+                t = parseInt(t[0]) / 2000000000.0;
+                if (key === scroll.gox) {
+                    e.scrollLeft = Math.floor((e.scrollWidth - e.clientWidth) * t);
+                } else {
+                    e.scrollTop = Math.floor((e.scrollHeight - e.clientHeight) * t);
+                }
+            }
+            break;
+
         case 'img.src': setImageSource(e, value); break;
 
         case 'input.value':

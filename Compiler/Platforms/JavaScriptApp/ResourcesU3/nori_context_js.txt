@@ -29,6 +29,8 @@
         'float.anchorbottom': true,
         'img.src': true,
         'input.value': true,
+        'scroll.gox': true,
+        'scroll.goy': true,
     },
     layoutExemptProperties: {
         'el.bgcolor': true,
@@ -61,6 +63,8 @@
         'input.onblur': true,
         'input.changed': true,
         'tb.multiline': true,
+        'scroll.gox': true,
+        'scroll.goy': true,
     },
     isPanelType: {
         'Border': true,

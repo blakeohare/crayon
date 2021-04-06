@@ -1,7 +1,11 @@
-﻿namespace Nori {
+﻿import Math;
+
+namespace Nori {
 
     const ScrollPanel_XMode = 'scroll.x';
     const ScrollPanel_YMode = 'scroll.y';
+    const ScrollPanel_ScrollToX = 'scroll.gox';
+    const ScrollPanel_ScrollToY = 'scroll.goy';
 
     enum ScrollMode {
         NONE = 0,
@@ -28,6 +32,15 @@
                 case 'yScroll': return this._setEnumWithString(ScrollPanel_YMode, strValue);
                 default: return base.setAttributeWithString(name, strValue);
             }
+        }
+
+        function scrollX(percent) { return this._scrollTo(ScrollPanel_ScrollToX, percent); }
+        function scrollY(percent) { return this._scrollTo(ScrollPanel_ScrollToY, percent); }
+
+        field _scrollCounter = 1; // prevents old instructions from getting executed multiple times
+        function _scrollTo(k, percent) {
+            value = Math.floor(Math.ensureRange(percent, 0, 1) * 2000000000);
+            return this._setStringProperty(k, value + ',' + this._scrollCounter++);
         }
 
         function scrollToTop() { return this._scrollImpl('E', 'N', 0); }

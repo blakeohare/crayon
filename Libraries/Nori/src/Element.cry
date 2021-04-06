@@ -92,6 +92,8 @@ namespace Nori {
             FloatPanel_AnchorBottom: true,
             Image_Source: true,
             InputElement_Value: true,
+            ScrollPanel_ScrollToX: true,
+            ScrollPanel_ScrollToY: true,
         };
 
         field _id;
