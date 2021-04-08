@@ -251,7 +251,6 @@ namespace Interpreter.Vm
                 pairCount += 1;
             }
             int[] pairs = new int[pairCount];
-            int b = 0;
             int j = 0;
             int i = 0;
             i = 0;

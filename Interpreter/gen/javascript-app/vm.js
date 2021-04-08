@@ -158,7 +158,6 @@ var Base64Helper_bytesToB64 = function(userByteList, output, stringsByInt) {
 		pairCount += 1;
 	}
 	var pairs = PST$createNewArray(pairCount);
-	var b = 0;
 	var j = 0;
 	var i = 0;
 	i = 0;
