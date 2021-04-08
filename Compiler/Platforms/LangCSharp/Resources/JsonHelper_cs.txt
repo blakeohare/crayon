@@ -148,8 +148,14 @@ namespace Interpreter.Vm
                                 char u3 = rawValue[i.Value + 2];
                                 char u4 = rawValue[i.Value + 3];
                                 i.Value += 4;
-                                string strValue = UnicodeToString("" + u1 + u2 + u3 + u4);
-                                sb.Append(strValue);
+                                string hexValue = "" + u1 + u2 + u3 + u4;
+                                int value;
+                                if (!int.TryParse(hexValue, System.Globalization.NumberStyles.HexNumber, null, out value))
+                                {
+                                    throw new JsonParserException();
+                                }
+
+                                sb.Append((char)value);
                             }
                             else
                             {
@@ -169,21 +175,6 @@ namespace Interpreter.Vm
             if (i.Value >= length) throw new JsonParserException();
             i.Value++; // closing quote
             return CrayonWrapper.buildString(globals, sb.ToString());
-        }
-
-        private static byte[] buffer = new byte[4];
-        private static string UnicodeToString(string code)
-        {
-            int value;
-            if (!int.TryParse(code, System.Globalization.NumberStyles.HexNumber, null, out value))
-            {
-                throw new JsonParserException();
-            }
-            buffer[3] = (byte)((value >> 24) & 255);
-            buffer[2] = (byte)((value >> 16) & 255);
-            buffer[1] = (byte)((value >> 8) & 255);
-            buffer[0] = (byte)((value >> 0) & 255);
-            return System.Text.Encoding.UTF32.GetString(buffer);
         }
 
         private static Value ParseJsonList(VmGlobals globals, char[] rawValue, int length, Index i)
