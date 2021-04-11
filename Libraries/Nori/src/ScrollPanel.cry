@@ -40,7 +40,22 @@ namespace Nori {
         field _scrollCounter = 1; // prevents old instructions from getting executed multiple times
         function _scrollTo(k, percent) {
             value = Math.floor(Math.ensureRange(percent, 0, 1) * 2000000000);
-            return this._setStringProperty(k, value + ',' + this._scrollCounter++);
+            return this._setStringProperty(k, '%,' + value + ',' + this._scrollCounter++);
+        }
+
+        function scrollIntoView(e) {
+            walker = e.getParent();
+            isParent = false;
+            while (walker != null) {
+                if (walker == this) {
+                    isParent = true;
+                    break;
+                }
+                walker = walker.getParent();
+            }
+            if (!isParent) throw new InvalidArgumentException("Cannot scroll element not inside the ScrollPanel.");
+
+            return this._setStringProperty(ScrollPanel_ScrollToY, 'V,' + e._id + ',' + this._scrollCounter++);
         }
 
         function scrollToTop() { return this._scrollImpl('E', 'N', 0); }

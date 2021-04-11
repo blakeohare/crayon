@@ -412,13 +412,18 @@ function setProperty(e, key, value) {
         case 'scroll.goy':
             if (!e.NORI_scrollpanelCounter) e.NORI_scrollpanelCounter = {};
             t = value.split(',');
-            if (e.NORI_scrollpanelCounter[key] !== t[1]) {
-                e.NORI_scrollpanelCounter[key] = t[1];
-                t = parseInt(t[0]) / 2000000000.0;
-                if (key === scroll.gox) {
-                    e.scrollLeft = Math.floor((e.scrollWidth - e.clientWidth) * t);
-                } else {
-                    e.scrollTop = Math.floor((e.scrollHeight - e.clientHeight) * t);
+            if (e.NORI_scrollpanelCounter[key] !== t[2]) {
+                e.NORI_scrollpanelCounter[key] = t[2];
+                if (t[0] === '%') {
+                    t = parseInt(t[1]) / 2000000000.0;
+                    if (key === scroll.gox) {
+                        e.scrollLeft = Math.floor((e.scrollWidth - e.clientWidth) * t);
+                    } else {
+                        e.scrollTop = Math.floor((e.scrollHeight - e.clientHeight) * t);
+                    }
+                } else if (t[0] === 'V') {
+                    t = ctx.elementById[parseInt(t[1])];
+                    if (t) t.scrollIntoView();
                 }
             }
             break;
