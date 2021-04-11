@@ -367,6 +367,7 @@ function setProperty(e, key, value) {
         case 'border.topthickness': e.NORI_borders[1] = value; e.firstChild.style.borderTopWidth = value + 'px'; e.firstChild.style.borderTopStyle = value > 0 ? 'solid' : 'none'; break;
         case 'border.rightthickness': e.NORI_borders[2] = value; e.firstChild.style.borderRightWidth = value + 'px'; e.firstChild.style.borderRightStyle = value > 0 ? 'solid' : 'none'; break;
         case 'border.bottomthickness': e.NORI_borders[3] = value; e.firstChild.style.borderBottomWidth = value + 'px'; e.firstChild.style.borderBottomStyle = value > 0 ? 'solid' : 'none'; break;
+        case 'border.pp': e.NORI_borderPropPad = value / 1024.0; break;
 
         case 'cv.height': e.firstChild.height = value; break;
         case 'cv.width': e.firstChild.width = value; break;

@@ -156,6 +156,24 @@
 
         let e = ctx.elementById[elementId];
 
+        if (e.NORI_borderPropPad && usableWidth > 0 && usableHeight > 0) {
+            let givenRatio = usableWidth / usableHeight;
+            let wantedRatio = e.NORI_borderPropPad;
+            if (givenRatio > wantedRatio) {
+                // trim from left and right
+                let newWidth = usableHeight * wantedRatio;
+                let diff = usableWidth - newWidth;
+                xOffset += Math.floor(diff / 2);
+                usableWidth = newWidth;
+            } else if (givenRatio < wantedRatio) {
+                // trim from top and bottom
+                let newHeight = usableWidth / wantedRatio;
+                let diff = usableHeight - newHeight;
+                yOffset += Math.floor(diff / 2);
+                usableHeight = newHeight;
+            }
+        }
+
         let x;
         let y;
         let width;

@@ -12,6 +12,7 @@ namespace Nori {
     const Border_BottomColor = 'border.bottomcolor';
     const Border_Radius = 'border.radius';
     const Border_Crop = 'border.crop';
+    const Border_PropPad = 'border.pp';
 
     class Border : Panel {
         constructor() : base('Border', true) { }
@@ -23,6 +24,39 @@ namespace Nori {
 
         function getCrop() { return this._getBoolProperty(Border_Crop); }
         function setCrop(value) { return this._setBoolProperty(Border_Crop, value); }
+
+        function getProportionPadding() { return this._getFloatProperty(Border_PropPad); }
+        function setProportionPadding(xOrRatioOrStr, y = null) {
+            x = xOrRatioOrStr;
+            t = typeof(x);
+            if (t == Core.Type.STRING) {
+                t = x.replace(':', '/').split('/');
+                if (t.length > 2) throw new InvalidArgumentException("Invalid proportion.");
+                if (t.length == 2) {
+                    x = parseFloat(t[0]);
+                    y = parseFloat(t[1]);
+                    if (x == null || y == null) throw new InvalidArgumentException("Invalid proportion.");
+                    if (y == 0) throw new InvalidArgumentException("y component of proportion cannot be 0.");
+                    ratio = x / y;
+                } else {
+                    ratio = x;
+                }
+            } else if (x == 0) {
+                ratio = 0;
+            } else if (y != null) {
+                if (y == 0) throw new InvalidArgumentException("y value cannot be 0.");
+                ratio = x / y;
+            } else if (t == Core.Type.FLOAT || t == Core.Type.INTEGER) {
+                ratio = x + 0.0;
+            } else {
+                throw new InvalidArgumentException("Invalid value for ratio.");
+            }
+
+            if (ratio == 0) {
+                return this._clearProperty(Border_PropPad);
+            }
+            return this._setFloatProperty(Border_PropPad, Math.abs(ratio));
+        }
 
         function getRadius() { return this._getIntProperty(Border_Radius); }
 
@@ -81,6 +115,8 @@ namespace Nori {
                 case 'thicknessTop': return this.setTopThickness(parseInt(strValue));
                 case 'thicknessRight': return this.setRightThickness(parseInt(strValue));
                 case 'thicknessBottom': return this.setBottomThickness(parseInt(strValue));
+
+                case 'proportionPadding': return this.setProportionPadding(strValue);
 
                 default: return base.setAttributeWithString(name, strValue);
             }
