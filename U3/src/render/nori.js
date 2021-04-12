@@ -270,6 +270,10 @@ function setProperty(e, key, value) {
             }
             break;
 
+        case 'el.tooltip':
+            e.title = value ? value : null;
+            break;
+
         case 'rtb.onlink':
             NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, arg => arg));
             break;

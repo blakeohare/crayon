@@ -36,6 +36,7 @@ namespace Nori {
     const Element_ShadowY = 'el.shadowy';
     const Element_Opacity = 'el.opacity';
     const Element_Focus = 'el.focus';
+    const Element_ToolTip = 'el.tooltip';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -74,18 +75,18 @@ namespace Nori {
         // prefix in the property name itself to indicate type. This would also save a
         // function call for the type specific property setter wrapper.
         static field STRING_PROPERTIES = {
-            Button_Text: true,
-            Button_GradientTop: true,
-            Button_GradientBottom: true,
-            TextBlock_Text: true,
             Border_LeftColor: true,
             Border_TopColor: true,
             Border_RightColor: true,
             Border_BottomColor: true,
+            Button_Text: true,
+            Button_GradientTop: true,
+            Button_GradientBottom: true,
             Element_BackgroundColor: true,
             Element_FontColor: true,
             Element_Font: true,
             Element_ShadowColor: true,
+            Element_ToolTip: true,
             FloatPanel_AnchorLeft: true,
             FloatPanel_AnchorTop: true,
             FloatPanel_AnchorRight: true,
@@ -94,6 +95,7 @@ namespace Nori {
             InputElement_Value: true,
             ScrollPanel_ScrollToX: true,
             ScrollPanel_ScrollToY: true,
+            TextBlock_Text: true,
         };
 
         field _id;
@@ -285,6 +287,7 @@ namespace Nori {
                 case 'fill': return NoriUtil.parseBoolean(strValue) ? this.enableFill() : this;
                 case 'hfill': return NoriUtil.parseBoolean(strValue) ? this.enableFill('h') : this;
                 case 'vfill': return NoriUtil.parseBoolean(strValue) ? this.enableFill('v') : this;
+                case 'tooltip': return this._setStringProperty(Element_ToolTip, strValue);
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
@@ -314,6 +317,9 @@ namespace Nori {
         function setFont(value) { return this._setStringProperty(Element_Font, value); }
         function setFontSize(value) { return this._setIntProperty(Element_FontSize, Math.floor(value * 1000)); }
         function getFontSize() { return this._getIntProperty(Element_FontSize) / 1000.0; }
+
+        function getTooltip() { return this._getStringProperty(Element_ToolTip); }
+        function setTooltip(value) { return this._setStringProperty(Element_ToolTip, value); }
 
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }
