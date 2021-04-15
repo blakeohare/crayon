@@ -221,9 +221,41 @@ function updateShadow(e) {
     ].join('');
 }
 
+let handleRenderQuery = (callback, request) => {
+    let parts = request.split(',');
+    let fn = parts[0];
+    let qid = parseInt(parts[1]);
+    let eid = parseInt(parts[2]);
+    let e = ctx.elementById[eid];
+    let response = '';
+    switch (fn) {
+        case 'SZ':
+            if (e !== null) {
+                let rect = e.getBoundingClientRect();
+                response = rect.width + ',' + rect.height;
+            } else {
+                response = '-1,-1';
+            }
+            break;
+        default:
+            response = 'null';
+            break;
+    }
+    if (callback) callback(qid + ',' + response);
+};
+
 function setProperty(e, key, value) {
     let t;
     switch (key) {
+
+        case 'el.query':
+            // TODO: queue this to run AFTER the layout pass rather than a timeout
+            setTimeout(() => handleRenderQuery(e.NORI_queryResultHandler, value), 0);
+            break;
+        case 'el.queryresult':
+            NoriEvents.applyEventHandler(e, key, NoriEvents.buildEventHandler(value, e, key, a => a));
+            break;
+
         case 'el.width': e.NORI_size[0] = value; break;
         case 'el.height': e.NORI_size[1] = value; break;
         case 'el.halign': e.NORI_align[0] = 'SLCR'.charAt(value); break;

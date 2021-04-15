@@ -47,6 +47,16 @@ namespace Nori {
             this._handlers['on-render-pass'] = [this._maybeFireOnLoadHandlers, null];
             this._handlers['on-timeout-callback'] = [this._handleTimeout, (args) => { return [Core.parseInt(args)]; }];
             this._internalBorder = this._setContentInternal(new Border());
+
+            this._internalBorder._setEventHandler(Element_RenderQueryResult, s => {
+                parts = s.split(',');
+                id = parseInt(parts[0]);
+                cb = id != null ? this._renderQueryCallbacks.get(id) : null;
+                if (cb != null) {
+                    this._renderQueryCallbacks.remove(id);
+                    cb(parts[1:].join(','));
+                }
+            }, a => [a]);
         }
 
         function _setContentInternal(e) {
@@ -55,6 +65,14 @@ namespace Nori {
             this._rootElementId = e._id;
             this._rootElementChanged = true;
             return e;
+        }
+
+        field _renderQueryCounter = 1;
+        field _renderQueryCallbacks = {};
+        function _sendRenderQuery(fn, id, cb) {
+            qid = this._renderQueryCounter++;
+            this._renderQueryCallbacks[qid] = cb;
+            this._internalBorder._setStringProperty(Element_RenderQuery, fn + ',' + qid + ',' + id);
         }
 
         function setTitle(title) {

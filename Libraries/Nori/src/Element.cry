@@ -37,6 +37,8 @@ namespace Nori {
     const Element_Opacity = 'el.opacity';
     const Element_Focus = 'el.focus';
     const Element_ToolTip = 'el.tooltip';
+    const Element_RenderQuery = 'el.query'; // pseudo-property to send a command
+    const Element_RenderQueryResult = 'el.queryresult'; // event handler to respond to query events
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -85,6 +87,7 @@ namespace Nori {
             Element_BackgroundColor: true,
             Element_FontColor: true,
             Element_Font: true,
+            Element_RenderQuery: true,
             Element_ShadowColor: true,
             Element_ToolTip: true,
             FloatPanel_AnchorLeft: true,
@@ -289,6 +292,15 @@ namespace Nori {
                 case 'vfill': return NoriUtil.parseBoolean(strValue) ? this.enableFill('v') : this;
                 case 'tooltip': return this._setStringProperty(Element_ToolTip, strValue);
                 default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
+            }
+        }
+
+        function getRenderSize(cb) {
+            if (this._frame != null) {
+                this._frame._sendRenderQuery('SZ', this._id, result => {
+                    t = result.split(',');
+                    cb(parseInt(t[0]), parseInt(t[1]));
+                });
             }
         }
 

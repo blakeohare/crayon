@@ -22,6 +22,7 @@
         'el.bgcolor': true,
         'el.fontcolor': true,
         'el.font': true,
+        'el.query': true,
         'el.shadowcolor': true,
         'el.tooltip': true,
         'float.anchorleft': true,
