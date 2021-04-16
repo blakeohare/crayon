@@ -164,6 +164,10 @@
                 e.NORI_handlers.outer['link'] = handler;
                 break;
 
+            case 'el.queryresult':
+                e.NORI_queryResultHandler = handler;
+                break;
+
             case 'el.onclick':
                 if (e.NORI_type === 'Button') {
                     e.NORI_handlers.inner['click'] = handler;
