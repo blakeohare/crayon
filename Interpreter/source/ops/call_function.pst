@@ -297,6 +297,7 @@ if (staticConstructorNotInvoked) {
                     case PrimitiveMethodName.JOIN: @import("primitivemethods/list_join.pst"); break;
                     case PrimitiveMethodName.MAP: @import("primitivemethods/list_map.pst"); break;
                     case PrimitiveMethodName.POP: @import("primitivemethods/list_pop.pst"); break;
+                    case PrimitiveMethodName.REDUCE: @import("primitivemethods/list_reduce.pst"); break;
                     case PrimitiveMethodName.REMOVE: @import("primitivemethods/list_remove.pst"); break;
                     case PrimitiveMethodName.REVERSE: @import("primitivemethods/list_reverse.pst"); break;
                     case PrimitiveMethodName.SHUFFLE: @import("primitivemethods/list_shuffle.pst"); break;

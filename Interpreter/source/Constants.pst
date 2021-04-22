@@ -211,6 +211,7 @@ enum PrimitiveMethodName {
     MAP,
     MERGE,
     POP,
+    REDUCE,
     REMOVE,
     REPLACE,
     REVERSE,

@@ -143,6 +143,27 @@
         return output;
     }
 
+    function _LIB_CORE_list_reduce(fp, acc, list, accMissing) {
+        if (!$$$('typeis', fp, Core.Type.FUNCTION)) {
+            throw new InvalidArgumentException("Reduce function requires a function as its first input");
+        }
+
+        i = 0;
+        if (accMissing) {
+            if (list.length == 0) {
+                throw new InvalidArgumentException();
+            } else {
+                acc = list[0];
+                i = 1;
+            }
+        }
+        len = list.length;
+        while (i < len) {
+            acc = fp(acc, list[i++]);
+        }
+        return acc;
+    }
+
     @localized('en', 'getCurrentExecutionToken')
     @localized('es', 'ESgetCurrentExecutionToken')
     @localized('jp', 'JPgetCurrentExecutionToken')

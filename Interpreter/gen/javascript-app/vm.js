@@ -2041,6 +2041,8 @@ var initializeFunction = function(vm, args, currentPc, stringArg) {
 			vm[4][14][2] = functionId;
 		} else if ("_LIB_CORE_invoke" == name) {
 			vm[4][14][3] = functionId;
+		} else if ("_LIB_CORE_list_reduce" == name) {
+			vm[4][14][4] = functionId;
 		} else if ("_LIB_CORE_generateException" == name) {
 			var mn = vm[4][18];
 			mn[1] = functionId;
@@ -3238,7 +3240,7 @@ var interpretImpl = function(vm, executionContextId) {
 											output = buildString(globals, PST$stringTrimOneSide(string1, true));
 										}
 										break;
-									case 25:
+									case 26:
 										if ((argCount != 2)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string replace method", 2, argCount));
 										} else {
@@ -3251,21 +3253,21 @@ var interpretImpl = function(vm, executionContextId) {
 											}
 										}
 										break;
-									case 26:
+									case 27:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string reverse method", 0, argCount));
 										} else {
 											output = buildString(globals, string1.split('').reverse().join(''));
 										}
 										break;
-									case 27:
+									case 28:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string rtrim method", 0, argCount));
 										} else {
 											output = buildString(globals, PST$stringTrimOneSide(string1, false));
 										}
 										break;
-									case 30:
+									case 31:
 										if ((argCount != 1)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string split method", 1, argCount));
 										} else {
@@ -3286,7 +3288,7 @@ var interpretImpl = function(vm, executionContextId) {
 											}
 										}
 										break;
-									case 31:
+									case 32:
 										if ((argCount != 1)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string startsWith method", 1, argCount));
 										} else {
@@ -3300,14 +3302,14 @@ var interpretImpl = function(vm, executionContextId) {
 											}
 										}
 										break;
-									case 32:
+									case 33:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string trim method", 0, argCount));
 										} else {
 											output = buildString(globals, string1.trim());
 										}
 										break;
-									case 33:
+									case 34:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string upper method", 0, argCount));
 										} else {
@@ -3550,6 +3552,24 @@ var interpretImpl = function(vm, executionContextId) {
 										}
 										break;
 									case 24:
+										if (((argCount == 0) || (argCount > 2))) {
+											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+										} else if ((funcArgs[0][0] != 9)) {
+											hasInterrupt = EX_InvalidArgument(ec, "list reduce method requires a function pointer as its argument.");
+										} else {
+											funcArgs[2] = value;
+											funcArgs[3] = VALUE_FALSE;
+											if ((argCount == 1)) {
+												funcArgs[3] = VALUE_TRUE;
+												funcArgs[1] = VALUE_NULL;
+											}
+											argCount = 4;
+											primitiveMethodToCoreLibraryFallback = true;
+											functionId = metadata[14][4];
+											output = null;
+										}
+										break;
+									case 25:
 										if ((argCount != 1)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
 										} else {
@@ -3575,21 +3595,21 @@ var interpretImpl = function(vm, executionContextId) {
 											}
 										}
 										break;
-									case 26:
+									case 27:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reverse method", 0, argCount));
 										} else {
 											list1[2].reverse();
 										}
 										break;
-									case 28:
+									case 29:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
 										} else {
 											PST$shuffle(list1[2]);
 										}
 										break;
-									case 29:
+									case 30:
 										if ((argCount == 0)) {
 											sortLists(list1, list1, PST$intBuffer16);
 											if ((PST$intBuffer16[0] > 0)) {
@@ -3750,7 +3770,7 @@ var interpretImpl = function(vm, executionContextId) {
 											}
 										}
 										break;
-									case 24:
+									case 25:
 										if ((argCount != 1)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
 										} else {
@@ -3813,7 +3833,7 @@ var interpretImpl = function(vm, executionContextId) {
 											}
 										}
 										break;
-									case 34:
+									case 35:
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
 										} else {
@@ -7178,38 +7198,41 @@ var primitiveMethodsInitializeLookup = function(nameLookups) {
 	if ((nameLookups["pop"] !== undefined)) {
 		lookup[nameLookups["pop"]] = 23;
 	}
+	if ((nameLookups["reduce"] !== undefined)) {
+		lookup[nameLookups["reduce"]] = 24;
+	}
 	if ((nameLookups["remove"] !== undefined)) {
-		lookup[nameLookups["remove"]] = 24;
+		lookup[nameLookups["remove"]] = 25;
 	}
 	if ((nameLookups["replace"] !== undefined)) {
-		lookup[nameLookups["replace"]] = 25;
+		lookup[nameLookups["replace"]] = 26;
 	}
 	if ((nameLookups["reverse"] !== undefined)) {
-		lookup[nameLookups["reverse"]] = 26;
+		lookup[nameLookups["reverse"]] = 27;
 	}
 	if ((nameLookups["rtrim"] !== undefined)) {
-		lookup[nameLookups["rtrim"]] = 27;
+		lookup[nameLookups["rtrim"]] = 28;
 	}
 	if ((nameLookups["shuffle"] !== undefined)) {
-		lookup[nameLookups["shuffle"]] = 28;
+		lookup[nameLookups["shuffle"]] = 29;
 	}
 	if ((nameLookups["sort"] !== undefined)) {
-		lookup[nameLookups["sort"]] = 29;
+		lookup[nameLookups["sort"]] = 30;
 	}
 	if ((nameLookups["split"] !== undefined)) {
-		lookup[nameLookups["split"]] = 30;
+		lookup[nameLookups["split"]] = 31;
 	}
 	if ((nameLookups["startsWith"] !== undefined)) {
-		lookup[nameLookups["startsWith"]] = 31;
+		lookup[nameLookups["startsWith"]] = 32;
 	}
 	if ((nameLookups["trim"] !== undefined)) {
-		lookup[nameLookups["trim"]] = 32;
+		lookup[nameLookups["trim"]] = 33;
 	}
 	if ((nameLookups["upper"] !== undefined)) {
-		lookup[nameLookups["upper"]] = 33;
+		lookup[nameLookups["upper"]] = 34;
 	}
 	if ((nameLookups["values"] !== undefined)) {
-		lookup[nameLookups["values"]] = 34;
+		lookup[nameLookups["values"]] = 35;
 	}
 	return lookup;
 };
@@ -7516,19 +7539,19 @@ var resolvePrimitiveMethodName2 = function(lookup, type, globalNameId) {
 				return output;
 			case 225:
 				return output;
-			case 280:
-				return output;
 			case 291:
 				return output;
 			case 302:
 				return output;
-			case 335:
+			case 313:
 				return output;
 			case 346:
 				return output;
 			case 357:
 				return output;
 			case 368:
+				return output;
+			case 379:
 				return output;
 			case 6:
 				return output;
@@ -7554,11 +7577,13 @@ var resolvePrimitiveMethodName2 = function(lookup, type, globalNameId) {
 				return output;
 			case 270:
 				return output;
-			case 292:
+			case 281:
 				return output;
-			case 314:
+			case 303:
 				return output;
 			case 325:
+				return output;
+			case 336:
 				return output;
 			case 51:
 				return output;
@@ -7572,9 +7597,9 @@ var resolvePrimitiveMethodName2 = function(lookup, type, globalNameId) {
 				return output;
 			case 249:
 				return output;
-			case 271:
+			case 282:
 				return output;
-			case 381:
+			case 392:
 				return output;
 			case 20:
 				return output;

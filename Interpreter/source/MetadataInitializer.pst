@@ -45,6 +45,8 @@
             vm.metadata.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
         } else if (Core.StringEquals("_LIB_CORE_invoke", name)) {
             vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
+        } else if (Core.StringEquals("_LIB_CORE_list_reduce", name)) {
+            vm.metadata.primitiveMethodFunctionIdFallbackLookup[4] = functionId;
         } else if (Core.StringEquals("_LIB_CORE_generateException", name)) {
             MagicNumbers mn = vm.metadata.magicNumbers;
             mn.coreGenerateExceptionFunctionId = functionId;

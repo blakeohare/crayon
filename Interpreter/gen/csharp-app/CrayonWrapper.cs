@@ -2572,6 +2572,10 @@ namespace Interpreter.Vm
                 {
                     vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
                 }
+                else if ("_LIB_CORE_list_reduce" == name)
+                {
+                    vm.metadata.primitiveMethodFunctionIdFallbackLookup[4] = functionId;
+                }
                 else if ("_LIB_CORE_generateException" == name)
                 {
                     MagicNumbers mn = vm.metadata.magicNumbers;
@@ -4134,7 +4138,7 @@ namespace Interpreter.Vm
                                                     output = buildString(globals, string1.TrimStart());
                                                 }
                                                 break;
-                                            case 25:
+                                            case 26:
                                                 if ((argCount != 2))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string replace method", 2, argCount));
@@ -4153,7 +4157,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 26:
+                                            case 27:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string reverse method", 0, argCount));
@@ -4163,7 +4167,7 @@ namespace Interpreter.Vm
                                                     output = buildString(globals, PST_StringReverse(string1));
                                                 }
                                                 break;
-                                            case 27:
+                                            case 28:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string rtrim method", 0, argCount));
@@ -4173,7 +4177,7 @@ namespace Interpreter.Vm
                                                     output = buildString(globals, string1.TrimEnd());
                                                 }
                                                 break;
-                                            case 30:
+                                            case 31:
                                                 if ((argCount != 1))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string split method", 1, argCount));
@@ -4201,7 +4205,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 31:
+                                            case 32:
                                                 if ((argCount != 1))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string startsWith method", 1, argCount));
@@ -4223,7 +4227,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 32:
+                                            case 33:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string trim method", 0, argCount));
@@ -4233,7 +4237,7 @@ namespace Interpreter.Vm
                                                     output = buildString(globals, string1.Trim());
                                                 }
                                                 break;
-                                            case 33:
+                                            case 34:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string upper method", 0, argCount));
@@ -4594,6 +4598,30 @@ namespace Interpreter.Vm
                                                 }
                                                 break;
                                             case 24:
+                                                if (((argCount == 0) || (argCount > 2)))
+                                                {
+                                                    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+                                                }
+                                                else if ((funcArgs[0].type != 9))
+                                                {
+                                                    hasInterrupt = EX_InvalidArgument(ec, "list reduce method requires a function pointer as its argument.");
+                                                }
+                                                else
+                                                {
+                                                    funcArgs[2] = value;
+                                                    funcArgs[3] = VALUE_FALSE;
+                                                    if ((argCount == 1))
+                                                    {
+                                                        funcArgs[3] = VALUE_TRUE;
+                                                        funcArgs[1] = VALUE_NULL;
+                                                    }
+                                                    argCount = 4;
+                                                    primitiveMethodToCoreLibraryFallback = true;
+                                                    functionId = metadata.primitiveMethodFunctionIdFallbackLookup[4];
+                                                    output = null;
+                                                }
+                                                break;
+                                            case 25:
                                                 if ((argCount != 1))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
@@ -4636,7 +4664,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 26:
+                                            case 27:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reverse method", 0, argCount));
@@ -4646,7 +4674,7 @@ namespace Interpreter.Vm
                                                     reverseList(list1);
                                                 }
                                                 break;
-                                            case 28:
+                                            case 29:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
@@ -4665,7 +4693,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 29:
+                                            case 30:
                                                 if ((argCount == 0))
                                                 {
                                                     sortLists(list1, list1, PST_IntBuffer16);
@@ -4887,7 +4915,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 24:
+                                            case 25:
                                                 if ((argCount != 1))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
@@ -4976,7 +5004,7 @@ namespace Interpreter.Vm
                                                     }
                                                 }
                                                 break;
-                                            case 34:
+                                            case 35:
                                                 if ((argCount > 0))
                                                 {
                                                     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
@@ -9190,49 +9218,53 @@ namespace Interpreter.Vm
             {
                 lookup[nameLookups["pop"]] = 23;
             }
+            if (nameLookups.ContainsKey("reduce"))
+            {
+                lookup[nameLookups["reduce"]] = 24;
+            }
             if (nameLookups.ContainsKey("remove"))
             {
-                lookup[nameLookups["remove"]] = 24;
+                lookup[nameLookups["remove"]] = 25;
             }
             if (nameLookups.ContainsKey("replace"))
             {
-                lookup[nameLookups["replace"]] = 25;
+                lookup[nameLookups["replace"]] = 26;
             }
             if (nameLookups.ContainsKey("reverse"))
             {
-                lookup[nameLookups["reverse"]] = 26;
+                lookup[nameLookups["reverse"]] = 27;
             }
             if (nameLookups.ContainsKey("rtrim"))
             {
-                lookup[nameLookups["rtrim"]] = 27;
+                lookup[nameLookups["rtrim"]] = 28;
             }
             if (nameLookups.ContainsKey("shuffle"))
             {
-                lookup[nameLookups["shuffle"]] = 28;
+                lookup[nameLookups["shuffle"]] = 29;
             }
             if (nameLookups.ContainsKey("sort"))
             {
-                lookup[nameLookups["sort"]] = 29;
+                lookup[nameLookups["sort"]] = 30;
             }
             if (nameLookups.ContainsKey("split"))
             {
-                lookup[nameLookups["split"]] = 30;
+                lookup[nameLookups["split"]] = 31;
             }
             if (nameLookups.ContainsKey("startsWith"))
             {
-                lookup[nameLookups["startsWith"]] = 31;
+                lookup[nameLookups["startsWith"]] = 32;
             }
             if (nameLookups.ContainsKey("trim"))
             {
-                lookup[nameLookups["trim"]] = 32;
+                lookup[nameLookups["trim"]] = 33;
             }
             if (nameLookups.ContainsKey("upper"))
             {
-                lookup[nameLookups["upper"]] = 33;
+                lookup[nameLookups["upper"]] = 34;
             }
             if (nameLookups.ContainsKey("values"))
             {
-                lookup[nameLookups["values"]] = 34;
+                lookup[nameLookups["values"]] = 35;
             }
             return lookup;
         }
@@ -9634,19 +9666,19 @@ namespace Interpreter.Vm
                         return output;
                     case 225:
                         return output;
-                    case 280:
-                        return output;
                     case 291:
                         return output;
                     case 302:
                         return output;
-                    case 335:
+                    case 313:
                         return output;
                     case 346:
                         return output;
                     case 357:
                         return output;
                     case 368:
+                        return output;
+                    case 379:
                         return output;
                     case 6:
                         return output;
@@ -9672,11 +9704,13 @@ namespace Interpreter.Vm
                         return output;
                     case 270:
                         return output;
-                    case 292:
+                    case 281:
                         return output;
-                    case 314:
+                    case 303:
                         return output;
                     case 325:
+                        return output;
+                    case 336:
                         return output;
                     case 51:
                         return output;
@@ -9690,9 +9724,9 @@ namespace Interpreter.Vm
                         return output;
                     case 249:
                         return output;
-                    case 271:
+                    case 282:
                         return output;
-                    case 381:
+                    case 392:
                         return output;
                     case 20:
                         return output;

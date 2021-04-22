@@ -30,6 +30,7 @@
     if (nameLookups.Contains("map")) lookup[nameLookups["map"]] = PrimitiveMethodName.MAP;
     if (nameLookups.Contains("merge")) lookup[nameLookups["merge"]] = PrimitiveMethodName.MERGE;
     if (nameLookups.Contains("pop")) lookup[nameLookups["pop"]] = PrimitiveMethodName.POP;
+    if (nameLookups.Contains("reduce")) lookup[nameLookups["reduce"]] = PrimitiveMethodName.REDUCE;
     if (nameLookups.Contains("remove")) lookup[nameLookups["remove"]] = PrimitiveMethodName.REMOVE;
     if (nameLookups.Contains("replace")) lookup[nameLookups["replace"]] = PrimitiveMethodName.REPLACE;
     if (nameLookups.Contains("reverse")) lookup[nameLookups["reverse"]] = PrimitiveMethodName.REVERSE;
@@ -87,6 +88,7 @@ int resolvePrimitiveMethodName2(Array<int> lookup, int type, int globalNameId) {
             case Types.LIST + (MAX_TYPE * PrimitiveMethodName.JOIN):
             case Types.LIST + (MAX_TYPE * PrimitiveMethodName.MAP):
             case Types.LIST + (MAX_TYPE * PrimitiveMethodName.POP):
+            case Types.LIST + (MAX_TYPE * PrimitiveMethodName.REDUCE):
             case Types.LIST + (MAX_TYPE * PrimitiveMethodName.REMOVE):
             case Types.LIST + (MAX_TYPE * PrimitiveMethodName.REVERSE):
             case Types.LIST + (MAX_TYPE * PrimitiveMethodName.SHUFFLE):
