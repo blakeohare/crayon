@@ -42,7 +42,7 @@
                         dir = parts[1];
                         break;
                     case 'F': // file
-                        path = (dir == '' ? '' : (dir + '/')) + parts[5:].join(',');
+                        path = (dir == '/' ? '' : (dir + '/')) + parts[5:].join(',');
                         file = {
                             'x': parseInt(parts[1]),
                             'y': parseInt(parts[2]),
