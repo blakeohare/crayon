@@ -74,6 +74,8 @@ namespace Parser
                 return nullableFunctionDef;
             }
 
+            tokens.EnsureNotEof();
+
             Token token = tokens.Peek();
             throw ParserException.ThrowException(
                 this.parser.CurrentLocale,
