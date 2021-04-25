@@ -245,6 +245,8 @@ let handleRenderQuery = (callback, request) => {
 };
 
 function setProperty(e, key, value) {
+    if (!e) return;
+
     let t;
     switch (key) {
 
@@ -530,6 +532,8 @@ function setProperty(e, key, value) {
 }
 
 function unsetProperty(e, key) {
+    if (!e) return;
+
     // Note that there are a lot of missing properties from this switch.
     // That is because they cannot be unset, as they have some default value
     // and the VM code will only set explicit values by sending the default
@@ -615,12 +619,14 @@ function syncChildIds(e, childIds, startIndex, endIndex) {
 }
 
 function appendChild(e, childId) {
+    if (!e) return;
     let host = e.firstChild;
     host.appendChild(ctx.elementById[childId]);
     e.NORI_childrenIdList.push(childId);
 }
 
 function removeChildrenFromEnd(e, n) {
+    if (!e) return;
     let host = e.firstChild;
     while (n --> 0) {
         let removedElement = host.lastChild;
