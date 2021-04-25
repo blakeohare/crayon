@@ -212,6 +212,8 @@ namespace Nori {
         }
 
         function flushUpdates() {
+            if (!this._isShown) return;
+
             renderData = this._getRenderData();
 
             this._u3window.sendData(renderData);
