@@ -30,7 +30,11 @@ namespace Nori {
                     d['b64'] = '';
                 }
                 return this._clearProperty(Image_Source);
-            } else if (oldBmp != bitmap || oldBmp == null || bitmap._versionId != d['v']) {
+            }
+
+            if (!(bitmap is Images.Bitmap)) throw new InvalidArgumentException("argument must be an Images.Bitmap instance");
+
+            if (oldBmp != bitmap || oldBmp == null || bitmap._versionId != d['v']) {
                 d['v'] = bitmap._versionId;
                 d['bmp'] = bitmap;
                 d['b64'] = bitmap._lastPng ?? bitmap.toBase64(Images.ImageFormat.PNG);
