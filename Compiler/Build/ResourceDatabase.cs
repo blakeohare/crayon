@@ -47,9 +47,9 @@ namespace Build
 
         //public FileOutput ByteCodeFile { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
-        public FileOutput Image2ResourceManifestFile { get; set; }
+        public FileOutput ImageResourceManifestFile { get; set; }
 
-        public Dictionary<string, FileOutput> Image2ResourceFiles { get; set; }
+        public Dictionary<string, FileOutput> ImageResourceFiles { get; set; }
 
         public List<FileOutput> AudioResources { get; set; }
         public List<FileOutput> ImageResources { get; set; }
@@ -134,9 +134,9 @@ namespace Build
                 output["res/bin/" + binResource.CanonicalFileName] = binResource;
             }
 
-            foreach (string name in this.Image2ResourceFiles.Keys)
+            foreach (string name in this.ImageResourceFiles.Keys)
             {
-                FileOutput imgResource = this.Image2ResourceFiles[name];
+                FileOutput imgResource = this.ImageResourceFiles[name];
                 output["res/img/" + name] = imgResource;
             }
         }

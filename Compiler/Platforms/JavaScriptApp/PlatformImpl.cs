@@ -134,7 +134,7 @@ namespace JavaScriptApp
                 resourcesJs.Append(";\n");
             }
 
-            string imageManifest = resourceDatabase.Image2ResourceManifestFile.TextContent;
+            string imageManifest = resourceDatabase.ImageResourceManifestFile.TextContent;
             imageManifest = StringTokenUtil.ConvertStringValueToCode(imageManifest);
             resourcesJs.Append("C$common$imageManifest = " + imageManifest + ";\n");
 
@@ -150,9 +150,9 @@ namespace JavaScriptApp
                 TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(byteCode) + ";",
             };
 
-            foreach (string imageChunk in resourceDatabase.Image2ResourceFiles.Keys)
+            foreach (string imageChunk in resourceDatabase.ImageResourceFiles.Keys)
             {
-                output["resources/images/" + imageChunk] = resourceDatabase.Image2ResourceFiles[imageChunk];
+                output["resources/images/" + imageChunk] = resourceDatabase.ImageResourceFiles[imageChunk];
             }
 
             foreach (FileOutput audioResourceFile in resourceDatabase.AudioResources)

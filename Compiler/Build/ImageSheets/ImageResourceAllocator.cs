@@ -201,7 +201,7 @@ namespace Build.ImageSheets
             chunks.AddRange(GetChunksForSmallImages(smallImages));
 
             string manifest = ConvertChunksToManifest(chunks);
-            resDB.Image2ResourceManifestFile = new FileOutput()
+            resDB.ImageResourceManifestFile = new FileOutput()
             {
                 Type = FileOutputType.Text,
                 TrimBomIfPresent = true,
@@ -217,7 +217,7 @@ namespace Build.ImageSheets
                     Bitmap = chunk.FinalizedBitmap,
                 };
             }
-            resDB.Image2ResourceFiles = chunkImages;
+            resDB.ImageResourceFiles = chunkImages;
         }
     }
 }

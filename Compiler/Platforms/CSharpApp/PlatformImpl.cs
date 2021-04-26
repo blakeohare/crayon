@@ -36,9 +36,9 @@ namespace CSharpApp
                 "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
             };
 
-            if (resDb.Image2ResourceManifestFile != null)
+            if (resDb.ImageResourceManifestFile != null)
             {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\Image2Manifest.txt\"/>");
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\ImageManifest.txt\"/>");
             }
 
             if (options.GetBool(ExportOptionKey.HAS_ICON))
@@ -51,7 +51,7 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageFile.CanonicalFileName + "\"/>");
             }
 
-            foreach (string imageChunk in resDb.Image2ResourceFiles.Keys)
+            foreach (string imageChunk in resDb.ImageResourceFiles.Keys)
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageChunk + "\"/>");
             }
@@ -148,9 +148,9 @@ namespace CSharpApp
             output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
 
-            if (resourceDatabase.Image2ResourceManifestFile != null)
+            if (resourceDatabase.ImageResourceManifestFile != null)
             {
-                output[baseDir + "Resources/Image2Manifest.txt"] = resourceDatabase.Image2ResourceManifestFile;
+                output[baseDir + "Resources/ImageManifest.txt"] = resourceDatabase.ImageResourceManifestFile;
             }
 
             foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
@@ -158,9 +158,9 @@ namespace CSharpApp
                 output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
             }
 
-            foreach (string imageFilePath in resourceDatabase.Image2ResourceFiles.Keys)
+            foreach (string imageFilePath in resourceDatabase.ImageResourceFiles.Keys)
             {
-                output[baseDir + "Resources/" + imageFilePath] = resourceDatabase.Image2ResourceFiles[imageFilePath];
+                output[baseDir + "Resources/" + imageFilePath] = resourceDatabase.ImageResourceFiles[imageFilePath];
             }
 
             foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))

@@ -284,7 +284,7 @@ namespace Crayon.Pipeline
                 compilation.ByteCode,
                 compilation.AllScopesMetadata,
                 resourceDatabase.ResourceManifestFile.TextContent,
-                resourceDatabase.Image2ResourceManifestFile == null ? null : resourceDatabase.Image2ResourceManifestFile.TextContent);
+                resourceDatabase.ImageResourceManifestFile == null ? null : resourceDatabase.ImageResourceManifestFile.TextContent);
             return new ExportResponse()
             {
                 CbxOutputPath = cbxLocation,
