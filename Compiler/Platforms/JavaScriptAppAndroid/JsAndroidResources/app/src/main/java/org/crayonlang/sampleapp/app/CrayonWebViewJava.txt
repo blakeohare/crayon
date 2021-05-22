@@ -256,9 +256,17 @@ public class CrayonWebView extends WebView {
                 });
                 break;
 
+            case "unhandled-back-button":
+                ((MainActivity)this.getContext()).superOnBackPressed();
+                break;
+
             default:
                 throw new RuntimeException("Unknown message: " + type);
         }
+    }
+
+    void sendBackButton() {
+        this.sendMessage("back-button", "", false);
     }
 
     void sendTunnelMessageNotRegistered(int msgId) {

@@ -67,4 +67,13 @@ public class MainActivity extends Activity {
         }
         return 0;
     }
+
+    public void superOnBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.cwv.sendBackButton();
+    }
 }
