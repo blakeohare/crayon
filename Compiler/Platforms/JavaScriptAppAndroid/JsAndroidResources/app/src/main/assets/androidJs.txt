@@ -40,8 +40,11 @@ receiveMessage = function(type, payload, useEncoding) {
 
         case 'back-button':
             let backUnhandledCb = () => { sendMessage('unhandled-back-button', ''); };
-            // TODO: check if U3 is available and has a hardware back button handler registered.
-            backUnhandledCb();
+            if (window.noriNotifyHardwareBackButtonPressed) {
+                window.noriNotifyHardwareBackButtonPressed(backUnhandledCb);
+            } else {
+                backUnhandledCb();
+            }
             break;
 
         default:

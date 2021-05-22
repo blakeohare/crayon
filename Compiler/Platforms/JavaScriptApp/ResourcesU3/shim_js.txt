@@ -5,8 +5,10 @@ let platformSpecificHandleEvent;
 (() => {
 
 window.addEventListener('load', () => {
-	window.CrayonInterop.msghubRegisterConsumer(hub => {
-		
+
+	let ci = C$interop$getInteropObj();
+
+	ci.msghubRegisterConsumer(hub => {
 		const { listen, send } = hub;
 
 		platformSpecificHandleEvent = (id, eventName, args) => {

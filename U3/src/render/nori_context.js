@@ -81,4 +81,6 @@
 
     hasKeyDownListener: false,
     hasKeyUpListener: false,
+    hasBackButtonHandler: false,
+    induceHardwareDefaultBackBehavior: null,
 };

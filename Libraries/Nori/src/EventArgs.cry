@@ -1,5 +1,17 @@
 ﻿namespace Nori {
 
+    class BackEventArg {
+        field _frame;
+        field _sent = false;
+        constructor(f) { this._frame = f; }
+        function useDefaultBeahvior() {
+            if (this._sent) return;
+            this._sent = true;
+            this._frame._queuedCommandsWireData.add('BB', 0);
+            this._frame.flushUpdates();
+        }
+    }
+
     class MouseEventArg {
 
         field x;

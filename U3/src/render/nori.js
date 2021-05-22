@@ -684,7 +684,14 @@ function flushUpdates(data) {
                     case 'frame.keyup':
                         ctx.hasKeyUpListener = true;
                         break;
+                    case 'frame.back':
+                        ctx.hasBackButtonHandler = true;
+                        break;
                 }
+                break;
+
+            case 'BB': // Induce default back button behavior
+                if (ctx.induceHardwareDefaultBackBehavior) ctx.induceHardwareDefaultBackBehavior();
                 break;
 
             case 'FR': // Font resource
@@ -911,4 +918,13 @@ const waitForFonts = () => {
         return NoriUtil.promiseWait(10).then(() => waitForFont());
     };
     return waitForFont();
+};
+
+window.noriNotifyHardwareBackButtonPressed = unhandledCallback => {
+    if (ctx.hasBackButtonHandler) {
+        ctx.induceHardwareDefaultBackBehavior = unhandledCallback;
+        platformSpecificHandleEvent(-1, 'frame.back', 'x');
+    } else {
+        unhandledCallback();
+    }
 };

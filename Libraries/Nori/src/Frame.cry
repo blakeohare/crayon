@@ -8,6 +8,7 @@ namespace Nori {
     const Frame_OnResize = 'frame.onresize';
     const Frame_OnKeyDown = 'frame.keydown';
     const Frame_OnKeyUp = 'frame.keyup';
+    const Frame_OnBack = 'frame.back';
 
     /*
         Represents a window-like UI object.
@@ -115,6 +116,12 @@ namespace Nori {
         function setKeyUpHandler(fn) {
             this._handlers[Frame_OnKeyUp] = [fn, KeyboardEventArg.parseKeyUp];
             this._dirtyFrameAttributes[Frame_OnKeyUp] = 1;
+            return this;
+        }
+
+        function setBackHandler(fn) {
+            this._handlers[Frame_OnBack] = [fn, s => [new BackEventArg(this)]];
+            this._dirtyFrameAttributes[Frame_OnBack] = 1;
             return this;
         }
 
