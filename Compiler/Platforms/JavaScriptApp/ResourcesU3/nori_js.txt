@@ -396,7 +396,10 @@ function setProperty(e, key, value) {
         case 'float.anchorbottom': e.NORI_floatAnchors[3] = value; break;
 
         case 'border.crop': e.style.overflow = value ? 'hidden' : 'auto'; break;
-        case 'border.radius': e.style.borderRadius = value + 'px'; e.firstChild.style.borderRadius = value + 'px'; break;
+        case 'border.radtl': e.style.borderTopLeftRadius = value + 'px'; e.firstChild.style.borderTopLeftRadius = value + 'px'; break;
+        case 'border.radtr': e.style.borderTopRightRadius = value + 'px'; e.firstChild.style.borderTopRightRadius = value + 'px'; break;
+        case 'border.radbl': e.style.borderBottomLeftRadius = value + 'px'; e.firstChild.style.borderBottomLeftRadius = value + 'px'; break;
+        case 'border.radbr': e.style.borderBottomRightRadius = value + 'px'; e.firstChild.style.borderBottomRightRadius = value + 'px'; break;
         case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
         case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
         case 'border.rightcolor': e.firstChild.style.borderRightColor = value; break;

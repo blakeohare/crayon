@@ -10,7 +10,10 @@ namespace Nori {
     const Border_TopColor = 'border.topcolor';
     const Border_RightColor = 'border.rightcolor';
     const Border_BottomColor = 'border.bottomcolor';
-    const Border_Radius = 'border.radius';
+    const Border_RadiusTL = 'border.radtl';
+    const Border_RadiusTR = 'border.radtr';
+    const Border_RadiusBL = 'border.radbl';
+    const Border_RadiusBR = 'border.radbr';
     const Border_Crop = 'border.crop';
     const Border_PropPad = 'border.pp';
 
@@ -58,7 +61,10 @@ namespace Nori {
             return this._setFloatProperty(Border_PropPad, Math.abs(ratio));
         }
 
-        function getRadius() { return this._getIntProperty(Border_Radius); }
+        function getRadiusTopLeft() { return this._getIntProperty(Border_RadiusTL); }
+        function getRadiusTopRight() { return this._getIntProperty(Border_RadiusTR); }
+        function getRadiusBottomLeft() { return this._getIntProperty(Border_RadiusBL); }
+        function getRadiusBottomLeft() { return this._getIntProperty(Border_RadiusBR); }
 
         function getLeftColor() { return this._getColorProperty(Border_LeftColor); }
         function getTopColor() { return this._getColorProperty(Border_TopColor); }
@@ -86,7 +92,11 @@ namespace Nori {
             return this._setIntProperty(Border_BottomThickness, value);
         }
 
-        function setRadius(sz) { return this._setIntProperty(Border_Radius, sz); }
+        function setRadius(sz) { return this._setInt4Property(Border_RadiusTL, Border_RadiusTR, Border_RadiusBL, Border_RadiusBR, sz); }
+        function setRadiusTopLeft(sz) { return this._setIntProperty(Border_RadiusTL, sz); }
+        function setRadiusTopRight(sz) { return this._setIntProperty(Border_RadiusTR, sz); }
+        function setRadiusBottomLeft(sz) { return this._setIntProperty(Border_RadiusBL, sz); }
+        function setRadiusBottomRight(sz) { return this._setIntProperty(Border_RadiusBR, sz); }
 
         function setLeftColor(r, g, b, a = 255) { return this._setColorProperty(Border_LeftColor, r, g, b, a); }
         function setTopColor(r, g, b, a = 255) { return this._setColorProperty(Border_TopColor, r, g, b, a); }
@@ -101,7 +111,11 @@ namespace Nori {
         function setAttributeWithString(name, strValue) {
             switch (name) {
                 case 'crop': return this._setBooleanAsString(Border_Crop, strValue);
-                case 'radius': return this._setIntProperty(Border_Radius, Core.parseInt(strValue));
+                case 'radius': return this.setRadius(parseInt(strValue));
+                case 'radiusTopLeft': return this._setIntProperty(Border_RadiusTL, parseInt(strValue));
+                case 'radiusTopRight': return this._setIntProperty(Border_RadiusTR, parseInt(strValue));
+                case 'radiusBottomLeft': return this._setIntProperty(Border_RadiusBL, parseInt(strValue));
+                case 'radiusBottomRight': return this._setIntProperty(Border_RadiusBR, parseInt(strValue));
                 case 'color':
                     c = NoriUtil._parseColor(strValue);
                     return this.setColor(c[0], c[1], c[2], c[3]);

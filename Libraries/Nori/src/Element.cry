@@ -153,6 +153,15 @@ namespace Nori {
             if (this._frame != null && this._isClean) this._markPropertiesDirty();
             return this;
         }
+        function _setInt4Property(id1, id2, id3, id4, value) {
+            t = Math.floor(value);
+            this._newProperties[id1] = t;
+            this._newProperties[id2] = t;
+            this._newProperties[id3] = t;
+            this._newProperties[id4] = t;
+            if (this._frame != null && this._isClean) this._markPropertiesDirty();
+            return this;
+        }
         function _setFloatProperty(id, value) {
             this._newProperties[id] = Math.floor(1024 * value);
             if (this._frame != null && this._isClean) this._markPropertiesDirty();
