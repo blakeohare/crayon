@@ -1,0 +1,6 @@
+﻿namespace Nori {
+
+    class WrapPanel : Panel {
+        constructor() : base('WrapPanel', false) { }
+    }
+}

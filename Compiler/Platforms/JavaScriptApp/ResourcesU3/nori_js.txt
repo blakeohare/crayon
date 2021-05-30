@@ -77,6 +77,11 @@ function setFrameSize(width, height) {
 }
 
 function createElement(id, type) {
+
+    if (type == 'WrapPanel') {
+        console.log("Foo");
+    }
+
     let wrapper = document.createElement('div');
     wrapper.NORI_id = id;
     wrapper.NORI_type = type;
@@ -197,6 +202,7 @@ function createElement(id, type) {
         case 'FlowPanel':
         case 'StackPanel':
         case 'FloatPanel':
+        case 'WrapPanel':
             break;
 
         default:
