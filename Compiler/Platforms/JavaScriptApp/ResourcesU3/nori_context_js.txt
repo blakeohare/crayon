@@ -76,6 +76,7 @@
         'FlowPanel': true,
         'ScrollPanel': true,
         'StackPanel': true,
+        'WrapPanel': true,
     },
     scrollEnumLookup: ['none', 'auto', 'scroll', 'crop'],
 

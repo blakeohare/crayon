@@ -315,6 +315,16 @@
         }
     };
 
+    let adjustXYOffsets = (e, deltaX, deltaY) => {
+        let s = (e.NORI_floatAnchors && (currentRoot === e)) ? e.firstChild.style : e.style;
+        let x = s.left;
+        let y = s.top;
+        x = parseInt(y.substr(0, y.length - 2));
+        y = parseInt(y.substr(0, y.length - 2));
+        s.left = (x + deltaX) + 'px';
+        s.top = (y + deltaY) + 'px';
+    };
+
     let doDockPanelChildrenLayout = (
         panel,
         xOffset,
@@ -434,11 +444,58 @@
         doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, 'W', false);
     };
     childrenLayoutFnByType['FloatPanel'] = (panel, xOffset, yOffset, availableWidth, availableHeight) => {
-        if (panel !== currentRoot) {
-            roots.push(panel);
-        } else {
+        if (panel === currentRoot) {
             docLayoutFn(panel, xOffset, yOffset, availableWidth, availableHeight);
+        } else {
+            roots.push(panel);
         }
+    };
+    childrenLayoutFnByType['WrapPanel'] = (panel, xOffset, yOffset, availableWidth, availableHeight) => {
+        textWrapsFound = true;
+        doWrapLayout(panel, xOffset, yOffset, availableWidth, availableHeight);
+    };
+
+    let doWrapLayout = (panel, xOffset, yOffset, availableWidth, availableHeight) => {
+        let childrenIds = panel.NORI_childrenIdList;
+        let length = childrenIds.length;
+        let child;
+        let margin;
+        let widthConsumed;
+        let heightConsumed;
+        let maxHeightInRow = 0;
+        let maxWidthInRow = 0;
+        let remainingWidthForRow = availableWidth;
+        let fullAvailableWidth = availableWidth;
+        let originalXOffset = xOffset;
+
+        for (let i = 0; i < length; ++i) {
+            child = ctx.elementById[childrenIds[i]];
+            margin = child.NORI_margin;
+            usableWidth = remainingWidthForRow - margin[0] - margin[2];
+
+            spaceAllocation(
+                child.NORI_id,
+                xOffset + margin[0], yOffset + margin[1],
+                fullAvailableWidth, availableHeight,
+                'L', 'T');
+            widthConsumed = margin[0] + margin[2] + child.NORI_allocatedSize[0];
+            heightConsumed = margin[1] + margin[3] + child.NORI_allocatedSize[1];
+            if (remainingWidthForRow - widthConsumed >= 0) {
+                xOffset += widthConsumed;
+                remainingWidthForRow -= widthConsumed;
+                maxHeightInRow = Math.max(maxHeightInRow, heightConsumed);
+                maxWidthInRow = Math.max(maxWidthInRow, availableWidth - remainingWidthForRow);
+            } else {
+                let oldX = xOffset;
+                let oldY = yOffset;
+                xOffset = originalXOffset;
+                yOffset += maxHeightInRow;
+                adjustXYOffsets(child, xOffset - oldX, yOffset - oldY);
+                remainingWidthForRow = fullAvailableWidth;
+                maxHeightInRow = heightConsumed;
+            }
+        }
+        panel.NORI_allocatedSize = [availableWidth, yOffset + maxHeightInRow]; // do margins go in here?
     };
 
     let calculateRequiredSize = (e) => {
@@ -511,6 +568,15 @@
                     case 'FlowPanel':
                         xSize += childWidth;
                         ySize = Math.max(ySize, childHeight);
+                        break;
+
+                    case 'WrapPanel':
+                        if (e === currentRoot) {
+
+                        } else {
+                            xSize = 0;
+                            ySize = 0;
+                        }
                         break;
 
                     case 'FloatPanel':
