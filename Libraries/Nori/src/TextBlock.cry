@@ -13,6 +13,7 @@ namespace Nori {
 
         function setText(value) { return this._setStringProperty(TextBlock_Text, '0' + value); }
         function getText() { return this._getStringProperty(TextBlock_Text)[1:]; }
+        function clearText() { return this.setText(''); }
 
         function setWrap(value) { return this._setBoolProperty(TextBlock_Wrap, value); }
         function getWrap(value) { return this._getBoolProperty(TextBlock_Wrap); }
