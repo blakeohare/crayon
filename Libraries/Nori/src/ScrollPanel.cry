@@ -28,8 +28,14 @@ namespace Nori {
 
         function setAttributeWithString(name, strValue) {
             switch (name) {
-                case 'xScroll': return this._setEnumWithString(ScrollPanel_XMode, strValue);
-                case 'yScroll': return this._setEnumWithString(ScrollPanel_YMode, strValue);
+                case 'xScroll':
+                case 'yScroll':
+                    // I keep making this error so may as well just make it work
+                    strValue = strValue.lower();
+                    if (strValue == 'true') strValue = 'scroll';
+                    else if (strValue == 'false') strValue = 'crop';
+
+                    return this._setEnumWithString(name == 'xScroll' ? ScrollPanel_XMode : ScrollPanel_YMode, strValue);
                 default: return base.setAttributeWithString(name, strValue);
             }
         }
