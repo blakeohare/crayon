@@ -291,17 +291,20 @@ def buildRelease(args):
 	print(runCommand(cmd))
 	
 	# Copy the Crayon runtime
-	copyDirectory(VM_TEMP_DIR + '/Source/CrayonRuntime/bin/Release/netcoreapp3.1/' + dot_net_platform_name + '/publish', copyToDir + '/vm', '.exe')
+	runtime_from_dir = VM_TEMP_DIR + '/Source/CrayonRuntime/bin/Release/netcoreapp3.1/' + dot_net_platform_name + '/publish'
+	runtime_to_dir = copyToDir + '/vm'
+	ensure_directory_exists(runtime_to_dir)
 	if isWindows:
-		vm_from = os.sep.join((copyToDir + '/vm/Interpreter.exe').split('/'))
-		vm_to = vm_from.split(os.sep)
-		vm_to.pop()
-		vm_to.append('CrayonRuntime.exe')
-		vm_to = os.sep.join(vm_to)
-		os.rename(vm_from, vm_to)
+		copy_file(runtime_from_dir + '/Interpreter.exe', runtime_to_dir + '/CrayonRuntime.exe')
+	elif isMac:
+		to_path = runtime_to_dir + '/CrayonRuntime'
+		copy_file(runtime_from_dir + '/Interpreter', to_path)
+		runCommand('chmod +x ' + to_path)
+	else:
+		raise Exception()
+
 	# Copy U3 window
-	if isWindows:
-		copyDirectory(u3_dir, copyToDir + '/u3')
+	copyDirectory(u3_dir, copyToDir + '/u3')
 
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
