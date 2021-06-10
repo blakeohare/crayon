@@ -55,10 +55,14 @@ namespace Interpreter.Vm
         private static DateTime Epoch = new DateTime(1970, 1, 1); // TODO: switch to UnixEpoch once this is migrated to .NET Core
         public static double GetCurrentTime()
         {
-            long filetime;
-            GetSystemTimePreciseAsFileTime(out filetime);
-            DateTime now = DateTime.FromFileTimeUtc(filetime);
-            return now.Subtract(Epoch).Ticks / (double)TimeSpan.TicksPerSecond;
+            if (IsWindows)
+            {
+                long filetime;
+                GetSystemTimePreciseAsFileTime(out filetime);
+                DateTime now = DateTime.FromFileTimeUtc(filetime);
+                return now.Subtract(Epoch).Ticks / (double)TimeSpan.TicksPerSecond;
+            }
+            return DateTime.UtcNow.Subtract(Epoch).TotalMilliseconds / 1000.0;
         }
 
         public static void Noop() { }
