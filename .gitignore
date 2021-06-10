@@ -5,6 +5,7 @@ obj
 /Compiler/CrayonOSX.userprefs
 /Docs/sql.txt
 /Compiler/.vs
+/Compiler/.vscode
 /Compiler/Pastel/.vs
 __pycache__
 *.pyc

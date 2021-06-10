@@ -10,10 +10,11 @@ namespace Crayon
         {
             get
             {
-                return FileUtil.JoinPath(
-                    Environment.GetEnvironmentVariable("CRAYON_HOME"),
-                    "vm",
-                    "CrayonRuntime.exe");
+                string binary = System.Environment.OSVersion.Platform == System.PlatformID.Unix
+                    ? "CrayonRuntime"
+                    : "CrayonRuntime.exe";
+
+                return FileUtil.JoinPath(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", binary);
             }
         }
 
