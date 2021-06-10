@@ -1,7 +1,4 @@
 VERSION = '2.9.0'
-MSBUILD = r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe'
-XBUILD = 'xbuild'
-RELEASE_CONFIG = '/p:Configuration=Release'
 VM_TEMP_DIR = 'VmTemp'
 VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 
@@ -159,10 +156,16 @@ def buildRelease(args):
 
 	os_platform = args[0]
 
-	isMono = os_platform == 'mono'
 	isWindows = os_platform == 'windows'
+	isMac = os_platform == 'mac'
+	isLinux = os_platform == 'linux'
 
-	if not isWindows and not isMono:
+	if isLinux:
+		log("not supported yet")
+		print("Linux support isn't here yet. But soon!")
+		return
+
+	if not isWindows and not isMac:
 		log("incorrect platform")
 		print ("Invalid platform: " + os_platform)
 		return
@@ -179,30 +182,23 @@ def buildRelease(args):
 
 	if isWindows:
 		u3_dir = os.path.join('..', 'U3', 'dist', 'win')
-		if not os.path.exists(u3_dir):
-			print("*** ERROR! ***")
-			print("U3 executable is missing. Run Scripts/u3packager.py first.")
-			return
+	elif isMac:
+		u3_dir = os.path.join('..', 'U3', 'dist', 'mac')
 	else:
-		print("*** ERROR ***")
-		print("TODO: Need to implement U3 copying for non-Windows platforms")
+		raise Exception("Not implemented")
+	
+	if not os.path.exists(u3_dir):
+		print("*** ERROR! ***")
+		print("U3 executable is missing. Run Scripts/u3packager.py first.")
 		return
 	
 	# Compile the compiler bits in the source tree to their usual bin directory
 
-	if isMono:
-		BUILD_CMD = XBUILD
-	#	SLN_PATH = '../Compiler/Crayon.sln'
-	else:
-		BUILD_CMD = MSBUILD
-	#	SLN_PATH = '..\\Compiler\\Crayon.sln'
-	#cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
-	
 	cmd = ' '.join([
 		'dotnet publish',
 		os.path.join('..', 'Compiler', 'Crayon', 'Crayon.csproj'),
 		'-c Release',
-		'-r', 'osx-x64' if isMono else 'win-x64',
+		'-r', 'osx-x64' if isMac else 'win-x64',
 		'--self-contained true',
 		'-p:PublishTrimmed=true',
 		'-p:PublishSingleFile=true'
@@ -214,13 +210,16 @@ def buildRelease(args):
 
 
 	# Copy the compiler's release bits into the newly created release directory
-	releaseDir = '../Compiler/Crayon/bin/Release/netcoreapp3.1/' + ('osx-x64' if isMono else 'win-x64') + '/publish'
+	releaseDir = '../Compiler/Crayon/bin/Release/netcoreapp3.1/' + ('osx-x64' if isMac else 'win-x64') + '/publish'
 	
 	log("Copying crayon.exe, readme, and license to output directory")
 	if isWindows:
 		crayon_exe_name = 'Crayon.exe'
-	else:
+	elif isMac:
 		crayon_exe_name = 'Crayon'
+	else:
+		raise Exception("Invalid platform")
+
 	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), canonicalize_sep(copyToDir + '/' + crayon_exe_name.lower()))
 	
 	shutil.copyfile(canonicalize_sep('../Compiler/Crayon/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
@@ -265,8 +264,8 @@ def buildRelease(args):
 	
 	# Use the newly built compiler to generate the VM source code (in VmTemp)
 	print("Generating VM code...")
-	new_crayon_executable = copyToDir + '/crayon' + ('' if isMono else '.exe')
-	if isMono:
+	new_crayon_executable = copyToDir + '/crayon' + ('' if isMac else '.exe')
+	if isMac:
 		runCommand('chmod +x ' + new_crayon_executable)
 	runtimeCompilationCommand = canonicalize_sep(new_crayon_executable) + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
 
@@ -278,13 +277,7 @@ def buildRelease(args):
 
 	# Now compile the generated VM source code	
 	print("Compiling VM for distribution...")
-	cmd = ' '.join([
-		BUILD_CMD, 
-		RELEASE_CONFIG, 
-		canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')
-	])
-	
-	dot_net_platform_name = 'osx-x64' if isMono else 'win-x64'
+	dot_net_platform_name = 'osx-x64' if isMac else 'win-x64'
 	cmd = ' '.join([
 		'dotnet publish',
 		os.path.join(VM_TEMP_DIR_SOURCE, 'CrayonRuntime', 'Interpreter.csproj'),
@@ -317,10 +310,11 @@ def buildRelease(args):
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
 		syntaxHighlighter = readFile("notepadplusplus_crayon_syntax.xml")
 		writeFile(copyToDir + '/notepadplusplus_crayon_syntax.xml', syntaxHighlighter, '\n')
-
-	if isMono:
+	elif isMac:
 		setupFile = readFile("setup-mono.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
+	else:
+		raise Exception("Invalid platform")
 
 
 	# Copy the Interpreter source to vmsrc
