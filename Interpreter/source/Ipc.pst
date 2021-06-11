@@ -27,3 +27,11 @@ string IpcNamedPipeServer_close(Value objValue) {
     object pipe = obj.nativeData[0];
     return Extension.CoreFunc_NamedPipeServerClose(pipe);
 }
+
+string IpcUnixSocketClient_create(Value strValue) {
+    return "Not implemented";
+}
+
+string IpcUnixSocketServer_create(Value strValue) {
+    return "Not implemented";
+}

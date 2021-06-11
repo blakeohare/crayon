@@ -109,6 +109,9 @@ namespace Parser
         BROWSER_INTEROP_SET_URL_PATH = 113,
         BASE_64_FROM_BYTES = 114,
         ENVIRONMENT_IS_MOBILE = 115,
+
+        IPC_UNIX_SOCKET_CLIENT_CREATE = 116,
+        IPC_UNIX_SOCKET_SERVER_CREATE = 117,
     }
 
     internal static class CoreFunctionIDHelper
@@ -222,6 +225,8 @@ namespace Parser
                 case "browserInteropSetUrlPath": return (int)CoreFunctionID.BROWSER_INTEROP_SET_URL_PATH;
                 case "base64FromBytes": return (int)CoreFunctionID.BASE_64_FROM_BYTES;
                 case "environmentIsMobile": return (int)CoreFunctionID.ENVIRONMENT_IS_MOBILE;
+                case "ipcUnixSocketClientCreate": return (int)CoreFunctionID.IPC_UNIX_SOCKET_CLIENT_CREATE;
+                case "ipcUnixSocketServerCreate": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_CREATE;
 
                 default: return -1;
             }

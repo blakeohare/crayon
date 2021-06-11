@@ -105,6 +105,8 @@
     case 113: Core.EmitComment("browserInteropSetUrlPath"); @import("corefuncs/browserInteropSetUrlPath.pst"); break;
     case 114: Core.EmitComment("base64FromBytes"); @import("corefuncs/base64FromBytes.pst"); break;
     case 115: Core.EmitComment("environmentIsMobile"); @import("corefuncs/environmentIsMobile.pst"); break;
+    case 116: Core.EmitComment("ipcUnixSocketClientCreate"); @import("corefuncs/ipcUnixSocketClientCreate.pst"); break;
+    case 117: Core.EmitComment("ipcUnixSocketServerCreate"); @import("corefuncs/ipcUnixSocketServerCreate.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

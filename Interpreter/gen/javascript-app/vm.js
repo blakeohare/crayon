@@ -5334,6 +5334,26 @@ var interpretImpl = function(vm, executionContextId) {
 						// environmentIsMobile;
 						output = buildBoolean(globals, C$common$envIsMobile());
 						break;
+					case 116:
+						// ipcUnixSocketClientCreate;
+						arg1 = valueStack[--valueStackSize];
+						string1 = IpcUnixSocketClient_create(arg1);
+						if ((string1 == null)) {
+							output = globals[0];
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
+					case 117:
+						// ipcUnixSocketServerCreate;
+						arg1 = valueStack[--valueStackSize];
+						string1 = IpcUnixSocketServer_create(arg1);
+						if ((string1 == null)) {
+							output = globals[0];
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -6450,6 +6470,14 @@ var IpcNamedPipeServer_create = function(objValue, nameValue, startFn, dataFn, c
 	obj[3] = PST$createNewArray(1);
 	obj[3][0] = (() => {})();
 	return null;
+};
+
+var IpcUnixSocketClient_create = function(strValue) {
+	return "Not implemented";
+};
+
+var IpcUnixSocketServer_create = function(strValue) {
+	return "Not implemented";
 };
 
 var isClassASubclassOf = function(vm, subClassId, parentClassId) {

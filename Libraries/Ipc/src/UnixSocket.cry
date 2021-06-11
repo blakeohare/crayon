@@ -1,0 +1,43 @@
+﻿import Environment;
+
+namespace Ipc {
+
+    function isUnixSocketSupported() {
+        env = Environment.getEnvironment();
+        p = env['platform'];
+        return p == 'mac' || p == 'linux';
+    }
+
+    function ensureUnixSocketSupported() {
+        if (!isUnixSocketSupported()) {
+            throw new InvalidOperationException("Unix sockets are not supported on this platform.");
+        }
+    }
+
+    class UnixSocketClient {
+
+        constructor(path) {
+            ensureUnixSocketSupported();
+            this._handleCreate($$$('ipcUnixSocketClientCreate', path));
+        }
+
+        function _handleCreate(s) {
+            if (s != null) {
+                throw new Exception(s);
+            }
+        }
+    }
+
+    class UnixSocketServer {
+        constructor(path) {
+            ensureUnixSocketSupported();
+            this._handleCreate($$$('ipcUnixSocketServerCreate', path));
+        }
+
+        function _handleCreate(s) {
+            if (s != null) {
+                throw new Exception(s);
+            }
+        }
+    }
+}

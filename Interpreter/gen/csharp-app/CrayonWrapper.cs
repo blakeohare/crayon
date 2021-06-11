@@ -6814,6 +6814,32 @@ namespace Interpreter.Vm
                                 // environmentIsMobile;
                                 output = buildBoolean(globals, false);
                                 break;
+                            case 116:
+                                // ipcUnixSocketClientCreate;
+                                arg1 = valueStack[--valueStackSize];
+                                string1 = IpcUnixSocketClient_create(arg1);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
+                            case 117:
+                                // ipcUnixSocketServerCreate;
+                                arg1 = valueStack[--valueStackSize];
+                                string1 = IpcUnixSocketServer_create(arg1);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -8244,6 +8270,16 @@ namespace Interpreter.Vm
             obj.nativeData = new object[1];
             obj.nativeData[0] = CoreFunctions.NamedPipeServerCreate((string)nameValue.internalValue, startFn, dataFn, closeFn);
             return null;
+        }
+
+        public static string IpcUnixSocketClient_create(Value strValue)
+        {
+            return "Not implemented";
+        }
+
+        public static string IpcUnixSocketServer_create(Value strValue)
+        {
+            return "Not implemented";
         }
 
         public static bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId)
