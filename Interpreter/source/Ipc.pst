@@ -28,18 +28,18 @@ string IpcNamedPipeServer_close(Value objValue) {
     return Extension.CoreFunc_NamedPipeServerClose(pipe);
 }
 
-string IpcUnixSocketClient_create(ObjectInstance inst, string socketName, Value onReadyCb, Value onDisconnectCb) {
+string IpcUnixSocketClient_create(ObjectInstance inst, string path, Value onReadyCb, Value onDisconnectCb) {
     inst.nativeData = new Array<object>(1);
-    return Extension.UnixSocket_ClientCreate(inst.nativeData, socketName, onReadyCb, onDisconnectCb);
+    return Extension.UnixSocket_ClientCreate(inst.nativeData, path, onReadyCb, onDisconnectCb);
 }
 
-string IpcUnixSocketClient_send(object server, string msg) {
-    return Extension.UnixSocket_ClientSend(server, msg);
+string IpcUnixSocketClient_send(object client, string msg) {
+    return Extension.UnixSocket_ClientSend(client, msg);
 }
 
-string IpcUnixSocketServer_create(ObjectInstance inst, string socketName, Value onRecvCb) {
+string IpcUnixSocketServer_create(ObjectInstance inst, string path, Value onRecvCb) {
     inst.nativeData = new Array<object>(1);
-    return Extension.UnixSocket_ServerCreate(inst.nativeData, socketName, onRecvCb);
+    return Extension.UnixSocket_ServerCreate(inst.nativeData, path, onRecvCb);
 }
 
 int IpcUnixSocketServer_disconnect(object server) {

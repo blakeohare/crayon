@@ -132,6 +132,26 @@ namespace Interpreter.Vm
             return null;
         }
 
+        internal static string UnixSocketClientCreate(object[] clientOut, string path, Value onReadyCb, Value onDisconnectCb)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string UnixSocketClientSend(object client, string msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string UnixSocketServerCreate(object[] serverOut, string path, Value onRecvCb)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static void UnixSocketServerDisconnect(object server)
+        {
+            throw new NotImplementedException();
+        }
+
         public static void HttpSend(Value cb, Value failCb, string url, string method, string contentType, int[] binaryContent, string textContent, string[] headersKvp, Value bytesObj, object[] bytesObjNativeData)
         {
             System.ComponentModel.BackgroundWorker bgWorker = new System.ComponentModel.BackgroundWorker();

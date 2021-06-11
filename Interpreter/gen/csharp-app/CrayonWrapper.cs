@@ -8300,21 +8300,21 @@ namespace Interpreter.Vm
             return null;
         }
 
-        public static string IpcUnixSocketClient_create(ObjectInstance inst, string socketName, Value onReadyCb, Value onDisconnectCb)
+        public static string IpcUnixSocketClient_create(ObjectInstance inst, string path, Value onReadyCb, Value onDisconnectCb)
         {
             inst.nativeData = new object[1];
-            return CoreFunctions.UnixSocketClientCreate(inst.nativeData, socketName, onReadyCb, onDisconnectCb);
+            return CoreFunctions.UnixSocketClientCreate(inst.nativeData, path, onReadyCb, onDisconnectCb);
         }
 
-        public static string IpcUnixSocketClient_send(object server, string msg)
+        public static string IpcUnixSocketClient_send(object client, string msg)
         {
-            return CoreFunctions.UnixSocketClientSend(server, msg);
+            return CoreFunctions.UnixSocketClientSend(client, msg);
         }
 
-        public static string IpcUnixSocketServer_create(ObjectInstance inst, string socketName, Value onRecvCb)
+        public static string IpcUnixSocketServer_create(ObjectInstance inst, string path, Value onRecvCb)
         {
             inst.nativeData = new object[1];
-            return CoreFunctions.UnixSocketServerCreate(inst.nativeData, socketName, onRecvCb);
+            return CoreFunctions.UnixSocketServerCreate(inst.nativeData, path, onRecvCb);
         }
 
         public static int IpcUnixSocketServer_disconnect(object server)

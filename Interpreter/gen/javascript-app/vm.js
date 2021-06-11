@@ -6497,16 +6497,16 @@ var IpcNamedPipeServer_create = function(objValue, nameValue, startFn, dataFn, c
 	return null;
 };
 
-var IpcUnixSocketClient_create = function(inst, socketName, onReadyCb, onDisconnectCb) {
+var IpcUnixSocketClient_create = function(inst, path, onReadyCb, onDisconnectCb) {
 	inst[3] = PST$createNewArray(1);
 	return (() => {})();
 };
 
-var IpcUnixSocketClient_send = function(server, msg) {
+var IpcUnixSocketClient_send = function(client, msg) {
 	return (() => {})();
 };
 
-var IpcUnixSocketServer_create = function(inst, socketName, onRecvCb) {
+var IpcUnixSocketServer_create = function(inst, path, onRecvCb) {
 	inst[3] = PST$createNewArray(1);
 	return (() => {})();
 };
