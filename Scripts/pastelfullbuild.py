@@ -1,10 +1,9 @@
 import os
+import platform
 import sys
 
-MSBUILD = r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe'
-RELEASE_CONFIG = '/p:Configuration=Release'
-LIBRARIES_DIR = r'..\Libraries'
-INTERPRE_DIR = r'..\Interpreter' # lol, "interpre-dir"
+LIBRARIES_DIR = os.path.join('..', 'Libraries')
+INTERPRE_DIR = os.path.join('..', 'Interpreter') # lol, "interpre-dir"
 
 PLATFORMS = [
   'lang-csharp',
@@ -55,10 +54,21 @@ def get_interpreter():
 
 def main(args):
 
+  p = platform.system()
+  isWindows = p == 'Windows'
+  isMac = p == 'Darwin'
+  isLinux = p == 'Linux'
+  if not isWindows and not isMac and not isLinux:
+    print("Unknown platform: " + p)
+    return
+  if isLinux:
+    print("Linux not currently supported")
+    return
+
   pastelSource = os.environ['PASTEL_SOURCE']
 
   if pastelSource == None:
-    print("PASTEL_SOURCE enironment variable must be set. This should be the root of the https://github.com/blakeohare/pastel repository")
+    print("PASTEL_SOURCE environment variable must be set. This should be the root of the https://github.com/blakeohare/pastel repository")
     return
 
   if len(args) > 1:
@@ -69,8 +79,14 @@ def main(args):
   if len(args) == 1:
     lib_filter = args[0]
 
+  binary_name = 'Pastel.exe' if isWindows else 'Pastel'
+
   pastel_sln = os.path.join(pastelSource, 'Source', 'Pastel.sln')
-  pastel_exe = os.path.join(pastelSource, 'Source', 'bin', 'Release', 'netcoreapp3.1', 'Pastel.exe')
+  pastel_exe = [
+    os.path.join(pastelSource, 'Source', 'bin', 'Release', 'netcoreapp3.1', binary_name),
+    os.path.join(pastelSource, 'Source', 'bin', 'Release', 'netcoreapp3.1', 'osx-x64', 'publish', binary_name),
+  ][isMac] # I'm not entirely sure why the pattern is different
+
   cmd = ' '.join([
     'dotnet build',
     pastel_sln,
