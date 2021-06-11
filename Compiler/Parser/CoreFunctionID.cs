@@ -112,6 +112,8 @@ namespace Parser
 
         IPC_UNIX_SOCKET_CLIENT_CREATE = 116,
         IPC_UNIX_SOCKET_SERVER_CREATE = 117,
+        IPC_UNIX_SOCKET_CLIENT_SEND = 118,
+        IPC_UNIX_SOCKET_SERVER_DISCONNECT = 119,
     }
 
     internal static class CoreFunctionIDHelper
@@ -227,7 +229,8 @@ namespace Parser
                 case "environmentIsMobile": return (int)CoreFunctionID.ENVIRONMENT_IS_MOBILE;
                 case "ipcUnixSocketClientCreate": return (int)CoreFunctionID.IPC_UNIX_SOCKET_CLIENT_CREATE;
                 case "ipcUnixSocketServerCreate": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_CREATE;
-
+                case "ipcUnixSocketClientSend": return (int)CoreFunctionID.IPC_UNIX_SOCKET_CLIENT_SEND;
+                case "ipcUnixSocketServerDisconnect": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_DISCONNECT;
                 default: return -1;
             }
         }

@@ -16,28 +16,97 @@ namespace Ipc {
 
     class UnixSocketClient {
 
+        field _onDisconnect = null;
+        field _onReady = null;
+        field _state = 0; // 0 - not connected, 1 - connected, 2 - disconnected
+
         constructor(path) {
             ensureUnixSocketSupported();
-            this._handleCreate($$$('ipcUnixSocketClientCreate', path));
+            err = $$$('ipcUnixSocketClientCreate', this, path,
+                () => {
+                    this._state = 1;
+                    if (this._onReady != null) this._onReady();
+                },
+                () => {
+                    this._state = 2;
+                    if (this._onDisconnect != null) this._onDisconnect();
+                });
+            this._handleError(err);
         }
 
-        function _handleCreate(s) {
+        function _handleError(s) {
             if (s != null) {
                 throw new Exception(s);
             }
+        }
+
+        function setOnReady(fp) {
+            if (this._state == 1) {
+                timedCallback(() => fp(), 0);
+            } else {
+                this._onReady = fp;
+            }
+            return this;
+        }
+
+        function setOnDisconnect(fp) {
+            if (this._state == 2) {
+                timedCallback(() => fp(), 0);
+            } else {
+                this._onDisconnect = fp;
+            }
+            return this;
+        }
+
+        function send(msg) {
+            this._handleError($$$('ipcUnixSocketClientSend', this, msg + ''));
+            return this;
         }
     }
 
     class UnixSocketServer {
+
+        field _handleRecv = null;
+        field _onDisconnect = null;
+        field _recvQueue = [];
+
         constructor(path) {
             ensureUnixSocketSupported();
-            this._handleCreate($$$('ipcUnixSocketServerCreate', path));
+            this._handleError($$$('ipcUnixSocketServerCreate', this, path, msg => {
+                if (this._recvQueue == null) {
+                    this._handleRecv(msg);
+                } else {
+                    this._recvQueue.add(msg);
+                }
+            }));
         }
 
-        function _handleCreate(s) {
+        function _handleError(s) {
             if (s != null) {
                 throw new Exception(s);
             }
+        }
+
+        function setOnReceive(fp) {
+            this._handleRecv = fp;
+            timedCallback(() => {
+                while (this._recvQueue.length > 0) {
+                    msg = this._recvQueue[0];
+                    this._recvQueue = this._recvQueue[1:];
+                    fp(msg);
+                    sleep(0.001);
+                }
+                this._recvQueue = null;
+            }, 0);
+            return this;
+        }
+
+        function disconnect() {
+            $$$('ipcUnixSocketServerDisconnect', this);
+            timedCallback(() => {
+                if (this._onDisconnect != null) this._onDisconnect();
+            }, 0);
+            return this;
         }
     }
 }

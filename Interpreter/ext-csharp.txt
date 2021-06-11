@@ -56,6 +56,11 @@ EXT: CoreFunc_TextEncoding_ConvertTextToBytes: TextEncodingHelper.TextToBytes([A
 
 EXT: CoreFunc_TimedCallback: EventLoop.ExecuteFunctionPointerWithDelay([ARG:1], [ARG:2])
 
+EXT: UnixSocket_ClientCreate: CoreFunctions.UnixSocketClientCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: UnixSocket_ClientSend: CoreFunctions.UnixSocketClientSend([ARG:1], [ARG:2])
+EXT: UnixSocket_ServerCreate: CoreFunctions.UnixSocketServerCreate([ARG:1], [ARG:2], [ARG:3])
+EXT: UnixSocket_ServerDisconnect: CoreFunctions.UnixSocketServerDisconnect([ARG:1])
+
 EXT: _lib_fileiocommon_directoryCreate: DiskHelper.CreateDirectory([ARG:2])
 EXT: _lib_fileiocommon_directoryDelete: DiskHelper.DeleteDirectory([ARG:2])
 EXT: _lib_fileiocommon_directoryExists: DiskHelper.DirectoryExists([ARG:2])

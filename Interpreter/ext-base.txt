@@ -56,6 +56,11 @@ EXT-TYPE: int CoreFunc_TextEncoding_ConvertTextToBytes(string value, bool includ
 
 EXT-TYPE: void CoreFunc_TimedCallback(Value cb, double delay);
 
+EXT-TYPE: string UnixSocket_ClientCreate(Array<object> nativeSocketOut, string path, Value onReadyCb, Value onDisonnectCb);
+EXT-TYPE: string UnixSocket_ClientSend(object nativeSocket, string msg);
+EXT-TYPE: string UnixSocket_ServerCreate(Array<object> nativeSocketOut, string path, Value onRecvCb);
+EXT-TYPE: void UnixSocket_ServerDisconnect(object nativeSocket);
+
 # TODO: change the names of these
 EXT-TYPE: int _lib_fileiocommon_getDirParent(string path, Array<string> stringOut);
 EXT-TYPE: string _lib_fileiocommon_getDirRoot(string path);

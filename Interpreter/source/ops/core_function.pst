@@ -107,6 +107,8 @@
     case 115: Core.EmitComment("environmentIsMobile"); @import("corefuncs/environmentIsMobile.pst"); break;
     case 116: Core.EmitComment("ipcUnixSocketClientCreate"); @import("corefuncs/ipcUnixSocketClientCreate.pst"); break;
     case 117: Core.EmitComment("ipcUnixSocketServerCreate"); @import("corefuncs/ipcUnixSocketServerCreate.pst"); break;
+    case 118: Core.EmitComment("ipcUnixSocketClientSend"); @import("corefuncs/ipcUnixSocketClientSend.pst"); break;
+    case 119: Core.EmitComment("ipcUnixSocketServerDisconnect"); @import("corefuncs/ipcUnixSocketServerDisconnect.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

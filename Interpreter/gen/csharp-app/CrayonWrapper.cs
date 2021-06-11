@@ -6816,8 +6816,12 @@ namespace Interpreter.Vm
                                 break;
                             case 116:
                                 // ipcUnixSocketClientCreate;
-                                arg1 = valueStack[--valueStackSize];
-                                string1 = IpcUnixSocketClient_create(arg1);
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                string1 = IpcUnixSocketClient_create((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, arg3, arg4);
                                 if ((string1 == null))
                                 {
                                     output = globals.valueNull;
@@ -6829,8 +6833,11 @@ namespace Interpreter.Vm
                                 break;
                             case 117:
                                 // ipcUnixSocketServerCreate;
-                                arg1 = valueStack[--valueStackSize];
-                                string1 = IpcUnixSocketServer_create(arg1);
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                string1 = IpcUnixSocketServer_create((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, arg3);
                                 if ((string1 == null))
                                 {
                                     output = globals.valueNull;
@@ -6839,6 +6846,27 @@ namespace Interpreter.Vm
                                 {
                                     output = buildString(globals, string1);
                                 }
+                                break;
+                            case 118:
+                                // ipcUnixSocketClientSend;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                string1 = IpcUnixSocketClient_send(((ObjectInstance)arg1.internalValue).nativeData[0], (string)arg2.internalValue);
+                                if ((string1 == null))
+                                {
+                                    output = globals.valueNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
+                            case 119:
+                                // ipcUnixSocketServerDisconnect;
+                                arg1 = valueStack[--valueStackSize];
+                                IpcUnixSocketServer_disconnect(((ObjectInstance)arg1.internalValue).nativeData[0]);
+                                output = VALUE_NULL;
                                 break;
                         }
                         if ((row[1] == 1))
@@ -8272,14 +8300,27 @@ namespace Interpreter.Vm
             return null;
         }
 
-        public static string IpcUnixSocketClient_create(Value strValue)
+        public static string IpcUnixSocketClient_create(ObjectInstance inst, string socketName, Value onReadyCb, Value onDisconnectCb)
         {
-            return "Not implemented";
+            inst.nativeData = new object[1];
+            return CoreFunctions.UnixSocketClientCreate(inst.nativeData, socketName, onReadyCb, onDisconnectCb);
         }
 
-        public static string IpcUnixSocketServer_create(Value strValue)
+        public static string IpcUnixSocketClient_send(object server, string msg)
         {
-            return "Not implemented";
+            return CoreFunctions.UnixSocketClientSend(server, msg);
+        }
+
+        public static string IpcUnixSocketServer_create(ObjectInstance inst, string socketName, Value onRecvCb)
+        {
+            inst.nativeData = new object[1];
+            return CoreFunctions.UnixSocketServerCreate(inst.nativeData, socketName, onRecvCb);
+        }
+
+        public static int IpcUnixSocketServer_disconnect(object server)
+        {
+            CoreFunctions.UnixSocketServerDisconnect(server);
+            return 0;
         }
 
         public static bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId)

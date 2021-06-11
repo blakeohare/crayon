@@ -1,0 +1,3 @@
+﻿@import("inline/1_arg.pst");
+IpcUnixSocketServer_disconnect(Core.ForceParens((ObjectInstance)arg1.internalValue).nativeData[0]);
+output = VALUE_NULL;

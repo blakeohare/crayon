@@ -1,0 +1,7 @@
+﻿@import("inline/2_arg.pst");
+string1 = IpcUnixSocketClient_send(Core.ForceParens((ObjectInstance)arg1.internalValue).nativeData[0], (string) arg2.internalValue);
+if (string1 == null) {
+    output = globals.valueNull;
+} else {
+    output = buildString(globals, string1);
+}

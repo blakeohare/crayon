@@ -56,6 +56,11 @@ EXT: CoreFunc_TextEncoding_ConvertTextToBytes: C$textEncoding.textToBytes([ARG:1
 
 EXT: CoreFunc_TimedCallback: C$common$timedCallback([ARG:1], [ARG:2])
 
+EXT: UnixSocket_ClientCreate: (() => {})()
+EXT: UnixSocket_ClientSend: (() => {})()
+EXT: UnixSocket_ServerCreate: (() => {})()
+EXT: UnixSocket_ServerDisconnect: (() => {})()
+
 
 EXT: _lib_fileiocommon_directoryCreate: LIB$fileiocommon$fakedisk$mkdir([ARG:1], [ARG:2])
 EXT: _lib_fileiocommon_directoryDelete: LIB$fileiocommon$fakedisk$rmdir([ARG:1], [ARG:2])

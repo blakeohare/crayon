@@ -5336,8 +5336,12 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 116:
 						// ipcUnixSocketClientCreate;
-						arg1 = valueStack[--valueStackSize];
-						string1 = IpcUnixSocketClient_create(arg1);
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						string1 = IpcUnixSocketClient_create(arg1[1], arg2[1], arg3, arg4);
 						if ((string1 == null)) {
 							output = globals[0];
 						} else {
@@ -5346,13 +5350,34 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 117:
 						// ipcUnixSocketServerCreate;
-						arg1 = valueStack[--valueStackSize];
-						string1 = IpcUnixSocketServer_create(arg1);
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						string1 = IpcUnixSocketServer_create(arg1[1], arg2[1], arg3);
 						if ((string1 == null)) {
 							output = globals[0];
 						} else {
 							output = buildString(globals, string1);
 						}
+						break;
+					case 118:
+						// ipcUnixSocketClientSend;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						string1 = IpcUnixSocketClient_send((arg1[1])[3][0], arg2[1]);
+						if ((string1 == null)) {
+							output = globals[0];
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
+					case 119:
+						// ipcUnixSocketServerDisconnect;
+						arg1 = valueStack[--valueStackSize];
+						IpcUnixSocketServer_disconnect((arg1[1])[3][0]);
+						output = VALUE_NULL;
 						break;
 				}
 				if ((row[1] == 1)) {
@@ -6472,12 +6497,23 @@ var IpcNamedPipeServer_create = function(objValue, nameValue, startFn, dataFn, c
 	return null;
 };
 
-var IpcUnixSocketClient_create = function(strValue) {
-	return "Not implemented";
+var IpcUnixSocketClient_create = function(inst, socketName, onReadyCb, onDisconnectCb) {
+	inst[3] = PST$createNewArray(1);
+	return (() => {})();
 };
 
-var IpcUnixSocketServer_create = function(strValue) {
-	return "Not implemented";
+var IpcUnixSocketClient_send = function(server, msg) {
+	return (() => {})();
+};
+
+var IpcUnixSocketServer_create = function(inst, socketName, onRecvCb) {
+	inst[3] = PST$createNewArray(1);
+	return (() => {})();
+};
+
+var IpcUnixSocketServer_disconnect = function(server) {
+	(() => {})();
+	return 0;
 };
 
 var isClassASubclassOf = function(vm, subClassId, parentClassId) {
