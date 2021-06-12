@@ -134,22 +134,69 @@ namespace Interpreter.Vm
 
         internal static string UnixSocketClientCreate(object[] clientOut, string path, Value onReadyCb, Value onDisconnectCb)
         {
-            throw new NotImplementedException();
+            System.Net.Sockets.Socket socket = new System.Net.Sockets.Socket(
+                System.Net.Sockets.AddressFamily.Unix,
+                System.Net.Sockets.SocketType.Stream,
+                System.Net.Sockets.ProtocolType.Unspecified);
+            clientOut[0] = socket;
+
+            System.ComponentModel.BackgroundWorker bgworker = new System.ComponentModel.BackgroundWorker();
+            bgworker.DoWork += (sender, e) => {
+                try {
+                    socket.Connect(new System.Net.Sockets.UnixDomainSocketEndPoint(path));
+                    EventLoop.ExecuteFunctionPointer(onReadyCb, new Value[0]);
+                } catch (Exception) {
+                    EventLoop.ExecuteFunctionPointer(onDisconnectCb, new Value[0]);
+                }
+            };
+            bgworker.RunWorkerAsync();
+            return null;
         }
 
         internal static string UnixSocketClientSend(object client, string msg)
         {
-            throw new NotImplementedException();
+            System.Net.Sockets.Socket socket = (System.Net.Sockets.Socket)client;
+            if (socket == null) return "Socket closed";
+            byte[] msgBytes = System.Text.Encoding.UTF8.GetBytes(msg);
+            socket.Send(msgBytes);
+            return null;
         }
 
         internal static string UnixSocketServerCreate(object[] serverOut, string path, Value onRecvCb)
         {
-            throw new NotImplementedException();
+            if (System.IO.File.Exists(path)) {
+                System.IO.File.Delete(path);
+            }
+
+            System.Net.Sockets.Socket socket = new System.Net.Sockets.Socket(
+                System.Net.Sockets.AddressFamily.Unix,
+                System.Net.Sockets.SocketType.Stream,
+                System.Net.Sockets.ProtocolType.Unspecified);
+            serverOut[0] = socket;
+            socket.Bind(new System.Net.Sockets.UnixDomainSocketEndPoint(path));
+            socket.Listen(1); // TODO: customizable value
+            System.ComponentModel.BackgroundWorker bgworker = new System.ComponentModel.BackgroundWorker();
+            bgworker.DoWork += (e, sender) => {
+                System.Net.Sockets.Socket s = socket.Accept();
+                byte[] buffer = new byte[2048];
+                int bytesRead = 0;
+                do {
+                    bytesRead = s.Receive(buffer, 0, buffer.Length, System.Net.Sockets.SocketFlags.None);
+                    // TODO: This is problematic with multi-byte encodings. This should honestly be a byte-based API
+                    // but that would be unperformant in the VM until there's a native byte-array type. The only
+                    // use case for this at the moment will only be sending base64 so it's okay (for now).
+                    string msg = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    EventLoop.ExecuteFunctionPointerNativeArgs(onRecvCb, new object[] { msg });
+                } while (bytesRead > 0);
+            };
+            bgworker.RunWorkerAsync();
+            return null;
         }
 
         internal static void UnixSocketServerDisconnect(object server)
         {
-            throw new NotImplementedException();
+            System.Net.Sockets.Socket socket = (System.Net.Sockets.Socket)server;
+            socket.Close();
         }
 
         public static void HttpSend(Value cb, Value failCb, string url, string method, string contentType, int[] binaryContent, string textContent, string[] headersKvp, Value bytesObj, object[] bytesObjNativeData)
