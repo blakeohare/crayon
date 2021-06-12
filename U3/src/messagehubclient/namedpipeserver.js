@@ -2,6 +2,9 @@
 
 let runServer = (name, onData, onCreate, onClose) => {
 
+    let isWindows = process.platform === 'win32';
+    let path = isWindows ? ('\\\\?\\pipe\\' + name) : (process.env['TMPDIR'] + 'org.crayonlang/u3/' + name);
+
     let server = net.createServer(stream => {
         stream.on('data', c => {
             let dataStr = c.toString('utf8');
@@ -13,7 +16,7 @@ let runServer = (name, onData, onCreate, onClose) => {
         });
     });
 
-    server.listen('\\\\?\\pipe\\' + name, () => {
+    server.listen(path, () => {
         if (onCreate) onCreate();
     });
 };

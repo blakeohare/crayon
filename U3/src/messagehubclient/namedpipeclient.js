@@ -15,13 +15,15 @@ const runClient = (name, onCreate, onClose) => {
 
     let attemptToCreateConnection = () => {
 
+        let isWindows = process.platform === 'win32';
+        let path = isWindows ? ('\\\\?\\pipe\\' + name) : (process.env['TMPDIR'] + 'org.crayonlang/u3/' + name);
         let resolution = null;
         let p = new Promise(res => {
             resolution = res;
         });
 
         let attemptedSocket = null;
-        attemptedSocket = net.createConnection('\\\\?\\pipe\\' + name, () => {
+        attemptedSocket = net.createConnection(path, () => {
             resolution(true);
             attemptedSocket.on('close', () => {
                 if (onClose) onClose();
