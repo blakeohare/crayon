@@ -36,6 +36,8 @@ def main(args):
     print("Unknown platform: '" + platform + "'")
     return
 
+  print("Building U3 for " + platform)
+
   if isWindows:
     props = {
       'arch': 'win32',
@@ -50,6 +52,8 @@ def main(args):
       'u3-out': 'mac',
       'bin-name': 'u3window',
     }
+  else:
+    raise Exception()
 
   push_cd(os.path.join('..', 'U3'))
 

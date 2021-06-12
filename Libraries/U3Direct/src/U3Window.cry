@@ -29,7 +29,13 @@ namespace U3Direct {
                 this._hub.setDesktopInitializer(token => {
                     cryHome = Environment.getEnvironmentVariable('CRAYON_HOME');
                     if (cryHome == null) throw new Exception("CRAYON_HOME not set.");
-                    u3Executable = cryHome + '\\u3\\u3window.exe'; // TODO: check platform first
+
+                    env = Environment.getEnvironment();
+                    if (env['platform'] == 'windows') {
+                        u3Executable = cryHome + '\\u3\\u3window.exe';
+                    } else {
+                        u3Executable = cryHome + '/u3/u3window.app';
+                    }
                     args = [
                         '--u3:token', token,
                         '--u3:pid', Process.getCurrentProcessId() + ''

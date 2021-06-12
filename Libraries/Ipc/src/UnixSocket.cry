@@ -101,6 +101,11 @@ namespace Ipc {
             return this;
         }
 
+        function setOnDisconnect(fp) {
+            this._onDisconnect = fp;
+            return this;
+        }
+
         function disconnect() {
             $$$('ipcUnixSocketServerDisconnect', this);
             timedCallback(() => {

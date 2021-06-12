@@ -1,5 +1,22 @@
-﻿namespace MessageHub {
+﻿import Environment;
+import FileIO;
+import Ipc;
 
+namespace MessageHub {
+
+    /*
+        Nix (Mac/Linux) hub does its steps in the following order:
+        - Create a UnixSocketServer to receive commands (although nothing will come)
+        - Run the desktop initializer function. This will presumably start a process that uses the MessageHub client library.
+        - The MessageHub client library will start a UnixSocketServer to receive messages on its end.
+        - Once that file socket is done, then it sends a message to the Crayon process that simply says "DOWNSTREAM_READY"
+        - Back in the Crayon process, the "DOWNSTREAM_READY" message is received.
+        - At this point both pipes are fully operational.
+
+        The file names of the pipes are:
+        - downstream pipe (to Process): "$TMPDIR/org.crayonlang/u3/msghub_{TOKEN}_ds"
+        - upstream pipe (to Crayon): "$TMPDIR/org.crayonlang/u3/msghub_{TOKEN}_ds"
+    */
     class NixHub {
 
         field token;
@@ -8,19 +25,64 @@
         field onClose;
         field recvRaw;
 
+        field socketClient;
+        field socketServer;
+
+        field waitingForDownstreamReady = true;
+
+        field tmpdir;
+
         constructor(token, recvRaw, onReady, onClose, desktopInit) {
             this.token = token;
             this.recvRaw = recvRaw;
             this.onReady = onReady;
             this.onClose = onClose;
+            this.desktopInit = desktopInit;
+
+            tmpdir = [Environment.getEnvironmentVariable('TMPDIR')];
+            tmpdir.add(tmpdir[-1] + 'org.crayonlang');
+            tmpdir.add(tmpdir[-1] + '/u3');
+            for (d : tmpdir) {
+                if (d == null) throw new Exception();
+                if (!FileIO.directoryExists(d)) FileIO.directoryCreate(d);
+            }
+            this.tmpdir = tmpdir.pop();
         }
 
         function start() {
-            throw new NotImplementedException();
+            this.socketServer = new UnixSocketServer(this.tmpdir + '/msghub_' + this.token + '_us')
+                .setOnReceive(this.receiveData)
+                .setOnDisconnect(this.receiveClose);
+
+
+            if (this.desktopInit != null) {
+                this.desktopInit();
+            }
+        }
+
+        function receiveData(data) {
+            // TODO: this needs to be rewritten to accept arbitrarily sliced data and then
+            // interpret it out of the "length@payload" format. All that logic is currently
+            // residing in the native C# code for the NamedPipeServer.
+            if (this.waitingForDownstreamReady) {
+                if (data.trim() != 'DOWNSTREAM_READY') throw new Exception('|' + data + '|@' + data.length); // did not receive expected response.
+                this.waitingForDownstreamReady = false;
+                this.socketClient = new UnixSocketClient(this.tmpdir + '/msghub_' + this.token + '_ds'
+                    // , () => { this.receiveClose(); } // TODO: close notification
+                );
+                this.onReady();
+                return;
+            }
+
+            this.recvRaw(data);
+        }
+
+        function receiveClose() {
+            this.onClose();
         }
 
         function sendString(rawString) {
-            throw new NotImplementedException();
+            this.socketClient.writeLine(rawString.length + '@' + rawString);
         }
     }
 }
