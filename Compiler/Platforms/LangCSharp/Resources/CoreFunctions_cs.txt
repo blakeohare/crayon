@@ -176,6 +176,71 @@ namespace Interpreter.Vm
             socket.Bind(new System.Net.Sockets.UnixDomainSocketEndPoint(path));
             socket.Listen(1); // TODO: customizable value
             System.ComponentModel.BackgroundWorker bgworker = new System.ComponentModel.BackgroundWorker();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            bool intPhase = true;
+            int targetLength = 0;
+            bgworker.DoWork += (e, sender) => {
+                System.Net.Sockets.Socket s = socket.Accept();
+                byte[] buffer = new byte[2048];
+                int bytesRead = 0;
+                bool stillRunning = true;
+                while (stillRunning)
+                {
+                    if (intPhase)
+                    {
+                        bytesRead = s.Receive(buffer, 0, 1, System.Net.Sockets.SocketFlags.None);
+                        if (bytesRead == 0)
+                        {
+                            stillRunning = false;
+                        }
+                        else if (buffer[0] == (byte)'@')
+                        {
+                            targetLength = int.Parse(sb.ToString());
+                            intPhase = false;
+                            sb.Clear();
+                        }
+                        else
+                        {
+                            sb.Append((char)buffer[0]);
+                        }
+                    }
+                    else
+                    {
+                        bytesRead = s.Receive(buffer, 0, System.Math.Min(buffer.Length, targetLength), System.Net.Sockets.SocketFlags.None);
+                        for (int i = 0; i < bytesRead; ++i)
+                        {
+                            // TODO: This is problematic with multi-byte encodings.
+                            sb.Append((char)buffer[i]);
+                        }
+                        if (sb.Length == targetLength)
+                        {
+                            intPhase = true;
+                            string msg = sb.ToString();
+                            sb.Clear();
+                            EventLoop.ExecuteFunctionPointerNativeArgs(onRecvCb, new object[] { msg });
+                        }
+                    }
+                }
+            };
+            bgworker.RunWorkerAsync();
+            return null;
+        }
+
+        internal static string UnixSocketServerCreate_CORRECT_NO_HACK(object[] serverOut, string path, Value onRecvCb)
+        {
+            if (System.IO.File.Exists(path)) {
+                System.IO.File.Delete(path);
+            }
+
+            System.Net.Sockets.Socket socket = new System.Net.Sockets.Socket(
+                System.Net.Sockets.AddressFamily.Unix,
+                System.Net.Sockets.SocketType.Stream,
+                System.Net.Sockets.ProtocolType.Unspecified);
+            serverOut[0] = socket;
+            socket.Bind(new System.Net.Sockets.UnixDomainSocketEndPoint(path));
+            socket.Listen(1); // TODO: customizable value
+            System.ComponentModel.BackgroundWorker bgworker = new System.ComponentModel.BackgroundWorker();
+
             bgworker.DoWork += (e, sender) => {
                 System.Net.Sockets.Socket s = socket.Accept();
                 byte[] buffer = new byte[2048];
