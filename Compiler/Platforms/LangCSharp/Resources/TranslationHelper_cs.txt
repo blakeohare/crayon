@@ -17,16 +17,30 @@ namespace Interpreter.Vm
             Environment.OSVersion.Platform == PlatformID.Win32Windows ||
             Environment.OSVersion.Platform == PlatformID.WinCE;
 
+        private static string environmentDescriptor = null;
         public static string EnvironmentDescriptor
         {
             get
             {
-                switch (Environment.OSVersion.Platform)
+                if (environmentDescriptor == null)
                 {
-                    case PlatformID.Unix: return "linux|csharp";
-                    case PlatformID.MacOSX: return "mac|csharp";
-                    default: return "windows|csharp";
+                    if (Environment.OSVersion.Platform == PlatformID.Unix)
+                    {
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                        {
+                            environmentDescriptor = "mac|csharp";
+                        }
+                        else
+                        {
+                            environmentDescriptor = "linux|csharp";
+                        }
+                    }
+                    else
+                    {
+                        environmentDescriptor = "windows|csharp";
+                    }
                 }
+                return environmentDescriptor;
             }
         }
 
