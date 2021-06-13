@@ -36,17 +36,20 @@ namespace U3Direct {
                     ];
 
                     env = Environment.getEnvironment()['platform'];
+                    useShell = false;
                     if (env == 'windows') {
-                        u3Executable = cryHome + '\\u3\\u3window.exe';
+                        execFile = cryHome + '\\u3\\u3window.exe';
                     } else if (env == 'mac') {
-                        args = ['--args'] + args;
-                        u3Executable = cryHome + '/u3/u3window.app/Contents/MacOS/u3window';
+                        args = [cryHome + '/u3/u3window.app', '--args'] + args;
+                        execFile = 'open';
+                        useShell = true;
                     } else {
                         throw new NotImplementedException();
                     }
 
                     p = new Process()
-                        .setExecutable(u3Executable)
+                        .setExecutable(execFile)
+                        .setShellMode(useShell)
                         .onFinish(status => {
                             print("Finished with status: " + status);
                         })
