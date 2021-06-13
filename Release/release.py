@@ -306,6 +306,9 @@ def buildRelease(args):
 	# Copy U3 window
 	copyDirectory(u3_dir, copyToDir + '/u3')
 
+	if isMac:
+		runCommand('chmod +x ' + copyToDir + '/u3/u3window.app/Contents/MacOS/u3window')
+
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
 	if isWindows:
