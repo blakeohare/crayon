@@ -15,6 +15,7 @@ namespace ProcessUtil {
         field _isFinished = false;
         field _pid = null;
         field _cwd = null;
+        field _shellMode = false;
 
         constructor() {
             if (!Process.isSupported()) throw new Exception("Launching processes are not supported on this platform.");
@@ -70,6 +71,11 @@ namespace ProcessUtil {
             return this;
         }
 
+        function setShellMode(value) {
+            this._shellMode = value == true;
+            return this;
+        }
+
         function isRunning() { return this._isRunning; }
 
         function run() {
@@ -88,8 +94,18 @@ namespace ProcessUtil {
                     if (handler != null) handler(str);
                 }
             };
-            this._pid = $$$('processRun', this, this._executable, this._args ?? [], onData, (this._cwd ?? '') + '');
+
+            if (this._shellMode == true) {
+                if (this._onStdErr != null || this._onStdErr != null) {
+                    throw new InvalidArgumentException("Shell mode processes cannot use STDOUT/STDERR output");
+                }
+            }
+
+            flags = this._shellMode == true ? 1 : 0;
+
+            this._pid = $$$('processRun', this, this._executable, this._args ?? [], onData, (this._cwd ?? '') + '', flags);
             // TODO: return status codes as negative numbers.
+            if (this._pid == -2) throw new Exception("Cannot execute .app bundles directly. Use shell mode or run the contained binary directly.");
             if (this._pid == -1) throw new Exception("An error occurred while launching the process.");
             return this._pid;
         }

@@ -5143,13 +5143,14 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 92:
 						// processRun;
-						valueStackSize -= 5;
+						valueStackSize -= 6;
+						arg6 = valueStack[(valueStackSize + 5)];
 						arg5 = valueStack[(valueStackSize + 4)];
 						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						output = buildInteger(globals, ProcessHelper_processRun(arg1[1], arg2[1], arg3[1], arg4, arg5[1]));
+						output = buildInteger(globals, ProcessHelper_processRun(arg1[1], arg2[1], arg3[1], arg4, arg5[1], arg6[1]));
 						break;
 					case 93:
 						// processKill;
@@ -7332,7 +7333,7 @@ var ProcessHelper_kill = function(pid) {
 	return false;
 };
 
-var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb, cwd) {
+var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb, cwd, flags) {
 	if ((cwd.length == 0)) {
 		cwd = null;
 	}

@@ -3,12 +3,13 @@
     string exPath,
     ListImpl args,
     Value onDataCb,
-    string cwd) {
+    string cwd,
+    int flags) {
 
     if (cwd.Size() == 0) cwd = null;
     Array<int> intOut = new Array<int>(1);
     wrapper.nativeData = new Array<object>(1);
-    wrapper.nativeData[0] = Extension.CoreFunc_ProcessRun(exPath, listImplToStringArray(args), onDataCb, intOut, cwd);
+    wrapper.nativeData[0] = Extension.CoreFunc_ProcessRun(exPath, listImplToStringArray(args), onDataCb, intOut, cwd, flags);
 
     return intOut[0];
 }

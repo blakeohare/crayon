@@ -6620,13 +6620,14 @@ namespace Interpreter.Vm
                                 break;
                             case 92:
                                 // processRun;
-                                valueStackSize -= 5;
+                                valueStackSize -= 6;
+                                arg6 = valueStack[(valueStackSize + 5)];
                                 arg5 = valueStack[(valueStackSize + 4)];
                                 arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                output = buildInteger(globals, ProcessHelper_processRun((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4, (string)arg5.internalValue));
+                                output = buildInteger(globals, ProcessHelper_processRun((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4, (string)arg5.internalValue, (int)arg6.internalValue));
                                 break;
                             case 93:
                                 // processKill;
@@ -9389,7 +9390,7 @@ namespace Interpreter.Vm
             return ProcessHelper.KillProcess(pid);
         }
 
-        public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb, string cwd)
+        public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb, string cwd, int flags)
         {
             if ((cwd.Length == 0))
             {
@@ -9397,7 +9398,7 @@ namespace Interpreter.Vm
             }
             int[] intOut = new int[1];
             wrapper.nativeData = new object[1];
-            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(exPath, listImplToStringArray(args), onDataCb, intOut, cwd);
+            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(exPath, listImplToStringArray(args), onDataCb, intOut, cwd, flags);
             return intOut[0];
         }
 

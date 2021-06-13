@@ -41,9 +41,10 @@ namespace Interpreter.Vm
             return true;
         }
 
-        internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut, string cwd)
+        internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut, string cwd, int flags)
         {
             bool isWindows = System.Environment.OSVersion.Platform == System.PlatformID.Win32NT;
+            bool useShell = (flags & 1) != 0;
 
             System.Diagnostics.Process p = new System.Diagnostics.Process();
 
@@ -52,9 +53,10 @@ namespace Interpreter.Vm
             {
                 actualArgs.AddRange(new string[] { "/C", execName });
             }
-            else
+            else if (!useShell && execName.EndsWith(".app") && System.IO.Directory.Exists(execName))
             {
-                // TODO: check for .app at the end and if it's a directory and throw an appropriate error
+                intOut[0] = -2;
+                return null;
             }
             actualArgs.AddRange(args);
 
@@ -72,15 +74,18 @@ namespace Interpreter.Vm
 
             List<string> unifiedStream = new List<string>();
 
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            p.OutputDataReceived += (sender, e) => {
-                EmitToBuffer(callbackFp, unifiedStream, "S", e.Data);
-            };
-            p.ErrorDataReceived += (sender, e) => {
-                EmitToBuffer(callbackFp, unifiedStream, "E", e.Data);
-            };
+            startInfo.UseShellExecute = useShell;
+            if (!useShell)
+            {
+                startInfo.RedirectStandardOutput = true;
+                startInfo.RedirectStandardError = true;
+                p.OutputDataReceived += (sender, e) => {
+                    EmitToBuffer(callbackFp, unifiedStream, "S", e.Data);
+                };
+                p.ErrorDataReceived += (sender, e) => {
+                    EmitToBuffer(callbackFp, unifiedStream, "E", e.Data);
+                };
+            }
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             if (cwd != null) startInfo.WorkingDirectory = cwd;
             p.EnableRaisingEvents = true;
@@ -88,10 +93,13 @@ namespace Interpreter.Vm
 
             p.Exited += (sender, e) =>
             {
-                string stdRemaining = p.StandardOutput.ReadToEnd();
-                if (stdRemaining.Length > 0)
+                if (!useShell)
                 {
-                    EmitToBuffer(callbackFp, unifiedStream, "S", stdRemaining);
+                    string stdRemaining = p.StandardOutput.ReadToEnd();
+                    if (stdRemaining.Length > 0)
+                    {
+                        EmitToBuffer(callbackFp, unifiedStream, "S", stdRemaining);
+                    }
                 }
                 EmitToBuffer(callbackFp, unifiedStream, "X", "0");
             };

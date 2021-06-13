@@ -1,5 +1,5 @@
-﻿@import("inline/5_arg.pst");
+﻿@import("inline/6_arg.pst");
 
 output = buildInteger(
     globals,
-    ProcessHelper_processRun((ObjectInstance) arg1.internalValue, (string) arg2.internalValue, (ListImpl) arg3.internalValue, arg4, (string) arg5.internalValue));
+    ProcessHelper_processRun((ObjectInstance) arg1.internalValue, (string) arg2.internalValue, (ListImpl) arg3.internalValue, arg4, (string) arg5.internalValue, (int) arg6.internalValue));
