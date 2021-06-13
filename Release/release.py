@@ -121,6 +121,22 @@ def list_directories(path):
 			output.append(file)
 	return output
 
+def list_all_files_recursive(path):
+	output = []
+	list_all_files_recursive_impl(path, '', output)
+	return output
+
+def list_all_files_recursive_impl(abs_path, rel_path, output):
+	for file in os.listdir(abs_path):
+		if file.lower() == '.ds_store': continue
+
+		abs_file = os.path.join(abs_path, file)
+		rel_file = file if rel_path == '' else os.path.join(rel_path, file)
+		if os.path.isdir(abs_file):
+			list_all_files_recursive_impl(abs_file, rel_file, output)
+		else:
+			output.append(rel_file)
+
 def runCommand(cmd):
 	c = os.popen(cmd)
 	output = c.read()
@@ -307,7 +323,9 @@ def buildRelease(args):
 	copyDirectory(u3_dir, copyToDir + '/u3')
 
 	if isMac:
-		runCommand('chmod +x ' + copyToDir + '/u3/u3window.app/Contents/MacOS/u3window')
+		u3win_app = copyToDir + '/u3/u3window.app'
+		for file in list_all_files_recursive(u3win_app):
+			runCommand('chmod +x ' + u3win_app + '/' + file.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)'))
 
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
