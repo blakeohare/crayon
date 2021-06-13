@@ -44,36 +44,43 @@ namespace Interpreter.Vm
         internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut, string cwd)
         {
             bool isWindows = System.Environment.OSVersion.Platform == System.PlatformID.Win32NT;
+
             System.Diagnostics.Process p = new System.Diagnostics.Process();
 
             List<string> actualArgs = new List<string>();
-            if (isWindows) {
+            if (isWindows)
+            {
                 actualArgs.AddRange(new string[] { "/C", execName });
-            } else {
-                actualArgs.Add("--args");
+            }
+            else
+            {
+                // TODO: check for .app at the end and if it's a directory and throw an appropriate error
             }
             actualArgs.AddRange(args);
 
             string argsFlatString = string.Join(" ", actualArgs.Select(s => EscapeStringForCommandLine(s)));
 
             System.Diagnostics.ProcessStartInfo startInfo;
-            if (isWindows) {
+            if (isWindows)
+            {
                 startInfo = new System.Diagnostics.ProcessStartInfo("C:\\Windows\\System32\\cmd.exe", argsFlatString);
-            } else {
+            }
+            else
+            {
                 startInfo = new System.Diagnostics.ProcessStartInfo(execName, argsFlatString);
             }
 
-            startInfo.UseShellExecute = false;
-            bool isMacApp = !isWindows && System.IO.Directory.Exists(execName);
             List<string> unifiedStream = new List<string>();
-            if (isMacApp) {
-                startInfo.UseShellExecute = true;
-            } else {
-                startInfo.RedirectStandardOutput = true;
-                startInfo.RedirectStandardError = true;
-                p.OutputDataReceived += (sender, e) => { EmitToBuffer(callbackFp, unifiedStream, "S", e.Data); };
-                p.ErrorDataReceived += (sender, e) => { EmitToBuffer(callbackFp, unifiedStream, "E", e.Data); };
-            }
+
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            p.OutputDataReceived += (sender, e) => {
+                EmitToBuffer(callbackFp, unifiedStream, "S", e.Data);
+            };
+            p.ErrorDataReceived += (sender, e) => {
+                EmitToBuffer(callbackFp, unifiedStream, "E", e.Data);
+            };
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             if (cwd != null) startInfo.WorkingDirectory = cwd;
             p.EnableRaisingEvents = true;
@@ -81,12 +88,10 @@ namespace Interpreter.Vm
 
             p.Exited += (sender, e) =>
             {
-                if (!isMacApp) {
-                    string stdRemaining = p.StandardOutput.ReadToEnd();
-                    if (stdRemaining.Length > 0)
-                    {
-                        EmitToBuffer(callbackFp, unifiedStream, "S", stdRemaining);
-                    }
+                string stdRemaining = p.StandardOutput.ReadToEnd();
+                if (stdRemaining.Length > 0)
+                {
+                    EmitToBuffer(callbackFp, unifiedStream, "S", stdRemaining);
                 }
                 EmitToBuffer(callbackFp, unifiedStream, "X", "0");
             };

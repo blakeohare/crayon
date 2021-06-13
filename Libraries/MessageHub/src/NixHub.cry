@@ -82,7 +82,7 @@ namespace MessageHub {
         }
 
         function sendString(rawString) {
-            this.socketClient.writeLine(rawString.length + '@' + rawString);
+            this.socketClient.send(rawString.length + '@' + rawString);
         }
     }
 }

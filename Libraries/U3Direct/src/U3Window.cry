@@ -30,18 +30,26 @@ namespace U3Direct {
                     cryHome = Environment.getEnvironmentVariable('CRAYON_HOME');
                     if (cryHome == null) throw new Exception("CRAYON_HOME not set.");
 
-                    env = Environment.getEnvironment();
-                    if (env['platform'] == 'windows') {
-                        u3Executable = cryHome + '\\u3\\u3window.exe';
-                    } else {
-                        u3Executable = cryHome + '/u3/u3window.app';
-                    }
                     args = [
                         '--u3:token', token,
                         '--u3:pid', Process.getCurrentProcessId() + ''
                     ];
+
+                    env = Environment.getEnvironment()['platform'];
+                    if (env == 'windows') {
+                        u3Executable = cryHome + '\\u3\\u3window.exe';
+                    } else if (env == 'mac') {
+                        args = ['--args'] + args;
+                        u3Executable = cryHome + '/u3/u3window.app/Contents/MacOS/u3window';
+                    } else {
+                        throw new NotImplementedException();
+                    }
+
                     p = new Process()
-                        .setExecutable(Environment.replaceEnvironmentVariables(u3Executable))
+                        .setExecutable(u3Executable)
+                        .onFinish(status => {
+                            print("Finished with status: " + status);
+                        })
                         .setArgs(args);
                     p.run();
                 });
