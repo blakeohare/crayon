@@ -1,5 +1,5 @@
 VERSION = '2.9.0'
-VM_TEMP_DIR = 'VmTemp'
+VM_TEMP_DIR = 'temp'
 VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 
 LIBRARIES = [
@@ -278,18 +278,17 @@ def buildRelease(args):
 	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copyToDir))
 	log("Set the CRAYON_HOME to " + os.environ['CRAYON_HOME'])
 	
-	# Use the newly built compiler to generate the VM source code (in VmTemp)
+	# Use the newly built compiler to generate the VM source code (in temp)
 	print("Generating VM code...")
 	new_crayon_executable = copyToDir + '/crayon' + ('' if isMac else '.exe')
 	if isMac:
 		runCommand('chmod +x ' + new_crayon_executable)
 	runtimeCompilationCommand = canonicalize_sep(new_crayon_executable) + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
 
-	log("Generating the VM C# project in VmTemp/ with the command: " + runtimeCompilationCommand)
+	log("Generating the VM C# project in temp/ with the command: " + runtimeCompilationCommand)
 	print('running:')
 	print('  ' + runtimeCompilationCommand)
 	print(runCommand(runtimeCompilationCommand))
-
 
 	# Now compile the generated VM source code	
 	print("Compiling VM for distribution...")
@@ -303,7 +302,7 @@ def buildRelease(args):
 		'-p:PublishTrimmed=true',
 		'-p:PublishSingleFile=true'
 	])
-	log("Compiling the VM in VmTemp using the command: " + cmd)
+	log("Compiling the VM in temp using the command: " + cmd)
 	print(runCommand(cmd))
 	
 	# Copy the Crayon runtime
@@ -345,6 +344,30 @@ def buildRelease(args):
 	# TODO: no longer needed! Need to copy the generated bits instead as a crypkg
 	#copyDirectory('../Interpreter/source', copyToDir + '/vmsrc', '.pst')
 
+
+	# Create a dummy project with ALL libraries
+	log("Ensuring libraries compile")
+	print("Ensure libraries compile\n")
+	old_cwd = os.getcwd()
+	os.chdir(os.path.join('.', VM_TEMP_DIR))
+	runCommand(os.path.join('..', new_crayon_executable) + ' -genDefaultProj LibTest')
+	os.chdir(old_cwd)
+
+	code = []
+	for lib in LIBRARIES:
+		if lib in ('FileIOCommon', ): continue
+		code.append('import ' + lib + ';\n')
+	code.append('\nfunction main() { }\n')
+	writeFile(VM_TEMP_DIR + '/LibTest/source/main.cry', ''.join(code), '\n')
+	result = runCommand(new_crayon_executable + ' ' + VM_TEMP_DIR + '/LibTest/LibTest.build -target csharp')
+	if result.strip() != '':
+		err = "*** ERROR: Libraries did not compile cleanly!!! ***"
+		print('*' * len(err))
+		print(err)
+		print('*' * len(err))
+		print("The build output was this:")
+		print(result)
+		return
 
 	# Hooray, you're done!
 	log("Completed")
