@@ -29,7 +29,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new NotImplementedException();
+            throw new ParserException(this.FirstToken, "The class '" + this.ClassDefinition.NameToken.Value + "' cannot be used here.");
         }
 
         internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
