@@ -280,7 +280,7 @@ def buildRelease(args):
 	
 	# Use the newly built compiler to generate the VM source code (in temp)
 	print("Generating VM code...")
-	new_crayon_executable = copyToDir + '/crayon' + ('' if isMac else '.exe')
+	new_crayon_executable = canonicalize_sep(copyToDir + '/crayon' + ('' if isMac else '.exe'))
 	if isMac:
 		runCommand('chmod +x ' + new_crayon_executable)
 	runtimeCompilationCommand = canonicalize_sep(new_crayon_executable) + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
@@ -359,7 +359,7 @@ def buildRelease(args):
 		code.append('import ' + lib + ';\n')
 	code.append('\nfunction main() { }\n')
 	writeFile(VM_TEMP_DIR + '/LibTest/source/main.cry', ''.join(code), '\n')
-	result = runCommand(new_crayon_executable + ' ' + VM_TEMP_DIR + '/LibTest/LibTest.build -target csharp')
+	result = runCommand(new_crayon_executable + ' ' + canonicalize_sep(VM_TEMP_DIR + '/LibTest/LibTest.build') + ' -target csharp')
 	if result.strip() != '':
 		err = "*** ERROR: Libraries did not compile cleanly!!! ***"
 		print('*' * len(err))
