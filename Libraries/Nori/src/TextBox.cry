@@ -2,6 +2,8 @@
 
     const TextBox_HasBorder = 'tb.border';
     const TextBox_MultiLine = 'tb.multiline';
+    const TextBox_Watermark = 'tb.wm';
+    const TextBox_WatermarkColor = 'tb.wmc';
 
     class AbstractTextBox : InputElement {
 
@@ -19,6 +21,11 @@
             return this._setValue(text);
         }
 
+        function setWatermarkText(text) { return this._setStringProperty(TextBox_Watermark, text + ''); }
+        function getWatermarkText() { return this._getStringProperty(TextBox_Watermark); }
+        function getWatermarkColor() { return this._getColorProperty(TextBox_WatermarkColor); }
+        function setWatermarkColor(r, g, b, a = 255) { return this._setColorProperty(TextBox_WatermarkColor, r, g, b, a); }
+
         function getShowBorder() { return this._getBoolProperty(TextBox_HasBorder); }
         function setShowBorder(value) { return this._setBoolProperty(TextBox_HasBorder, value); }
 
@@ -31,6 +38,8 @@
                 case 'text':
                     return this.setText(strValue);
                 case 'showBorder': return this._setBooleanAsString(TextBox_HasBorder, strValue);
+                case 'watermark': return this.setWatermarkText(strValue);
+                case 'watermarkColor': return this._setColorWithString(TextBox_WatermarkColor, strValue);
                 default: return base.setAttributeWithString(name, strValue);
             }
         }

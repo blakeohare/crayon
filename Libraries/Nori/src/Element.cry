@@ -99,6 +99,8 @@ namespace Nori {
             ScrollPanel_ScrollToX: true,
             ScrollPanel_ScrollToY: true,
             TextBlock_Text: true,
+            TextBox_Watermark: true,
+            TextBox_WatermarkColor: true,
         };
 
         field _id;

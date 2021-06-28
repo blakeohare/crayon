@@ -525,6 +525,14 @@ function setProperty(e, key, value) {
             }
 
             break;
+        case 'tb.wm':
+            e.firstChild.placeholder = value + '';
+            break;
+        case 'tb.wmc':
+            // oh no, this is impossible currently
+            // TODO: add support for this with dynamically generated stylesheet rules, although this needs to be
+            // done in tandem with the overall themeing system.
+            break;
 
         case 'input.onfocus':
         case 'input.onblur':

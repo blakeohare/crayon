@@ -33,6 +33,8 @@
         'input.value': true,
         'scroll.gox': true,
         'scroll.goy': true,
+        'tb.wm': true,
+        'tb.wmc': true,
     },
     layoutExemptProperties: {
         'el.bgcolor': true,
@@ -66,6 +68,8 @@
         'input.onblur': true,
         'input.changed': true,
         'tb.multiline': true,
+        'tb.wm': true,
+        'tb.wmc': true,
         'scroll.gox': true,
         'scroll.goy': true,
     },
