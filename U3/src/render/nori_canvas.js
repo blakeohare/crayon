@@ -49,7 +49,7 @@
         let cvWidth = canvas.width;
         let cvHeight = canvas.height;
         let end = start + len;
-        let r, g, b, a, w, h, x, y, lineWidth, x2, y2, hex, img, theta;
+        let r, g, b, a, w, h, x, y, lineWidth, x2, y2, x3, y3, hex, img, theta;
         let tx, ty, sx, sy, tw, th, sw, sh;
         let i = start;
         let imgLookup = canvas._NORI_imgLookup;
@@ -119,6 +119,29 @@
                     } else {
                         ctx.fill();
                         ctx.closePath();
+                    }
+                    break;
+
+                case 'T':
+                    a = buffer[i + 4];
+                    x = buffer[i + 5];
+                    y = buffer[i + 6];
+                    x2 = buffer[i + 7];
+                    y2 = buffer[i + 8];
+                    x3 = buffer[i + 9];
+                    y3 = buffer[i + 10];
+                    i += 11;
+                    if (a > 0) {
+                        if (a < 255) ctx.globalAlpha = a / 255;
+
+                        ctx.fillStyle = hex;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x2, y2);
+                        ctx.lineTo(x3, y3);
+                        ctx.fill();
+
+                        if (a < 255) ctx.globalAlpha = 1;
                     }
                     break;
 

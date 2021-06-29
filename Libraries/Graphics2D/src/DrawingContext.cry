@@ -68,6 +68,13 @@ namespace Graphics2D {
             return this;
         }
 
+        function triangle(x1, y1, x2, y2, x3, y3, rOrColor, g = null, b = null, a = 255) {
+            this._verifyColor(rOrColor, g, b, a);
+            $$$('argVerifyNums', "Triangle coordinates must be numbers.", x1, y1, x2, y2, x3, y3, 6);
+            this._buffer.add('T', this._colR, this._colG, this._colB, this._colA, x1, y1, x2, y2, x3, y3);
+            return this;
+        }
+
         function line(x1, y1, x2, y2, w, rOrColor, g = null, b = null, a = 255) {
             this._verifyColor(rOrColor, g, b, a);
             $$$('argVerifyNums', "Line coordinates must be numbers.", x1, y1, x2, y2, 4);
