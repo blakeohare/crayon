@@ -133,14 +133,14 @@
                     i += 11;
                     if (a > 0) {
                         if (a < 255) ctx.globalAlpha = a / 255;
-                        
+
                         ctx.fillStyle = hex;
                         ctx.beginPath();
                         ctx.moveTo(x, y);
                         ctx.lineTo(x2, y2);
                         ctx.lineTo(x3, y3);
                         ctx.fill();
-                        
+
                         if (a < 255) ctx.globalAlpha = 1;
                     }
                     break;
