@@ -5,36 +5,17 @@ namespace Crayon
 {
     internal class Program
     {
-
-#if DEBUG
-        private const bool IS_RELEASE = false;
-#else
-        private const bool IS_RELEASE = true;
-#endif
-
         static void Main(string[] args)
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
 
-            Command command = FlagParser.Parse(commandLineArgs, IS_RELEASE);
-            if (command.HasErrors)
-            {
-                ErrorPrinter.ShowErrors(command.Errors);
-            }
-            else
-            {
-                using (new PerformanceSection("Crayon"))
-                {
-                    Pipeline.MainPipeline.Run(command, IS_RELEASE);
-                }
-            }
-
-#if DEBUG
-            if (command.ShowPerformanceMarkers)
-            {
-                ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
-            }
-#endif
+            CommonUtil.Wax.WaxHub waxHub = new CommonUtil.Wax.WaxHub();
+            waxHub.RegisterService(new RouterService());
+            waxHub.AwaitSendRequest(
+                "router",
+                new System.Collections.Generic.Dictionary<string, object>() {
+                    { "args", commandLineArgs }
+                });
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
