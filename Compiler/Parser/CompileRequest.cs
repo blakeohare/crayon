@@ -10,7 +10,6 @@ namespace Parser
         public string DelegateMainTo { get { return this.BuildContext.DelegateMainTo; } }
         public Localization.Locale CompilerLocale { get { return this.BuildContext.CompilerLocale; } }
         public string[] LocalDeps { get { return this.BuildContext.LocalDeps; } }
-        public string[] RemoteDeps { get { return this.BuildContext.RemoteDeps; } }
         public string ProjectDirectory { get { return this.BuildContext.ProjectDirectory; } }
 
         private Dictionary<string, object> compileTimeVariableValues = new Dictionary<string, object>();
