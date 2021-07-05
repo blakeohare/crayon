@@ -34,7 +34,6 @@ namespace Build.BuildParseNodes
         // see Common/OrientationParser.cs
         public string Orientation { get; set; }
         public string[] LocalDeps { get; set; }
-        public string[] RemoteDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; set; }
         public string CompilerLocale { get; set; }

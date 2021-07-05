@@ -30,7 +30,6 @@ namespace Build
         public string ProjectTitle { get; set; }
         public string Orientation { get; set; }
         public string[] LocalDeps { get; set; }
-        public string[] RemoteDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; private set; }
         public bool JsFullPage { get; set; }
@@ -129,7 +128,6 @@ namespace Build
             string iosBundlePrefix = desiredTarget.IosBundlePrefix ?? buildInput.IosBundlePrefix;
             string javaPackage = desiredTarget.JavaPackage ?? buildInput.JavaPackage;
             string[] localDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, buildInput.LocalDeps);
-            string[] remoteDeps = CombineAndFlattenStringArrays(desiredTarget.RemoteDeps, buildInput.RemoteDeps);
             string description = desiredTarget.Description ?? buildInput.Description ?? "";
             string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
             string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
@@ -172,9 +170,6 @@ namespace Build
                 .Select(t => pr.Replace(t))
                 .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
                 .ToArray();
-            remoteDeps = remoteDeps
-                .Select(t => pr.Replace(t))
-                .ToArray();
             description = pr.Replace(description);
 
             BuildContext buildContext = new BuildContext()
@@ -192,7 +187,6 @@ namespace Build
                 ProjectTitle = projectTitle,
                 Orientation = orientation,
                 LocalDeps = localDeps,
-                RemoteDeps = remoteDeps,
                 IosBundlePrefix = iosBundlePrefix,
                 JavaPackage = javaPackage,
                 JsFullPage = jsFullPage,

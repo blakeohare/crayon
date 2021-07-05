@@ -60,13 +60,12 @@ namespace Build.BuildParseNodes
             object removeSymbols = json.Get("removeSymbols");
             item.RemoveSymbols = removeSymbols == null ? null : new NullableBoolean(removeSymbols is bool && (bool)removeSymbols);
 
-            List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();
             foreach (string depPath in (json.GetAsList("deps") ?? new object[0]).OfType<string>())
             {
                 if (depPath.StartsWith("http://") || depPath.StartsWith("https://"))
                 {
-                    remoteDeps.Add(depPath);
+                    throw new System.NotImplementedException(); // Remote dependencies no longer supported...for now.
                 }
                 else
                 {
@@ -79,8 +78,6 @@ namespace Build.BuildParseNodes
                 .Select(t => t.TrimEnd('/'))
                 .Distinct()
                 .ToArray();
-
-            item.RemoteDeps = remoteDeps.ToArray();
 
             List<SourceItem> sourceDirectories = new List<SourceItem>();
             string source = json.GetAsString("source");
