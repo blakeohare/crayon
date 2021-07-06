@@ -11,7 +11,7 @@ namespace Parser
     internal class CompilationScope
     {
         public string ScopeKey { get; private set; }
-        public AssemblyMetadata Metadata { get; private set; }
+        public ExternalAssemblyMetadata Metadata { get; private set; }
         public int ScopeNumId { get; private set; }
         public Locale Locale { get; private set; }
         public ProgrammingLanguage ProgrammingLanguage { get; private set; }
@@ -31,7 +31,7 @@ namespace Parser
 
         public CompilationScope(
             AssemblyContext topLevelAssembly,
-            AssemblyMetadata metadata,
+            ExternalAssemblyMetadata metadata,
             Locale locale,
             ProgrammingLanguage programmingLanguage)
         {

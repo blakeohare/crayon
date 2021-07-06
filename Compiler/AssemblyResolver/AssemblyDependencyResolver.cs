@@ -7,17 +7,17 @@ namespace AssemblyResolver
     public class AssemblyDependencyResolver
     {
         // Essentially, just a post-order traversal
-        public static AssemblyMetadata[] GetAssemblyResolutionOrder(IEnumerable<AssemblyMetadata> usedAssemblies)
+        public static InternalAssemblyMetadata[] GetAssemblyResolutionOrder(IEnumerable<InternalAssemblyMetadata> usedAssemblies)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            AssemblyMetadata[] unorderedAssemblies = usedAssemblies.OrderBy(md => md.ID.ToLowerInvariant()).ToArray();
+            InternalAssemblyMetadata[] unorderedAssemblies = usedAssemblies.OrderBy(md => md.ID.ToLowerInvariant()).ToArray();
 
-            List<AssemblyMetadata> orderedLibraries = new List<AssemblyMetadata>();
-            HashSet<AssemblyMetadata> usedLibraries = new HashSet<AssemblyMetadata>();
+            List<InternalAssemblyMetadata> orderedLibraries = new List<InternalAssemblyMetadata>();
+            HashSet<InternalAssemblyMetadata> usedLibraries = new HashSet<InternalAssemblyMetadata>();
 
-            HashSet<AssemblyMetadata> cycleCheck = new HashSet<AssemblyMetadata>();
-            Stack<AssemblyMetadata> breadcrumbs = new Stack<AssemblyMetadata>();
-            foreach (AssemblyMetadata assembly in unorderedAssemblies)
+            HashSet<InternalAssemblyMetadata> cycleCheck = new HashSet<InternalAssemblyMetadata>();
+            Stack<InternalAssemblyMetadata> breadcrumbs = new Stack<InternalAssemblyMetadata>();
+            foreach (InternalAssemblyMetadata assembly in unorderedAssemblies)
             {
                 if (!usedLibraries.Contains(assembly))
                 {
@@ -32,11 +32,11 @@ namespace AssemblyResolver
         }
 
         private static void LibraryUsagePostOrderTraversal(
-            AssemblyMetadata libraryToUse,
-            List<AssemblyMetadata> libraryOrderOut,
-            HashSet<AssemblyMetadata> usedLibraries,
-            HashSet<AssemblyMetadata> cycleCheck,
-            Stack<AssemblyMetadata> breadcrumbs)
+            InternalAssemblyMetadata libraryToUse,
+            List<InternalAssemblyMetadata> libraryOrderOut,
+            HashSet<InternalAssemblyMetadata> usedLibraries,
+            HashSet<InternalAssemblyMetadata> cycleCheck,
+            Stack<InternalAssemblyMetadata> breadcrumbs)
         {
             if (usedLibraries.Contains(libraryToUse)) return;
 
@@ -47,7 +47,7 @@ namespace AssemblyResolver
                 System.Text.StringBuilder message = new System.Text.StringBuilder();
                 message.Append("There is a dependency cycle in your libraries: ");
                 bool first = true;
-                foreach (AssemblyMetadata breadcrumb in breadcrumbs)
+                foreach (InternalAssemblyMetadata breadcrumb in breadcrumbs)
                 {
                     if (first) first = false;
                     else message.Append(" -> ");
@@ -57,7 +57,7 @@ namespace AssemblyResolver
             }
             cycleCheck.Add(libraryToUse);
 
-            foreach (AssemblyMetadata dependency in libraryToUse.DirectDependencies)
+            foreach (InternalAssemblyMetadata dependency in libraryToUse.DirectDependencies)
             {
                 LibraryUsagePostOrderTraversal(dependency, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
             }
@@ -69,28 +69,28 @@ namespace AssemblyResolver
         }
 
         private static void LibraryDepTreeFlattenerRecursive(
-            Dictionary<string, AssemblyMetadata> libsOut,
-            AssemblyMetadata current)
+            Dictionary<string, InternalAssemblyMetadata> libsOut,
+            InternalAssemblyMetadata current)
         {
             string id = current.ID;
             if (!libsOut.ContainsKey(id))
             {
                 libsOut[id] = current;
-                foreach (AssemblyMetadata dep in current.DirectDependencies)
+                foreach (InternalAssemblyMetadata dep in current.DirectDependencies)
                 {
                     LibraryDepTreeFlattenerRecursive(libsOut, dep);
                 }
             }
         }
 
-        private static AssemblyMetadata[] LibraryDepTreeFlattener(AssemblyMetadata[] topLevelDeps)
+        private static InternalAssemblyMetadata[] LibraryDepTreeFlattener(InternalAssemblyMetadata[] topLevelDeps)
         {
-            Dictionary<string, AssemblyMetadata> flattened = new Dictionary<string, AssemblyMetadata>();
-            foreach (AssemblyMetadata dep in topLevelDeps)
+            Dictionary<string, InternalAssemblyMetadata> flattened = new Dictionary<string, InternalAssemblyMetadata>();
+            foreach (InternalAssemblyMetadata dep in topLevelDeps)
             {
                 LibraryDepTreeFlattenerRecursive(flattened, dep);
             }
-            List<AssemblyMetadata> output = new List<AssemblyMetadata>();
+            List<InternalAssemblyMetadata> output = new List<InternalAssemblyMetadata>();
             foreach (string flattenedKey in flattened.Keys.OrderBy(n => n.ToLowerInvariant()))
             {
                 output.Add(flattened[flattenedKey]);
@@ -114,14 +114,14 @@ namespace AssemblyResolver
             deep dependencies. "rootDeps" is the "name" value of just the library dependencies
             used by the root user-defined scope.
         */
-        public static string GetDependencyTreeJson(AssemblyMetadata[] libraries)
+        public static string GetDependencyTreeJson(InternalAssemblyMetadata[] libraries)
         {
             Dictionary<string, string[]> depsById = new Dictionary<string, string[]>();
             string[] rootDeps = libraries.Select(am => am.ID).OrderBy(n => n.ToLowerInvariant()).ToArray();
 
-            Dictionary<string, AssemblyMetadata> allLibraries = new Dictionary<string, AssemblyMetadata>();
+            Dictionary<string, InternalAssemblyMetadata> allLibraries = new Dictionary<string, InternalAssemblyMetadata>();
 
-            foreach (AssemblyMetadata lib in LibraryDepTreeFlattener(libraries))
+            foreach (InternalAssemblyMetadata lib in LibraryDepTreeFlattener(libraries))
             {
                 string[] deps = new HashSet<string>(lib.DirectDependencies
                     .Select(assembly => assembly.ID))

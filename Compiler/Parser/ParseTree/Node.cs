@@ -13,7 +13,7 @@ namespace Parser.ParseTree
             this.Owner = owner;
         }
 
-        public AssemblyMetadata Assembly
+        public ExternalAssemblyMetadata Assembly
         {
             get { return this.CompilationScope.Metadata; }
         }

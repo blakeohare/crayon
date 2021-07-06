@@ -11,8 +11,8 @@ namespace AssemblyResolver
 {
     public class AssemblyFinder
     {
-        public AssemblyMetadata[] AssemblyFlatList { get; private set; }
-        private Dictionary<string, AssemblyMetadata> libraryLookup;
+        public InternalAssemblyMetadata[] AssemblyFlatList { get; private set; }
+        private Dictionary<string, InternalAssemblyMetadata> libraryLookup;
 
         public AssemblyFinder() : this(null, null) { }
 
@@ -23,7 +23,7 @@ namespace AssemblyResolver
             this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory).ToArray();
 
             libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
-            foreach (AssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
+            foreach (InternalAssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
             {
                 foreach (Locale supportedLocale in assemblyMetadata.SupportedLocales)
                 {
@@ -32,15 +32,15 @@ namespace AssemblyResolver
             }
         }
 
-        public AssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string name)
+        public InternalAssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string name)
         {
-            AssemblyMetadata assembly;
+            InternalAssemblyMetadata assembly;
             return libraryLookup.TryGetValue(name, out assembly)
                 ? assembly
                 : null;
         }
 
-        private static AssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
+        private static InternalAssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
             string[] nullableBuildFileLocalDepsList,
             string nullableProjectDirectory)
         {
@@ -109,11 +109,11 @@ namespace AssemblyResolver
             // For example, a custom library referenced by a build file will override a built-in library.
             // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts
             // buttons in the corners of the screen, but without having to change any code to be platform-aware.
-            Dictionary<string, AssemblyMetadata> uniqueAssemblies = new Dictionary<string, AssemblyMetadata>();
+            Dictionary<string, InternalAssemblyMetadata> uniqueAssemblies = new Dictionary<string, InternalAssemblyMetadata>();
             foreach (string path in verifiedLibraryPaths)
             {
                 string defaultName = Path.GetFileName(path);
-                AssemblyMetadata metadata = AssemblyMetadataFactory.CreateLibrary(path, defaultName);
+                InternalAssemblyMetadata metadata = AssemblyMetadataFactory.CreateLibrary(path, defaultName);
 
                 // TODO: don't hardcode EN
                 string uniqueKey = "en:" + metadata.ID;

@@ -8,21 +8,9 @@ namespace AssemblyResolver
 {
     public static class AssemblyMetadataFactory
     {
-        public static AssemblyMetadata CreateUserDefined(Locale locale)
+        public static InternalAssemblyMetadata CreateLibrary(string directory, string id)
         {
-            AssemblyMetadata m = new AssemblyMetadata();
-            m.ID = ".";
-            m.InternalLocale = locale;
-            m.CanonicalKey = ".";
-            m.SupportedLocales = new HashSet<Locale>() { locale };
-            m.OnlyImportableFrom = new HashSet<string>();
-            m.IsUserDefined = true;
-            return m;
-        }
-
-        public static AssemblyMetadata CreateLibrary(string directory, string id)
-        {
-            AssemblyMetadata m = new AssemblyMetadata();
+            InternalAssemblyMetadata m = new ExternalAssemblyMetadata();
             m.Directory = directory;
             m.ID = id;
             m.IsUserDefined = false;
