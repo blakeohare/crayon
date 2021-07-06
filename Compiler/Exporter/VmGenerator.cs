@@ -38,7 +38,7 @@ namespace Exporter
             Platform.AbstractPlatform platform,
             ExportRequest nullableExportBundle,
             Build.ResourceDatabase resourceDatabase,
-            ICollection<AssemblyMetadata> relevantLibraries,
+            bool usesU3,
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
         {
@@ -46,9 +46,6 @@ namespace Exporter
             {
                 bool isStandaloneVm = mode == VmGenerationMode.EXPORT_VM_AND_LIBRARIES;
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags(isStandaloneVm) ?? new Dictionary<string, object>();
-
-                Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExportPastelFree(platform, librariesByID);
 
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
@@ -67,7 +64,7 @@ namespace Exporter
                         .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableExportBundle.JsFilePrefix)
                         .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
                         .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations)
-                        .SetOption(ExportOptionKey.USES_U3, libraries.Where(lib => lib.Name == "U3Direct").Any());
+                        .SetOption(ExportOptionKey.USES_U3, usesU3);
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPaths);
                     if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);

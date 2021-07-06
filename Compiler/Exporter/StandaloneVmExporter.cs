@@ -4,6 +4,7 @@ using CommonUtil.Disk;
 using Platform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exporter
 {
@@ -51,11 +52,12 @@ namespace Exporter
 
             AbstractPlatform platform = platformProvider.GetPlatform(platformId);
             AssemblyMetadata[] assemblyMetadataList = new AssemblyFinder().AssemblyFlatList;
+            bool usesU3 = assemblyMetadataList.Any(a => a.ID == "U3Direct");
             Dictionary<string, FileOutput> fileOutputContext = new Dictionary<string, FileOutput>();
             ExportStandaloneVmSourceCodeForPlatform(
                 fileOutputContext,
                 platform,
-                assemblyMetadataList,
+                usesU3,
                 vmTargetDirectory);
             ExportUtil.EmitFilesToDisk(fileOutputContext, vmTargetDirectory);
         }
@@ -63,7 +65,7 @@ namespace Exporter
         private static void ExportStandaloneVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> fileOutput,
             AbstractPlatform platform,
-            AssemblyMetadata[] allLibraries,
+            bool usesU3,
             string vmTargetDir)
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
@@ -72,7 +74,7 @@ namespace Exporter
                 platform,
                 null,
                 null,
-                allLibraries,
+                usesU3,
                 vmTargetDir,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
         }
