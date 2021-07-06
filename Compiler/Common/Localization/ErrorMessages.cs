@@ -1,4 +1,4 @@
-﻿namespace Localization
+﻿namespace Common.Localization
 {
     public enum ErrorMessages
     {

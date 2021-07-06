@@ -36,7 +36,7 @@ namespace Parser
         }
         public Token TokenInfo { get; set; }
 
-        internal ParserException(Localization.ErrorMessages errorType, Token token, Localization.Locale locale)
+        internal ParserException(Common.Localization.ErrorMessages errorType, Token token, Common.Localization.Locale locale)
             : this(token, locale.Strings.Get(errorType.ToString()))
         {
             this.TokenInfo = token;
@@ -88,7 +88,7 @@ namespace Parser
         // Throws an exception, but also returns an exception so that you can use 'throw' syntax
         // at the calling site to prevent the compiler from complaining about control flow branches
         // that aren't actually accessible.
-        internal static ParserException ThrowException(Localization.Locale locale, Localization.ErrorMessages errorType, Token token, params string[] args)
+        internal static ParserException ThrowException(Common.Localization.Locale locale, Common.Localization.ErrorMessages errorType, Token token, params string[] args)
         {
             throw new ParserException(token, locale.Strings.Get(errorType.ToString(), args));
         }

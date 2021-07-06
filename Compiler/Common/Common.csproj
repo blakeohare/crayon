@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="icons\*.png" />
+    <EmbeddedResource Include="Localization\Languages\*\*.txt" />
   </ItemGroup>
 
 </Project>

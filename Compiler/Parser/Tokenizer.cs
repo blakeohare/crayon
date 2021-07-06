@@ -17,14 +17,14 @@ namespace Parser
                     return true;
 
                 default:
-                    switch (Localization.CharSetDetector.GetCharType(c))
+                    switch (Common.Localization.CharSetDetector.GetCharType(c))
                     {
-                        case Localization.CharType.ACCENTED:
-                        case Localization.CharType.LETTER:
-                        case Localization.CharType.NUMBER:
-                        case Localization.CharType.KANJI:
-                        case Localization.CharType.HIRAGANA:
-                        case Localization.CharType.KATAKANA:
+                        case Common.Localization.CharType.ACCENTED:
+                        case Common.Localization.CharType.LETTER:
+                        case Common.Localization.CharType.NUMBER:
+                        case Common.Localization.CharType.KANJI:
+                        case Common.Localization.CharType.HIRAGANA:
+                        case Common.Localization.CharType.KATAKANA:
                             return true;
                         default:
                             return false;
@@ -54,7 +54,7 @@ namespace Parser
 
         public static Token[] Tokenize(FileScope file)
         {
-            Localization.Locale locale = file.CompilationScope.Locale;
+            Common.Localization.Locale locale = file.CompilationScope.Locale;
             string code = file.Content;
 
             // Add a newline and a dummy character at the end.

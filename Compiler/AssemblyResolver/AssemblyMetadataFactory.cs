@@ -1,4 +1,4 @@
-﻿using Localization;
+﻿using Common.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using CommonUtil.Disk;

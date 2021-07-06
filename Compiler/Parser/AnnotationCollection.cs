@@ -1,8 +1,7 @@
 ﻿using Common;
-using Localization;
+using Common.Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Parser
 {

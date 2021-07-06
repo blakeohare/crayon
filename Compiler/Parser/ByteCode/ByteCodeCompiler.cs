@@ -1,4 +1,4 @@
-﻿using Localization;
+﻿using Common.Localization;
 using Parser.ByteCode.Nodes;
 using Parser.ParseTree;
 using System;
