@@ -6,7 +6,22 @@ using System.Linq;
 
 namespace AssemblyResolver
 {
-    public class AssemblyMetadata
+    public static class AssemblyTODO
+    {
+        public static ExternalAssemblyMetadata Bridge(InternalAssemblyMetadata md)
+        {
+            return (ExternalAssemblyMetadata)md;
+        }
+
+        public static ExternalAssemblyMetadata[] Bridge(IList<InternalAssemblyMetadata> md)
+        {
+            return md.Cast<ExternalAssemblyMetadata>().ToArray();
+        }
+    }
+
+    public class ExternalAssemblyMetadata : InternalAssemblyMetadata { }
+
+    public class InternalAssemblyMetadata
     {
         public override string ToString()
         {
@@ -21,17 +36,17 @@ namespace AssemblyResolver
         public HashSet<string> OnlyImportableFrom { get; set; }
         public bool IsUserDefined { get; set; }
         public Dictionary<string, string> NameByLocale { get; set; }
-        private Dictionary<string, AssemblyMetadata> directDependencies = new Dictionary<string, AssemblyMetadata>();
+        private Dictionary<string, InternalAssemblyMetadata> directDependencies = new Dictionary<string, InternalAssemblyMetadata>();
 
         public string Version { get { return "v1"; } } // TODO: versions
         public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
 
-        public AssemblyMetadata()
+        public InternalAssemblyMetadata()
         {
             this.NameByLocale = new Dictionary<string, string>();
         }
 
-        public AssemblyMetadata[] DirectDependencies
+        public InternalAssemblyMetadata[] DirectDependencies
         {
             get
             {
@@ -42,11 +57,11 @@ namespace AssemblyResolver
             }
         }
 
-        public void RegisterDependencies(AssemblyMetadata assembly)
+        public void RegisterDependencies(InternalAssemblyMetadata assembly)
         {
             if (this.directDependencies == null)
             {
-                this.directDependencies = new Dictionary<string, AssemblyMetadata>();
+                this.directDependencies = new Dictionary<string, InternalAssemblyMetadata>();
             }
             this.directDependencies[assembly.ID] = assembly;
         }
@@ -56,7 +71,7 @@ namespace AssemblyResolver
             return this.NameByLocale.ContainsKey(locale.ID) ? this.NameByLocale[locale.ID] : this.ID;
         }
 
-        public bool IsAllowedImport(AssemblyMetadata fromAssembly)
+        public bool IsAllowedImport(InternalAssemblyMetadata fromAssembly)
         {
             if (this.IsImportRestricted)
             {

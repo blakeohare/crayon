@@ -22,7 +22,8 @@ namespace Parser.Resolver
 
             parser.VerifyNoBadImports();
 
-            AssemblyMetadata[] assembliesInDependencyOrder = AssemblyDependencyResolver.GetAssemblyResolutionOrder(parser.ScopeManager.ImportedAssemblyScopes.Select(scope => scope.Metadata));
+            ExternalAssemblyMetadata[] assembliesInDependencyOrder = AssemblyTODO.Bridge(AssemblyDependencyResolver.GetAssemblyResolutionOrder(parser.ScopeManager.ImportedAssemblyScopes.Select(scope => scope.Metadata)));
+
             List<CompilationScope> compilationScopes = new List<CompilationScope>(
                 assembliesInDependencyOrder.Select(asm => compilationScopeLookup[asm.ID]));
             compilationScopes.Add(parser.RootScope);

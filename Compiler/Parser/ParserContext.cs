@@ -37,7 +37,7 @@ namespace Parser
             this.DelegateMainTo = compileRequest.DelegateMainTo;
             Locale rootLocale = compileRequest.CompilerLocale;
 
-            AssemblyMetadata userDefinedAssembly = AssemblyMetadataFactory.CreateUserDefined(compileRequest.CompilerLocale);
+            ExternalAssemblyMetadata userDefinedAssembly = CreateRootAssembly(compileRequest.CompilerLocale);
             CompilationScope userDefinedScope = new CompilationScope(this.TopLevelAssembly, userDefinedAssembly, rootLocale, this.TopLevelAssembly.ProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
@@ -45,6 +45,18 @@ namespace Parser
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.LiteralLookup = new LiteralLookup();
+        }
+
+        private static ExternalAssemblyMetadata CreateRootAssembly(Locale locale)
+        {
+            ExternalAssemblyMetadata m = new ExternalAssemblyMetadata();
+            m.ID = ".";
+            m.InternalLocale = locale;
+            m.CanonicalKey = ".";
+            m.SupportedLocales = new HashSet<Locale>() { locale };
+            m.OnlyImportableFrom = new HashSet<string>();
+            m.IsUserDefined = true;
+            return m;
         }
 
         private int localeCount = -1;
@@ -192,7 +204,7 @@ namespace Parser
 
         public TopLevelEntity CurrentCodeContainer { get; set; }
 
-        public AssemblyMetadata CurrentLibrary { get { return this.CurrentScope.Metadata; } }
+        public ExternalAssemblyMetadata CurrentLibrary { get { return this.CurrentScope.Metadata; } }
 
         public CompilationScope CurrentScope { get; private set; }
 

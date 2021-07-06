@@ -35,7 +35,7 @@ namespace Parser
         internal LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
         {
             string anyValidCoreLibId = "en:Core";
-            AssemblyMetadata coreLib = this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(anyValidCoreLibId);
+            ExternalAssemblyMetadata coreLib = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(anyValidCoreLibId));
             string name = coreLib.GetName(parser.CurrentLocale);
             return this.GetOrImportAssembly(parser, null, name);
         }
@@ -57,12 +57,12 @@ namespace Parser
             string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
 
             string secondAttemptedKey = name;
-            AssemblyMetadata assemblyMetadata = this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name);
+            ExternalAssemblyMetadata assemblyMetadata = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name));
             Locale effectiveLocale = fromLocale;
 
             if (assemblyMetadata == null)
             {
-                assemblyMetadata = this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(name);
+                assemblyMetadata = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(name));
                 if (assemblyMetadata != null &&
                     assemblyMetadata.SupportedLocales.Contains(fromLocale) &&
                     assemblyMetadata.InternalLocale != fromLocale)
