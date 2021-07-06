@@ -138,7 +138,6 @@ namespace Crayon.Pipeline
                             outputDirectory,
                             compilation.ByteCode,
                             resourceDatabase,
-                            assemblies,
                             usesU3,
                             exportBundle,
                             new PlatformProvider(),
@@ -150,6 +149,7 @@ namespace Crayon.Pipeline
                         command.VmPlatform,
                         new PlatformProvider(),
                         command.VmExportDirectory,
+                        false,
                         isRelease);
                     return new Result() { Errors = standaloneVmExportResponse.Errors };
 
@@ -283,7 +283,6 @@ namespace Crayon.Pipeline
                 outputFiles,
                 outputFolder,
                 compilation.ByteCode,
-                compilation.AllScopesMetadata,
                 resourceDatabase.ResourceManifestFile.TextContent,
                 resourceDatabase.ImageResourceManifestFile == null ? null : resourceDatabase.ImageResourceManifestFile.TextContent);
             return new ExportResponse()

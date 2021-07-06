@@ -1,5 +1,4 @@
-﻿using AssemblyResolver;
-using Common;
+﻿using Common;
 using CommonUtil;
 using CommonUtil.Disk;
 using System.Collections.Generic;
@@ -14,14 +13,12 @@ namespace Exporter
             Dictionary<string, FileOutput> fileOutputContext,
             string outputDirectory,
             string byteCode,
-            IList<AssemblyMetadata> assemblies,
             string resourceManifest,
             string imageManifest2Text)
         {
             byte[] cbxFileBytes = GenerateCbxBinaryData(
                 resourceManifest,
                 imageManifest2Text,
-                assemblies,
                 byteCode);
 
             fileOutputContext[projectId + ".cbx"] = new FileOutput()
@@ -47,7 +44,6 @@ namespace Exporter
         private static byte[] GenerateCbxBinaryData(
             string resourceManifestText,
             string imageManifest2Text,
-            IList<AssemblyMetadata> assemblies,
             string byteCode)
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
@@ -60,18 +56,6 @@ namespace Exporter
             cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
             cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
             cbxOutput.AddRange(code);
-
-            List<string> libraries = new List<string>();
-            foreach (AssemblyMetadata libMetadata in assemblies)
-            {
-                libraries.Add(libMetadata.ID);
-                libraries.Add(libMetadata.Version);
-            }
-            string libsData = string.Join(",", libraries);
-            byte[] libsDataBytes = StringUtil.ToUtf8Bytes(libsData);
-            cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
-            cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
-            cbxOutput.AddRange(libsDataBytes);
 
             byte[] resourceManifest = StringUtil.ToUtf8Bytes(resourceManifestText);
             cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));

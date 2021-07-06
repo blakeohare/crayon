@@ -1,5 +1,4 @@
-﻿using AssemblyResolver;
-using Common;
+﻿using Common;
 using CommonUtil.Disk;
 using Platform;
 using System;
@@ -14,13 +13,14 @@ namespace Exporter
             string platformId,
             IPlatformProvider platformProvider,
             string vmTargetDirectoryRaw,
+            bool usesU3,
             bool isRelease)
         {
             if (isRelease)
             {
                 try
                 {
-                    RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
+                    RunImpl(platformId, platformProvider, usesU3, vmTargetDirectoryRaw);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -32,7 +32,7 @@ namespace Exporter
             }
             else
             {
-                RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
+                RunImpl(platformId, platformProvider, usesU3, vmTargetDirectoryRaw);
             }
             return new ExportResponse();
         }
@@ -40,6 +40,7 @@ namespace Exporter
         public static void RunImpl(
             string platformId,
             IPlatformProvider platformProvider,
+            bool usesU3,
             string vmTargetDirectoryRaw)
         {
             string vmTargetDirectory = vmTargetDirectoryRaw;
@@ -51,8 +52,6 @@ namespace Exporter
             vmTargetDirectory = FileUtil.FinalizeTilde(vmTargetDirectory);
 
             AbstractPlatform platform = platformProvider.GetPlatform(platformId);
-            AssemblyMetadata[] assemblyMetadataList = new AssemblyFinder().AssemblyFlatList;
-            bool usesU3 = assemblyMetadataList.Any(a => a.ID == "U3Direct");
             Dictionary<string, FileOutput> fileOutputContext = new Dictionary<string, FileOutput>();
             ExportStandaloneVmSourceCodeForPlatform(
                 fileOutputContext,
