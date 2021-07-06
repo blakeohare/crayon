@@ -21,7 +21,6 @@ namespace JavaScriptAppAndroid
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
-            IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
         {
@@ -49,7 +48,6 @@ namespace JavaScriptAppAndroid
             this.ParentPlatform.ExportProject(
                 basicProject,
                 byteCode,
-                libraries,
                 resourceDatabase,
                 options);
 
@@ -123,9 +121,7 @@ namespace JavaScriptAppAndroid
             return this.ParentPlatform.GetConstantFlags();
         }
 
-        public override void ExportStandaloneVm(
-            Dictionary<string, FileOutput> output,
-            IList<LibraryForExport> everyLibrary)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
         {
             throw new NotImplementedException();
         }

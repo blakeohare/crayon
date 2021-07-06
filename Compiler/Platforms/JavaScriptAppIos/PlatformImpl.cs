@@ -21,7 +21,6 @@ namespace JavaScriptAppIos
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
-            IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
         {
@@ -35,7 +34,6 @@ namespace JavaScriptAppIos
             this.ParentPlatform.ExportProject(
                 basicProject,
                 byteCode,
-                libraries,
                 resourceDatabase,
                 options);
 
@@ -139,9 +137,7 @@ namespace JavaScriptAppIos
             }
         }
 
-        public override void ExportStandaloneVm(
-            Dictionary<string, FileOutput> output,
-            IList<LibraryForExport> everyLibrary)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
         {
             throw new NotImplementedException();
         }

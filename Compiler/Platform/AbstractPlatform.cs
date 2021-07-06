@@ -157,14 +157,11 @@ namespace Platform
             }
         }
 
-        public abstract void ExportStandaloneVm(
-            Dictionary<string, FileOutput> output,
-            IList<LibraryForExport> everyLibrary);
+        public abstract void ExportStandaloneVm(Dictionary<string, FileOutput> output);
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
-            IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options);
 

@@ -18,11 +18,13 @@
         JS_HEAD_EXTRAS,
         JS_FULL_PAGE,
         LAUNCHSCREEN_PATH,
-        LIBRARIES_USED,
         PROJECT_ID,
         SUPPORTED_ORIENTATION,
         VERSION,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
+
+        // TODO: this needs to be streamlined in some other non-library-specific way
+        USES_U3,
     }
 }

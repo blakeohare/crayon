@@ -60,14 +60,14 @@ namespace Exporter
                         .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableExportBundle.GuidSeed)
                         .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
                         .SetOption(ExportOptionKey.PROJECT_TITLE, nullableExportBundle.ProjectTitle)
-                        .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
                         .SetOption(ExportOptionKey.HAS_ICON, nullableExportBundle.IconPaths.Length > 0)
                         .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableExportBundle.LaunchScreenPath != null)
                         .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableExportBundle.IosBundlePrefix)
                         .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableExportBundle.JavaPackage)
                         .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableExportBundle.JsFilePrefix)
                         .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
-                        .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations);
+                        .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations)
+                        .SetOption(ExportOptionKey.USES_U3, libraries.Where(lib => lib.Name == "U3Direct").Any());
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPaths);
                     if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);
@@ -77,15 +77,12 @@ namespace Exporter
                     platform.ExportProject(
                         output,
                         byteCode,
-                        libraries,
                         resourceDatabase,
                         options);
                 }
                 else
                 {
-                    platform.ExportStandaloneVm(
-                        output,
-                        libraries);
+                    platform.ExportStandaloneVm(output);
                 }
             }
         }
