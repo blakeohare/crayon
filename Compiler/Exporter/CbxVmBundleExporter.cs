@@ -1,5 +1,4 @@
-﻿using AssemblyResolver;
-using Build;
+﻿using Build;
 using Common;
 using CommonUtil.Disk;
 using System;
@@ -15,7 +14,6 @@ namespace Exporter
             string outputDirectory,
             string byteCode,
             ResourceDatabase resourceDatabase,
-            IList<AssemblyMetadata> assemblies,
             bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider,
@@ -25,7 +23,7 @@ namespace Exporter
             {
                 try
                 {
-                    RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, assemblies, usesU3, exportRequest, platformProvider);
+                    RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, usesU3, exportRequest, platformProvider);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -37,7 +35,7 @@ namespace Exporter
             }
             else
             {
-                RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, assemblies, usesU3, exportRequest, platformProvider);
+                RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, usesU3, exportRequest, platformProvider);
             }
             return new ExportResponse();
         }
@@ -48,7 +46,6 @@ namespace Exporter
             string outputDirectory,
             string byteCode,
             ResourceDatabase resourceDatabase,
-            IList<AssemblyMetadata> assemblies,
             bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider)

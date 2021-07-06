@@ -1,8 +1,5 @@
-﻿using AssemblyResolver;
-using Common;
-using CommonUtil.Collections;
+﻿using Common;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Exporter
 {
@@ -14,24 +11,6 @@ namespace Exporter
 
     public class VmGenerator
     {
-        private List<Platform.LibraryForExport> GetLibrariesForExportPastelFree(
-            Platform.AbstractPlatform platform,
-            Dictionary<string, AssemblyMetadata> librariesById)
-        {
-            List<Platform.LibraryForExport> output = new List<Platform.LibraryForExport>();
-            foreach (string libraryId in librariesById.Keys.OrderBy(k => k))
-            {
-                AssemblyMetadata libraryMetadata = librariesById[libraryId];
-                LibraryExporter library = LibraryExporter.Get(libraryMetadata, platform);
-                Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
-                    libraryMetadata.ID,
-                    libraryMetadata.Version,
-                    libraryMetadata.Directory);
-                output.Add(libraryForExport);
-            }
-            return output;
-        }
-
         public void GenerateVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> output,
             string byteCode,
