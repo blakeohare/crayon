@@ -8,7 +8,7 @@ namespace Parser
         public string ProjectId { get { return this.BuildContext.ProjectID; } }
         public Build.AssemblyContext TopLevelAssembly { get { return this.BuildContext.TopLevelAssembly; } }
         public string DelegateMainTo { get { return this.BuildContext.DelegateMainTo; } }
-        public Localization.Locale CompilerLocale { get { return this.BuildContext.CompilerLocale; } }
+        public Common.Localization.Locale CompilerLocale { get { return this.BuildContext.CompilerLocale; } }
         public string[] LocalDeps { get { return this.BuildContext.LocalDeps; } }
         public string ProjectDirectory { get { return this.BuildContext.ProjectDirectory; } }
 

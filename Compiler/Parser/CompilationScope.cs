@@ -1,7 +1,7 @@
 ﻿using AssemblyResolver;
 using Build;
 using Common;
-using Localization;
+using Common.Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;

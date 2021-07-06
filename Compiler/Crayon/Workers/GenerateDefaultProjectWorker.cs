@@ -28,14 +28,14 @@ namespace Crayon
         private class DefaultProjectGeneratorImpl
         {
             private string originalProjectId;
-            private Localization.Locale projectLocale;
+            private Common.Localization.Locale projectLocale;
 
             public string ProjectID { get; private set; }
 
             public DefaultProjectGeneratorImpl(string projectId, string localeId)
             {
                 this.originalProjectId = projectId.Trim();
-                this.projectLocale = Localization.Locale.Get(localeId);
+                this.projectLocale = Common.Localization.Locale.Get(localeId);
                 this.ProjectID = StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
             }
 
