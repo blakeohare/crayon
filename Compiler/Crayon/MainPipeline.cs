@@ -109,6 +109,7 @@ namespace Crayon.Pipeline
                         ? command.OutputDirectoryOverride
                         : buildContext.OutputFolder;
                     IList<AssemblyResolver.AssemblyMetadata> assemblies = compilation.AllScopesMetadata;
+                    bool usesU3 = assemblies.Any(a => a.ID == "U3Direct");
 
                     ResourceDatabase resourceDatabase;
                     if (isRelease)
@@ -138,6 +139,7 @@ namespace Crayon.Pipeline
                             compilation.ByteCode,
                             resourceDatabase,
                             assemblies,
+                            usesU3,
                             exportBundle,
                             new PlatformProvider(),
                             isRelease);
@@ -206,7 +208,6 @@ namespace Crayon.Pipeline
             return new ExportRequest()
             {
                 ByteCode = byteCode,
-                LibraryAssemblies = libraryAssemblies.ToArray(),
                 ProjectID = buildContext.ProjectID,
                 Version = buildContext.TopLevelAssembly.Version,
                 Description = buildContext.TopLevelAssembly.Description,

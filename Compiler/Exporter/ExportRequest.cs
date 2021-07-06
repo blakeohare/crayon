@@ -8,7 +8,6 @@ namespace Exporter
         public string ByteCode { get; set; }
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
-        public IList<AssemblyResolver.AssemblyMetadata> LibraryAssemblies { get; set; }
         public string[] IconPaths { get; set; }
         public string LaunchScreenPath { get; set; }
         public string ProjectTitle { get; set; }

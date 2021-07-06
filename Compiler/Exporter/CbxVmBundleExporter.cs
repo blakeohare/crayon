@@ -16,6 +16,7 @@ namespace Exporter
             string byteCode,
             ResourceDatabase resourceDatabase,
             IList<AssemblyMetadata> assemblies,
+            bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider,
             bool isRelease)
@@ -24,7 +25,7 @@ namespace Exporter
             {
                 try
                 {
-                    RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, assemblies, exportRequest, platformProvider);
+                    RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, assemblies, usesU3, exportRequest, platformProvider);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -36,7 +37,7 @@ namespace Exporter
             }
             else
             {
-                RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, assemblies, exportRequest, platformProvider);
+                RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, assemblies, usesU3, exportRequest, platformProvider);
             }
             return new ExportResponse();
         }
@@ -48,6 +49,7 @@ namespace Exporter
             string byteCode,
             ResourceDatabase resourceDatabase,
             IList<AssemblyMetadata> assemblies,
+            bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider)
         {
@@ -69,7 +71,7 @@ namespace Exporter
                 platform,
                 exportRequest,
                 resourceDatabase,
-                assemblies,
+                usesU3,
                 outputDirectory,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
