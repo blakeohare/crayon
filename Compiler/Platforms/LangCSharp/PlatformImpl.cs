@@ -20,9 +20,7 @@ namespace LangCSharp
             return new Dictionary<string, object>();
         }
 
-        public override void ExportStandaloneVm(
-            Dictionary<string, FileOutput> output,
-            IList<LibraryForExport> everyLibrary)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
         {
             throw new NotImplementedException();
         }
@@ -30,7 +28,6 @@ namespace LangCSharp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
-            IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
         {

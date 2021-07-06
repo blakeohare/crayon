@@ -22,9 +22,7 @@ namespace JavaScriptApp
             return new Dictionary<string, object>();
         }
 
-        public override void ExportStandaloneVm(
-            Dictionary<string, FileOutput> output,
-            IList<LibraryForExport> everyLibrary)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
         {
             throw new NotImplementedException();
         }
@@ -45,13 +43,12 @@ namespace JavaScriptApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
-            IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
 
-            bool usesU3 = libraries.Where(lib => lib.Name == "U3Direct").Any();
+            bool usesU3 = options.GetBool(ExportOptionKey.USES_U3);
 
             if (options.GetBool(ExportOptionKey.JS_FULL_PAGE))
             {

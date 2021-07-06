@@ -85,9 +85,7 @@ namespace CSharpApp
 
         private Dictionary<string, string> HACK_libraryProjectGuidToPath = new Dictionary<string, string>();
 
-        public override void ExportStandaloneVm(
-            Dictionary<string, FileOutput> output,
-            IList<LibraryForExport> everyLibrary)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
 
@@ -130,12 +128,11 @@ namespace CSharpApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             string byteCode,
-            IList<LibraryForExport> libraries,
             Build.ResourceDatabase resourceDatabase,
             Options options)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
-            bool usesU3 = libraries.Where(lib => lib.Name == "U3Direct").Any();
+            bool usesU3 = options.GetBool(ExportOptionKey.USES_U3);
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
