@@ -10,7 +10,16 @@ namespace AssemblyResolver
     {
         public static ExternalAssemblyMetadata Bridge(InternalAssemblyMetadata md)
         {
-            return (ExternalAssemblyMetadata)md;
+            return new ExternalAssemblyMetadata() {
+                ID = md.ID,
+                IsUserDefined = false,
+                InternalLocale = md.InternalLocale,
+                SupportedLocales = new HashSet<Locale>(md.SupportedLocales),
+                NameByLocale = md.NameByLocale,
+                OnlyImportableFrom = new HashSet<string>(md.OnlyImportableFrom),
+                CanonicalKey = md.InternalLocale.ID + ":" + md.ID,
+                SourceCode = md.GetSourceCode(),
+            };
         }
 
         public static ExternalAssemblyMetadata[] Bridge(IList<InternalAssemblyMetadata> md)
@@ -18,8 +27,6 @@ namespace AssemblyResolver
             return md.Cast<ExternalAssemblyMetadata>().ToArray();
         }
     }
-
-    public class ExternalAssemblyMetadata : InternalAssemblyMetadata { }
 
     public class InternalAssemblyMetadata
     {
@@ -31,39 +38,15 @@ namespace AssemblyResolver
         public string Directory { get; set; }
         public string ID { get; set; }
         public Locale InternalLocale { get; set; }
-        public string CanonicalKey { get; set; }
-        public HashSet<Locale> SupportedLocales { get; set; }
-        public HashSet<string> OnlyImportableFrom { get; set; }
-        public bool IsUserDefined { get; set; }
+        public Locale[] SupportedLocales { get; set; }
+        public string[] OnlyImportableFrom { get; set; }
         public Dictionary<string, string> NameByLocale { get; set; }
-        private Dictionary<string, InternalAssemblyMetadata> directDependencies = new Dictionary<string, InternalAssemblyMetadata>();
-
+        
         public string Version { get { return "v1"; } } // TODO: versions
-        public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
 
         public InternalAssemblyMetadata()
         {
             this.NameByLocale = new Dictionary<string, string>();
-        }
-
-        public InternalAssemblyMetadata[] DirectDependencies
-        {
-            get
-            {
-                return this.directDependencies.Keys
-                    .OrderBy(k => k.ToLowerInvariant())
-                    .Select(k => this.directDependencies[k])
-                    .ToArray();
-            }
-        }
-
-        public void RegisterDependencies(InternalAssemblyMetadata assembly)
-        {
-            if (this.directDependencies == null)
-            {
-                this.directDependencies = new Dictionary<string, InternalAssemblyMetadata>();
-            }
-            this.directDependencies[assembly.ID] = assembly;
         }
 
         public string GetName(Locale locale)
@@ -71,20 +54,7 @@ namespace AssemblyResolver
             return this.NameByLocale.ContainsKey(locale.ID) ? this.NameByLocale[locale.ID] : this.ID;
         }
 
-        public bool IsAllowedImport(InternalAssemblyMetadata fromAssembly)
-        {
-            if (this.IsImportRestricted)
-            {
-                // Non-empty list means it must be only accessible from a specific library and not top-level user code.
-                if (fromAssembly.IsUserDefined) return false;
-
-                // Is the current library on the list?
-                return this.OnlyImportableFrom.Contains(fromAssembly.ID);
-            }
-            return true;
-        }
-
-        public Dictionary<string, string> GetSourceCode()
+        internal Dictionary<string, string> GetSourceCode()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             string srcDir = FileUtil.JoinPath(this.Directory, "src");

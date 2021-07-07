@@ -35,7 +35,7 @@ namespace Parser
         internal LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
         {
             string anyValidCoreLibId = "en:Core";
-            ExternalAssemblyMetadata coreLib = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(anyValidCoreLibId));
+            Common.ExternalAssemblyMetadata coreLib = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(anyValidCoreLibId));
             string name = coreLib.GetName(parser.CurrentLocale);
             return this.GetOrImportAssembly(parser, null, name);
         }
@@ -57,7 +57,7 @@ namespace Parser
             string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
 
             string secondAttemptedKey = name;
-            ExternalAssemblyMetadata assemblyMetadata = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name));
+            Common.ExternalAssemblyMetadata assemblyMetadata = AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name));
             Locale effectiveLocale = fromLocale;
 
             if (assemblyMetadata == null)
@@ -106,7 +106,7 @@ namespace Parser
                 return output;
             }
 
-            Dictionary<string, string> sourceCode = assemblyMetadata.GetSourceCode();
+            Dictionary<string, string> sourceCode = assemblyMetadata.SourceCode;
 
             string arbitraryFilename = sourceCode.Keys.Where(t => t.Contains('.')).Select(t => t.ToLowerInvariant()).FirstOrDefault();
             Common.ProgrammingLanguage programmingLanguage = arbitraryFilename != null && arbitraryFilename.EndsWith(".acr")

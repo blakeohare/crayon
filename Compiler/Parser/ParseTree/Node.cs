@@ -1,4 +1,4 @@
-﻿using AssemblyResolver;
+﻿using Common;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree

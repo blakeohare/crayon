@@ -108,7 +108,7 @@ namespace Crayon.Pipeline
                     string outputDirectory = command.HasOutputDirectoryOverride
                         ? command.OutputDirectoryOverride
                         : buildContext.OutputFolder;
-                    IList<AssemblyResolver.ExternalAssemblyMetadata> assemblies = compilation.AllScopesMetadata;
+                    IList<ExternalAssemblyMetadata> assemblies = compilation.AllScopesMetadata;
                     bool usesU3 = assemblies.Any(a => a.ID == "U3Direct");
 
                     ResourceDatabase resourceDatabase;
@@ -202,7 +202,7 @@ namespace Crayon.Pipeline
 
         private static ExportRequest BuildExportRequest(
             string byteCode,
-            IList<AssemblyResolver.ExternalAssemblyMetadata> libraryAssemblies,
+            IList<ExternalAssemblyMetadata> libraryAssemblies,
             BuildContext buildContext)
         {
             return new ExportRequest()
