@@ -1,9 +1,8 @@
-﻿using Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AssemblyResolver
+namespace Common
 {
     public class AssemblyDependencyUtil
     {
