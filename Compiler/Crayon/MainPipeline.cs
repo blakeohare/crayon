@@ -10,9 +10,9 @@ namespace Crayon.Pipeline
 {
     internal static class MainPipeline
     {
-        public static void Run(Command command, bool isRelease)
+        public static void Run(Command command, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
         {
-            Result result = RunImpl(command, isRelease);
+            Result result = RunImpl(command, isRelease, waxHub);
 
             if (command.IsJsonOutput)
             {
@@ -44,7 +44,7 @@ namespace Crayon.Pipeline
             return compileRequest;
         }
 
-        public static Result RunImpl(Command command, bool isRelease)
+        public static Result RunImpl(Command command, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
@@ -75,7 +75,7 @@ namespace Crayon.Pipeline
                         try
                         {
                             buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                            compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
+                            compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub);
                         }
                         catch (InvalidOperationException ioe)
                         {
@@ -88,7 +88,7 @@ namespace Crayon.Pipeline
                     else
                     {
                         buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                        compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
+                        compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub);
                     }
 
                     if (compilation.HasErrors)
@@ -153,22 +153,21 @@ namespace Crayon.Pipeline
                         isRelease);
                     return new Result() { Errors = standaloneVmExportResponse.Errors };
 
-
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, isRelease);
+                    ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, isRelease, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     return new Result() { Errors = errorCheckOnlyResponse.Errors };
 
                 case ExecutionType.EXPORT_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease);
+                    ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     return new Result() { Errors = cbxOnlyResponse.Errors };
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse exportResult = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease);
+                    ExportResponse exportResult = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     if (exportResult.HasErrors)
                     {
@@ -226,7 +225,8 @@ namespace Crayon.Pipeline
         private static ExportResponse DoExportStandaloneCbxFileAndGetPath(
             Command command,
             bool isDryRunErrorCheck,
-            bool isRelease)
+            bool isRelease,
+            CommonUtil.Wax.WaxHub waxHub)
         {
             BuildContext buildContext;
             if (isRelease)
@@ -245,7 +245,7 @@ namespace Crayon.Pipeline
                 buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
             }
 
-            Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease);
+            Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub);
             if (isDryRunErrorCheck || compilation.HasErrors)
             {
                 return new ExportResponse() { Errors = compilation.Errors };

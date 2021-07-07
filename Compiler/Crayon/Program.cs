@@ -11,6 +11,7 @@ namespace Crayon
 
             CommonUtil.Wax.WaxHub waxHub = new CommonUtil.Wax.WaxHub();
             waxHub.RegisterService(new RouterService());
+            waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.AwaitSendRequest(
                 "router",
                 new System.Collections.Generic.Dictionary<string, object>() {

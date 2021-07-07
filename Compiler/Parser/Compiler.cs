@@ -6,14 +6,14 @@ namespace Parser
 {
     public static class Compiler
     {
-        public static CompilationBundle Compile(CompileRequest compileRequest, bool isRelease)
+        public static CompilationBundle Compile(CompileRequest compileRequest, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
         {
             CompilationBundle result;
             if (isRelease)
             {
                 try
                 {
-                    result = CompileImpl(compileRequest);
+                    result = CompileImpl(compileRequest, waxHub);
                 }
                 catch (MultiParserException multiException)
                 {
@@ -39,16 +39,16 @@ namespace Parser
             }
             else
             {
-                result = CompileImpl(compileRequest);
+                result = CompileImpl(compileRequest, waxHub);
             }
             return result;
         }
 
-        private static CompilationBundle CompileImpl(CompileRequest compileRequest)
+        private static CompilationBundle CompileImpl(CompileRequest compileRequest, CommonUtil.Wax.WaxHub waxHub)
         {
             using (new PerformanceSection("ExportBundle.Compile"))
             {
-                ParserContext parserContext = new ParserContext(compileRequest);
+                ParserContext parserContext = new ParserContext(compileRequest, waxHub);
                 TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
 
                 ByteCodeCompiler bcc = new ByteCodeCompiler();

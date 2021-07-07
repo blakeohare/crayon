@@ -10,6 +10,7 @@ namespace CommonUtil.Wax
 
         public void RegisterService(WaxService service)
         {
+            service.Hub = this;
             this.services[service.Name] = service;
         }
 

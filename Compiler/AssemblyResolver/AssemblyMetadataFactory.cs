@@ -1,12 +1,12 @@
-﻿using Common.Localization;
+﻿using CommonUtil.Disk;
+using CommonUtil.Json;
+using Common.Localization;
 using System.Collections.Generic;
 using System.Linq;
-using CommonUtil.Disk;
-using CommonUtil.Json;
 
 namespace AssemblyResolver
 {
-    public static class AssemblyMetadataFactory
+    internal static class AssemblyMetadataFactory
     {
         public static InternalAssemblyMetadata CreateLibrary(string directory, string id)
         {

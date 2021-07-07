@@ -1,6 +1,5 @@
 ﻿using Common;
 using CommonUtil;
-using CommonUtil.Collections;
 using CommonUtil.Disk;
 using Common.Localization;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace AssemblyResolver
 {
-    public class AssemblyFinder
+    internal class AssemblyFinder
     {
         public InternalAssemblyMetadata[] AssemblyFlatList { get; private set; }
         private Dictionary<string, InternalAssemblyMetadata> libraryLookup;
