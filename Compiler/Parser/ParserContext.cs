@@ -29,7 +29,7 @@ namespace Parser
         // TODO: make this configurable.
         public bool IncludeDebugSymbols { get { return true; } }
 
-        public ParserContext(CompileRequest compileRequest)
+        public ParserContext(CompileRequest compileRequest, CommonUtil.Wax.WaxHub waxHub)
         {
             this.CompileRequest = compileRequest;
             this.ProjectId = compileRequest.ProjectId;
@@ -41,7 +41,7 @@ namespace Parser
             CompilationScope userDefinedScope = new CompilationScope(this.TopLevelAssembly, userDefinedAssembly, rootLocale, this.TopLevelAssembly.ProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
-            this.ScopeManager = new ScopeManager(compileRequest);
+            this.ScopeManager = new ScopeManager(compileRequest, waxHub);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.LiteralLookup = new LiteralLookup();

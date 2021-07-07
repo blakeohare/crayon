@@ -6,29 +6,7 @@ using System.Linq;
 
 namespace AssemblyResolver
 {
-    public static class AssemblyTODO
-    {
-        public static ExternalAssemblyMetadata Bridge(InternalAssemblyMetadata md)
-        {
-            return new ExternalAssemblyMetadata() {
-                ID = md.ID,
-                IsUserDefined = false,
-                InternalLocale = md.InternalLocale,
-                SupportedLocales = new HashSet<Locale>(md.SupportedLocales),
-                NameByLocale = md.NameByLocale,
-                OnlyImportableFrom = new HashSet<string>(md.OnlyImportableFrom),
-                CanonicalKey = md.InternalLocale.ID + ":" + md.ID,
-                SourceCode = md.GetSourceCode(),
-            };
-        }
-
-        public static ExternalAssemblyMetadata[] Bridge(IList<InternalAssemblyMetadata> md)
-        {
-            return md.Cast<ExternalAssemblyMetadata>().ToArray();
-        }
-    }
-
-    public class InternalAssemblyMetadata
+    internal class InternalAssemblyMetadata
     {
         public override string ToString()
         {
@@ -41,7 +19,7 @@ namespace AssemblyResolver
         public Locale[] SupportedLocales { get; set; }
         public string[] OnlyImportableFrom { get; set; }
         public Dictionary<string, string> NameByLocale { get; set; }
-        
+
         public string Version { get { return "v1"; } } // TODO: versions
 
         public InternalAssemblyMetadata()

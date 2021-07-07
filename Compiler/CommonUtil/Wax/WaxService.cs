@@ -11,7 +11,7 @@ namespace CommonUtil.Wax
         }
 
         public string Name { get; set; }
-        internal WaxHub Hub { get; set; }
+        public WaxHub Hub { get; set; }
         public abstract void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb);
 
         public void SendRequest(string serviceName, Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)

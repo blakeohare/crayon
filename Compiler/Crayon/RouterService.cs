@@ -28,7 +28,7 @@ namespace Crayon
             {
                 using (new PerformanceSection("Crayon"))
                 {
-                    Pipeline.MainPipeline.Run(command, IS_RELEASE);
+                    Pipeline.MainPipeline.Run(command, IS_RELEASE, this.Hub);
                 }
             }
 
