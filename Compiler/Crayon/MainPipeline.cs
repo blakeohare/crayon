@@ -101,7 +101,7 @@ namespace Crayon.Pipeline
 
                     if (command.ShowDependencyTree)
                     {
-                        string depTree = AssemblyResolver.AssemblyDependencyUtil.GetDependencyTreeJson(compilation.RootScopeDependencyMetadata).Trim();
+                        string depTree = AssemblyDependencyUtil.GetDependencyTreeJson(compilation.RootScopeDependencyMetadata).Trim();
                         ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, depTree);
                     }
 
