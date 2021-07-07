@@ -10,10 +10,9 @@ namespace AssemblyResolver
     {
         public static InternalAssemblyMetadata CreateLibrary(string directory, string id)
         {
-            InternalAssemblyMetadata m = new ExternalAssemblyMetadata();
+            InternalAssemblyMetadata m = new InternalAssemblyMetadata();
             m.Directory = directory;
             m.ID = id;
-            m.IsUserDefined = false;
             JsonLookup manifest;
 
             string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
@@ -38,10 +37,11 @@ namespace AssemblyResolver
                 m.NameByLocale[localeId] = name ?? m.ID;
             }
 
-            m.CanonicalKey = m.InternalLocale.ID + ":" + m.ID;
-            m.SupportedLocales = new HashSet<Locale>(manifest.GetAsDictionary("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
-            m.SupportedLocales.Add(m.InternalLocale);
-            m.OnlyImportableFrom = new HashSet<string>(manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
+            HashSet<Locale> supportedLocales = new HashSet<Locale>(manifest.GetAsDictionary("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
+            supportedLocales.Add(m.InternalLocale);
+            m.SupportedLocales = supportedLocales.OrderBy(loc => loc.ID).ToArray();
+
+            m.OnlyImportableFrom = new HashSet<string>(manifest.GetAsList("onlyAllowImportFrom").Cast<string>()).ToArray();
 
             return m;
         }
