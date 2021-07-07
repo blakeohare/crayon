@@ -47,7 +47,7 @@ namespace Common.Localization
                     }
                 }
             }
-            string keywordsRaw = new ResourceStore(typeof(Locale)).ReadAssemblyFileText("Languages/" + name.ToLowerInvariant() + "/keywords.txt", true);
+            string keywordsRaw = new ResourceStore(typeof(Locale)).ReadAssemblyFileText("Localization/Languages/" + name.ToLowerInvariant() + "/keywords.txt", true);
             if (keywordsRaw == null)
             {
                 invalid = true;
