@@ -29,7 +29,7 @@ namespace Parser
             // This is currently only used in slim circumstances.
             Common.TODO.IsValidLibraryNameIsWrong();
 
-            return this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(locale + ":" + name) != null;
+            return AssemblyTODO.Bridge(this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(locale + ":" + name)) != null;
         }
 
         internal LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
