@@ -1,5 +1,4 @@
-﻿using Build;
-using Common;
+﻿using Common;
 using Common.Localization;
 using Parser.ParseTree;
 using Parser.Resolver;
@@ -35,7 +34,7 @@ namespace Parser
             Locale rootLocale = compileRequest.CompilerLocale;
 
             ExternalAssemblyMetadata userDefinedAssembly = CreateRootAssembly(compileRequest.CompilerLocale);
-            CompilationScope userDefinedScope = new CompilationScope(compileRequest, userDefinedAssembly, rootLocale, compileRequest.RootProgrammingLanguage);
+            CompilationScope userDefinedScope = new CompilationScope(userDefinedAssembly, rootLocale, compileRequest.RootProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
             this.ScopeManager = new ScopeManager(compileRequest, waxHub);
