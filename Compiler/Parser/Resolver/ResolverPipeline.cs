@@ -1,5 +1,4 @@
-﻿using AssemblyResolver;
-using Common;
+﻿using Common;
 using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
