@@ -68,14 +68,14 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    Parser.CompilationBundle compilation;
+                    Parser.ExternalCompilationBundle compilation;
 
                     if (isRelease)
                     {
                         try
                         {
                             buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                            compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub);
+                            compilation = Parser.CompilerTODO.Convert(Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub));
                         }
                         catch (InvalidOperationException ioe)
                         {
@@ -88,7 +88,7 @@ namespace Crayon.Pipeline
                     else
                     {
                         buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                        compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub);
+                        compilation = Parser.CompilerTODO.Convert(Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub));
                     }
 
                     if (compilation.HasErrors)
@@ -101,15 +101,12 @@ namespace Crayon.Pipeline
 
                     if (command.ShowDependencyTree)
                     {
-                        string depTree = AssemblyDependencyUtil.GetDependencyTreeJson(compilation.RootScopeDependencyMetadata).Trim();
-                        ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, depTree);
+                        ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, compilation.DependencyTreeJson);
                     }
 
                     string outputDirectory = command.HasOutputDirectoryOverride
                         ? command.OutputDirectoryOverride
                         : buildContext.OutputFolder;
-                    IList<ExternalAssemblyMetadata> assemblies = compilation.AllScopesMetadata;
-                    bool usesU3 = assemblies.Any(a => a.ID == "U3Direct");
 
                     ResourceDatabase resourceDatabase;
                     if (isRelease)
@@ -131,14 +128,14 @@ namespace Crayon.Pipeline
                         resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
                     }
 
-                    ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, assemblies, buildContext);
+                    ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, buildContext);
                     ExportResponse response = CbxVmBundleExporter.Run(
                             buildContext.Platform.ToLowerInvariant(),
                             buildContext.ProjectDirectory,
                             outputDirectory,
                             compilation.ByteCode,
                             resourceDatabase,
-                            usesU3,
+                            compilation.UsesU3,
                             exportBundle,
                             new PlatformProvider(),
                             isRelease);
@@ -201,7 +198,6 @@ namespace Crayon.Pipeline
 
         private static ExportRequest BuildExportRequest(
             string byteCode,
-            IList<ExternalAssemblyMetadata> libraryAssemblies,
             BuildContext buildContext)
         {
             return new ExportRequest()
@@ -245,7 +241,7 @@ namespace Crayon.Pipeline
                 buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
             }
 
-            Parser.CompilationBundle compilation = Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub);
+            Parser.ExternalCompilationBundle compilation = Parser.CompilerTODO.Convert(Parser.Compiler.Compile(CreateCompileRequest(buildContext), isRelease, waxHub));
             if (isDryRunErrorCheck || compilation.HasErrors)
             {
                 return new ExportResponse() { Errors = compilation.Errors };
