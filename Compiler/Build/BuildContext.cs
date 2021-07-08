@@ -12,12 +12,6 @@ namespace Build
 {
     public class BuildContext
     {
-        public BuildContext()
-        {
-            this.TopLevelAssembly = new AssemblyContext(this);
-        }
-
-        public AssemblyContext TopLevelAssembly { get; set; }
         public string ProjectID { get; set; }
         public string ProjectDirectory { get; set; }
         public string OutputFolder { get; set; }
@@ -37,6 +31,11 @@ namespace Build
         public string[] IconFilePaths { get; set; }
         public string DelegateMainTo { get; set; }
         public bool RemoveSymbols { get; set; }
+        public FilePath[] SourceFolders { get; set; }
+        public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; set; }
+        public string Version { get; set; }
+        public string Description { get; set; }
+        public ProgrammingLanguage RootProgrammingLanguage { get; set; }
 
         private static Target FindTarget(string targetName, IList<Target> targets)
         {
@@ -172,6 +171,12 @@ namespace Build
                 .ToArray();
             description = pr.Replace(description);
 
+            ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(programmingLanguage);
+            if (nullableLanguage == null)
+            {
+                throw new InvalidOperationException("Invalid programming language specified: '" + programmingLanguage + "'");
+            }
+
             BuildContext buildContext = new BuildContext()
             {
                 ProjectDirectory = projectDir,
@@ -193,24 +198,37 @@ namespace Build
                 CompilerLocale = Locale.Get(compilerLocale),
                 DelegateMainTo = delegateMainTo,
                 RemoveSymbols = removeSymbols,
-            };
-
-            ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(programmingLanguage);
-            if (nullableLanguage == null)
-            {
-                throw new InvalidOperationException("Invalid programming language specified: '" + programmingLanguage + "'");
-            }
-
-            buildContext.TopLevelAssembly = new AssemblyContext(buildContext)
-            {
+                RootProgrammingLanguage = nullableLanguage.Value,
+                BuildVariableLookup = varLookup,
                 Description = description,
                 Version = version,
                 SourceFolders = ToFilePaths(projectDir, sources),
-                BuildVariableLookup = varLookup,
-                ProgrammingLanguage = nullableLanguage.Value,
             };
 
             return buildContext.ValidateValues(useRelativePathsInErrors);
+        }
+
+        public Dictionary<string, string> GetCodeFiles()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string fileExtension = this.RootProgrammingLanguage == ProgrammingLanguage.ACRYLIC
+                ? ".acr"
+                : ".cry";
+            foreach (FilePath sourceDir in this.SourceFolders)
+            {
+                string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
+                foreach (string filepath in files)
+                {
+                    if (filepath.ToLowerInvariant().EndsWith(fileExtension))
+                    {
+                        string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
+                            filepath,
+                            this.ProjectDirectory);
+                        output[relativePath] = FileUtil.ReadFileText(filepath);
+                    }
+                }
+            }
+            return output;
         }
 
         private static string[] CombineAndFlattenStringArrays(string[] a, string[] b)
@@ -249,7 +267,7 @@ namespace Build
         public BuildContext ValidateValues(bool useRelativePathsInErrors)
         {
             if (this.ProjectID == null) throw new InvalidOperationException("There is no project-id for this build target.");
-            if (this.TopLevelAssembly.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
+            if (this.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
             if (this.OutputFolder == null) throw new InvalidOperationException("There is no output path for this build target.");
 
             foreach (char c in this.ProjectID)

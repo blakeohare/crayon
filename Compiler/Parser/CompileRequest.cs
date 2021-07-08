@@ -6,7 +6,6 @@ namespace Parser
     {
         public Build.BuildContext BuildContext { get; set; }
         public string ProjectId { get { return this.BuildContext.ProjectID; } }
-        public Build.AssemblyContext TopLevelAssembly { get { return this.BuildContext.TopLevelAssembly; } }
         public string DelegateMainTo { get { return this.BuildContext.DelegateMainTo; } }
         public Common.Localization.Locale CompilerLocale { get { return this.BuildContext.CompilerLocale; } }
         public string[] LocalDeps { get { return this.BuildContext.LocalDeps; } }
