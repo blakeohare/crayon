@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangCSharp", "Platforms\Lan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangJavaScript", "Platforms\LangJavaScript\LangJavaScript.csproj", "{BEAB7F8D-9B28-499B-81E1-D2BC2BBBE499}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Disk", "Disk\Disk.csproj", "{ACAE730D-03CD-43C2-B746-99D214317A46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{BEAB7F8D-9B28-499B-81E1-D2BC2BBBE499}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEAB7F8D-9B28-499B-81E1-D2BC2BBBE499}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEAB7F8D-9B28-499B-81E1-D2BC2BBBE499}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACAE730D-03CD-43C2-B746-99D214317A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACAE730D-03CD-43C2-B746-99D214317A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACAE730D-03CD-43C2-B746-99D214317A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACAE730D-03CD-43C2-B746-99D214317A46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
