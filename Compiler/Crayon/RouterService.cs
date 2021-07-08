@@ -38,6 +38,7 @@ namespace Crayon
                 ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
             }
 #endif
+            cb(new Dictionary<string, object>());
         }
     }
 }

@@ -10,8 +10,7 @@ namespace Parser
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {
-            CompileRequest cr = new CompileRequest(request) {
-            };
+            CompileRequest cr = new CompileRequest(request);
             InternalCompilationBundle icb = Compiler.Compile(cr, (bool)request["isRelease"], this.Hub);
 
             Dictionary<string, object> output = new Dictionary<string, object>();

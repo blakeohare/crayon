@@ -22,9 +22,14 @@ namespace AssemblyResolver
 
         public string Version { get { return "v1"; } } // TODO: versions
 
-        public InternalAssemblyMetadata()
+        public InternalAssemblyMetadata(string id, Locale internalLocale, string directory)
         {
-            this.NameByLocale = new Dictionary<string, string>();
+            this.ID = id;
+            this.InternalLocale = internalLocale;
+            this.NameByLocale = new Dictionary<string, string>() {
+                { this.InternalLocale.ID, this.ID },
+            };
+            this.Directory = directory;
         }
 
         public string GetName(Locale locale)

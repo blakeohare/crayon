@@ -10,11 +10,7 @@ namespace AssemblyResolver
     {
         public static InternalAssemblyMetadata CreateLibrary(string directory, string id)
         {
-            InternalAssemblyMetadata m = new InternalAssemblyMetadata();
-            m.Directory = directory;
-            m.ID = id;
             JsonLookup manifest;
-
             string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
             try
             {
@@ -28,7 +24,8 @@ namespace AssemblyResolver
                 throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + id + "'.", jpe);
             }
 
-            m.InternalLocale = Locale.Get(manifest.GetAsString("localization.default", "en"));
+            Locale internalLocale = Locale.Get(manifest.GetAsString("localization.default", "en"));
+            InternalAssemblyMetadata m = new InternalAssemblyMetadata(id, internalLocale, directory);
 
             IDictionary<string, object> namesByLocale = manifest.GetAsDictionary("localization.names");
             foreach (string localeId in namesByLocale.Keys)

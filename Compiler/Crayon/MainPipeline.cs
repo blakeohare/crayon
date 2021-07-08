@@ -64,7 +64,7 @@ namespace Crayon.Pipeline
         {
             Dictionary<string, object> resultRaw = waxHub.AwaitSendRequest("compiler", request);
             List<Error> errors = new List<Error>();
-            string[] errorsRaw = (string[])request["errors"];
+            string[] errorsRaw = (string[])resultRaw["errors"];
             for (int i = 0; i < errorsRaw.Length; i += 4)
             {
                 Error err = new Error()
