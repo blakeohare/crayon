@@ -38,7 +38,7 @@ namespace Build
             {
                 ResourceDatabase resDb = new ResourceDatabase();
 
-                foreach (FilePath sourceRoot in buildContext.TopLevelAssembly.SourceFolders)
+                foreach (FilePath sourceRoot in buildContext.SourceFolders)
                 {
                     string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
 

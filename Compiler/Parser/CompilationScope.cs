@@ -14,13 +14,13 @@ namespace Parser
         public ExternalAssemblyMetadata Metadata { get; private set; }
         public int ScopeNumId { get; private set; }
         public Locale Locale { get; private set; }
+        private BuildContext buildContext;
         public ProgrammingLanguage ProgrammingLanguage { get; private set; }
 
         public bool IsCrayon {  get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
         public bool IsAcrylic {  get { return this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC; } }
         public bool IsStaticallyTyped {  get { return this.IsAcrylic; } }
 
-        private AssemblyContext topLevelAssembly;
         private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 
         private List<TopLevelEntity> entities = new List<TopLevelEntity>();
@@ -30,7 +30,7 @@ namespace Parser
         private static int numIdAlloc = 1;
 
         public CompilationScope(
-            AssemblyContext topLevelAssembly,
+            BuildContext buildContext,
             ExternalAssemblyMetadata metadata,
             Locale locale,
             ProgrammingLanguage programmingLanguage)
@@ -38,7 +38,7 @@ namespace Parser
             this.Locale = locale;
             this.ProgrammingLanguage = programmingLanguage;
             this.ScopeNumId = numIdAlloc++;
-            this.topLevelAssembly = topLevelAssembly;
+            this.buildContext = buildContext;
             this.Metadata = metadata;
             this.ScopeKey = this.Metadata.CanonicalKey;
         }

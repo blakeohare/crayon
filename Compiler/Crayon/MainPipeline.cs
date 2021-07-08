@@ -28,9 +28,9 @@ namespace Crayon.Pipeline
         {
             Parser.CompileRequest compileRequest = new Parser.CompileRequest() { BuildContext = buildContext };
 
-            foreach (string key in buildContext.TopLevelAssembly.BuildVariableLookup.Keys)
+            foreach (string key in buildContext.BuildVariableLookup.Keys)
             {
-                BuildVarCanonicalized buildVar = buildContext.TopLevelAssembly.BuildVariableLookup[key];
+                BuildVarCanonicalized buildVar = buildContext.BuildVariableLookup[key];
                 switch (buildVar.Type)
                 {
                     case VarType.BOOLEAN: compileRequest.AddCompileTimeBoolean(key, buildVar.BoolValue); break;
@@ -208,8 +208,8 @@ namespace Crayon.Pipeline
             {
                 ByteCode = byteCode,
                 ProjectID = buildContext.ProjectID,
-                Version = buildContext.TopLevelAssembly.Version,
-                Description = buildContext.TopLevelAssembly.Description,
+                Version = buildContext.Version,
+                Description = buildContext.Description,
                 GuidSeed = buildContext.GuidSeed,
                 ProjectTitle = buildContext.ProjectTitle,
                 JsFilePrefix = SanitizeJsFilePrefix(buildContext.JsFilePrefix),

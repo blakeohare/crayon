@@ -13,7 +13,6 @@ namespace Parser
     internal class ParserContext
     {
         public string ProjectId { get; private set; }
-        public AssemblyContext TopLevelAssembly { get; private set; } // still in the Build project
         public string DelegateMainTo { get; private set; }
         public CompileRequest CompileRequest { get; private set; }
 
@@ -33,12 +32,11 @@ namespace Parser
         {
             this.CompileRequest = compileRequest;
             this.ProjectId = compileRequest.ProjectId;
-            this.TopLevelAssembly = compileRequest.TopLevelAssembly;
             this.DelegateMainTo = compileRequest.DelegateMainTo;
             Locale rootLocale = compileRequest.CompilerLocale;
 
             ExternalAssemblyMetadata userDefinedAssembly = CreateRootAssembly(compileRequest.CompilerLocale);
-            CompilationScope userDefinedScope = new CompilationScope(this.TopLevelAssembly, userDefinedAssembly, rootLocale, this.TopLevelAssembly.ProgrammingLanguage);
+            CompilationScope userDefinedScope = new CompilationScope(compileRequest.BuildContext, userDefinedAssembly, rootLocale, compileRequest.BuildContext.RootProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
             this.ScopeManager = new ScopeManager(compileRequest, waxHub);
@@ -323,7 +321,7 @@ namespace Parser
 
         public TopLevelEntity[] ParseAllTheThings()
         {
-            Dictionary<string, string> files = this.TopLevelAssembly.GetCodeFiles();
+            Dictionary<string, string> files = this.CompileRequest.BuildContext.GetCodeFiles();
 
             // When a syntax error is encountered, add it to this list (RELEASE builds only).
             // Only allow one syntax error per file. Libraries are considered stable and will
