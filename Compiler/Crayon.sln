@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonUtil", "CommonUtil\CommonUtil.csproj", "{31D50C2B-7FE4-4E1B-B7E7-63DF4D85EF64}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Disk", "Disk\Disk.csproj", "{ACAE730D-03CD-43C2-B746-99D214317A46}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exporter", "Exporter\Exporter.csproj", "{C6A46837-04C6-48CF-A1F0-634DC36C630F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions", "Extensions\Extensions.csproj", "{8AC22B8A-CF7F-44D3-81B1-AF400910B128}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parser", "Parser\Parser.csproj", "{778DF8F6-82DD-47B0-8316-21941A73AE57}"
 EndProject
@@ -32,8 +36,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangCSharp", "Platforms\LangCSharp\LangCSharp.csproj", "{F4807913-AD86-49A8-A7B4-6261D9904195}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangJavaScript", "Platforms\LangJavaScript\LangJavaScript.csproj", "{BEAB7F8D-9B28-499B-81E1-D2BC2BBBE499}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Disk", "Disk\Disk.csproj", "{ACAE730D-03CD-43C2-B746-99D214317A46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{ACAE730D-03CD-43C2-B746-99D214317A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACAE730D-03CD-43C2-B746-99D214317A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACAE730D-03CD-43C2-B746-99D214317A46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AC22B8A-CF7F-44D3-81B1-AF400910B128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AC22B8A-CF7F-44D3-81B1-AF400910B128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AC22B8A-CF7F-44D3-81B1-AF400910B128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AC22B8A-CF7F-44D3-81B1-AF400910B128}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
