@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Disk\Disk.csproj" />
     <ProjectReference Include="..\Exporter\Exporter.csproj" />
+    <ProjectReference Include="..\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\Parser\Parser.csproj" />
     <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj" />
     <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj" />
