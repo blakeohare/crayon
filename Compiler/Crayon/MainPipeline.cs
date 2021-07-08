@@ -15,7 +15,7 @@ namespace Crayon.Pipeline
 
             if (command.IsJsonOutput)
             {
-                RenderErrorInfoAsJson(result.Errors ?? new Error[0]);
+                ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, Error.ToJson(result.Errors ?? new Error[0]));
             }
             else if (result.HasErrors)
             {
@@ -326,46 +326,6 @@ namespace Crayon.Pipeline
             {
                 CbxOutputPath = cbxLocation,
             };
-        }
-
-        private static void RenderErrorInfoAsJson(Error[] errors)
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.Append("{ \"errors\": [");
-            for (int i = 0; i < errors.Length; ++i)
-            {
-                Error error = errors[i];
-                if (i > 0) sb.Append(',');
-
-                sb.Append("\n  {");
-                if (error.FileName != null)
-                {
-                    sb.Append("\n    \"file\": \"");
-                    sb.Append(error.FileName.Replace("\\", "\\\\"));
-                    sb.Append("\",");
-                }
-
-                if (error.HasLineInfo)
-                {
-                    sb.Append("\n    \"col\": ");
-                    sb.Append(error.Column + 1);
-                    sb.Append(",");
-                    sb.Append("\n    \"line\": ");
-                    sb.Append(error.Line + 1);
-                    sb.Append(",");
-                }
-                sb.Append("\n    \"message\": \"");
-                sb.Append(error.Message.Replace("\\", "\\\\").Replace("\"", "\\\""));
-                sb.Append("\"\n  }");
-            }
-            sb.Append(" ] }");
-            string output = sb.ToString();
-            WriteCompileInformation(output);
-        }
-
-        private static void WriteCompileInformation(string value)
-        {
-            ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, value);
         }
     }
 }
