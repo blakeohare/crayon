@@ -26,7 +26,7 @@ namespace Crayon.Pipeline
 
         private static Parser.CompileRequest CreateCompileRequest(BuildContext buildContext)
         {
-            Parser.CompileRequest compileRequest = new Parser.CompileRequest() { BuildContext = buildContext };
+            Parser.CompileRequest compileRequest = new Parser.CompileRequest(buildContext);
 
             foreach (string key in buildContext.BuildVariableLookup.Keys)
             {

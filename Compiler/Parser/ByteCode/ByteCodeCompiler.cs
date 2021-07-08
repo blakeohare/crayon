@@ -19,11 +19,11 @@ namespace Parser.ByteCode
 
             ByteBuffer literalsTable = ByteBuffer.FromLiteralLookup(parser.LiteralLookup);
 
-            ByteBuffer tokenData = parser.CompileRequest.BuildContext.RemoveSymbols
+            ByteBuffer tokenData = parser.CompileRequest.RemoveSymbols
                 ? new ByteBuffer()
                 : this.BuildTokenData(userCode);
 
-            ByteBuffer fileContent = parser.CompileRequest.BuildContext.RemoveSymbols
+            ByteBuffer fileContent = parser.CompileRequest.RemoveSymbols
                 ? new ByteBuffer()
                 : this.BuildFileContent(parser.GetFilesById());
 

@@ -14,7 +14,7 @@ namespace Parser
         public ExternalAssemblyMetadata Metadata { get; private set; }
         public int ScopeNumId { get; private set; }
         public Locale Locale { get; private set; }
-        private BuildContext buildContext;
+        private CompileRequest compileRequest;
         public ProgrammingLanguage ProgrammingLanguage { get; private set; }
 
         public bool IsCrayon {  get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
@@ -30,7 +30,7 @@ namespace Parser
         private static int numIdAlloc = 1;
 
         public CompilationScope(
-            BuildContext buildContext,
+            CompileRequest compileRequest,
             ExternalAssemblyMetadata metadata,
             Locale locale,
             ProgrammingLanguage programmingLanguage)
@@ -38,7 +38,7 @@ namespace Parser
             this.Locale = locale;
             this.ProgrammingLanguage = programmingLanguage;
             this.ScopeNumId = numIdAlloc++;
-            this.buildContext = buildContext;
+            this.compileRequest = compileRequest;
             this.Metadata = metadata;
             this.ScopeKey = this.Metadata.CanonicalKey;
         }

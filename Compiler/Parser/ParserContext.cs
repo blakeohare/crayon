@@ -36,7 +36,7 @@ namespace Parser
             Locale rootLocale = compileRequest.CompilerLocale;
 
             ExternalAssemblyMetadata userDefinedAssembly = CreateRootAssembly(compileRequest.CompilerLocale);
-            CompilationScope userDefinedScope = new CompilationScope(compileRequest.BuildContext, userDefinedAssembly, rootLocale, compileRequest.BuildContext.RootProgrammingLanguage);
+            CompilationScope userDefinedScope = new CompilationScope(compileRequest, userDefinedAssembly, rootLocale, compileRequest.RootProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
             this.ScopeManager = new ScopeManager(compileRequest, waxHub);
@@ -321,7 +321,7 @@ namespace Parser
 
         public TopLevelEntity[] ParseAllTheThings()
         {
-            Dictionary<string, string> files = this.CompileRequest.BuildContext.GetCodeFiles();
+            Dictionary<string, string> files = this.CompileRequest.GetCodeFiles();
 
             // When a syntax error is encountered, add it to this list (RELEASE builds only).
             // Only allow one syntax error per file. Libraries are considered stable and will
