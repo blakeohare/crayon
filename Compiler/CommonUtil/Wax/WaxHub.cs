@@ -44,7 +44,8 @@ namespace CommonUtil.Wax
 #if DEBUG
             this.services[serviceName].HandleRequest(
                 ParseWireData(SerializeWireData(request)),
-                response => {
+                response =>
+                {
                     responsePtr.Add(response);
                     return true;
                 });
@@ -87,7 +88,12 @@ namespace CommonUtil.Wax
             {
                 object value = data[key];
                 wireData.Add(key);
-                if (value is int)
+                if (value == null)
+                {
+                    wireData.Add("N");
+                    wireData.Add("");
+                }
+                else if (value is int)
                 {
                     wireData.Add("I");
                     wireData.Add("" + data);
@@ -135,7 +141,7 @@ namespace CommonUtil.Wax
                     case 'B': output[key] = data == "1"; break;
                     case 'I': output[key] = int.Parse(data); break;
                     case 'S': output[key] = data; break;
-
+                    case 'N': output[key] = null; break;
                     case 'A':
                         List<string> arr = new List<string>();
                         int length = int.Parse(data);
