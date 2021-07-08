@@ -48,8 +48,9 @@ namespace Parser
         private Dictionary<string, Common.ExternalAssemblyMetadata> assemblyCache = new Dictionary<string, Common.ExternalAssemblyMetadata>();
         private Common.ExternalAssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string localeId, string name)
         {
-            string key = localeId + ":" + name;
-            if (!this.assemblyCache.ContainsKey(key)) {
+            string key = (localeId == null || localeId == "") ? name : (localeId + ":" + name);
+            if (!this.assemblyCache.ContainsKey(key))
+            {
 
                 Dictionary<string, object> response = this.wax.AwaitSendRequest("assembly", new Dictionary<string, object>() {
                     { "command", "GetAssemblyMetadataFromAnyPossibleKey" },
