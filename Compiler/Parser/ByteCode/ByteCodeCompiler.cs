@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Parser.ByteCode
 {
-    public class ByteCodeCompiler
+    internal class ByteCodeCompiler
     {
         internal ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelEntity> lines)
         {

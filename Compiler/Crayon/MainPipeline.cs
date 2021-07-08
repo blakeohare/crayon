@@ -4,7 +4,6 @@ using CommonUtil.Disk;
 using Exporter;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Crayon.Pipeline
 {
@@ -58,7 +57,7 @@ namespace Crayon.Pipeline
             return request;
         }
 
-        private static Parser.ExternalCompilationBundle Compile(
+        private static ExternalCompilationBundle Compile(
             Dictionary<string, object> request,
             CommonUtil.Wax.WaxHub waxHub)
         {
@@ -76,7 +75,7 @@ namespace Crayon.Pipeline
                 };
                 errors.Add(err);
             }
-            Parser.ExternalCompilationBundle result = new Parser.ExternalCompilationBundle()
+            ExternalCompilationBundle result = new ExternalCompilationBundle()
             {
                 ByteCode = (string)resultRaw["byteCode"],
                 DependencyTreeJson = (string)resultRaw["depTree"],
@@ -110,7 +109,7 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    Parser.ExternalCompilationBundle compilation;
+                    ExternalCompilationBundle compilation;
 
                     if (isRelease)
                     {
@@ -283,7 +282,7 @@ namespace Crayon.Pipeline
                 buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
             }
 
-            Parser.ExternalCompilationBundle compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
+            ExternalCompilationBundle compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
             if (isDryRunErrorCheck || compilation.HasErrors)
             {
                 return new ExportResponse() { Errors = compilation.Errors };

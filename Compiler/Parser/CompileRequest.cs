@@ -2,7 +2,7 @@
 
 namespace Parser
 {
-    public class CompileRequest
+    internal class CompileRequest
     {
         private Dictionary<string, string> codeFiles;
 

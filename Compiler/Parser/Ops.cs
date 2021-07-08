@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    public enum Ops
+    internal enum Ops
     {
         ADDITION = 0,
         SUBTRACTION = 1,
