@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AssemblyResolver\AssemblyResolver.csproj" />
     <ProjectReference Include="..\Build\Build.csproj" />
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
