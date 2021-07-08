@@ -4,7 +4,7 @@ using Parser.ParseTree;
 
 namespace Parser
 {
-    public static class Compiler
+    internal static class Compiler
     {
         public static InternalCompilationBundle Compile(CompileRequest compileRequest, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
         {

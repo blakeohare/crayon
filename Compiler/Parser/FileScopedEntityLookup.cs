@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser
 {
-    class FileScopedEntityLookup
+    internal class FileScopedEntityLookup
     {
         private bool initialized = false;
         private FileScope fileScope;
