@@ -4,12 +4,32 @@ namespace Parser
 {
     public class CompileRequest
     {
-        public Build.BuildContext BuildContext { get; set; }
-        public string ProjectId { get { return this.BuildContext.ProjectID; } }
-        public string DelegateMainTo { get { return this.BuildContext.DelegateMainTo; } }
-        public Common.Localization.Locale CompilerLocale { get { return this.BuildContext.CompilerLocale; } }
-        public string[] LocalDeps { get { return this.BuildContext.LocalDeps; } }
-        public string ProjectDirectory { get { return this.BuildContext.ProjectDirectory; } }
+        private Dictionary<string, string> codeFiles;
+
+        public CompileRequest(Build.BuildContext buildContext)
+        {
+            this.ProjectId = buildContext.ProjectID;
+            this.DelegateMainTo = buildContext.DelegateMainTo;
+            this.CompilerLocale = buildContext.CompilerLocale;
+            this.LocalDeps = buildContext.LocalDeps;
+            this.ProjectDirectory = buildContext.ProjectDirectory;
+            this.codeFiles = buildContext.GetCodeFiles();
+            this.RootProgrammingLanguage = buildContext.RootProgrammingLanguage;
+            this.RemoveSymbols = buildContext.RemoveSymbols;
+        }
+
+        public bool RemoveSymbols { get; private set; }
+        public string ProjectId { get; private set; }
+        public string DelegateMainTo { get; private set; }
+        public Common.Localization.Locale CompilerLocale { get; private set; }
+        public string[] LocalDeps { get; private set; }
+        public string ProjectDirectory { get; private set; }
+        public Common.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
+
+        public Dictionary<string, string> GetCodeFiles()
+        {
+            return this.codeFiles;
+        }
 
         private Dictionary<string, object> compileTimeVariableValues = new Dictionary<string, object>();
         private Dictionary<string, int> compileTimeVariableTypes = new Dictionary<string, int>();
