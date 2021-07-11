@@ -48,28 +48,6 @@ namespace CrayonRuntime
         public string ImageManifest { get { return this.GetChunk("IMGS") ?? ""; } }
         public string CbxVersion { get { return this.vMajor + "." + this.vMinor + "." + this.vRelease; } }
 
-        public Dictionary<string, string> LibraryVersionsByName
-        {
-            get
-            {
-                Dictionary<string, string> output = new Dictionary<string, string>();
-                string libs = this.GetChunk("LIBS") ?? "";
-                if (libs.Length > 0)
-                {
-                    string[] parts = libs.Split(',');
-                    if (parts.Length % 2 == 1) throw InvalidFile();
-                    for (int i = 0; i < parts.Length; i += 2)
-                    {
-                        string libName = parts[i].Trim();
-                        string libVersion = parts[i + 1].Trim();
-                        if (libName.Length == 0 || libVersion.Length == 0) throw InvalidFile();
-                        output[libName] = libVersion;
-                    }
-                }
-                return output;
-            }
-        }
-
         private int GetFourByteBigEndianNumber(byte[] data, int index)
         {
             if (index + 4 > data.Length) throw InvalidFile();

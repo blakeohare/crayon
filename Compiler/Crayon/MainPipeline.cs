@@ -115,7 +115,7 @@ namespace Crayon.Pipeline
                     {
                         try
                         {
-                            buildContext = new GetBuildContextWorker().DoWorkImpl(command);
+                            buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
                             compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
                         }
                         catch (InvalidOperationException ioe)
@@ -128,7 +128,7 @@ namespace Crayon.Pipeline
                     }
                     else
                     {
-                        buildContext = new GetBuildContextWorker().DoWorkImpl(command);
+                        buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
                         compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
                     }
 
@@ -273,7 +273,7 @@ namespace Crayon.Pipeline
             {
                 try
                 {
-                    buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
+                    buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -282,7 +282,7 @@ namespace Crayon.Pipeline
             }
             else
             {
-                buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
+                buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
             }
 
             ExternalCompilationBundle compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);

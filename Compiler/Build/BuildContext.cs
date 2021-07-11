@@ -211,9 +211,7 @@ namespace Build
         public Dictionary<string, string> GetCodeFiles()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            string fileExtension = this.RootProgrammingLanguage == ProgrammingLanguage.ACRYLIC
-                ? ".acr"
-                : ".cry";
+            string fileExtension = ProgrammingLanguageParser.LangToFileExtension(this.RootProgrammingLanguage);
             foreach (FilePath sourceDir in this.SourceFolders)
             {
                 string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
@@ -401,6 +399,29 @@ namespace Build
             }
 
             return buildFilePath;
+        }
+
+        public void TranspileFrontendLanguage(CommonUtil.Wax.WaxHub hub)
+        {
+            if (this.RootProgrammingLanguage == ProgrammingLanguage.ACRYLIC ||
+                this.RootProgrammingLanguage == ProgrammingLanguage.CRAYON)
+            {
+                return;
+            }
+
+            Dictionary<string, object> result = hub.AwaitSendRequest(
+                "extensions",
+                new Dictionary<string, object>() {
+                    { "command", "getLanguageFrontend" },
+                    { "lang", this.RootProgrammingLanguage.ToString().ToLower() },
+                });
+
+            if (!(bool)result["ready"])
+            {
+                throw new InvalidOperationException("The language frontend extension for " + this.RootProgrammingLanguage + " could not be downloaded at this time.");
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
