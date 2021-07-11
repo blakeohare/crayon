@@ -1,6 +1,7 @@
 ﻿using CommonUtil;
 using CommonUtil.Disk;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Crayon
 {
@@ -68,8 +69,32 @@ namespace Crayon
 
         public override void HandleRequest(Dictionary<string, object> request, System.Func<Dictionary<string, object>, bool> cb)
         {
-            string flags = (string)request["flags"];
             bool realTimePrint = (bool)request["realTimePrint"];
+            string cbxPath = (string)request["cbxPath"];
+            bool showLibStack = (bool)request["showLibStack"];
+            bool useOutputPrefixes = (bool)request["useOutputPrefixes"];
+            string[] args = (string[])request["args"];
+
+            string cbxFile = FileUtil.GetPlatformPath(cbxPath);
+            int processId = CommonUtil.Process.ProcessUtil.GetCurrentProcessId();
+
+            List<string> flagGroups = new List<string>();
+            flagGroups.Add("\"" + cbxFile + "\"");
+            flagGroups.Add("parentProcessId:" + processId);
+            flagGroups.Add("showLibStack:" + (showLibStack ? "yes" : "no"));
+            flagGroups.Add("showOutputPrefixes:" + (useOutputPrefixes ? "yes" : "no"));
+
+            int userCmdLineArgCount = args.Length;
+            if (userCmdLineArgCount > 0)
+            {
+                flagGroups.Add("runtimeargs:" + userCmdLineArgCount + ":" + string.Join(",", args.Select(s => Base64.ToBase64(s))));
+            }
+            else
+            {
+                flagGroups.Add("runtimeargs:0");
+            }
+
+            string flags = string.Join(" ", flagGroups);
             CrayonRuntimeProcess proc = new CrayonRuntimeProcess(this.CrayonRuntimePath, flags, realTimePrint);
             proc.RunBlocking();
             string[] output = proc.FlushBuffer();

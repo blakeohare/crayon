@@ -213,12 +213,13 @@ namespace Crayon.Pipeline
                         return new Result() { Errors = exportResult.Errors };
                     }
 
-                    string cmdLineFlags = new RunCbxFlagBuilderWorker().DoWorkImpl(command, exportResult.CbxOutputPath);
-
                     NotifyStatusChange("RUN-START");
                     waxHub.AwaitSendRequest("cbxrunner", new Dictionary<string, object>() {
-                        { "flags", cmdLineFlags },
                         { "realTimePrint", true },
+                        { "cbxPath", exportResult.CbxOutputPath },
+                        { "args", command.DirectRunArgs },
+                        { "showLibStack", command.DirectRunShowLibStack },
+                        { "useOutputPrefixes", command.UseOutputPrefixes },
                     });
                     NotifyStatusChange("RUN-END");
 
