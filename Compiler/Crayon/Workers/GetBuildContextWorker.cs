@@ -1,14 +1,13 @@
 ﻿using Build;
 using Common;
 using CommonUtil.Disk;
-using Exporter;
 using System;
 
 namespace Crayon
 {
     class GetBuildContextWorker
     {
-        public BuildContext DoWorkImpl(Command command)
+        public BuildContext DoWorkImpl(Command command, CommonUtil.Wax.WaxHub hub)
         {
             string buildFile = command.BuildFilePath;
             string target = command.BuildTarget;
@@ -55,6 +54,8 @@ namespace Crayon
             }
 
             buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
+
+            buildContext.TranspileFrontendLanguage(hub);
 
             return buildContext;
         }

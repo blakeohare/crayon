@@ -7,7 +7,7 @@ namespace Crayon
 {
     public class GetBuildContextCbxWorker
     {
-        internal BuildContext DoWorkImpl(Command command)
+        internal BuildContext DoWorkImpl(Command command, CommonUtil.Wax.WaxHub hub)
         {
             string buildFilePath = command.BuildFilePath;
 
@@ -20,6 +20,7 @@ namespace Crayon
             string projectDirectory = FileUtil.GetParentDirectory(buildFile);
             string buildFileContent = FileUtil.ReadFileText(buildFile);
             BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, null, command.ResourceErrorsShowRelativeDir);
+            buildContext.TranspileFrontendLanguage(hub);
             return buildContext;
         }
     }
