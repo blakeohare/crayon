@@ -42,8 +42,9 @@ namespace CommonUtil.Wax
         {
             List<Dictionary<string, object>> responsePtr = new List<Dictionary<string, object>>();
 #if DEBUG
+            Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
             this.services[serviceName].HandleRequest(
-                ParseWireData(SerializeWireData(request)),
+                immutableEnsuredCopy,
                 response =>
                 {
                     responsePtr.Add(response);
