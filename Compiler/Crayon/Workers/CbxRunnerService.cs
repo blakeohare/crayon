@@ -75,6 +75,14 @@ namespace Crayon
             bool useOutputPrefixes = (bool)request["useOutputPrefixes"];
             string[] args = (string[])request["args"];
 
+            if (cbxPath.Contains("{DISK:"))
+            {
+                cbxPath = (string)this.Hub.AwaitSendRequest("disk", new Dictionary<string, object>() {
+                    { "command", "resolvePath" },
+                    { "path", cbxPath },
+                })["path"];
+            }
+
             string cbxFile = FileUtil.GetPlatformPath(cbxPath);
             int processId = CommonUtil.Process.ProcessUtil.GetCurrentProcessId();
 

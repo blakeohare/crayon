@@ -48,6 +48,17 @@ namespace Extensions
                 throw new NotImplementedException(); // extension not found
             }
 
+            // TODO: only do this if the CBX package doesn't exist already
+            string folderId = (string)result["folderId"];
+            string buildFile = "{DISK:" + folderId + "}/" + lang + ".build";
+            string cbxFile = "{DISK:" + folderId + "}/output/cbx/" + lang + ".cbx";
+            this.Hub.AwaitSendRequest("router", new Dictionary<string, object>()
+            {
+                { "args", (buildFile + " -cbx").Split(' ') },
+            });
+
+            this.Hub.RegisterService(new LanguageFrontendService(lang, cbxFile));
+
             return new Dictionary<string, object>() {
                 { "ready", true },
             };

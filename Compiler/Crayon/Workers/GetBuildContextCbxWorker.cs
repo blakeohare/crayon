@@ -16,7 +16,7 @@ namespace Crayon
                 throw new InvalidOperationException("No build path was provided.");
             }
 
-            string buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFilePath);
+            string buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFilePath, hub);
             string projectDirectory = FileUtil.GetParentDirectory(buildFile);
             string buildFileContent = FileUtil.ReadFileText(buildFile);
             BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, null, command.ResourceErrorsShowRelativeDir);

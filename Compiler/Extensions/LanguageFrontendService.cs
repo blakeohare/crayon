@@ -6,21 +6,30 @@ namespace Extensions
     internal class LanguageFrontendService : CommonUtil.Wax.WaxService
     {
         private string language;
-        private string cbxFolderId;
+        private string cbxPath;
 
-        public LanguageFrontendService(string lang, string folderId) : base("langfe-" + lang)
+        public LanguageFrontendService(string lang, string cbxPath) : base("langfe-" + lang)
         {
             this.language = lang;
-            this.cbxFolderId = folderId;
+            this.cbxPath = cbxPath;
         }
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {
-            Dictionary<string, object> result = this.Hub.AwaitSendRequest("cbxrunner", new Dictionary<string, object>() { });
+            string sourceDirectory = (string)request["sourceDir"];
+            string targetDirectory = (string)request["targetDir"];
+            string entryPointFile = (string)request["entryPointFile"];
+            Dictionary<string, object> result = this.Hub.AwaitSendRequest("cbxrunner", new Dictionary<string, object>() {
+                { "cbxPath", this.cbxPath },
+                { "realTimePrint", false },
+                { "showLibStack", true },
+                { "useOutputPrefixes", true },
+                { "args", new string[] { sourceDirectory, entryPointFile, targetDirectory } },
+            });
 
-            throw new NotImplementedException();
-
-            // cb(new Dictionary<string, object>() { });
+            cb(new Dictionary<string, object>() {
+                { "done", true },
+            });
         }
     }
 }

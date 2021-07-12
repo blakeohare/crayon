@@ -17,7 +17,7 @@ namespace Crayon
                 throw new InvalidOperationException("Build file and target must be specified together.");
             }
 
-            buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile);
+            buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile, hub);
 
             string projectDirectory = FileUtil.GetParentDirectory(buildFile);
 

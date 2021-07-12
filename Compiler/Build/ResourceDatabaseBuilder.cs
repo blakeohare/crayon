@@ -46,7 +46,7 @@ namespace Build
                     foreach (string relativeFilePath in relativePaths)
                     {
                         string absolutePath = FileUtil.GetCanonicalizeUniversalPath(sourceRoot.AbsolutePath + "/" + relativeFilePath);
-                        string aliasedPath = sourceRoot.GetAliasedOrRelativePathh(absolutePath);
+                        string aliasedPath = sourceRoot.GetAliasedOrRelativePath(absolutePath);
                         string fileName = Path.GetFileName(absolutePath);
                         string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
 
