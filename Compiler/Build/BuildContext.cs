@@ -382,9 +382,30 @@ namespace Build
             }
         }
 
-        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
+        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath, CommonUtil.Wax.WaxHub waxHub)
+        {
+            string validatedPath = GetValidatedCanonicalBuildFilePathImpl(originalBuildFilePath, waxHub);
+            if (validatedPath == null)
+            {
+                throw new InvalidOperationException("Build file does not exist: " + originalBuildFilePath);
+            }
+            return validatedPath;
+        }
+
+        private static string GetValidatedCanonicalBuildFilePathImpl(string originalBuildFilePath, CommonUtil.Wax.WaxHub waxHub)
         {
             string buildFilePath = originalBuildFilePath;
+
+            if (buildFilePath.Contains("{DISK:"))
+            {
+                Dictionary<string, object> diskResult = waxHub.AwaitSendRequest("disk", new Dictionary<string, object>() {
+                    { "command", "resolvePath" },
+                    { "path", buildFilePath },
+                });
+
+                return (string)diskResult["path"];
+            }
+
             buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
             if (!buildFilePath.StartsWith("/") &&
                 !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
@@ -395,7 +416,7 @@ namespace Build
 
             if (!FileUtil.FileExists(buildFilePath))
             {
-                throw new InvalidOperationException("Build file does not exist: " + originalBuildFilePath);
+                return null;
             }
 
             return buildFilePath;
@@ -409,11 +430,13 @@ namespace Build
                 return;
             }
 
+            string langId = this.RootProgrammingLanguage.ToString().ToLower();
+
             Dictionary<string, object> result = hub.AwaitSendRequest(
                 "extensions",
                 new Dictionary<string, object>() {
                     { "command", "getLanguageFrontend" },
-                    { "lang", this.RootProgrammingLanguage.ToString().ToLower() },
+                    { "lang", langId },
                 });
 
             if (!(bool)result["ready"])
@@ -421,7 +444,21 @@ namespace Build
                 throw new InvalidOperationException("The language frontend extension for " + this.RootProgrammingLanguage + " could not be downloaded at this time.");
             }
 
-            throw new NotImplementedException();
+            if (this.SourceFolders.Length != 1) throw new NotImplementedException();
+
+            FilePath source = this.SourceFolders[0];
+            string originalSource = source.AbsolutePath;
+            string targetSource = source.AbsolutePath + "_gen";
+            string HACK_startingFile = "main.py";
+
+            Dictionary<string, object> transpilationResult = hub.AwaitSendRequest("langfe-" + langId, new Dictionary<string, object>() {
+                { "sourceDir", originalSource },
+                { "targetDir", targetSource },
+                { "entryPointFile", HACK_startingFile },
+            });
+
+            this.SourceFolders[0].AddSuffix("_gen");
+            this.RootProgrammingLanguage = ProgrammingLanguage.CRAYON;
         }
     }
 }

@@ -6,9 +6,9 @@ namespace Common
     public class FilePath
     {
         private string[] pathRelativeToRoot;
-        private readonly string absolutePathString;
-        private readonly string canonicalAbsolutePath;
-        private readonly string nullableAlias; // any resources or code files that are generated from this FilePath should alias this FilePath's absolute path to this string instead.
+        private string absolutePathString;
+        private string canonicalAbsolutePath;
+        private string nullableAlias; // any resources or code files that are generated from this FilePath should alias this FilePath's absolute path to this string instead.
 
         public FilePath(string pathRelativeToProjectRoot, string projectRootDirectory, string alias)
         {
@@ -20,6 +20,13 @@ namespace Common
             this.pathRelativeToRoot = pathRelativeToProjectRoot.Split('/');
             alias = (alias ?? "").Trim();
             this.nullableAlias = alias.Length == 0 ? null : alias;
+        }
+
+        public void AddSuffix(string suffix)
+        {
+            this.canonicalAbsolutePath += suffix;
+            this.absolutePathString += suffix;
+            this.pathRelativeToRoot[this.pathRelativeToRoot.Length - 1] += suffix;
         }
 
         public override bool Equals(object obj)
@@ -43,7 +50,7 @@ namespace Common
 
         public string AbsolutePath { get { return this.absolutePathString; } }
 
-        public string GetAliasedOrRelativePathh(string absolutePath)
+        public string GetAliasedOrRelativePath(string absolutePath)
         {
             if (this.nullableAlias == null)
             {
