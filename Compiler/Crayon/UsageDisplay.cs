@@ -3,9 +3,9 @@ using CommonUtil;
 
 namespace Crayon
 {
-    internal class UsageDisplayWorker
+    internal static class UsageDisplay
     {
-        private static readonly string USAGE = StringUtil.JoinLines(
+        internal static readonly string USAGE = StringUtil.JoinLines(
             "Crayon version " + VersionInfo.VersionString,
             "",
             "To export:",
@@ -37,10 +37,5 @@ namespace Crayon
             "                     default, stack traces are truncated to only",
             "                     show user code.",
             "");
-
-        public void DoWorkImpl()
-        {
-            ConsoleWriter.Print(ConsoleMessageType.USAGE_NOTES, USAGE);
-        }
     }
 }
