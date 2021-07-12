@@ -54,7 +54,7 @@ namespace Extensions
             string cbxFile = "{DISK:" + folderId + "}/output/cbx/" + lang + ".cbx";
             this.Hub.AwaitSendRequest("router", new Dictionary<string, object>()
             {
-                { "args", (buildFile + " -cbx").Split(' ') },
+                { "args", (buildFile + " -CR:cbx").Split(' ') },
             });
 
             this.Hub.RegisterService(new LanguageFrontendService(lang, cbxFile));

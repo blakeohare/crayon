@@ -208,10 +208,18 @@ namespace Crayon
 
             if (output.ContainsKey(BUILD_FILE) && !output.ContainsKey(BUILD_TARGET))
             {
-                command.IsDirectCbxRun = true;
-                command.DirectRunArgs = directRunArgs.ToArray();
                 command.BuildFilePath = output[BUILD_FILE];
-                command.DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK);
+                if (output.ContainsKey(CBX))
+                {
+                    command.IsDirectCbxRun = false;
+                    command.CbxExportPath = "";
+                }
+                else
+                {
+                    command.IsDirectCbxRun = true;
+                    command.DirectRunArgs = directRunArgs.ToArray();
+                    command.DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK);
+                }
 
                 return command;
             }
