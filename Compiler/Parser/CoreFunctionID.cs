@@ -114,6 +114,7 @@ namespace Parser
         IPC_UNIX_SOCKET_SERVER_CREATE = 117,
         IPC_UNIX_SOCKET_CLIENT_SEND = 118,
         IPC_UNIX_SOCKET_SERVER_DISCONNECT = 119,
+        REFLECT_NAMESPACE_FUNCTIONS = 120,
     }
 
     internal static class CoreFunctionIDHelper
@@ -231,6 +232,7 @@ namespace Parser
                 case "ipcUnixSocketServerCreate": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_CREATE;
                 case "ipcUnixSocketClientSend": return (int)CoreFunctionID.IPC_UNIX_SOCKET_CLIENT_SEND;
                 case "ipcUnixSocketServerDisconnect": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_DISCONNECT;
+                case "reflectNamespaceFunctions": return (int)CoreFunctionID.REFLECT_NAMESPACE_FUNCTIONS;
                 default: return -1;
             }
         }

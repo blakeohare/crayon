@@ -40,5 +40,14 @@
                     throw new Core.InvalidArgumentException("Can only get methods from an instance or class reference.");
             }
         }
+
+        @localized('en', 'getFunctions')
+        @localized('es', 'ESgetFunctions')
+        @localized('jp', 'JPgetFunctions')
+        function getFunctions(namespaceName) {
+            funcs = [];
+            $$$('reflectNamespaceFunctions', namespaceName + '', funcs);
+            return funcs;
+        }
     }
 }

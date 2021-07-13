@@ -109,6 +109,7 @@
     case 117: Core.EmitComment("ipcUnixSocketServerCreate"); @import("corefuncs/ipcUnixSocketServerCreate.pst"); break;
     case 118: Core.EmitComment("ipcUnixSocketClientSend"); @import("corefuncs/ipcUnixSocketClientSend.pst"); break;
     case 119: Core.EmitComment("ipcUnixSocketServerDisconnect"); @import("corefuncs/ipcUnixSocketServerDisconnect.pst"); break;
+    case 120: Core.EmitComment("reflectNamespaceFunctions"); @import("corefuncs/reflectNamespaceFunctions.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

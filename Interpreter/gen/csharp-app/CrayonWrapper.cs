@@ -6869,6 +6869,14 @@ namespace Interpreter.Vm
                                 IpcUnixSocketServer_disconnect(((ObjectInstance)arg1.internalValue).nativeData[0]);
                                 output = VALUE_NULL;
                                 break;
+                            case 120:
+                                // reflectNamespaceFunctions;
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                bool1 = Reflect_getNamespaceFunctions(vm, (string)arg1.internalValue, (ListImpl)arg2.internalValue);
+                                output = buildBoolean(globals, bool1);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -9682,6 +9690,11 @@ namespace Interpreter.Vm
                 EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
             }
             return new Value(6, output);
+        }
+
+        public static bool Reflect_getNamespaceFunctions(VmContext vm, string ns, ListImpl output)
+        {
+            return false;
         }
 
         public static int registerNamedCallback(VmContext vm, string scope, string functionName, System.Func<object[], object> callback)

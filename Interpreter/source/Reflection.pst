@@ -36,3 +36,7 @@ Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) 
     }
     return new Value(Types.LIST, output);
 }
+
+bool Reflect_getNamespaceFunctions(VmContext vm, string ns, ListImpl output) {
+    return false;
+}

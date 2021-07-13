@@ -5380,6 +5380,14 @@ var interpretImpl = function(vm, executionContextId) {
 						IpcUnixSocketServer_disconnect((arg1[1])[3][0]);
 						output = VALUE_NULL;
 						break;
+					case 120:
+						// reflectNamespaceFunctions;
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						bool1 = Reflect_getNamespaceFunctions(vm, arg1[1], arg2[1]);
+						output = buildBoolean(globals, bool1);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -7553,6 +7561,10 @@ var Reflect_getMethods = function(vm, ec, methodSource) {
 		EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
 	}
 	return [6, output];
+};
+
+var Reflect_getNamespaceFunctions = function(vm, ns, output) {
+	return false;
 };
 
 var registerNamedCallback = function(vm, scope, functionName, callback) {
