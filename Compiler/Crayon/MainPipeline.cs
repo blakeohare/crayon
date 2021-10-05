@@ -19,7 +19,7 @@ namespace Crayon.Pipeline
             }
             else if (result.HasErrors)
             {
-                ErrorPrinter.ShowErrors(result.Errors);
+                ErrorPrinter.ShowErrors(result.Errors, !isRelease);
             }
         }
 
@@ -101,14 +101,18 @@ namespace Crayon.Pipeline
                 };
                 errors.Add(err);
             }
-            ExternalCompilationBundle result = new ExternalCompilationBundle()
-            {
-                ByteCode = (string)resultRaw["byteCode"],
-                DependencyTreeJson = (string)resultRaw["depTree"],
-                Errors = errors.ToArray(),
-                UsesU3 = (bool)resultRaw["usesU3"],
-            };
-            return result;
+            return errors.Count == 0
+                ? new ExternalCompilationBundle()
+                {
+                    ByteCode = (string)resultRaw["byteCode"],
+                    DependencyTreeJson = (string)resultRaw["depTree"],
+                    Errors = errors.ToArray(),
+                    UsesU3 = (bool)resultRaw["usesU3"],
+                }
+                : new ExternalCompilationBundle()
+                {
+                    Errors = errors.ToArray()
+                };
         }
 
         public static Result RunImpl(Command command, bool isRelease, CommonUtil.Wax.WaxHub waxHub)

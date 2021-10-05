@@ -22,7 +22,7 @@ namespace Crayon
             Command command = FlagParser.Parse(commandLineArgs, IS_RELEASE);
             if (command.HasErrors)
             {
-                ErrorPrinter.ShowErrors(command.Errors);
+                ErrorPrinter.ShowErrors(command.Errors, !IS_RELEASE);
             }
             else
             {

@@ -4,7 +4,7 @@ namespace Crayon
 {
     class ErrorPrinter
     {
-        public static void ShowErrors(IList<Common.Error> errors)
+        public static void ShowErrors(IList<Common.Error> errors, bool throwAnyway)
         {
             List<string> errorLines = new List<string>();
             foreach (Common.Error error in errors)
@@ -27,6 +27,10 @@ namespace Crayon
 
             string finalErrorString = string.Join("\n\n", errorLines);
 
+            if (throwAnyway)
+            {
+                throw new System.Exception(finalErrorString);
+            }
             Common.ConsoleWriter.Print(Common.ConsoleMessageType.PARSER_ERROR, finalErrorString);
         }
     }
