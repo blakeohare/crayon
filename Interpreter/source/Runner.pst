@@ -220,7 +220,7 @@ InterpreterResult runInterpreterWithFunctionPointer(VmContext vm, Value fpValue,
     return runInterpreter(vm, newId);
 }
 
-// TODO: remove this (usages may still exist in some libraries as artifacts of .cry->.pst conversion)
+// TODO: remove this
 int noop() {
     return 0;
 }
