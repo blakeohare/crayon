@@ -81,82 +81,141 @@ namespace CommonUtil.Wax
 #endif
         }
 
-
         internal static string SerializeWireData(Dictionary<string, object> data)
         {
-            List<string> wireData = new List<string>();
-            foreach (string key in data.Keys)
+            List<string> buffer = new List<string>();
+            SerializeWireDataImpl(data, buffer);
+            return string.Join(',', buffer.Select(item => Base64.ToBase64(item)));
+        }
+
+        private static void SerializeWireDataImpl(object item, List<string> buffer)
+        {
+            if (item == null)
             {
-                object value = data[key];
-                wireData.Add(key);
-                if (value == null)
+                buffer.Add("N");
+            }
+            else if (item is int)
+            {
+                buffer.Add("I");
+                buffer.Add("" + item);
+            }
+            else if (item is bool)
+            {
+                buffer.Add("B");
+                buffer.Add(((bool)item) ? "1" : "0");
+            }
+            else if (item is string)
+            {
+                buffer.Add("S");
+                buffer.Add((string)item);
+            }
+            else if (item is string[])
+            {
+                buffer.Add("As");
+                string[] items = (string[])item;
+                buffer.Add("" + items.Length);
+                buffer.AddRange(items);
+            }
+            else if (item is int[])
+            {
+                buffer.Add("Ai");
+                int[] items = (int[])item;
+                buffer.Add("" + items.Length);
+                buffer.AddRange(items.Select(x => "" + x));
+            }
+            else if (item is object[])
+            {
+                buffer.Add("Ao");
+                object[] items = (object[])item;
+                buffer.Add("" + items.Length);
+                foreach (object obj in items)
                 {
-                    wireData.Add("N");
-                    wireData.Add("");
-                }
-                else if (value is int)
-                {
-                    wireData.Add("I");
-                    wireData.Add("" + data);
-                }
-                else if (value is bool)
-                {
-                    wireData.Add("B");
-                    wireData.Add((bool)value ? "1" : "0");
-                }
-                else if (value is string)
-                {
-                    wireData.Add("S");
-                    wireData.Add((string)value);
-                }
-                else if (value is string[])
-                {
-                    wireData.Add("A");
-                    string[] items = (string[])value;
-                    wireData.Add(items.Length + "");
-                    foreach (string item in items)
-                    {
-                        wireData.Add(item);
-                    }
-                }
-                else
-                {
-                    throw new NotImplementedException();
+                    SerializeWireDataImpl(obj, buffer);
                 }
             }
-
-            return string.Join(',', wireData.Select(item => Base64.ToBase64(item)));
+            else if (item is Dictionary<string, object>)
+            {
+                buffer.Add("D");
+                Dictionary<string, object> d = (Dictionary<string, object>)item;
+                buffer.Add("" + d.Count);
+                foreach (string key in d.Keys.OrderBy(k => k))
+                {
+                    buffer.Add(key);
+                    SerializeWireDataImpl(d[key], buffer);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         internal static Dictionary<string, object> ParseWireData(string encodedData)
         {
-            Dictionary<string, object> output = new Dictionary<string, object>();
-            string[] items = encodedData.Split(',').Select(item => Base64.FromBase64(item)).ToArray();
-            for (int i = 0; i < items.Length; i += 3)
+            Queue<string> buffer = new Queue<string>(encodedData.Split(',').Select(item => Base64.FromBase64(item)));
+            object output = ParseWireDataImpl(buffer);
+            if (output is Dictionary<string, object>)
             {
-                string key = items[i];
-                char type = items[i + 1][0];
-                string data = items[i + 2];
-                switch (type)
-                {
-                    case 'B': output[key] = data == "1"; break;
-                    case 'I': output[key] = int.Parse(data); break;
-                    case 'S': output[key] = data; break;
-                    case 'N': output[key] = null; break;
-                    case 'A':
-                        List<string> arr = new List<string>();
-                        int length = int.Parse(data);
-                        for (int j = 0; j < length; ++j)
-                        {
-                            arr.Add(items[i++ + 3]);
-                        }
-                        output[key] = arr.ToArray();
-                        break;
-
-                    default: throw new NotImplementedException();
-                }
+                return (Dictionary<string, object>)output;
             }
-            return output;
+            throw new InvalidOperationException("Wire data must be a dictionary at its root.");
+        }
+
+        private static object ParseWireDataImpl(Queue<string> buffer)
+        {
+            switch (buffer.Dequeue())
+            {
+                case "N": return null;
+                case "B": return buffer.Dequeue() == "1";
+                case "I": return int.Parse(buffer.Dequeue());
+                case "S": return buffer.Dequeue();
+                case "As":
+                    {
+                        List<string> strArray = new List<string>();
+                        int length = int.Parse(buffer.Dequeue());
+                        for (int i = 0; i < length; ++i)
+                        {
+                            strArray.Add(buffer.Dequeue());
+                        }
+                        return strArray.ToArray();
+                    }
+                case "Ai":
+                    {
+                        List<int> intArray = new List<int>();
+                        int length = int.Parse(buffer.Dequeue());
+                        for (int i = 0; i < length; ++i)
+                        {
+                            intArray.Add(int.Parse(buffer.Dequeue()));
+                        }
+                        return intArray.ToArray();
+                    }
+                case "Ao":
+                    {
+                        List<object> objArray = new List<object>();
+                        int length = int.Parse(buffer.Dequeue());
+                        for (int i = 0; i < length; ++i)
+                        {
+                            objArray.Add(ParseWireDataImpl(buffer));
+                        }
+                        return objArray.ToArray();
+                    }
+
+                case "D":
+                    {
+                        Dictionary<string, object> dict = new Dictionary<string, object>();
+                        int length = int.Parse(buffer.Dequeue());
+                        for (int i = 0; i < length; ++i)
+                        {
+                            string key = buffer.Dequeue();
+                            object value = ParseWireDataImpl(buffer);
+                            dict[key] = value;
+                        }
+                        return dict;
+                    }
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }
