@@ -550,7 +550,8 @@ C$ImageUtil$blit = (target, src, sx, sy, sw, sh, tx, ty, tw, th) => {
 	if (tw === sw && th === sh && sx == 0 && sy === 0) {
 		target.ctx.drawImage(src.canvas, tx, ty);
 	} else {
-		throw new Error("Sorry, not implemented quite yet.");
+		target.ctx.imageSmoothingEnabled = false;
+		target.ctx.drawImage(src.canvas, sx, sy, sw, sh, tx, ty, tw, th);
 	}
 };
 
