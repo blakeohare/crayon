@@ -35,6 +35,11 @@
             };
         }
 
+        public void SetWorkingDirectory(string workingDirectory)
+        {
+            this.internalProcess.StartInfo.WorkingDirectory = workingDirectory;
+        }
+
         public void RunBlocking()
         {
             this.internalProcess.Start();

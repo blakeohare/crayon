@@ -23,6 +23,7 @@
         public string[] DirectRunArgs { get; set; }
         public bool DirectRunShowLibStack { get; set; }
         public bool IsCSharpToAcrylicTranspiler { get; private set; }
+        public string ApkExportPath { get; set; }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }

@@ -20,6 +20,7 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_TYPE = "projType";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
         private static readonly string VERSION = "version";
+        private static readonly string APK_EXPORT_PATH = "apkExport";
 
         private static readonly string RESOURCE_ERRORS_SHOW_RELATIVE_DIR = "resourceErrorsShowRelativeDir";
 
@@ -62,6 +63,7 @@ namespace Crayon
         {
             BUILD_TARGET,
             BUILD_FILE, // this will be implicitly applied to the first argument that ends in .build and has no flag associated with it.
+            APK_EXPORT_PATH,
             OVERRIDE_OUTPUT_DIR,
             VM,
             VM_DIR,
@@ -254,6 +256,7 @@ namespace Crayon
                 if (output.ContainsKey(BUILD_FILE)) command.BuildFilePath = output[BUILD_FILE];
                 if (output.ContainsKey(BUILD_TARGET)) command.BuildTarget = output[BUILD_TARGET];
                 if (output.ContainsKey(VM_DIR)) command.VmExportDirectory = output[VM_DIR];
+                if (output.ContainsKey(APK_EXPORT_PATH)) command.ApkExportPath = output[APK_EXPORT_PATH];
                 if (output.ContainsKey(VM)) command.VmPlatform = output[VM];
                 if (output.ContainsKey(CBX)) command.CbxExportPath = output[CBX];
                 if (output.ContainsKey(VERSION)) command.ShowVersion = true;

@@ -210,6 +210,34 @@ namespace Crayon.Pipeline
                             exportBundle,
                             new PlatformProvider(),
                             isRelease);
+                    if (!response.HasErrors && command.ApkExportPath != null)
+                    {
+                        if (buildContext.Platform.ToLowerInvariant() != "javascript-app-android")
+                        {
+                            throw new InvalidOperationException("Cannot have an APK Export Path for non-Android projects");
+                        }
+
+                        if (!CommonUtil.Android.AndroidUtil.HasAndroidSdk)
+                        {
+                            throw new InvalidOperationException("Cannot export APK because the Android SDK is not present.");
+                        }
+
+                        if (!command.ApkExportPath.ToLowerInvariant().EndsWith(".apk"))
+                        {
+                            throw new InvalidOperationException("Cannot export APK to a file path that doesn't end with .apk");
+                        }
+
+                        CommonUtil.Android.AndroidApkBuildResult apkResult = CommonUtil.Android.AndroidUtil.BuildApk(outputDirectory);
+
+                        if (apkResult.HasError)
+                        {
+                            throw new InvalidOperationException("An error occurred while generating the APK: " + apkResult.Error);
+                        }
+
+                        FileUtil.EnsureParentFolderExists(command.ApkExportPath);
+                        System.IO.File.Copy(apkResult.ApkPath, command.ApkExportPath);
+                    }
+
                     return new Result() { Errors = response.Errors };
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
