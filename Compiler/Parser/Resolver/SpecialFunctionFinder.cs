@@ -44,7 +44,7 @@ namespace Parser.Resolver
                     .FirstOrDefault();
                 if (scope == null)
                 {
-                    throw new InvalidOperationException("delegate-main-to value is not a valid dependency of the main scope.");
+                    throw new InvalidOperationException("Your build file has its delegateMainTo value set to '" + delegateMainTo + "', but there are no library dependencies by this name. Did you forget to import it?");
                 }
             }
 
