@@ -83,11 +83,7 @@
                     i1 = y * this.width;
                     i2 = x;
                     value = 0.0;
-                    print("X/Y: " + x + '/' + y);
-                    print("Looping " + this.width + ' times');
                     for (i = 0; i < this.width; ++i) {
-                        print("i1 = " + i1);
-                        print("i2 = " + i2);
                         value += d1[i1] * d2[i2];
                         i1 += 1;
                         i2 += other.width;
