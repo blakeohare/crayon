@@ -61,6 +61,8 @@ namespace OpenGL {
         }
 
         function flush(isGame = false) {
+            this._g2dCtx._buffer.concat(this._queue);
+            this._queue.clear();
             this._g2dCtx.flush(isGame);
             return this;
         }

@@ -15,7 +15,7 @@
 
         constructor(glCtx, items) : base(glCtx) {
             this.size = items.length;
-            glCtx._appendQueue('GL:AB-S', [this._id] + items);
+            glCtx._appendQueue('GL:AB-S', [this._id, items.length] + items);
         }
     }
 }

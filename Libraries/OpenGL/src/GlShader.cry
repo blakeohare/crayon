@@ -6,19 +6,19 @@
         field _shaderId;
         field _glContext;
 
-        constructor(glContext, source) {
+        constructor(glContext, source, isVert) {
             this._glslSrc = source + '';
             this._shaderId = GlShader._idAlloc++;
             this._glContext = glContext;
-            this._glContext._appendQueue('GL:GLSL', [this._shaderId, this._glslSrc]);
+            this._glContext._appendQueue('GL:GLSL', [this._shaderId, this._glslSrc, isVert]);
         }
     }
 
     class VertexShader : GlShader {
-        constructor(glContext, shaderSrc) : base(glContext, shaderSrc) { }
+        constructor(glContext, shaderSrc) : base(glContext, shaderSrc, 1) { }
     }
 
     class FragmentShader : GlShader {
-        constructor(glContext, shaderSrc) : base(glContext, shaderSrc) { }
+        constructor(glContext, shaderSrc) : base(glContext, shaderSrc, 0) { }
     }
 }

@@ -35,6 +35,7 @@ LIBRARIES = [
 	'Nori',
 	'NoriRichText',
 	'NoriXml',
+	'OpenGL',
 	'ProcessUtil',
 	'Random',
 	'Resources',

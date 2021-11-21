@@ -41,7 +41,7 @@
             if (ref == null) {
                 ref = new GlLocation(this._glContext, name, this._versionId, isUniform);
                 this._attribs[name] = ref;
-                this._glContext._appendQueue('GL:QA', [isUniform ? 1 : 0, name, ref._id]);
+                this._glContext._appendQueue('GL:QA', [isUniform ? 1 : 0, name, ref._id, this._programId]);
 
             }
             return ref;

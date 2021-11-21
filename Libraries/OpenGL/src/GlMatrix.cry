@@ -27,7 +27,7 @@ namespace OpenGL {
                 b = -2.0 * nearClippingPlane;
             } else {
                 diff = farClippingPlane - nearClippingPlane;
-                a = -1.0 * farClippingPlane / diff;
+                a = -1.0 * (farClippingPlane + nearClippingPlane) / diff;
                 b = -2.0 * farClippingPlane * nearClippingPlane / diff;
             }
 
@@ -117,8 +117,6 @@ namespace OpenGL {
 
         function multiply(vectorOrMatrix) {
 
-            this.transpose();
-
             if (vectorOrMatrix is GlMatrix) {
                 output = new GlMatrix();
 
@@ -129,17 +127,16 @@ namespace OpenGL {
                     for (col = 0; col < 4; col++) {
                         // row and col refer to the output matrix
                         acc = 0.0;
-                        leftIndex = row * 4;
-                        rightIndex = col;
+                        leftIndex = col;
+                        rightIndex = row * 4;
                         for (i = 0; i < 4; i++) {
-                            acc += left[leftIndex++] * right[rightIndex];
-                            rightIndex += 4;
+                            acc += left[leftIndex] * right[rightIndex++];
+                            leftIndex += 4;
                         }
                         output.values[outputIndex++] = acc;
                     }
                 }
-                this.transpose();
-                return output.transpose();
+                return output;
             }
 
             if (vectorOrMatrix is GlVector) {

@@ -14,14 +14,16 @@ function main() {
                 <Button id="btn_back" width="50%" height="100%">backward</Button>
                 <Button id="btn_right" width="100%" height="100%">right</Button>
             </FlowPanel>
-            <Canvas id="surface"/>
+            <Canvas id="surface" canvasWidth="640" canvasHeight="480"/>
         </DockPanel>');
+
+    canvas = ui.findElement('surface');
 
     ui.findElement('btn_left').setClickHandler(() => { print("LEFT"); });
     ui.findElement('btn_right').setClickHandler(() => { print("RIGHT"); });
     ui.findElement('btn_forward').setClickHandler(() => { print("FORWARD"); });
     ui.findElement('btn_back').setClickHandler(() => { print("BACK"); });
-    canvas = ui.findElement('surface');
+
     ui.setLoadHandler(() => {
         initializeOpenGl(canvas);
     });
@@ -84,18 +86,19 @@ function initializeOpenGl(canvas) {
 
     accRotation = new GlMatrix(true);
 
+    mvpMatrix = projectionMatrix
+        .multiply(viewMatrix)
+        .multiply(modelMatrix);
+
     while (true) {
         Core.sleep(0.033);
 
         // accumulative rotation gets multiplied every frame
         accRotation = accRotation.multiply(rotationMatrix);
 
-        mvpMatrix = projectionMatrix
-            .multiply(viewMatrix)
-            .multiply(modelMatrix)
-            .multiply(accRotation);
+        mvpRotMatrix = mvpMatrix.multiply(accRotation);
 
-        matrixUniform.bindUniformMatrix(mvpMatrix);
+        matrixUniform.bindUniformMatrix(mvpRotMatrix);
         vertexCount = vertexData.length / 3;
         gl.drawArrays(GlVertexMode.TRIANGLES, 0, vertexCount);
         gl.flush();
