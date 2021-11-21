@@ -16,6 +16,7 @@ def main():
     'nori_context.js',
     'nori_events.js',
     'nori_gamepad.js',
+    'nori_gl.js',
     'nori_layout.js',
     'nori_util.js'
   ]:
