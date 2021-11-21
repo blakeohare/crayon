@@ -1,0 +1,53 @@
+﻿namespace OpenGL {
+    class GlProgram {
+        static field _programIdAlloc = 1;
+        field _programId;
+        field _glContext;
+        field _shaderIds = {};
+        field _versionId = 1;
+        field _attribs = {};
+
+        constructor(glContext) {
+            this._glContext = glContext;
+            this._programId = GlProgram._programIdAlloc++;
+            this._glContext._appendQueue('GL:CP', [this._programId]);
+        }
+
+        function attachShader(shader) {
+            if (!(shader is GlShader)) throw new InvalidArgumentException("Expected a shader instance.");
+            if (shader._glContext != this._glContext) throw new InvalidArgumentException("The shader and program come from different GL Contexts");
+            if (this._shaderIds.get(shader._shaderId) != null) throw new InvalidArgumentException("Shader already attached to this program");
+            this._shaderIds[shader._shaderId] = shader;
+            this._glContext._appendQueue('GL:AS', [this._programId, shader._shaderId]);
+            this._versionId++;
+            this._attribs.clear();
+            return this;
+        }
+
+        function link() {
+            this._glContext._appendQueue('GL:LP', [this._programId]);
+            this._versionId++;
+            this._attribs.clear();
+            return this;
+        }
+
+        function use() {
+            this._glContext._appendQueue('GL:PU', [this._programId]);
+            return this;
+        }
+
+        function _getLocation(name, isUniform) {
+            ref = this._attribs.get(name);
+            if (ref == null) {
+                ref = new GlLocation(this._glContext, name, this._versionId, isUniform);
+                this._attribs[name] = ref;
+                this._glContext._appendQueue('GL:QA', [isUniform ? 1 : 0, name, ref._id]);
+
+            }
+            return ref;
+        }
+
+        function getAttributeLocation(name) { return this._getLocation(name, false); }
+        function getUniformLocation(name) { return this._getLocation(name, true); }
+    }
+}

@@ -1,0 +1,36 @@
+﻿namespace OpenGL {
+    class GlLocation {
+        static field _locIdAlloc = 1;
+        field _id;
+        field _name;
+        field _linkVersion = 1;
+        field _isUniform;
+        field _glCtx;
+
+        // TODO: make this constructor internal
+        constructor(ctx, name, linkVer, isUniform) {
+            this._glCtx = ctx;
+            this._name = name;
+            this._id = GlLocation._locIdAlloc++;
+            this._linkVersion = linkVer;
+            this._isUniform = isUniform;
+        }
+
+        function bindVertexBuffer(buffer, sizePerPoint) {
+            this._glCtx._appendQueue('GL:BND-VER-BUF', [this._id, buffer._id, sizePerPoint]);
+            return this;
+        }
+
+        function bindUniformMatrix(matrix, transpose = false) {
+            if (!this._isUniform) throw new InvalidArgumentException(); // not a uniform location
+            umat = matrix;
+            if (transpose == true) {
+                umat = new GlMatrix();
+                umat.values = matrix.values[:];
+                umat.transpose();
+            }
+            this._glCtx._appendQueue('GL:BND-UNI-MAT', [this._id] + umat.values);
+            return this;
+        }
+    }
+}

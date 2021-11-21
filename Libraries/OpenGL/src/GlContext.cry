@@ -1,0 +1,68 @@
+﻿import Graphics2D;
+import Nori;
+
+namespace OpenGL {
+
+    enum GlClearMask {
+        COLOR_BUFFER_BIT = 1,
+        DEPTH_BUFFER_BIT = 2,
+        STENCIL_BUFFER_BIT = 4,
+    }
+
+    enum GlVertexMode {
+        POINTS = 1,
+        LINE_STRIP = 2,
+        LINE_LOOP = 3,
+        LINES = 4,
+        TRIANGLE_STRIP = 5,
+        TRIANGLE_FAN = 6,
+        TRIANGLES = 7,
+    }
+
+    class GlContext {
+        field _canvas;
+        field _queue = [];
+        field _id;
+        field _g2dCtx;
+        field _errCb;
+
+        static field _glContextIdAlloc = 1;
+
+        constructor(canvas, errCb) {
+            if (!(canvas is Nori.Canvas)) throw new InvalidArgumentException("GlContext constructor requires a canvas instance");
+            this._id = GlContext._glContextIdAlloc++;
+            this._g2dCtx = Graphics2D.createGraphicsContext(canvas);
+            this._appendQueue('GL:INIT', [this._id, canvas._id]);
+            this._errCb = (msg) => {
+                errCb(msg);
+            };
+        }
+
+        function _appendQueue(cmd, items) {
+            this._queue.add(cmd, items.length + 4, 0, 0);
+            this._queue.concat(items);
+            return this;
+        }
+
+        function clearColor(r, g, b) {
+            return this._appendQueue('GL:CC', [r, g, b]);
+        }
+
+        function clear(mask) {
+            return this._appendQueue('GL:CL', [mask]);
+        }
+
+        function enableDepthTest() {
+            return this._appendQueue('GL:EN-DEP', []);
+        }
+
+        function drawArrays(mode, startIndex, vertexCount) {
+            return this._appendQueue('GL:DRAW-ARR', [mode, startIndex, vertexCount]);
+        }
+
+        function flush(isGame = false) {
+            this._g2dCtx.flush(isGame);
+            return this;
+        }
+    }
+}

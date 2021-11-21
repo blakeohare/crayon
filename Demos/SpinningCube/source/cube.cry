@@ -1,0 +1,93 @@
+﻿function flattenList(nestedList) {
+    buffer = [];
+    _flattenListHelper(nestedList, buffer);
+    return buffer;
+}
+
+function _flattenListHelper(nestedList, buffer) {
+    for (i = 0; i < nestedList.length; i++) {
+        item = nestedList[i];
+        if (Core.typeof(item) == Core.Type.LIST) {
+            _flattenListHelper(item, buffer);
+        } else {
+            buffer.add(item);
+        }
+    }
+}
+
+function getCubeVertexData() {
+
+    /*
+              A---------B
+            / |       / |         Y+
+          /   |     /   |         ^
+        C---------D     |         |
+        |     |   |     |         |
+        |     E---|-----F         o-----> X+
+        |   /     |   /         /
+        | /       | /         L
+        G---------H         Z+
+    */
+
+    LEFT = -.5;
+    RIGHT = .5;
+    TOP = .5;
+    BOTTOM = -.5;
+    FRONT = .5;
+    BACK = -.5;
+
+    A = [LEFT, TOP, BACK];
+    B = [RIGHT, TOP, BACK];
+    C = [LEFT, TOP, FRONT];
+    D = [RIGHT, TOP, FRONT];
+    E = [LEFT, BOTTOM, BACK];
+    F = [RIGHT, BOTTOM, BACK];
+    G = [LEFT, BOTTOM, FRONT];
+    H = [RIGHT, BOTTOM, FRONT];
+
+    return flattenList([
+        // Front
+        D, H, C,
+        C, H, G,
+
+        // Left
+        A, C, G,
+        A, G, E,
+
+        // Back
+        B, A, F,
+        A, E, F,
+
+        // Right
+        D, B, F,
+        D, F, H,
+
+        // Top
+        A, B, D,
+        A, D, C,
+
+        // Bottom
+        F, E, G,
+        F, G, H,
+    ]);
+}
+
+function getCubeColorData() {
+
+    RED = [255, 0, 0];
+    GREEN = [0, 128, 0];
+    BLUE = [0, 50, 200];
+    PURPLE = [150, 20, 120];
+    ORANGE = [255, 128, 0];
+    YELLOW = [255, 235, 0];
+    output = [];
+    for (color : [RED, GREEN, PURPLE, BLUE, YELLOW, ORANGE]) {
+        r = color[0] / 255.0;
+        g = color[1] / 255.0;
+        b = color[2] / 255.0;
+        for (i = 0; i < 6; i++) {
+            output.add(r, g, b);
+        }
+    }
+    return output;
+}

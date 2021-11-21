@@ -1,0 +1,221 @@
+﻿import Math;
+
+// TODO: remove the internal usages of transpose since I flip flopped my representation's orientation in the middle of implementing this.
+
+namespace OpenGL {
+
+    enum GlAxis {
+        X = 1,
+        Y = 2,
+        Z = 3,
+    }
+
+    class GlMatrix {
+
+        static function createProjectionMatrix(
+            fieldOfViewRad,
+            aspectRatio,
+            nearClippingPlane,
+            farClippingPlane = null) {
+
+            t = Math.tan(fieldOfViewRad / 2.0);
+            if (t == 0) throw new InvalidArgumentException("Invalid field of view");
+            t = 1.0 / t;
+
+            if (farClippingPlane == null) {
+                a = -1.0;
+                b = -2.0 * nearClippingPlane;
+            } else {
+                diff = farClippingPlane - nearClippingPlane;
+                a = -1.0 * farClippingPlane / diff;
+                b = -2.0 * farClippingPlane * nearClippingPlane / diff;
+            }
+
+            mat = new GlMatrix();
+            mat.values = [
+                t / aspectRatio, 0.0, 0.0, 0.0,
+                0.0, t, 0.0, 0.0,
+                0.0, 0.0, a, -1.0,
+                0.0, 0.0, b, 0.0];
+            return mat;
+        }
+
+        field values;
+
+        constructor(isIdentity = false) {
+            this.values = [0.0] * 16;
+            if (isIdentity) {
+                this.values[0] = 1.0;
+                this.values[5] = 1.0;
+                this.values[10] = 1.0;
+                this.values[15] = 1.0;
+            }
+        }
+
+        static function getTranslationMatrix(x, y, z) {
+            m = new GlMatrix(true);
+            v = m.values;
+            v[12] = x * 1.0;
+            v[13] = y * 1.0;
+            v[14] = z * 1.0;
+            return m;
+        }
+
+        function transpose() {
+            m = this.values;
+            for (y = 0; y < 3; ++y) {
+                for (x = y + 1; x < 4; ++x) {
+                    i = y * 4 + x;
+                    j = x * 4 + y;
+                    t = m[i];
+                    m[i] = m[j];
+                    m[j] = t;
+                }
+            }
+            return this;
+        }
+
+        static function getRotationMatrix(amount, axis) {
+            c = Math.cos(amount);
+            s = Math.sin(amount);
+            mat = new GlMatrix(true);
+            values = mat.values;
+            switch (axis) {
+                case GlAxis.X:
+                    values[5] = c;
+                    values[6] = -s;
+                    values[9] = s;
+                    values[10] = c;
+                    return mat.transpose();
+                case GlAxis.Y:
+                    values[0] = c;
+                    values[2] = s;
+                    values[8] = -s;
+                    values[10] = c;
+                    return mat.transpose();
+                case GlAxis.Z:
+                    values[0] = c;
+                    values[1] = -s;
+                    values[4] = s;
+                    values[5] = c;
+                    return mat.transpose();
+                default:
+                    throw new InvalidArgumentException();
+
+            }
+        }
+
+        static function getScaleMatrix(amountOrX, y = null, z = null) {
+            mat = new GlMatrix();
+            values = mat.values;
+            values[0] = amountOrX * 1.0;
+            values[5] = (y ?? amountOrX) * 1.0;
+            values[10] = (z ?? amountOrX) * 1.0;
+            values[15] = 1.0;
+            return mat;
+        }
+
+        function multiply(vectorOrMatrix) {
+
+            this.transpose();
+
+            if (vectorOrMatrix is GlMatrix) {
+                output = new GlMatrix();
+
+                left = this.values;
+                right = vectorOrMatrix.values;
+                outputIndex = 0;
+                for (row = 0; row < 4; row++) {
+                    for (col = 0; col < 4; col++) {
+                        // row and col refer to the output matrix
+                        acc = 0.0;
+                        leftIndex = row * 4;
+                        rightIndex = col;
+                        for (i = 0; i < 4; i++) {
+                            acc += left[leftIndex++] * right[rightIndex];
+                            rightIndex += 4;
+                        }
+                        output.values[outputIndex++] = acc;
+                    }
+                }
+                this.transpose();
+                return output.transpose();
+            }
+
+            if (vectorOrMatrix is GlVector) {
+                this.transpose();
+                left = this.values;
+                right = vectorOrMatrix.values;
+                output = new GlVector(0, 0, 0);
+                outputValues = output.values;
+                leftIndex = 0;
+                for (col = 0; col < 4; col++) {
+                    for (row = 0; row < 4; row++) {
+                        outputValues[row] += left[leftIndex++] * right[row];
+                    }
+                }
+                this.transpose();
+                return output;
+            }
+
+            throw new InvalidArgumentException();
+        }
+
+        function invert() {
+            m = this.values;
+            a00 = m[0];
+            a01 = m[1];
+            a02 = m[2];
+            a03 = m[3];
+            a10 = m[4];
+            a11 = m[5];
+            a12 = m[6];
+            a13 = m[7];
+            a20 = m[8];
+            a21 = m[9];
+            a22 = m[10];
+            a23 = m[11];
+            a30 = m[12];
+            a31 = m[13];
+            a32 = m[14];
+            a33 = m[15];
+            b00 = a00 * a11 - a01 * a10;
+            b01 = a00 * a12 - a02 * a10;
+            b02 = a00 * a13 - a03 * a10;
+            b03 = a01 * a12 - a02 * a11;
+            b04 = a01 * a13 - a03 * a11;
+            b05 = a02 * a13 - a03 * a12;
+            b06 = a20 * a31 - a21 * a30;
+            b07 = a20 * a32 - a22 * a30;
+            b08 = a20 * a33 - a23 * a30;
+            b09 = a21 * a32 - a22 * a31;
+            b10 = a21 * a33 - a23 * a31;
+            b11 = a22 * a33 - a23 * a32;
+
+            d = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+            if (d == 0) throw new InvalidArgumentException("Cannot invert a matrix whose determinant is 0");
+            d = 1.0 / d;
+
+            output = new GlMatrix();
+            output.values = [
+                (a11 * b11 - a12 * b10 + a13 * b09) * d,
+                (a02 * b10 - a01 * b11 - a03 * b09) * d,
+                (a31 * b05 - a32 * b04 + a33 * b03) * d,
+                (a22 * b04 - a21 * b05 - a23 * b03) * d,
+                (a12 * b08 - a10 * b11 - a13 * b07) * d,
+                (a00 * b11 - a02 * b08 + a03 * b07) * d,
+                (a32 * b02 - a30 * b05 - a33 * b01) * d,
+                (a20 * b05 - a22 * b02 + a23 * b01) * d,
+                (a10 * b10 - a11 * b08 + a13 * b06) * d,
+                (a01 * b08 - a00 * b10 - a03 * b06) * d,
+                (a30 * b04 - a31 * b02 + a33 * b00) * d,
+                (a21 * b02 - a20 * b04 - a23 * b00) * d,
+                (a11 * b07 - a10 * b09 - a12 * b06) * d,
+                (a00 * b09 - a01 * b07 + a02 * b06) * d,
+                (a31 * b01 - a30 * b03 - a32 * b00) * d,
+                (a20 * b03 - a21 * b01 + a22 * b00) * d,
+            ];
+            return output;
+        }
+    }
+}

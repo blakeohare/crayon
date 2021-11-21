@@ -1,0 +1,103 @@
+﻿import Math;
+import Nori;
+import NoriXml;
+import OpenGL;
+import Resources;
+
+function main() {
+
+    ui = NoriXml.build('
+        <DockPanel fill="true">
+            <FlowPanel dock="south" height="50">
+                <Button id="btn_left" width="25%" height="100%">left</Button>
+                <Button id="btn_forward" width="33%" height="100%">forward</Button>
+                <Button id="btn_back" width="50%" height="100%">backward</Button>
+                <Button id="btn_right" width="100%" height="100%">right</Button>
+            </FlowPanel>
+            <Canvas id="surface"/>
+        </DockPanel>');
+
+    ui.findElement('btn_left').setClickHandler(() => { print("LEFT"); });
+    ui.findElement('btn_right').setClickHandler(() => { print("RIGHT"); });
+    ui.findElement('btn_forward').setClickHandler(() => { print("FORWARD"); });
+    ui.findElement('btn_back').setClickHandler(() => { print("BACK"); });
+    canvas = ui.findElement('surface');
+    ui.setLoadHandler(() => {
+        initializeOpenGl(canvas);
+    });
+
+    new Frame()
+        .setWidth(800)
+        .setHeight(600)
+        .setTitle("Spinning Cube")
+        .setContent(ui)
+        .show();
+}
+
+function initializeOpenGl(canvas) {
+
+    vertexData = getCubeVertexData();
+    colorData = getCubeColorData();
+
+    gl = new OpenGL.GlContext(canvas, err => {
+        print("ERROR:");
+        print(err);
+        print("I don't know what to do here.");
+    });
+
+    positionBuffer = new GlStaticArrayBuffer(gl, vertexData);
+    colorBuffer = new GlStaticArrayBuffer(gl, colorData);
+
+    vertexShader = new VertexShader(gl, Resources.readText('shaders/vertexShader.glsl'));
+    fragmentShader = new FragmentShader(gl, Resources.readText('shaders/fragmentShader.glsl'));
+
+    program = new GlProgram(gl)
+        .attachShader(vertexShader)
+        .attachShader(fragmentShader)
+        .link();
+
+    positionAttribute = program.getAttributeLocation('position');
+    colorAttribute = program.getAttributeLocation('color');
+    matrixUniform = program.getUniformLocation('matrix');
+
+    colorAttribute.bindVertexBuffer(colorBuffer, 3);
+    positionAttribute.bindVertexBuffer(positionBuffer, 3);
+
+    program.use();
+    gl.enableDepthTest();
+
+    projectionMatrix = GlMatrix.createProjectionMatrix(
+        75 * Math.PI / 180, // vertical field-of-view (angle, radians)
+        1.0, //canvas.width / canvas.height, // aspect W/H
+        .0001, // near cull distance
+        1000 // far cull distance
+    );
+    modelMatrix = GlMatrix.getTranslationMatrix(0, 0, -2);
+    viewMatrix = GlMatrix.getTranslationMatrix(0, 0, 2.5)
+        .invert();
+
+    rotDeg = 2.0;
+    rotationMatrix = new GlMatrix(true)
+        .multiply(GlMatrix.getRotationMatrix(rotDeg * Math.PI / 180, GlAxis.X))
+        .multiply(GlMatrix.getRotationMatrix(rotDeg * Math.PI / 180, GlAxis.Y))
+        .multiply(GlMatrix.getRotationMatrix(rotDeg * Math.PI / 180, GlAxis.Z));
+
+    accRotation = new GlMatrix(true);
+
+    while (true) {
+        Core.sleep(0.033);
+
+        // accumulative rotation gets multiplied every frame
+        accRotation = accRotation.multiply(rotationMatrix);
+
+        mvpMatrix = projectionMatrix
+            .multiply(viewMatrix)
+            .multiply(modelMatrix)
+            .multiply(accRotation);
+
+        matrixUniform.bindUniformMatrix(mvpMatrix);
+        vertexCount = vertexData.length / 3;
+        gl.drawArrays(GlVertexMode.TRIANGLES, 0, vertexCount);
+        gl.flush();
+    }
+}

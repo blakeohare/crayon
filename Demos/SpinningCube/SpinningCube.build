@@ -1,0 +1,33 @@
+{
+    "id": "SpinningCube",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "title": "SpinningCube",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
+    "version": "1.0",
+    "iosBundlePrefix": "com.yourname.SpinningCube,%VERSION%",
+    "guidSeed": "com.yourname.SpinningCube,v1,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "android",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "platform": "javascript-app-ios"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "jsFilePrefix": "/website/relative/path/from/domain/root"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}

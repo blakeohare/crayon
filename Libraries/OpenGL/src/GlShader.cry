@@ -1,0 +1,24 @@
+﻿namespace OpenGL {
+    class GlShader {
+        static field _idAlloc = 1;
+
+        field _glslSrc;
+        field _shaderId;
+        field _glContext;
+
+        constructor(glContext, source) {
+            this._glslSrc = source + '';
+            this._shaderId = GlShader._idAlloc++;
+            this._glContext = glContext;
+            this._glContext._appendQueue('GL:GLSL', [this._shaderId, this._glslSrc]);
+        }
+    }
+
+    class VertexShader : GlShader {
+        constructor(glContext, shaderSrc) : base(glContext, shaderSrc) { }
+    }
+
+    class FragmentShader : GlShader {
+        constructor(glContext, shaderSrc) : base(glContext, shaderSrc) { }
+    }
+}

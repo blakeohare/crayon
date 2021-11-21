@@ -1,0 +1,21 @@
+﻿namespace OpenGL {
+    class GlBuffer {
+        field _glCtx;
+        static field _bufIdAlloc = 1;
+        field _id;
+
+        constructor(glCtx) {
+            this._glCtx = glCtx;
+            this._id =  GlBuffer._bufIdAlloc++;
+        }
+    }
+
+    class GlStaticArrayBuffer : GlBuffer {
+        field size;
+
+        constructor(glCtx, items) : base(glCtx) {
+            this.size = items.length;
+            glCtx._appendQueue('GL:AB-S', [this._id] + items);
+        }
+    }
+}
