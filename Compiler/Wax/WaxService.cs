@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CommonUtil.Wax
+namespace Wax
 {
     public abstract class WaxService
     {

@@ -7,7 +7,7 @@ namespace Parser
 {
     internal class ScopeManager
     {
-        private CommonUtil.Wax.WaxHub wax;
+        private Wax.WaxHub wax;
         private string[] localDeps;
         private string projectDirectory;
 
@@ -18,7 +18,7 @@ namespace Parser
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> assembliesAlreadyImportedIndexByKey = new Dictionary<string, int>();
 
-        public ScopeManager(CompileRequest compileRequest, CommonUtil.Wax.WaxHub waxHub)
+        public ScopeManager(CompileRequest compileRequest, Wax.WaxHub waxHub)
         {
             this.wax = waxHub;
             this.localDeps = compileRequest.LocalDeps;

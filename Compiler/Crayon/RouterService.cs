@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    public class RouterService : CommonUtil.Wax.WaxService
+    public class RouterService : Wax.WaxService
     {
 #if DEBUG
         private const bool IS_RELEASE = false;

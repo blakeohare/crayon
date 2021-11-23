@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Extensions
 {
-    internal class LanguageFrontendService : CommonUtil.Wax.WaxService
+    internal class LanguageFrontendService : Wax.WaxService
     {
         private string language;
         private string cbxPath;

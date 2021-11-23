@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Crayon
 {
-    public class CbxRunnerService : CommonUtil.Wax.WaxService
+    public class CbxRunnerService : Wax.WaxService
     {
         public CbxRunnerService() : base("cbxrunner") { }
 

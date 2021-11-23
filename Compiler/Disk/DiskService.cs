@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Disk
 {
-    public class DiskService : CommonUtil.Wax.WaxService
+    public class DiskService : Wax.WaxService
     {
 
         private Dictionary<string, string> idToAbsolutePath = new Dictionary<string, string>();

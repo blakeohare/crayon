@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Extensions
 {
-    public class ExtensionsService : CommonUtil.Wax.WaxService
+    public class ExtensionsService : Wax.WaxService
     {
 
         private HashSet<string> loadedServices = new HashSet<string>();

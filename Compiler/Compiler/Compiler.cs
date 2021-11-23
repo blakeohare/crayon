@@ -6,7 +6,7 @@ namespace Parser
 {
     internal static class Compiler
     {
-        public static InternalCompilationBundle Compile(CompileRequest compileRequest, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
+        public static InternalCompilationBundle Compile(CompileRequest compileRequest, bool isRelease, Wax.WaxHub waxHub)
         {
             InternalCompilationBundle result;
             if (isRelease)
@@ -44,7 +44,7 @@ namespace Parser
             return result;
         }
 
-        private static InternalCompilationBundle CompileImpl(CompileRequest compileRequest, CommonUtil.Wax.WaxHub waxHub)
+        private static InternalCompilationBundle CompileImpl(CompileRequest compileRequest, Wax.WaxHub waxHub)
         {
             ParserContext parserContext = new ParserContext(compileRequest, waxHub);
             TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();

@@ -9,7 +9,7 @@ namespace Crayon.Pipeline
 {
     internal static class MainPipeline
     {
-        public static void Run(Command command, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
+        public static void Run(Command command, bool isRelease, Wax.WaxHub waxHub)
         {
             Result result = RunImpl(command, isRelease, waxHub);
 
@@ -85,7 +85,7 @@ namespace Crayon.Pipeline
 
         private static ExternalCompilationBundle Compile(
             Dictionary<string, object> request,
-            CommonUtil.Wax.WaxHub waxHub)
+            Wax.WaxHub waxHub)
         {
             Dictionary<string, object> resultRaw = waxHub.AwaitSendRequest("compiler", request);
             List<Error> errors = new List<Error>();
@@ -115,7 +115,7 @@ namespace Crayon.Pipeline
                 };
         }
 
-        public static Result RunImpl(Command command, bool isRelease, CommonUtil.Wax.WaxHub waxHub)
+        public static Result RunImpl(Command command, bool isRelease, Wax.WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
@@ -325,7 +325,7 @@ namespace Crayon.Pipeline
             Command command,
             bool isDryRunErrorCheck,
             bool isRelease,
-            CommonUtil.Wax.WaxHub waxHub)
+            Wax.WaxHub waxHub)
         {
             BuildContext buildContext;
             if (isRelease)

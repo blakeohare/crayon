@@ -1,5 +1,4 @@
-﻿using Common;
-using CommonUtil.Disk;
+﻿using CommonUtil.Disk;
 
 namespace Crayon
 {
@@ -9,7 +8,7 @@ namespace Crayon
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
 
-            CommonUtil.Wax.WaxHub waxHub = new CommonUtil.Wax.WaxHub();
+            Wax.WaxHub waxHub = new Wax.WaxHub();
             waxHub.RegisterService(new RouterService());
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Parser.CompilerService());

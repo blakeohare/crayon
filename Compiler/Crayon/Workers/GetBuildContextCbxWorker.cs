@@ -7,7 +7,7 @@ namespace Crayon
 {
     public class GetBuildContextCbxWorker
     {
-        internal BuildContext DoWorkImpl(Command command, CommonUtil.Wax.WaxHub hub)
+        internal BuildContext DoWorkImpl(Command command, Wax.WaxHub hub)
         {
             string buildFilePath = command.BuildFilePath;
 

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class CompilerService : CommonUtil.Wax.WaxService
+    public class CompilerService : Wax.WaxService
     {
         public CompilerService() : base("compiler") { }
 

@@ -26,7 +26,7 @@ namespace Parser
         // TODO: make this configurable.
         public bool IncludeDebugSymbols { get { return true; } }
 
-        public ParserContext(CompileRequest compileRequest, CommonUtil.Wax.WaxHub waxHub)
+        public ParserContext(CompileRequest compileRequest, Wax.WaxHub waxHub)
         {
             this.CompileRequest = compileRequest;
             this.ProjectId = compileRequest.ProjectId;

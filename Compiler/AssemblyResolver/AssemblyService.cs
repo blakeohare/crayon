@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AssemblyResolver
 {
-    public class AssemblyService : CommonUtil.Wax.WaxService
+    public class AssemblyService : Wax.WaxService
     {
         private Dictionary<string, AssemblyFinder> assemblyFinderCache = new Dictionary<string, AssemblyFinder>();
 

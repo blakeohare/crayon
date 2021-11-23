@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
 </Project>

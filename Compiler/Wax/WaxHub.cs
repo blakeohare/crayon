@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommonUtil.Wax
+namespace Wax
 {
     public class WaxHub
     {
@@ -85,7 +85,7 @@ namespace CommonUtil.Wax
         {
             List<string> buffer = new List<string>();
             SerializeWireDataImpl(data, buffer);
-            return string.Join(',', buffer.Select(item => Base64.ToBase64(item)));
+            return string.Join(',', buffer.Select(item => CommonUtil.Base64.ToBase64(item)));
         }
 
         private static void SerializeWireDataImpl(object item, List<string> buffer)
@@ -152,7 +152,7 @@ namespace CommonUtil.Wax
 
         internal static Dictionary<string, object> ParseWireData(string encodedData)
         {
-            Queue<string> buffer = new Queue<string>(encodedData.Split(',').Select(item => Base64.FromBase64(item)));
+            Queue<string> buffer = new Queue<string>(encodedData.Split(',').Select(item => CommonUtil.Base64.FromBase64(item)));
             object output = ParseWireDataImpl(buffer);
             if (output is Dictionary<string, object>)
             {

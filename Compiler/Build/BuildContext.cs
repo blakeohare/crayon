@@ -382,7 +382,7 @@ namespace Build
             }
         }
 
-        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath, CommonUtil.Wax.WaxHub waxHub)
+        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath, Wax.WaxHub waxHub)
         {
             string validatedPath = GetValidatedCanonicalBuildFilePathImpl(originalBuildFilePath, waxHub);
             if (validatedPath == null)
@@ -392,7 +392,7 @@ namespace Build
             return validatedPath;
         }
 
-        private static string GetValidatedCanonicalBuildFilePathImpl(string originalBuildFilePath, CommonUtil.Wax.WaxHub waxHub)
+        private static string GetValidatedCanonicalBuildFilePathImpl(string originalBuildFilePath, Wax.WaxHub waxHub)
         {
             string buildFilePath = originalBuildFilePath;
 
@@ -422,7 +422,7 @@ namespace Build
             return buildFilePath;
         }
 
-        public void TranspileFrontendLanguage(CommonUtil.Wax.WaxHub hub)
+        public void TranspileFrontendLanguage(Wax.WaxHub hub)
         {
             if (this.RootProgrammingLanguage == ProgrammingLanguage.ACRYLIC ||
                 this.RootProgrammingLanguage == ProgrammingLanguage.CRAYON)
