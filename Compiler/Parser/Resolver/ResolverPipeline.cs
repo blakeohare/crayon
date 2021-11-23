@@ -27,79 +27,68 @@ namespace Parser.Resolver
                 assembliesInDependencyOrder.Select(asm => compilationScopeLookup[asm.ID]));
             compilationScopes.Add(parser.RootScope);
 
-            using (new PerformanceSection("ResolveNames for compilation scopes"))
+            // Resolve raw names into the actual things they refer to based on namespaces and imports.
+            foreach (CompilationScope scope in compilationScopes)
             {
-                // Resolve raw names into the actual things they refer to based on namespaces and imports.
-                foreach (CompilationScope scope in compilationScopes)
-                {
-                    using (new PerformanceSection("Resolve Names for: " + scope.ScopeKey))
-                    {
-                        EntityNameResolver.Resolve(parser, scope);
-                    }
-                }
+                EntityNameResolver.Resolve(parser, scope);
             }
 
             LocalScopeVariableIdAllocator.Run(parser, code.Where(tle => !(tle is ConstDefinition || tle is EnumDefinition)));
 
-            using (new PerformanceSection("Resolve Types"))
+            foreach (CompilationScope scope in compilationScopes)
             {
-                foreach (CompilationScope scope in compilationScopes)
+                TopLevelEntity[] topLevelEntities = scope.GetTopLevelEntities();
+                ConstDefinition[] consts = topLevelEntities.OfType<ConstDefinition>().ToArray();
+                EnumDefinition[] enums = topLevelEntities.OfType<EnumDefinition>().ToArray();
+                ClassDefinition[] classes = topLevelEntities.OfType<ClassDefinition>().ToArray();
+                FunctionDefinition[] functions = topLevelEntities.OfType<FunctionDefinition>().ToArray();
+
+                // Constants are provided in dependency order. Type resolution running in this order
+                // will not encounter anything unknown. Const dependency loops are found by .SortConstants()
+                // Note that this sorting is for the purposes of type resolution. All enums are automatically
+                // known to be integers, so there's possibly still some dependency loops there, which are
+                // caught during the consolidation in the Resolve() phase.
+
+                TopLevelEntity[] topLevelEntitiesWithoutConstants = new TopLevelEntity[0]
+                    .Concat(enums)
+                    .Concat(functions)
+                    .Concat(classes)
+                    .ToArray();
+
+                // The type of the overall constant is dependent on the expression's type when there are
+                // no type declarations (i.e. Crayon). Because signature types need to be resolved before
+                // the expression itself, these are sorted in dependency order. Enum values, even though
+                // a const expression can depend on them, are always an integer, so they don't need to be
+                // type-resolved at this time.
+                ConstDefinition[] dependencySortedConstants = new ConstantDependencySorter(consts).SortConstants();
+                foreach (ConstDefinition cnst in dependencySortedConstants)
                 {
-                    using (new PerformanceSection("Resolve types for: " + scope.ScopeKey))
-                    {
-                        TopLevelEntity[] topLevelEntities = scope.GetTopLevelEntities();
-                        ConstDefinition[] consts = topLevelEntities.OfType<ConstDefinition>().ToArray();
-                        EnumDefinition[] enums = topLevelEntities.OfType<EnumDefinition>().ToArray();
-                        ClassDefinition[] classes = topLevelEntities.OfType<ClassDefinition>().ToArray();
-                        FunctionDefinition[] functions = topLevelEntities.OfType<FunctionDefinition>().ToArray();
+                    TypeResolver typeResolver = new TypeResolver(cnst);
 
-                        // Constants are provided in dependency order. Type resolution running in this order
-                        // will not encounter anything unknown. Const dependency loops are found by .SortConstants()
-                        // Note that this sorting is for the purposes of type resolution. All enums are automatically
-                        // known to be integers, so there's possibly still some dependency loops there, which are
-                        // caught during the consolidation in the Resolve() phase.
+                    // This shouldn't pick anything up, but it'll fire any errors when undeclared variable-like expressions are used.
+                    cnst.Expression.ResolveVariableOrigins(parser, VariableScope.NewEmptyScope(false), VariableIdAllocPhase.REGISTER_AND_ALLOC);
 
-                        TopLevelEntity[] topLevelEntitiesWithoutConstants = new TopLevelEntity[0]
-                            .Concat(enums)
-                            .Concat(functions)
-                            .Concat(classes)
-                            .ToArray();
-
-                        // The type of the overall constant is dependent on the expression's type when there are
-                        // no type declarations (i.e. Crayon). Because signature types need to be resolved before
-                        // the expression itself, these are sorted in dependency order. Enum values, even though
-                        // a const expression can depend on them, are always an integer, so they don't need to be
-                        // type-resolved at this time.
-                        ConstDefinition[] dependencySortedConstants = new ConstantDependencySorter(consts).SortConstants();
-                        foreach (ConstDefinition cnst in dependencySortedConstants)
-                        {
-                            TypeResolver typeResolver = new TypeResolver(cnst);
-
-                            // This shouldn't pick anything up, but it'll fire any errors when undeclared variable-like expressions are used.
-                            cnst.Expression.ResolveVariableOrigins(parser, VariableScope.NewEmptyScope(false), VariableIdAllocPhase.REGISTER_AND_ALLOC);
-
-                            cnst.ResolveTypes(parser, typeResolver);
-                            cnst.ValidateConstTypeSignature();
-                        }
-
-                        foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
-                        {
-                            TypeResolver typeResolver = new TypeResolver(tle);
-                            tle.ResolveSignatureTypes(parser, typeResolver);
-                        }
-
-                        foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants.Where(t => !(t is EnumDefinition)))
-                        {
-                            tle.EnsureModifierAndTypeSignatureConsistency();
-                        }
-
-                        foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
-                        {
-                            TypeResolver typeResolver = new TypeResolver(tle);
-                            tle.ResolveTypes(parser, typeResolver);
-                        }
-                    }
+                    cnst.ResolveTypes(parser, typeResolver);
+                    cnst.ValidateConstTypeSignature();
                 }
+
+                foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
+                {
+                    TypeResolver typeResolver = new TypeResolver(tle);
+                    tle.ResolveSignatureTypes(parser, typeResolver);
+                }
+
+                foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants.Where(t => !(t is EnumDefinition)))
+                {
+                    tle.EnsureModifierAndTypeSignatureConsistency();
+                }
+
+                foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
+                {
+                    TypeResolver typeResolver = new TypeResolver(tle);
+                    tle.ResolveTypes(parser, typeResolver);
+                }
+
             }
 
             SpecialFunctionFinder.Run(parser);

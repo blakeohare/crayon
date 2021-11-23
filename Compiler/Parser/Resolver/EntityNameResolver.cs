@@ -41,49 +41,46 @@ namespace Parser.Resolver
             Dictionary<string, NamespaceReferenceTemplate> scopeNamespaceLookup,
             Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup)
         {
-            using (new PerformanceSection("ResolveNames"))
+            foreach (FileScope file in new HashSet<FileScope>(toResolve.Select(tlc => tlc.FileScope)))
             {
-                foreach (FileScope file in new HashSet<FileScope>(toResolve.Select(tlc => tlc.FileScope)))
-                {
-                    file.FileScopeEntityLookup.InitializeLookups(
-                        depsLookup,
-                        scopeLookup,
-                        depsNamespaceLookup,
-                        scopeNamespaceLookup);
-                }
+                file.FileScopeEntityLookup.InitializeLookups(
+                    depsLookup,
+                    scopeLookup,
+                    depsNamespaceLookup,
+                    scopeNamespaceLookup);
+            }
 
-                List<ClassDefinition> classes = new List<ClassDefinition>(toResolve.OfType<ClassDefinition>());
+            List<ClassDefinition> classes = new List<ClassDefinition>(toResolve.OfType<ClassDefinition>());
 
-                foreach (ClassDefinition cd in classes)
+            foreach (ClassDefinition cd in classes)
+            {
+                if (cd.BaseClassDeclarations.Length > 0)
                 {
-                    if (cd.BaseClassDeclarations.Length > 0)
-                    {
-                        cd.ResolveBaseClasses();
-                    }
+                    cd.ResolveBaseClasses();
                 }
+            }
 
-                foreach (ClassDefinition cd in classes)
-                {
-                    cd.VerifyNoBaseClassLoops();
-                }
+            foreach (ClassDefinition cd in classes)
+            {
+                cd.VerifyNoBaseClassLoops();
+            }
 
-                foreach (TopLevelEntity item in toResolve)
+            foreach (TopLevelEntity item in toResolve)
+            {
+                if (!(item is Namespace))
                 {
-                    if (!(item is Namespace))
-                    {
-                        item.ResolveEntityNames(parser);
-                    }
+                    item.ResolveEntityNames(parser);
                 }
+            }
 
-                foreach (ClassDefinition cd in classes)
-                {
-                    cd.ResolveMemberIds();
-                }
+            foreach (ClassDefinition cd in classes)
+            {
+                cd.ResolveMemberIds();
+            }
 
-                foreach (TopLevelEntity ex in toResolve.Where(ex => ex is ConstDefinition || ex is EnumDefinition))
-                {
-                    parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
-                }
+            foreach (TopLevelEntity ex in toResolve.Where(ex => ex is ConstDefinition || ex is EnumDefinition))
+            {
+                parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
             }
         }
     }

@@ -9,7 +9,6 @@
         public string BuildTarget { get; set; }
         public string VmPlatform { get; set; }
         public string VmExportDirectory { get; set; }
-        public bool ShowPerformanceMarkers { get; set; }
         public bool IsEmpty { get; set; }
         public string CbxExportPath { get; set; }
         public bool ShowVersion { get; set; }

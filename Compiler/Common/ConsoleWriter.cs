@@ -10,7 +10,6 @@ namespace Common
         GENERAL_COMPILATION_ERROR,
         LIBRARY_TREE,
         PARSER_ERROR,
-        PERFORMANCE_METRIC,
         REMOTE_ASSEMBLY_ERROR,
         STATUS_CHANGE,
         USAGE_NOTES,

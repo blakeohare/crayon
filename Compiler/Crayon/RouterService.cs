@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common;
 
 namespace Crayon
 {
@@ -26,18 +25,9 @@ namespace Crayon
             }
             else
             {
-                using (new PerformanceSection("Crayon"))
-                {
-                    Pipeline.MainPipeline.Run(command, IS_RELEASE, this.Hub);
-                }
+                Pipeline.MainPipeline.Run(command, IS_RELEASE, this.Hub);
             }
 
-#if DEBUG
-            if (command.ShowPerformanceMarkers)
-            {
-                ConsoleWriter.Print(Common.ConsoleMessageType.PERFORMANCE_METRIC, Common.PerformanceTimer.GetSummary());
-            }
-#endif
             cb(new Dictionary<string, object>());
         }
     }

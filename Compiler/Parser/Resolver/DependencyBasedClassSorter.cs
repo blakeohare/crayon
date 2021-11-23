@@ -1,5 +1,4 @@
-﻿using Common;
-using Parser.ParseTree;
+﻿using Parser.ParseTree;
 using System.Collections.Generic;
 
 namespace Parser.Resolver
@@ -10,39 +9,36 @@ namespace Parser.Resolver
     {
         public static TopLevelEntity[] Run(IList<TopLevelEntity> code)
         {
-            using (new PerformanceSection("RearrangeClassDefinitions"))
+            // Rearrange class definitions so that base classes always come first.
+
+            HashSet<int> classIdsIncluded = new HashSet<int>();
+            List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
+            List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
+            List<TopLevelEntity> output = new List<TopLevelEntity>();
+            foreach (TopLevelEntity exec in code)
             {
-                // Rearrange class definitions so that base classes always come first.
-
-                HashSet<int> classIdsIncluded = new HashSet<int>();
-                List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
-                List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
-                List<TopLevelEntity> output = new List<TopLevelEntity>();
-                foreach (TopLevelEntity exec in code)
+                if (exec is FunctionDefinition)
                 {
-                    if (exec is FunctionDefinition)
-                    {
-                        functionDefinitions.Add((FunctionDefinition)exec);
-                    }
-                    else if (exec is ClassDefinition)
-                    {
-                        classDefinitions.Add((ClassDefinition)exec);
-                    }
-                    else
-                    {
-                        throw new ParserException(exec, "Unexpected item.");
-                    }
+                    functionDefinitions.Add((FunctionDefinition)exec);
                 }
-
-                output.AddRange(functionDefinitions);
-
-                foreach (ClassDefinition cd in classDefinitions)
+                else if (exec is ClassDefinition)
                 {
-                    RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
+                    classDefinitions.Add((ClassDefinition)exec);
                 }
-
-                return output.ToArray();
+                else
+                {
+                    throw new ParserException(exec, "Unexpected item.");
+                }
             }
+
+            output.AddRange(functionDefinitions);
+
+            foreach (ClassDefinition cd in classDefinitions)
+            {
+                RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
+            }
+
+            return output.ToArray();
         }
 
         private static void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<TopLevelEntity> output)

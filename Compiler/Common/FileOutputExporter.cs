@@ -21,27 +21,17 @@ namespace Common
 
         public void ExportFiles(Dictionary<string, FileOutput> files)
         {
-            using (new PerformanceSection("FileOutputExporter.ExportFiles", true))
+            foreach (string file in files.Keys.OrderBy(s => s)) // deterministic order
             {
-                foreach (string file in files.Keys.OrderBy(s => s)) // deterministic order
-                {
-                    this.ExportFile(file, files[file]);
-                }
+                this.ExportFile(file, files[file]);
             }
         }
 
         private void ExportFile(string path, FileOutput file)
         {
-            string absolutePath;
-            using (new PerformanceSection("JoinPath"))
-            {
-                absolutePath = FileUtil.JoinPath(this.targetDirectory, path);
-            }
+            string absolutePath = FileUtil.JoinPath(this.targetDirectory, path);
 
-            using (new PerformanceSection("EnsureParentFolderExists"))
-            {
-                FileUtil.EnsureParentFolderExists(absolutePath);
-            }
+            FileUtil.EnsureParentFolderExists(absolutePath);
 
             switch (file.Type)
             {
@@ -69,33 +59,24 @@ namespace Common
 
         private void ExportBinaryFile(string path, byte[] content)
         {
-            using (new PerformanceSection("ExportBinaryFile"))
-            {
-                FileUtil.WriteFileBytes(path, content);
-            }
+            FileUtil.WriteFileBytes(path, content);
         }
 
         private void ExportCopiedFile(string path, string originalAbsolutePath, bool isMove)
         {
-            using (new PerformanceSection("ExportCopiedFile"))
+            if (isMove)
             {
-                if (isMove)
-                {
-                    File.Move(originalAbsolutePath, path, true);
-                }
-                else
-                {
-                    File.Copy(originalAbsolutePath, path);
-                }
+                File.Move(originalAbsolutePath, path, true);
+            }
+            else
+            {
+                File.Copy(originalAbsolutePath, path);
             }
         }
 
         private void ExportImageFile(string path, Bitmap image)
         {
-            using (new PerformanceSection("ExportImageFile"))
-            {
-                image.Save(path);
-            }
+            image.Save(path);
         }
 
         private void ExportTextFile(string path, string content, bool trimBom)
@@ -104,18 +85,12 @@ namespace Common
             if (trimBom ||
                 (fileExtension != null && BOMLESS_TEXT_TYPES.Contains(fileExtension)))
             {
-                using (new PerformanceSection("ExportTextFileWithBytes"))
-                {
-                    byte[] bytes = StringUtil.ToUtf8Bytes(content);
-                    this.ExportBinaryFile(path, bytes);
-                }
+                byte[] bytes = StringUtil.ToUtf8Bytes(content);
+                this.ExportBinaryFile(path, bytes);
             }
             else
             {
-                using (new PerformanceSection("ExportTextFileStraightText"))
-                {
-                    FileUtil.WriteFileText(path, content);
-                }
+                FileUtil.WriteFileText(path, content);
             }
         }
     }

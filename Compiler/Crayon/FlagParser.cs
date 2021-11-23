@@ -1,5 +1,4 @@
-﻿using Exporter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Crayon
@@ -8,7 +7,6 @@ namespace Crayon
     {
         private static readonly string READABLE_BYTE_CODE = "readablebytecode";
         private static readonly string SHOW_DEP_TREE = "showDepTree";
-        private static readonly string SHOW_PERFORMANCE_MARKERS = "showperf";
         private static readonly string BUILD_TARGET = "target";
         private static readonly string BUILD_FILE = "buildfile";
         private static readonly string VM = "vm";
@@ -53,7 +51,6 @@ namespace Crayon
             SHOW_DEP_TREE,
             READABLE_BYTE_CODE,
             SHOW_LIB_STACK,
-            SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
             RESOURCE_ERRORS_SHOW_RELATIVE_DIR,
             VERSION,
@@ -199,7 +196,6 @@ namespace Crayon
 
             Command command = new Command()
             {
-                ShowPerformanceMarkers = output.ContainsKey(SHOW_PERFORMANCE_MARKERS),
                 ShowDependencyTree = output.ContainsKey(SHOW_DEP_TREE),
                 IsErrorCheckOnly = output.ContainsKey(ERROR_CHECK_ONLY),
                 IsJsonOutput = output.ContainsKey(JSON_OUTPUT),

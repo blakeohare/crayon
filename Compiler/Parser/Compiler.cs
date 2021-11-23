@@ -46,21 +46,18 @@ namespace Parser
 
         private static InternalCompilationBundle CompileImpl(CompileRequest compileRequest, CommonUtil.Wax.WaxHub waxHub)
         {
-            using (new PerformanceSection("ExportBundle.Compile"))
+            ParserContext parserContext = new ParserContext(compileRequest, waxHub);
+            TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
+
+            ByteCodeCompiler bcc = new ByteCodeCompiler();
+            ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);
+
+            return new InternalCompilationBundle()
             {
-                ParserContext parserContext = new ParserContext(compileRequest, waxHub);
-                TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
-
-                ByteCodeCompiler bcc = new ByteCodeCompiler();
-                ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);
-
-                return new InternalCompilationBundle()
-                {
-                    ByteCode = ByteCodeEncoder.Encode(buffer),
-                    RootScope = parserContext.RootScope,
-                    AllScopes = parserContext.ScopeManager.ImportedAssemblyScopes.ToArray(),
-                };
-            }
+                ByteCode = ByteCodeEncoder.Encode(buffer),
+                RootScope = parserContext.RootScope,
+                AllScopes = parserContext.ScopeManager.ImportedAssemblyScopes.ToArray(),
+            };
         }
     }
 }

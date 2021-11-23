@@ -1,5 +1,4 @@
-﻿using Common;
-using Parser.ParseTree;
+﻿using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
 
@@ -9,22 +8,19 @@ namespace Parser.Resolver
     {
         public static void Run(ParserContext parser, IEnumerable<TopLevelEntity> code)
         {
-            using (new PerformanceSection("ResolveVariableOrigins"))
+            foreach (TopLevelEntity item in code)
             {
-                foreach (TopLevelEntity item in code)
+                if (item is FunctionDefinition)
                 {
-                    if (item is FunctionDefinition)
-                    {
-                        ((FunctionDefinition)item).ResolveVariableOrigins(parser);
-                    }
-                    else if (item is ClassDefinition)
-                    {
-                        ((ClassDefinition)item).ResolveVariableOrigins(parser);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException(); // everything else in the root scope should have thrown before now.
-                    }
+                    ((FunctionDefinition)item).ResolveVariableOrigins(parser);
+                }
+                else if (item is ClassDefinition)
+                {
+                    ((ClassDefinition)item).ResolveVariableOrigins(parser);
+                }
+                else
+                {
+                    throw new InvalidOperationException(); // everything else in the root scope should have thrown before now.
                 }
             }
         }
