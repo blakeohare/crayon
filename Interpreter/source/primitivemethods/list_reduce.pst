@@ -2,7 +2,7 @@
 // outgoing args: [fp, acc[or random value if unset], array, accNotUsed]
 
 if (argCount == 0 || argCount > 2) {
-    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reduce method", 1, argCount));
 } else if (funcArgs[0].type != Types.FUNCTION) {
     hasInterrupt = EX_InvalidArgument(ec, "list reduce method requires a function pointer as its argument.");
 } else {
