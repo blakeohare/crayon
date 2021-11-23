@@ -45,10 +45,10 @@ namespace Build.BuildParseNodes
             item.JavaPackage = json.GetAsString("javaPackage") ?? json.GetAsString("java-package");
             item.JsFilePrefix = json.GetAsString("jsFilePrefix") ?? json.GetAsString("js-file-prefix");
             object jsFullPage = json.Get("jsFullPage") ?? json.Get("js-full-page");
-            item.JsFullPageRaw = jsFullPage == null ? null : new NullableBoolean((bool)jsFullPage);
+            item.JsFullPageRaw = jsFullPage == null ? (bool?)null : (bool)jsFullPage;
             item.LaunchScreen = json.GetAsString("launchScreen") ?? json.GetAsString("launch-screen");
             object jsMin = json.Get("jsMin") ?? json.Get("js-min");
-            item.MinifiedRaw = jsMin == null ? null : new NullableBoolean((bool)jsMin);
+            item.MinifiedRaw = jsMin == null ? (bool?)null : (bool)jsMin;
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
@@ -58,7 +58,7 @@ namespace Build.BuildParseNodes
             item.EnvFile = json.GetAsString("envFile");
 
             object removeSymbols = json.Get("removeSymbols");
-            item.RemoveSymbols = removeSymbols == null ? null : new NullableBoolean(removeSymbols is bool && (bool)removeSymbols);
+            item.RemoveSymbols = removeSymbols == null ? (bool?)null : (removeSymbols is bool && (bool)removeSymbols);
 
             List<string> fileDeps = new List<string>();
             foreach (string depPath in (json.GetAsList("deps") ?? new object[0]).OfType<string>())

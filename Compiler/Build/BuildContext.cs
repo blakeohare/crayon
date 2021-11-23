@@ -114,9 +114,9 @@ namespace Build
             string projectId = desiredTarget.ProjectId ?? buildInput.ProjectId;
             string version = desiredTarget.Version ?? buildInput.Version ?? "1.0";
             string jsFilePrefix = desiredTarget.JsFilePrefix ?? buildInput.JsFilePrefix;
-            bool jsFullPage = NullableBoolean.ToBoolean(desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw, false);
+            bool jsFullPage = desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw ?? false;
             // TODO: maybe set this default value to true, although this does nothing as of now.
-            bool minified = NullableBoolean.ToBoolean(desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw, false);
+            bool minified = desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw ?? false;
             bool exportDebugByteCode = BoolUtil.Parse(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
             string guidSeed = desiredTarget.GuidSeed ?? buildInput.GuidSeed ?? "";
             // TODO: make this a string array.
@@ -131,7 +131,7 @@ namespace Build
             string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
             string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
             string delegateMainTo = desiredTarget.DelegateMainTo ?? buildInput.DelegateMainTo;
-            bool removeSymbols = NullableBoolean.ToBoolean(desiredTarget.RemoveSymbols ?? buildInput.RemoveSymbols, false);
+            bool removeSymbols = desiredTarget.RemoveSymbols ?? buildInput.RemoveSymbols ?? false;
 
             if (output == null)
             {
