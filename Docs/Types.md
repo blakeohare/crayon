@@ -140,14 +140,52 @@ Like strings, lists also support slicing to create new lists that are sub arrays
 
 When you use slicing, you are creating a new list with references the original values in the list, but the original list is unaffected. 
 
+Creating a slice of the first 5 elements of a list is essentially the same as doing this:
+
+```
+let newList = [];
+for (i = 0; i < 5; i++) {
+    newList.add(oldList[i]);
+}
+```
+
+### List Methods
+
+| **Method** | **Explanation** |
+| --- | --- |
+| `list.add(item, ...)` | Adds 1 or more items to `list`. Return value is `null`. |
+| `list.choice()` | Returns a random item from the list. If the length of the list is `0`, throws an `UnsupportedOperationException`. |
+| `list.clear()` | Removes all items from the list. |
+| `list.clone()` | Creates a shallow copy of the list. |
+| `list.concat(otherList)` | Adds all items from `otherList` to the end of `list`. This mutates the original list. For a new list that is the concatenation of two lists, you can use the `+` operator between two lists to create a new combined list. |
+| `list.contains(item)` | Returns a boolean indicating whether the given item is present in the list. The condition of presence uses the same rules as `==`. |
+| `list.filter(func)` | Takes in a function `func` as an argument. This function must take in exactly 1 argument and return a boolean. Each item in the list will be passed in to `func` and the items that cause it to return `true` will be preserved in the new list. Items that return `false` will be discarded. |
+| `list.insert(index, value)` | Inserts an item into the list such that it will have the given index. This will push any other items that come after it back by 1 index. Note that this is generally an O(n) operation unless applied toward the end. If the index is out of range, an `IndexOutOfRangeException` will be thrown. Negative indexes are allowed as per the wrap-around rules. |
+| `list.join(seperator)` | Creates a new string that concatenates all the items in the list as strings, inserting the `separator` string between each element. To join a list together as a string with no sepatator, use the empty string `""` as the sepator. |
+| `list.map(func)` | Takes in a function `func` that takes in exactly one argument. `func` will be called on each item of `list` and a new list will be generated consisting of the return values from `func`. This new list is returned by `map`. |
+| `list.pop()` | Removes the last item from the list and returns it. This is a O(1) operation. |
+| `list.reduce(func, accumulator[optional])` | Takes in a function `func` that takes in two arguments. Each item in the list will be passed into this function in pairs starting with the first two items. The result of the function will be passed into the next invocation of `func` as the first argument (this is called the accumulator) and the next item in the list will be passed in as the 2nd argument. This will continue until all items in the list have been passed into `func` in this fashion. Optionally, you can provide a starting accumulator value that will be used instead of the first item of the list. If no starting `accumulator` is provided, there must be at least one item in the list. This item will be returned as the final value. Otherwise, an `InvalidArgumentException` will be thrown for empty lists. |
+| `list.remove(index)` | Removes the item from the list at the given `index`. This modifies the original list and returns the item that was removed. |
+| `list.reverse()` | Reverses the list. This modifies the original list and returns `null`. If you want to create a reversed copy, use list slicing instead e.g. `list[::-1]`. |
+| `list.shuffle()` | Randomly shuffles the list. This modifies the original list and returns `null`. |
+| `list.sort(func[optional])` | If `sort` is called without any arguments, all numbers or strings in the list will be sorted. Numbers will be sorted in increasing order and strings will be sorted in character code order. The list MUST only contain homogenous types i.e. the list can ONLY contain strings or the list can ONLY contain numbers. When a `func` value is provided, this is a key-based sort. The function must take exactly one argument. Each item in the list will be passed to the function and the list will be sorted by the return value of this function, which must be either a string or number (but not mixed). |
 
 ## Dictionaries
 
+
+
+
 ## Null
+
+
 
 ## Classes
 
+
+
 ## Functions
+
+
 
 ## Object Instances
 
