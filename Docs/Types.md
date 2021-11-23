@@ -116,6 +116,29 @@ print(removedEmojiMessage); // "Greetings ? kitty!"
 
 ## Lists
 
+Lists are linear collections of values and are created by using square brackets `[` and `]`.
+
+### Creating Lists
+
+To create a list, surround the values you want store in the list with square brackets and separate each item with a comma:
+
+`fruits = ["apple", "banana", "canteloupe", "durian"];`
+
+### Length and Indexing
+
+Lists are similar to strings in many ways. For example, if you want to know the length of the list, you can use the `.length` property to get an integer. For example, `fruits.length` will return `4`.
+
+Indexing is also similar to strings. To access an item in a string, you pass the item's index as an integer into square brackets after the list value.
+
+`fruits[2]` would return `"canteloupe"`. Like strings, indexes are 0-based. 
+
+> Negative indexes are also supported. See the section on indexes for strings for more information.
+
+### Slicing
+
+Like strings, lists also support slicing to create new lists that are sub arrays of the original list. 
+
+When you use slicing, you are creating a new list with references the original values in the list, but the original list is unaffected. 
 
 
 ## Dictionaries
