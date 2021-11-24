@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crayon", "Crayon\Crayon.csproj", "{F57E0C97-059A-423C-B345-E910C6124287}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "Build\Build.csproj", "{F3969B7F-A50F-4D50-86D3-CB67FD266A1F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyResolver", "AssemblyResolver\AssemblyResolver.csproj", "{509A5650-446A-4469-BF56-5F8C21D480E3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{937B2E4F-0CA3-40A1-BC77-1B6EB50556AE}"
@@ -37,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangCSharp", "Platforms\Lan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangJavaScript", "Platforms\LangJavaScript\LangJavaScript.csproj", "{BEAB7F8D-9B28-499B-81E1-D2BC2BBBE499}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wax", "Wax\Wax.csproj", "{C552E612-E20A-4538-8EC5-994ACA300C2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wax", "Wax\Wax.csproj", "{C552E612-E20A-4538-8EC5-994ACA300C2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{F57E0C97-059A-423C-B345-E910C6124287}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F57E0C97-059A-423C-B345-E910C6124287}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F57E0C97-059A-423C-B345-E910C6124287}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F3969B7F-A50F-4D50-86D3-CB67FD266A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3969B7F-A50F-4D50-86D3-CB67FD266A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3969B7F-A50F-4D50-86D3-CB67FD266A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3969B7F-A50F-4D50-86D3-CB67FD266A1F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{509A5650-446A-4469-BF56-5F8C21D480E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{509A5650-446A-4469-BF56-5F8C21D480E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{509A5650-446A-4469-BF56-5F8C21D480E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
