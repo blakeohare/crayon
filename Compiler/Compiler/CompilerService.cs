@@ -26,7 +26,7 @@ namespace Parser
             else
             {
                 output["byteCode"] = icb.ByteCode;
-                output["depTree"] = Common.AssemblyDependencyUtil.GetDependencyTreeJson(icb.RootScopeDependencyMetadata).Trim();
+                output["depTree"] = AssemblyDependencyUtil.GetDependencyTreeJson(icb.RootScopeDependencyMetadata).Trim();
                 output["usesU3"] = icb.AllScopesMetadata.Any(a => a.ID == "U3Direct");
                 if (icb.HasErrors)
                 {

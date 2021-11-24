@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace Parser
 {
-    public class AssemblyDependencyUtil
+    internal static class AssemblyDependencyUtil
     {
         // Essentially, just a post-order traversal
         public static ExternalAssemblyMetadata[] GetAssemblyResolutionOrder(IEnumerable<ExternalAssemblyMetadata> usedAssemblies)
