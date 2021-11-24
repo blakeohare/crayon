@@ -15,7 +15,7 @@ In Crayon, there are base-level types. There are exactly 10 different base level
 
 Some of the base level types have sub-types. For example, an object instance has its own type system. However that type system is contained within object instances itself. You cannot, for example, create a class that extends from List or Function. The object instance type system is the only type system that can have uesr-defined types.
 
-Enums are notably missing from this list. An enum is a compile-time concept and are converted into integers during compilation. 
+Enums are notably missing from this list. An enum is a compile-time concept and are converted into integers during compilation.
 
 Functions also have sub-types but these are fixed at only 5 subtypes:
 * Standalone functions
@@ -39,10 +39,10 @@ This document is the documentation of the behavior and features of these types i
 
 ## Integers
 
-Integers are number types that are whole numbers. 
+Integers are number types that are whole numbers.
 
 ### Integer min/max range
-The minimum and maximum value is dependent on the platform the VM is running on. 
+The minimum and maximum value is dependent on the platform the VM is running on.
 
 * When running in mobile/web or other JavaScript-based platforms, the range of integers is +/- 2<sup>53</sup>.
 * When running on native platforms directly, the range is +/- 2<sup>31</sup>.
@@ -57,13 +57,13 @@ Integers do not have any built-in methods.
 
 ## Floats
 
-The word "float" is short for "floating point numbers". These represent decimal based numbers. It is important to note that floats are their own type and can represent arbitrary numbers, even if the number happens to be equal to a whole number. For example, the number `2.0` is a float, even though it is equal to the integer `2`. 
+The word "float" is short for "floating point numbers". These represent decimal based numbers. It is important to note that floats are their own type and can represent arbitrary numbers, even if the number happens to be equal to a whole number. For example, the number `2.0` is a float, even though it is equal to the integer `2`.
 
 ### Behavior
 
-When performing mathematical operations on floats, the result will always be a float, even if the result is a whole number. For example, `2.5 + 8.5` will produce the float-typed value `11.0` instead of the integer-typed value `11`. 
+When performing mathematical operations on floats, the result will always be a float, even if the result is a whole number. For example, `2.5 + 8.5` will produce the float-typed value `11.0` instead of the integer-typed value `11`.
 
-When integers and floats are mixed in a mathematical operation, the result will always be a float. For example, `4 * 2.5` will result in `10.0`. 
+When integers and floats are mixed in a mathematical operation, the result will always be a float. For example, `4 * 2.5` will result in `10.0`.
 
 ### Methods
 
@@ -71,7 +71,7 @@ Floats do not have any built-in methods.
 
 ## Booleans
 
-A boolean is the constant `true` or `false`. Booleans can be generated using the comparison operators `==`, `!=`, `>`, `>=`, `<`, and `<=` and used in `if` and `while` statements. They can also be combined using the `&&` (and) and `||` (or) operators.  
+A boolean is the constant `true` or `false`. Booleans can be generated using the comparison operators `==`, `!=`, `>`, `>=`, `<`, and `<=` and used in `if` and `while` statements. They can also be combined using the `&&` (and) and `||` (or) operators.
 
 ### Methods
 
@@ -79,9 +79,9 @@ Booleans do not have any built-in methods.
 
 ## Strings
 
-Strings are a type that represent text. A string can be denoted by surrounding text with either a double quote `"` or a single `'`. There is no difference between these two conventions. 
+Strings are a type that represent text. A string can be denoted by surrounding text with either a double quote `"` or a single `'`. There is no difference between these two conventions.
 
-> While it doesn't make a technical difference, it is recommended that double quotes are used for user-facing text data and single quotes are used for internal data such as dictionary keys, flags, etc. 
+> While it doesn't make a technical difference, it is recommended that double quotes are used for user-facing text data and single quotes are used for internal data such as dictionary keys, flags, etc.
 
 ### Behavior
 
@@ -89,13 +89,13 @@ Strings are an immutable reference type in Crayon. This means that strings canno
 
 ### String Length
 
-You can find the length of the string by calling the property `.length` on any string value. For example, if you have the string `"Hello, world!"` stored in the variable `message`, the expression `message.length` would return the integer value `13`. Length is internally stored directly on string values and so accessing the length of a string is a O(1) operation (as opposed to null terminator internal formats). 
+You can find the length of the string by calling the property `.length` on any string value. For example, if you have the string `"Hello, world!"` stored in the variable `message`, the expression `message.length` would return the integer value `13`. Length is internally stored directly on string values and so accessing the length of a string is a O(1) operation (as opposed to null terminator internal formats).
 
 ### String Indexing
 
-You can access individual characters in a string by using square brackets `[` and `]` and passing in an integer. The integer is the offset from the beginning of the string (0-indexed). For example, if you you have a string in the variable `foo` and you wanted to get the first character of the string, you would use `foo[0]`. If you wanted to see the 5th character of `foo`, you would use `foo[4]` (because these are 0-indexed offsets from the beginning, 4 is the 5th character since 0 is the 1st character`). 
+You can access individual characters in a string by using square brackets `[` and `]` and passing in an integer. The integer is the offset from the beginning of the string (0-indexed). For example, if you you have a string in the variable `foo` and you wanted to get the first character of the string, you would use `foo[0]`. If you wanted to see the 5th character of `foo`, you would use `foo[4]` (because these are 0-indexed offsets from the beginning, 4 is the 5th character since 0 is the 1st character`).
 
-The character value itself is also a string. The length of the string will be 1. There is no special character type. 
+The character value itself is also a string. The length of the string will be 1. There is no special character type.
 
 In addition to positive integers, you can also use negative integers as string indexes. A negative string index counts backwards from the end of the list (in a 1-indexed fashion). For example, `foo[-1]` is the last character in the string. Basically if you add the length of the string to the negative number, you will get its equivalent positive index.
 
@@ -103,13 +103,13 @@ If you access a number greater tha or equal to the length or less than the negat
 
 ### String Slicing
 
-You can access a section of a string to create a new smaller string by using string slicing. This is similar to substring in most other languages. 
+You can access a section of a string to create a new smaller string by using string slicing. This is similar to substring in most other languages.
 
 String slicing uses square brackets `[` and `]` just like indexing, but uses two integers separated by a colon `:` instead of one integer. These indicate the start and end points of the string that you want to get a slice of.
 
-For example, suppose you have the string `alphabet = "abcdefghijklmnopqrstuvwxyz"` which has a length of 26. You can get the first half of the string by using `firstHalf = alphabet[0:13]`. The first number is the starting inclusive index and the second number is the ending exclusive index. Since we want all the characters up to the 13th index (but not including the 13th index), we use 13. This will return a new string `"abcdefghijklm"`. 
+For example, suppose you have the string `alphabet = "abcdefghijklmnopqrstuvwxyz"` which has a length of 26. You can get the first half of the string by using `firstHalf = alphabet[0:13]`. The first number is the starting inclusive index and the second number is the ending exclusive index. Since we want all the characters up to the 13th index (but not including the 13th index), we use 13. This will return a new string `"abcdefghijklm"`.
 
-All list slicing operations create new strings and do not affect the original string. Remember, strings are immutable types. 
+All list slicing operations create new strings and do not affect the original string. Remember, strings are immutable types.
 
 The above operation can be shortened to `firstHalf = alphabet[:13]`. When the slice starts at the beginning of the string, the first number can be omitted and `0` will be assumed. Likewise, if the slice goes through to the end of the string, the 2nd number can be ommitted and the string length will be assummed. For example, the second half of the alphabet can be created with the following expression: `lastHalf = alphabet[13:]`
 
@@ -140,7 +140,7 @@ String values have many built-in methods that can be used. to accomplish common 
 
 ### String Internal Encoding
 
-Strings are currently stored in UTF-16, however, **this is planned to change to unicode-codepoint-list format sometime around Crayon 3**. 
+Strings are currently stored in UTF-16, however, **this is planned to change to unicode-codepoint-list format sometime around Crayon 3**.
 
 This generally should not affect most use cases, however this subtly can be observed in certain situations using surrogate pair characters, such as when emojis are assumed to be a single character:
 
@@ -181,15 +181,15 @@ Lists are similar to strings in many ways. For example, if you want to know the 
 
 Indexing is also similar to strings. To access an item in a string, you pass the item's index as an integer into square brackets after the list value.
 
-`fruits[2]` would return `"canteloupe"`. Like strings, indexes are 0-based. 
+`fruits[2]` would return `"canteloupe"`. Like strings, indexes are 0-based.
 
 > Negative indexes are also supported. See the section on indexes for strings for more information.
 
 ### Slicing
 
-Like strings, lists also support slicing to create new lists that are sub arrays of the original list. 
+Like strings, lists also support slicing to create new lists that are sub arrays of the original list.
 
-When you use slicing, you are creating a new list with references the original values in the list, but the original list is unaffected. 
+When you use slicing, you are creating a new list with references the original values in the list, but the original list is unaffected.
 
 Creating a slice of the first 5 elements of a list is essentially the same as doing this:
 
@@ -200,9 +200,9 @@ for (i = 0; i < 5; i++) {
 }
 ```
 
-In addition to the start and end index, you can also pass a third integer into the slice arguments that represents the step amount. 
+In addition to the start and end index, you can also pass a third integer into the slice arguments that represents the step amount.
 
-For example, `myList[0:10:2]` will generate a new list that contains *every other* item from the original list up until the 10th index of the original list. 
+For example, `myList[0:10:2]` will generate a new list that contains *every other* item from the original list up until the 10th index of the original list.
 
 ```
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
@@ -217,7 +217,7 @@ countdown = [9:-1:-3]; // 10, 7, 4, 1
 ```
 Remember that the last index is not included, and so to have a backwards slice that goes all the way to the beginning, the end index must be -1. An easy way to get around this problem is to just omit parameters.
 
-One common pattern to get a backwards list isi to use the slice `[::-1]` to create a copy of a list that starts from the end and goes to the beginning. 
+One common pattern to get a backwards list isi to use the slice `[::-1]` to create a copy of a list that starts from the end and goes to the beginning.
 
 ```
 alphabetBackwards = letters[::-1];
@@ -246,9 +246,9 @@ alphabetBackwards = letters[::-1];
 
 ## Dictionaries
 
-A dictionary is a collection that stores key-value-pairs in an unordered fashion. A dictionary can hold any value. However the keys of a dictionary must always be a string, integer, or object instance. Dictionary keys cannot be mixed in the same dictionary. For example, you can't add a value to a dictionary with a key of `42` and then add another value to a dictionary with a key of `"x"`. 
+A dictionary is a collection that stores key-value-pairs in an unordered fashion. A dictionary can hold any value. However the keys of a dictionary must always be a string, integer, or object instance. Dictionary keys cannot be mixed in the same dictionary. For example, you can't add a value to a dictionary with a key of `42` and then add another value to a dictionary with a key of `"x"`.
 
-To create a dictionary, use curly braces. 
+To create a dictionary, use curly braces.
 
 `emptyDictionary = {};`
 
@@ -274,7 +274,7 @@ Setting/adding and getting by a key in a dictionary are both `O(1)` operations. 
 
 ### Getting the size of a dictionary
 
-Like strings and lists, you can use the `.length` property on dictionaries to get the total number of items in the dictionary. This property is a `O(1)` operation. 
+Like strings and lists, you can use the `.length` property on dictionaries to get the total number of items in the dictionary. This property is a `O(1)` operation.
 
 ### Iterating Through Dictionaries
 
@@ -286,7 +286,7 @@ for (key : myDictionary.keys()) {
 }
 ```
 
-The iteration order is consistent between platforms and will generally prefer the order that the keys were added to the dictionary. However, as with all unordered collections in other programming languages, the developer is encouraged to not depend on the iteration order since this is more of a behavioral quirk than a feature. 
+The iteration order is consistent between platforms and will generally prefer the order that the keys were added to the dictionary. However, as with all unordered collections in other programming languages, the developer is encouraged to not depend on the iteration order since this is more of a behavioral quirk than a feature.
 
 ### Dictionary Methods
 
@@ -339,7 +339,7 @@ print("I have defined a class called " + personClass.getName());
 
 ## Functions
 
-This is the documentation of the function type, not the creation and use of functions. 
+This is the documentation of the function type, not the creation and use of functions.
 
 Functions can be passed around as pointers, just like any other value.
 
@@ -369,5 +369,3 @@ if (obj is Person) {
     print(obj + " is a Person instance.");
 }
 ```
-
-
