@@ -417,63 +417,6 @@ namespace Parser
             return output.ToArray();
         }
 
-        public string GetSwitchLookupCode()
-        {
-            List<string> output = new List<string>();
-            foreach (string key in this.stringSwitchLookups.Keys)
-            {
-                string lookupName = key;
-                Dictionary<string, int> valuesToInts = this.stringSwitchLookups[key];
-                output.Add(lookupName);
-                output.Add(" = { ");
-                bool first = true;
-                foreach (string skey in valuesToInts.Keys)
-                {
-                    if (!first)
-                    {
-                        first = false;
-                        output.Add(", ");
-                    }
-                    output.Add(StringTokenUtil.ConvertStringValueToCode(skey));
-                    output.Add(": ");
-                    output.Add("" + valuesToInts[skey]);
-                }
-                output.Add(" };\r\n");
-            }
-
-            foreach (string lookupName in this.intListLookups.Keys)
-            {
-                List<int> actualList = new List<int>();
-                Dictionary<int, int> lookup = this.intListLookups[lookupName];
-                int explicitMax = this.explicitMaxes[lookupName];
-                int defaultCaseId = this.defaultCaseIds[lookupName];
-                while (actualList.Count <= explicitMax)
-                {
-                    actualList.Add(defaultCaseId);
-                }
-
-                foreach (int ikey in lookup.Keys)
-                {
-                    while (actualList.Count <= ikey)
-                    {
-                        actualList.Add(defaultCaseId);
-                    }
-                    actualList[ikey] = lookup[ikey];
-                }
-
-                output.Add(lookupName);
-                output.Add(" = [");
-                for (int i = 0; i < actualList.Count; ++i)
-                {
-                    if (i > 0) output.Add(", ");
-                    output.Add(actualList[i] + "");
-                }
-                output.Add("];\r\n");
-            }
-
-            return string.Join("", output);
-        }
-
         public int ValueStackDepth { get; set; }
 
         public Exception GenerateParseError(ErrorMessages errorType, Token token, params string[] args)

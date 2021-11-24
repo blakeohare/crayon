@@ -104,35 +104,35 @@ namespace JavaScriptApp
             foreach (FileOutput textResource in resDb.TextResources)
             {
                 resourcesJs.Append("C$common$addTextRes(");
-                resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(textResource.CanonicalFileName));
+                resourcesJs.Append(ConvertStringValueToCode(textResource.CanonicalFileName));
                 resourcesJs.Append(", ");
-                resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(textResource.TextContent));
+                resourcesJs.Append(ConvertStringValueToCode(textResource.TextContent));
                 resourcesJs.Append(");\n");
             }
 
             foreach (FileOutput fontResource in resDb.FontResources)
             {
                 resourcesJs.Append("C$common$addBinaryRes(");
-                resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(fontResource.CanonicalFileName));
+                resourcesJs.Append(ConvertStringValueToCode(fontResource.CanonicalFileName));
                 resourcesJs.Append(", '");
                 resourcesJs.Append(Base64.ToBase64(fontResource.GetFinalBinaryContent()));
                 resourcesJs.Append("');\n");
             }
 
             resourcesJs.Append("C$common$resourceManifest = ");
-            resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(resDb.ResourceManifestFile.TextContent));
+            resourcesJs.Append(ConvertStringValueToCode(resDb.ResourceManifestFile.TextContent));
             resourcesJs.Append(";\n");
 
             string filePrefix = options.GetStringOrNull(ExportOptionKey.JS_FILE_PREFIX);
             if (filePrefix != null)
             {
                 resourcesJs.Append("C$common$jsFilePrefix = ");
-                resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(filePrefix));
+                resourcesJs.Append(ConvertStringValueToCode(filePrefix));
                 resourcesJs.Append(";\n");
             }
 
             string imageManifest = resDb.ImageResourceManifestFile.TextContent;
-            imageManifest = StringTokenUtil.ConvertStringValueToCode(imageManifest);
+            imageManifest = ConvertStringValueToCode(imageManifest);
             resourcesJs.Append("C$common$imageManifest = " + imageManifest + ";\n");
 
             output["resources.js"] = new FileOutput()
@@ -144,7 +144,7 @@ namespace JavaScriptApp
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(cbxBundle.ByteCode) + ";",
+                TextContent = "C$bytecode = " + ConvertStringValueToCode(cbxBundle.ByteCode) + ";",
             };
 
             foreach (string imageChunk in resDb.ImageResourceFiles.Keys)
@@ -189,6 +189,27 @@ namespace JavaScriptApp
                     },
                     { "JS_EXTRA_HEAD", options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) },
                 });
+        }
+
+        private static string ConvertStringValueToCode(string rawValue)
+        {
+            List<string> output = new List<string>() { "\"" };
+            foreach (char c in rawValue)
+            {
+                switch (c)
+                {
+                    case '"': output.Add("\\\""); break;
+                    case '\n': output.Add("\\n"); break;
+                    case '\r': output.Add("\\r"); break;
+                    case '\0': output.Add("\\0"); break;
+                    case '\t': output.Add("\\t"); break;
+                    case '\\': output.Add("\\\\"); break;
+                    default: output.Add("" + c); break;
+                }
+            }
+            output.Add("\"");
+
+            return string.Join("", output);
         }
     }
 }

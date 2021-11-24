@@ -135,7 +135,7 @@ namespace Parser.ParseTree
                             string strValue = ((StringConstant)caseExpr).Value;
                             if (stringCases.Contains(strValue))
                             {
-                                throw new ParserException(caseExpr, "Duplicate case value in same switch: " + StringTokenUtil.ConvertStringValueToCode(strValue));
+                                throw new ParserException(caseExpr, "Duplicate case value in same switch: \"" + strValue + "\"");
                             }
                             stringCases.Add(strValue);
                         }
