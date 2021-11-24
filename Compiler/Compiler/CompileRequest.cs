@@ -10,7 +10,7 @@ namespace Parser
         {
             this.ProjectId = (string)rawRequest["projectId"];
             this.DelegateMainTo = (string)rawRequest["delegateMainTo"];
-            this.CompilerLocale = Common.Localization.Locale.Get((string)rawRequest["locale"]);
+            this.CompilerLocale = Parser.Localization.Locale.Get((string)rawRequest["locale"]);
             this.LocalDeps = (string[])rawRequest["localDeps"];
             this.ProjectDirectory = (string)rawRequest["projectDirectory"];
             this.codeFiles = CommonUtil.Collections.DictionaryUtil.FlattenedDictionaryToDictionary((string[])rawRequest["codeFiles"]);
@@ -35,7 +35,7 @@ namespace Parser
         public bool RemoveSymbols { get; private set; }
         public string ProjectId { get; private set; }
         public string DelegateMainTo { get; private set; }
-        public Common.Localization.Locale CompilerLocale { get; private set; }
+        public Parser.Localization.Locale CompilerLocale { get; private set; }
         public string[] LocalDeps { get; private set; }
         public string ProjectDirectory { get; private set; }
         public Common.ProgrammingLanguage RootProgrammingLanguage { get; private set; }

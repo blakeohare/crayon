@@ -30,14 +30,14 @@ namespace Parser
             return "Resolved Type: " + this.Category.ToString();
         }
 
-        public string ToUserString(Common.Localization.Locale locale)
+        public string ToUserString(Parser.Localization.Locale locale)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             this.ToUserStringImpl(sb, locale);
             return sb.ToString();
         }
 
-        private void ToUserStringImpl(System.Text.StringBuilder sb, Common.Localization.Locale locale) {
+        private void ToUserStringImpl(System.Text.StringBuilder sb, Parser.Localization.Locale locale) {
             switch (this.Category)
             {
                 case ResolvedTypeCategory.BOOLEAN: sb.Append("boolean"); return;
@@ -234,7 +234,7 @@ namespace Parser
         {
             if (!CanAssignToA(targetType))
             {
-                Common.Localization.Locale en = Common.Localization.Locale.Get("en");
+                Parser.Localization.Locale en = Parser.Localization.Locale.Get("en");
 
                 // TODO: use the correct locale
                 string msg = "Cannot assign a value of type '";

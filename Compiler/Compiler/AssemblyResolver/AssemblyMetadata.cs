@@ -1,6 +1,6 @@
 ﻿using Common;
 using CommonUtil.Disk;
-using Common.Localization;
+using Parser.Localization;
 using System.Collections.Generic;
 using System.Linq;
 

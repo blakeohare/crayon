@@ -2,7 +2,7 @@
 using CommonUtil.Resources;
 using System.Collections.Generic;
 
-namespace Common.Localization
+namespace Parser.Localization
 {
     public class StringTable
     {

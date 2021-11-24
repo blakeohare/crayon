@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common.Localization
+namespace Parser.Localization
 {
     public class Locale
     {

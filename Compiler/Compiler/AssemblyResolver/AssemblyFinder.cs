@@ -1,7 +1,7 @@
 ﻿using Common;
 using CommonUtil;
 using CommonUtil.Disk;
-using Common.Localization;
+using Parser.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;

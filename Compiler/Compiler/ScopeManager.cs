@@ -1,4 +1,4 @@
-﻿using Common.Localization;
+﻿using Parser.Localization;
 using CommonUtil.Collections;
 using System.Collections.Generic;
 using System.Linq;

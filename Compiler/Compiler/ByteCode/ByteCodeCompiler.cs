@@ -1,5 +1,5 @@
-﻿using Common.Localization;
-using Parser.ByteCode.Nodes;
+﻿using Parser.ByteCode.Nodes;
+using Parser.Localization;
 using Parser.ParseTree;
 using System;
 using System.Collections.Generic;

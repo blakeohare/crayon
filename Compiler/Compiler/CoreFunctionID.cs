@@ -240,14 +240,14 @@ namespace Parser
             }
         }
 
-        internal static int GetId(StringConstant str, Common.Localization.Locale locale)
+        internal static int GetId(StringConstant str, Parser.Localization.Locale locale)
         {
             int output = GetId(str.Value);
             if (output == -1)
             {
                 throw ParserException.ThrowException(
                     locale,
-                    Common.Localization.ErrorMessages.UNKNOWN_CORE_FUNCTION_ID,
+                    Parser.Localization.ErrorMessages.UNKNOWN_CORE_FUNCTION_ID,
                     str.FirstToken,
                     str.Value);
             }

@@ -52,7 +52,7 @@ namespace Parser.ParseTree
 
         protected FileScope fileScopeOverride = null; // Top level items that have no Owner will have this set.
         public FileScope FileScope { get { return this.fileScopeOverride ?? this.Owner.FileScope; } }
-        public Common.Localization.Locale Locale { get { return this.CompilationScope.Locale; } }
+        public Parser.Localization.Locale Locale { get { return this.CompilationScope.Locale; } }
 
         internal void BatchTopLevelConstructNameResolver(ParserContext parser, ICollection<TopLevelEntity> constructs)
         {

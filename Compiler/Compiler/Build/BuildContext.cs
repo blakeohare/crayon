@@ -3,7 +3,7 @@ using Common;
 using CommonUtil;
 using CommonUtil.Disk;
 using CommonUtil.Json;
-using Common.Localization;
+using Parser.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;

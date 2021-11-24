@@ -1,5 +1,5 @@
 ﻿using Common;
-using Common.Localization;
+using Parser.Localization;
 using Parser.ParseTree;
 using Parser.Resolver;
 using System;
