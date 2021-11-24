@@ -4,10 +4,10 @@ namespace Wax
 {
     public enum FileOutputType
     {
-        Text,
-        Binary,
-        Copy,
-        Image,
+        Text = 1,
+        Binary = 2,
+        Copy = 3,
+        Image = 4,
     }
 
     public class FileOutput
@@ -20,12 +20,6 @@ namespace Wax
         public byte[] BinaryContent { get; set; }
         public CommonUtil.Images.Bitmap Bitmap { get; set; }
         public bool IsLossy { get; set; } // e.g. JPEG's will change if re-encoded.
-
-        // Re-encode all text files as UTF-8 for consistent readback. If re-encoding fails, then this
-        // is likely a binary format that was erroneously included as a text resource and will not be
-        // useful to include in the project and thus the user can be warned.
-        // Only set to true on Type == Text.
-        public bool EnsureUtf8 { get; set; }
 
         // Original path relative to the root of the source directory.
         // This is the virtualized location of the embedded resource.

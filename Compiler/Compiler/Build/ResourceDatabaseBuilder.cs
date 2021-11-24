@@ -15,6 +15,57 @@ namespace Build
             "thumbs.db",
         });
 
+        private enum FileCategory
+        {
+            TEXT,
+            BINARY, // Not used yet.
+            AUDIO,
+            IMAGE,
+            FONT,
+
+            IGNORE_SILENT,
+            IGNORE_AUDIO,
+            IGNORE_IMAGE,
+            IGNORE_IMAGE_ASSET,
+        }
+
+        private static Dictionary<string, FileCategory> KNOWN_FILE_EXTENSIONS = new Dictionary<string, FileCategory>() {
+
+            { "cry", FileCategory.IGNORE_SILENT }, // Not interested in source code.
+
+            { "ogg", FileCategory.AUDIO },
+
+            { "jpg", FileCategory.IMAGE },
+            { "jpeg", FileCategory.IMAGE },
+            { "png", FileCategory.IMAGE },
+
+            { "ttf", FileCategory.FONT },
+
+            { "aac", FileCategory.IGNORE_AUDIO },
+            { "aiff", FileCategory.IGNORE_AUDIO },
+            { "au", FileCategory.IGNORE_AUDIO },
+            { "mid", FileCategory.IGNORE_AUDIO },
+            { "mp3", FileCategory.IGNORE_AUDIO },
+            { "mpg", FileCategory.IGNORE_AUDIO },
+            { "wav", FileCategory.IGNORE_AUDIO },
+            { "wma", FileCategory.IGNORE_AUDIO },
+
+            { "bmp", FileCategory.IGNORE_IMAGE },
+            { "gif", FileCategory.IGNORE_IMAGE },
+            { "ico", FileCategory.IGNORE_IMAGE },
+            { "pcx", FileCategory.IGNORE_IMAGE },
+            { "ppm", FileCategory.IGNORE_IMAGE },
+            { "tga", FileCategory.IGNORE_IMAGE },
+            { "tiff", FileCategory.IGNORE_IMAGE },
+
+            { "ai", FileCategory.IGNORE_IMAGE_ASSET },
+            { "cpt", FileCategory.IGNORE_IMAGE_ASSET },
+            { "psd", FileCategory.IGNORE_IMAGE_ASSET },
+            { "psp", FileCategory.IGNORE_IMAGE_ASSET },
+            { "svg", FileCategory.IGNORE_IMAGE_ASSET },
+            { "xcf", FileCategory.IGNORE_IMAGE_ASSET },
+        };
+
         public static ResourceDatabase PrepareResources(BuildContext buildContext)
         {
             // This really needs to go in a separate helper file.
@@ -43,46 +94,46 @@ namespace Build
                     string fileName = Path.GetFileName(absolutePath);
                     string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
 
-                    ResourceDatabase.FileCategory category;
+                    FileCategory category;
                     if (IGNORABLE_FILES.Contains(fileName.ToLowerInvariant()))
                     {
                         // Common system generated files that no one would ever want.
-                        category = ResourceDatabase.FileCategory.IGNORE_SILENT;
+                        category = FileCategory.IGNORE_SILENT;
                     }
-                    else if (ResourceDatabase.KNOWN_FILE_EXTENSIONS.ContainsKey(extension))
+                    else if (KNOWN_FILE_EXTENSIONS.ContainsKey(extension))
                     {
-                        category = ResourceDatabase.KNOWN_FILE_EXTENSIONS[extension];
+                        category = KNOWN_FILE_EXTENSIONS[extension];
                     }
                     else
                     {
                         TODO.BuildFileShouldIndicateWhichResourcesAreTextVsBinary();
-                        category = ResourceDatabase.FileCategory.TEXT;
+                        category = FileCategory.TEXT;
                     }
 
                     switch (category)
                     {
-                        case ResourceDatabase.FileCategory.IGNORE_SILENT:
+                        case FileCategory.IGNORE_SILENT:
                             break;
 
-                        case ResourceDatabase.FileCategory.IGNORE_IMAGE:
+                        case FileCategory.IGNORE_IMAGE:
                             ConsoleWriter.Print(
                                 ConsoleMessageType.BUILD_WARNING,
                                 aliasedPath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
                             break;
 
-                        case ResourceDatabase.FileCategory.IGNORE_AUDIO:
+                        case FileCategory.IGNORE_AUDIO:
                             ConsoleWriter.Print(
                                 ConsoleMessageType.BUILD_WARNING,
                                 aliasedPath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
                             break;
 
-                        case ResourceDatabase.FileCategory.IGNORE_IMAGE_ASSET:
+                        case FileCategory.IGNORE_IMAGE_ASSET:
                             ConsoleWriter.Print(
                                 ConsoleMessageType.BUILD_WARNING,
                                 aliasedPath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
                             break;
 
-                        case ResourceDatabase.FileCategory.AUDIO:
+                        case FileCategory.AUDIO:
                             resDb.AudioResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
@@ -92,7 +143,7 @@ namespace Build
                             });
                             break;
 
-                        case ResourceDatabase.FileCategory.BINARY:
+                        case FileCategory.BINARY:
                             resDb.AudioResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
@@ -102,7 +153,7 @@ namespace Build
                             });
                             break;
 
-                        case ResourceDatabase.FileCategory.TEXT:
+                        case FileCategory.TEXT:
                             string content = FileUtil.ReadFileText(absolutePath);
                             resDb.TextResources.Add(new FileOutput()
                             {
@@ -113,7 +164,7 @@ namespace Build
                             });
                             break;
 
-                        case ResourceDatabase.FileCategory.IMAGE:
+                        case FileCategory.IMAGE:
                             TODO.GetImageDimensionsFromFirstFewBytesInsteadOfLoadingIntoMemory();
 
                             if (extension == "png")
@@ -156,7 +207,7 @@ namespace Build
                             }
                             break;
 
-                        case ResourceDatabase.FileCategory.FONT:
+                        case FileCategory.FONT:
                             resDb.FontResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,

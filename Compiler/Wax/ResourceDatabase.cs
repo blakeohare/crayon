@@ -7,43 +7,6 @@ namespace Wax
      */
     public class ResourceDatabase
     {
-        public static Dictionary<string, FileCategory> KNOWN_FILE_EXTENSIONS = new Dictionary<string, FileCategory>() {
-
-            { "cry", FileCategory.IGNORE_SILENT }, // Not interested in source code.
-
-            { "ogg", FileCategory.AUDIO },
-
-            { "jpg", FileCategory.IMAGE },
-            { "jpeg", FileCategory.IMAGE },
-            { "png", FileCategory.IMAGE },
-
-            { "ttf", FileCategory.FONT },
-
-            { "aac", FileCategory.IGNORE_AUDIO },
-            { "aiff", FileCategory.IGNORE_AUDIO },
-            { "au", FileCategory.IGNORE_AUDIO },
-            { "mid", FileCategory.IGNORE_AUDIO },
-            { "mp3", FileCategory.IGNORE_AUDIO },
-            { "mpg", FileCategory.IGNORE_AUDIO },
-            { "wav", FileCategory.IGNORE_AUDIO },
-            { "wma", FileCategory.IGNORE_AUDIO },
-
-            { "bmp", FileCategory.IGNORE_IMAGE },
-            { "gif", FileCategory.IGNORE_IMAGE },
-            { "ico", FileCategory.IGNORE_IMAGE },
-            { "pcx", FileCategory.IGNORE_IMAGE },
-            { "ppm", FileCategory.IGNORE_IMAGE },
-            { "tga", FileCategory.IGNORE_IMAGE },
-            { "tiff", FileCategory.IGNORE_IMAGE },
-
-            { "ai", FileCategory.IGNORE_IMAGE_ASSET },
-            { "cpt", FileCategory.IGNORE_IMAGE_ASSET },
-            { "psd", FileCategory.IGNORE_IMAGE_ASSET },
-            { "psp", FileCategory.IGNORE_IMAGE_ASSET },
-            { "svg", FileCategory.IGNORE_IMAGE_ASSET },
-            { "xcf", FileCategory.IGNORE_IMAGE_ASSET },
-        };
-
         //public FileOutput ByteCodeFile { get; set; }
         public FileOutput ResourceManifestFile { get; set; }
         public FileOutput ImageResourceManifestFile { get; set; }
@@ -55,20 +18,6 @@ namespace Wax
         public List<FileOutput> TextResources { get; set; }
         public List<FileOutput> BinaryResources { get; set; }
         public List<FileOutput> FontResources { get; set; }
-
-        public enum FileCategory
-        {
-            TEXT,
-            BINARY, // Not used yet.
-            AUDIO,
-            IMAGE,
-            FONT,
-
-            IGNORE_SILENT,
-            IGNORE_AUDIO,
-            IGNORE_IMAGE,
-            IGNORE_IMAGE_ASSET,
-        }
 
         public ResourceDatabase()
         {
