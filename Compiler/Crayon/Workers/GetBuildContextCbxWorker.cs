@@ -1,13 +1,13 @@
 ﻿using Build;
 using CommonUtil.Disk;
-using Exporter;
 using System;
+using Wax;
 
 namespace Crayon
 {
     public class GetBuildContextCbxWorker
     {
-        internal BuildContext DoWorkImpl(Command command, Wax.WaxHub hub)
+        internal BuildContext DoWorkImpl(Command command, WaxHub hub)
         {
             string buildFilePath = command.BuildFilePath;
 

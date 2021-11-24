@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace Crayon
 {
@@ -90,8 +91,7 @@ namespace Crayon
                 {
                     return new Command
                     {
-                        Errors = new Common.Error[] { new Common.Error { Message = ioe.Message } },
-                        HasErrors = true,
+                        Errors = new Wax.Error[] { new Wax.Error { Message = ioe.Message } },
                     };
                 }
             }

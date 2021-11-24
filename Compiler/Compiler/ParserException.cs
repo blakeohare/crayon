@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
 namespace Parser
 {
@@ -14,7 +15,7 @@ namespace Parser
             this.ParseExceptions = exceptions.ToArray();
         }
 
-        internal Common.Error[] ToCompilerErrors()
+        internal Error[] ToCompilerErrors()
         {
             return this.ParseExceptions.Select(err => err.ToCompilerError()).ToArray();
         }
@@ -93,9 +94,9 @@ namespace Parser
             throw new ParserException(token, locale.Strings.Get(errorType.ToString(), args));
         }
 
-        internal Common.Error ToCompilerError()
+        internal Error ToCompilerError()
         {
-            Common.Error error = new Common.Error();
+            Error error = new Error();
             if (this.TokenInfo != null)
             {
                 error.Column = this.TokenInfo.Col + 1;

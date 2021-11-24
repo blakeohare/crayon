@@ -18,7 +18,7 @@ namespace Crayon
             Func<Dictionary<string, object>, bool> cb)
         {
             string[] commandLineArgs = (string[])request["args"];
-            Command command = FlagParser.Parse(commandLineArgs, IS_RELEASE);
+            Wax.Command command = FlagParser.Parse(commandLineArgs, IS_RELEASE);
             if (command.HasErrors)
             {
                 ErrorPrinter.ShowErrors(command.Errors, !IS_RELEASE);

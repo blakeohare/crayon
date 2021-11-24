@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
 namespace Parser
 {
-    public class CompilerService : Wax.WaxService
+    public class CompilerService : WaxService
     {
         public CompilerService() : base("compiler") { }
 
@@ -17,7 +18,7 @@ namespace Parser
             List<string> errors = new List<string>();
             if (icb.HasErrors)
             {
-                foreach (Common.Error err in icb.Errors)
+                foreach (Error err in icb.Errors)
                 {
                     errors.AddRange(new string[] { err.FileName, err.Line + "", err.Column + "", err.Message });
                 }
@@ -29,7 +30,7 @@ namespace Parser
                 output["usesU3"] = icb.AllScopesMetadata.Any(a => a.ID == "U3Direct");
                 if (icb.HasErrors)
                 {
-                    foreach (Common.Error err in icb.Errors)
+                    foreach (Error err in icb.Errors)
                     {
                         errors.Add(err.FileName);
                         errors.Add(err.Line + "");

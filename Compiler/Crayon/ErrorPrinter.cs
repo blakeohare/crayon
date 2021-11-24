@@ -4,10 +4,10 @@ namespace Crayon
 {
     class ErrorPrinter
     {
-        public static void ShowErrors(IList<Common.Error> errors, bool throwAnyway)
+        public static void ShowErrors(IList<Wax.Error> errors, bool throwAnyway)
         {
             List<string> errorLines = new List<string>();
-            foreach (Common.Error error in errors)
+            foreach (Wax.Error error in errors)
             {
                 string errorString;
                 if (error.Line != 0)

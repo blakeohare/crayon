@@ -4,6 +4,7 @@ using CommonUtil.Disk;
 using Exporter;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Wax;
 
 namespace Crayon.Pipeline
@@ -16,7 +17,10 @@ namespace Crayon.Pipeline
 
             if (command.IsJsonOutput)
             {
-                ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, Error.ToJson(result.Errors ?? new Error[0]));
+                string jsonErrors = "{\"errors\":[" +
+                    string.Join(',', result.Errors.Select(err => err.ToJson())) +
+                    "]}";
+                ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, jsonErrors);
             }
             else if (result.HasErrors)
             {
@@ -86,7 +90,7 @@ namespace Crayon.Pipeline
 
         private static ExternalCompilationBundle Compile(
             Dictionary<string, object> request,
-            Wax.WaxHub waxHub)
+            WaxHub waxHub)
         {
             Dictionary<string, object> resultRaw = waxHub.AwaitSendRequest("compiler", request);
             List<Error> errors = new List<Error>();
@@ -327,7 +331,7 @@ namespace Crayon.Pipeline
             Command command,
             bool isDryRunErrorCheck,
             bool isRelease,
-            Wax.WaxHub waxHub)
+            WaxHub waxHub)
         {
             BuildContext buildContext;
             if (isRelease)

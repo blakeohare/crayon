@@ -1,6 +1,6 @@
-﻿using Common;
-using Parser.ByteCode;
+﻿using Parser.ByteCode;
 using Parser.ParseTree;
+using Wax;
 
 namespace Parser
 {

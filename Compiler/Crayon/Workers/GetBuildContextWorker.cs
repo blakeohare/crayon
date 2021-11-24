@@ -2,6 +2,7 @@
 using Common;
 using CommonUtil.Disk;
 using System;
+using Wax;
 
 namespace Crayon
 {
