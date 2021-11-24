@@ -71,16 +71,58 @@ namespace Build
             // This really needs to go in a separate helper file.
             ResourceDatabase resourceDatabase = CreateResourceDatabase(buildContext);
 
-            resourceDatabase.GenerateResourceMapping();
+            GenerateResourceMapping(resourceDatabase);
 
             ImageResourceAllocator.PrepareImageResources(resourceDatabase);
 
             return resourceDatabase;
         }
 
+        public static void GenerateResourceMapping(ResourceDatabase resDb)
+        {
+            List<string> manifest = new List<string>();
+            int resourceId = 1;
+            foreach (FileOutput textFile in resDb.TextResources)
+            {
+                textFile.CanonicalFileName = "txt" + (resourceId++) + ".txt";
+                manifest.Add("TXT," + textFile.OriginalPath + "," + textFile.CanonicalFileName);
+            }
+
+            foreach (FileOutput imageFile in resDb.ImageResources)
+            {
+                manifest.Add("IMG," + imageFile.OriginalPath + ",");
+            }
+
+            foreach (FileOutput audioFile in resDb.AudioResources)
+            {
+                audioFile.CanonicalFileName = "snd" + (resourceId++) + ".ogg";
+                // TODO: swap the order of the original path and the canonical name
+                manifest.Add("SND," + audioFile.OriginalPath + "," + audioFile.CanonicalFileName);
+            }
+
+            foreach (FileOutput fontFile in resDb.FontResources)
+            {
+                fontFile.CanonicalFileName = "ttf" + (resourceId++) + ".ttf";
+                manifest.Add("TTF," + fontFile.OriginalPath + "," + fontFile.CanonicalFileName);
+            }
+
+            resDb.ResourceManifestFile = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\n", manifest),
+            };
+        }
+
+
         public static ResourceDatabase CreateResourceDatabase(BuildContext buildContext)
         {
             ResourceDatabase resDb = new ResourceDatabase();
+
+            List<FileOutput> audioResources = new List<FileOutput>();
+            List<FileOutput> imageResources = new List<FileOutput>();
+            List<FileOutput> textResources = new List<FileOutput>();
+            List<FileOutput> binaryResources = new List<FileOutput>();
+            List<FileOutput> fontResources = new List<FileOutput>();
 
             foreach (FilePath sourceRoot in buildContext.SourceFolders)
             {
@@ -134,7 +176,7 @@ namespace Build
                             break;
 
                         case FileCategory.AUDIO:
-                            resDb.AudioResources.Add(new FileOutput()
+                            audioResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
                                 RelativeInputPath = aliasedPath,
@@ -144,7 +186,7 @@ namespace Build
                             break;
 
                         case FileCategory.BINARY:
-                            resDb.AudioResources.Add(new FileOutput()
+                            binaryResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
                                 RelativeInputPath = aliasedPath,
@@ -155,7 +197,7 @@ namespace Build
 
                         case FileCategory.TEXT:
                             string content = FileUtil.ReadFileText(absolutePath);
-                            resDb.TextResources.Add(new FileOutput()
+                            textResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Text,
                                 TextContent = content,
@@ -173,7 +215,7 @@ namespace Build
                                 // with obscure format PNGs on some platforms. Luckily the compiler is pretty good with
                                 // reading these. Besides, you're going to be opening most of these files anyway since
                                 // the user should be using image sheets.
-                                resDb.ImageResources.Add(new FileOutput()
+                                imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Image,
                                     Bitmap = new Bitmap(absolutePath),
@@ -183,7 +225,7 @@ namespace Build
                             }
                             else if (extension == "jpg" || extension == "jpeg")
                             {
-                                resDb.ImageResources.Add(new FileOutput()
+                                imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Image,
                                     Bitmap = new Bitmap(absolutePath),
@@ -196,7 +238,7 @@ namespace Build
                             {
                                 TODO.PutImageWidthAndHeightIntoFileOutputPropertiesSoThatBitmapDoesntNeedToBePersistedInMemory();
 
-                                resDb.ImageResources.Add(new FileOutput()
+                                imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Copy,
                                     Bitmap = new Bitmap(absolutePath),
@@ -208,7 +250,7 @@ namespace Build
                             break;
 
                         case FileCategory.FONT:
-                            resDb.FontResources.Add(new FileOutput()
+                            fontResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
                                 RelativeInputPath = aliasedPath,
@@ -222,6 +264,13 @@ namespace Build
                     }
                 }
             }
+
+            resDb.ImageResources = imageResources.ToArray();
+            resDb.AudioResources = audioResources.ToArray();
+            resDb.FontResources = fontResources.ToArray();
+            resDb.TextResources = textResources.ToArray();
+            resDb.BinaryResources = binaryResources.ToArray();
+
             return resDb;
         }
     }

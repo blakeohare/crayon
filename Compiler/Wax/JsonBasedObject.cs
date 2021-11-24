@@ -62,6 +62,19 @@ namespace Wax
             return null;
         }
 
+        protected JsonBasedObject GetObject(string key)
+        {
+            object value = this.GetValue(key);
+            if (value == null) return null;
+            if (value is JsonBasedObject) return (JsonBasedObject)value;
+            return null;
+        }
+
+        protected void SetObject(string key, JsonBasedObject value)
+        {
+            this.SetValue(key, value);
+        }
+
         protected JsonBasedObject[] GetObjects(string key)
         {
             object value = this.GetValue(key);
@@ -70,7 +83,7 @@ namespace Wax
             return null;
         }
 
-        protected void SetObjects(string key, IList<JsonBasedObject> items)
+        protected void SetObjects(string key, IEnumerable<JsonBasedObject> items)
         {
             this.SetValue(key, items.ToArray());
         }
@@ -91,6 +104,19 @@ namespace Wax
         }
 
         protected void SetInteger(string key, int value)
+        {
+            this.SetValue(key, value);
+        }
+
+        protected Dictionary<string, JsonBasedObject> GetDictionary(string key)
+        {
+            object value = this.GetValue(key);
+            if (value == null) return null;
+            if (value is Dictionary<string, JsonBasedObject>) return (Dictionary<string, JsonBasedObject>)value;
+            return null;
+        }
+
+        protected void SetDictionary(string key, Dictionary<string, JsonBasedObject> value)
         {
             this.SetValue(key, value);
         }
@@ -126,6 +152,10 @@ namespace Wax
                     this.ItemToJson(sb, strings[i]);
                 }
                 sb.Append(']');
+            }
+            else if (value is JsonBasedObject)
+            {
+                ((JsonBasedObject)value).ToJsonImpl(sb);
             }
             else
             {

@@ -20,5 +20,10 @@
             string value = System.Text.Encoding.UTF8.GetString(utf8Bytes);
             return value;
         }
+
+        public static byte[] FromBase64ToBytes(string base64)
+        {
+            return System.Convert.FromBase64String(base64);
+        }
     }
 }
