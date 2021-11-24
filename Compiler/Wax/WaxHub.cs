@@ -14,7 +14,7 @@ namespace Wax
             this.services[service.Name] = service;
         }
 
-        public void SendRequest(
+        public void SendRequestX(
             string serviceName,
             Dictionary<string, object> request,
             Func<Dictionary<string, object>, bool> cb)
@@ -41,7 +41,7 @@ namespace Wax
             Dictionary<string, object> request)
         {
             List<Dictionary<string, object>> responsePtr = new List<Dictionary<string, object>>();
-#if DEBUG
+
             Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
             this.services[serviceName].HandleRequest(
                 immutableEnsuredCopy,
@@ -53,32 +53,6 @@ namespace Wax
 
             if (responsePtr.Count == 0) throw new NotImplementedException();
             return responsePtr[0];
-#else
-
-            this.SendRequest(serviceName, request, response =>
-            {
-                lock (responsePtr)
-                {
-                    responsePtr.Add(response);
-                }
-                return true;
-            });
-
-            double counter = 1;
-            while (true)
-            {
-                lock (responsePtr)
-                {
-                    if (responsePtr.Count > 0)
-                    {
-                        return responsePtr[0];
-                    }
-                }
-                System.Threading.Thread.Sleep((int)counter);
-                counter *= 1.5;
-                if (counter > 100) counter = 100;
-            }
-#endif
         }
 
         internal static string SerializeWireData(Dictionary<string, object> data)
