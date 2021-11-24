@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace Parser
 {
     public class ExternalAssemblyMetadata {
         private Dictionary<string, ExternalAssemblyMetadata> directDependencies = new Dictionary<string, ExternalAssemblyMetadata>();

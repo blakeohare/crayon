@@ -45,8 +45,8 @@ namespace Parser
             return (bool)response["found"];
         }
 
-        private Dictionary<string, Common.ExternalAssemblyMetadata> assemblyCache = new Dictionary<string, Common.ExternalAssemblyMetadata>();
-        private Common.ExternalAssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string localeId, string name)
+        private Dictionary<string, ExternalAssemblyMetadata> assemblyCache = new Dictionary<string, ExternalAssemblyMetadata>();
+        private ExternalAssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string localeId, string name)
         {
             string key = (localeId == null || localeId == "") ? name : (localeId + ":" + name);
             if (!this.assemblyCache.ContainsKey(key))
@@ -69,7 +69,7 @@ namespace Parser
                     Dictionary<string, string> nameByLocale = DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["nameByLocale"]);
                     Dictionary<string, string> sourceCode = DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["sourceCode"]);
 
-                    Common.ExternalAssemblyMetadata md = new Common.ExternalAssemblyMetadata()
+                    ExternalAssemblyMetadata md = new ExternalAssemblyMetadata()
                     {
                         ID = (string)response["id"],
                         IsUserDefined = false,
@@ -92,7 +92,7 @@ namespace Parser
 
         internal LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
         {
-            Common.ExternalAssemblyMetadata coreLib = this.GetAssemblyMetadataFromAnyPossibleKey("en", "Core");
+            ExternalAssemblyMetadata coreLib = this.GetAssemblyMetadataFromAnyPossibleKey("en", "Core");
             string name = coreLib.GetName(parser.CurrentLocale);
             return this.GetOrImportAssembly(parser, null, name);
         }
@@ -114,7 +114,7 @@ namespace Parser
             string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
 
             string secondAttemptedKey = name;
-            Common.ExternalAssemblyMetadata assemblyMetadata = this.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID, name);
+            ExternalAssemblyMetadata assemblyMetadata = this.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID, name);
             Locale effectiveLocale = fromLocale;
 
             if (assemblyMetadata == null)
