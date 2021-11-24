@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace CommonUtil
+﻿namespace CommonUtil
 {
     public static class FloatUtil
     {

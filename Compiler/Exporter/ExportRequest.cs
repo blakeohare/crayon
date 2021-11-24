@@ -1,7 +1,4 @@
-﻿using Common;
-using System.Collections.Generic;
-
-namespace Exporter
+﻿namespace Exporter
 {
     public class ExportRequest
     {
