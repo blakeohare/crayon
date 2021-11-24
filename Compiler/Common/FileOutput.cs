@@ -7,7 +7,6 @@ namespace Common
         Text,
         Binary,
         Copy,
-        Move,
         Image,
     }
 

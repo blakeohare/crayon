@@ -40,8 +40,7 @@ namespace Common
                     break;
 
                 case FileOutputType.Copy:
-                case FileOutputType.Move:
-                    this.ExportCopiedFile(absolutePath, file.AbsoluteInputPath, file.Type == FileOutputType.Move);
+                    this.ExportCopiedFile(absolutePath, file.AbsoluteInputPath, false);
                     break;
 
                 case FileOutputType.Image:
