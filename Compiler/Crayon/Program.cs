@@ -13,7 +13,6 @@ namespace Crayon
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Parser.CompilerService());
             waxHub.RegisterService(new Disk.DiskService());
-            waxHub.RegisterService(new Extensions.ExtensionsService());
             waxHub.RegisterService(new CbxRunnerService());
 
             waxHub.AwaitSendRequest(

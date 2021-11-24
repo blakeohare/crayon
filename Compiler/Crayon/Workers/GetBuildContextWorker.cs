@@ -22,9 +22,7 @@ namespace Crayon
 
             string projectDirectory = FileUtil.GetParentDirectory(buildFile);
 
-            BuildContext buildContext = null;
-
-            buildContext = BuildContext.Parse(projectDirectory, FileUtil.ReadFileText(buildFile), target, command.ResourceErrorsShowRelativeDir);
+            BuildContext buildContext = BuildContext.Parse(projectDirectory, FileUtil.ReadFileText(buildFile), target, command.ResourceErrorsShowRelativeDir);
 
             buildContext = buildContext ?? new BuildContext();
 
@@ -55,8 +53,6 @@ namespace Crayon
             }
 
             buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
-
-            buildContext.TranspileFrontendLanguage(hub);
 
             return buildContext;
         }

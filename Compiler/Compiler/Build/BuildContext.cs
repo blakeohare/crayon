@@ -421,44 +421,5 @@ namespace Build
 
             return buildFilePath;
         }
-
-        public void TranspileFrontendLanguage(Wax.WaxHub hub)
-        {
-            if (this.RootProgrammingLanguage == ProgrammingLanguage.ACRYLIC ||
-                this.RootProgrammingLanguage == ProgrammingLanguage.CRAYON)
-            {
-                return;
-            }
-
-            string langId = this.RootProgrammingLanguage.ToString().ToLower();
-
-            Dictionary<string, object> result = hub.AwaitSendRequest(
-                "extensions",
-                new Dictionary<string, object>() {
-                    { "command", "getLanguageFrontend" },
-                    { "lang", langId },
-                });
-
-            if (!(bool)result["ready"])
-            {
-                throw new InvalidOperationException("The language frontend extension for " + this.RootProgrammingLanguage + " could not be downloaded at this time.");
-            }
-
-            if (this.SourceFolders.Length != 1) throw new NotImplementedException();
-
-            FilePath source = this.SourceFolders[0];
-            string originalSource = source.AbsolutePath;
-            string targetSource = source.AbsolutePath + "_gen";
-            string HACK_startingFile = "main.py";
-
-            Dictionary<string, object> transpilationResult = hub.AwaitSendRequest("langfe-" + langId, new Dictionary<string, object>() {
-                { "sourceDir", originalSource },
-                { "targetDir", targetSource },
-                { "entryPointFile", HACK_startingFile },
-            });
-
-            this.SourceFolders[0].AddSuffix("_gen");
-            this.RootProgrammingLanguage = ProgrammingLanguage.CRAYON;
-        }
     }
 }
