@@ -3,7 +3,7 @@ using CommonUtil;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Wax;
 
 namespace JavaScriptApp
 {
@@ -42,8 +42,7 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            Build.ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options)
         {
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
@@ -81,7 +80,8 @@ namespace JavaScriptApp
 
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
 
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            ResourceDatabase resDb = cbxBundle.ResourceDB;
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, cbxBundle);
 
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
             TemplateSet vmTemplates = templateReader.GetVmTemplates();
@@ -101,7 +101,7 @@ namespace JavaScriptApp
 
             System.Text.StringBuilder resourcesJs = new System.Text.StringBuilder();
 
-            foreach (FileOutput textResource in resourceDatabase.TextResources)
+            foreach (FileOutput textResource in resDb.TextResources)
             {
                 resourcesJs.Append("C$common$addTextRes(");
                 resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(textResource.CanonicalFileName));
@@ -110,7 +110,7 @@ namespace JavaScriptApp
                 resourcesJs.Append(");\n");
             }
 
-            foreach (FileOutput fontResource in resourceDatabase.FontResources)
+            foreach (FileOutput fontResource in resDb.FontResources)
             {
                 resourcesJs.Append("C$common$addBinaryRes(");
                 resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(fontResource.CanonicalFileName));
@@ -120,7 +120,7 @@ namespace JavaScriptApp
             }
 
             resourcesJs.Append("C$common$resourceManifest = ");
-            resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent));
+            resourcesJs.Append(StringTokenUtil.ConvertStringValueToCode(resDb.ResourceManifestFile.TextContent));
             resourcesJs.Append(";\n");
 
             string filePrefix = options.GetStringOrNull(ExportOptionKey.JS_FILE_PREFIX);
@@ -131,7 +131,7 @@ namespace JavaScriptApp
                 resourcesJs.Append(";\n");
             }
 
-            string imageManifest = resourceDatabase.ImageResourceManifestFile.TextContent;
+            string imageManifest = resDb.ImageResourceManifestFile.TextContent;
             imageManifest = StringTokenUtil.ConvertStringValueToCode(imageManifest);
             resourcesJs.Append("C$common$imageManifest = " + imageManifest + ";\n");
 
@@ -144,15 +144,15 @@ namespace JavaScriptApp
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(byteCode) + ";",
+                TextContent = "C$bytecode = " + StringTokenUtil.ConvertStringValueToCode(cbxBundle.ByteCode) + ";",
             };
 
-            foreach (string imageChunk in resourceDatabase.ImageResourceFiles.Keys)
+            foreach (string imageChunk in resDb.ImageResourceFiles.Keys)
             {
-                output["resources/images/" + imageChunk] = resourceDatabase.ImageResourceFiles[imageChunk];
+                output["resources/images/" + imageChunk] = resDb.ImageResourceFiles[imageChunk];
             }
 
-            foreach (FileOutput audioResourceFile in resourceDatabase.AudioResources)
+            foreach (FileOutput audioResourceFile in resDb.AudioResources)
             {
                 output["resources/audio/" + audioResourceFile.CanonicalFileName] = audioResourceFile;
             }
@@ -167,10 +167,10 @@ namespace JavaScriptApp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            Build.ResourceDatabase resDb)
+            CbxBundleView cbxBundle)
         {
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
-                this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
+                this.ParentPlatform.GenerateReplacementDictionary(options, cbxBundle),
                 new Dictionary<string, string>()
                 {
                     { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled") },

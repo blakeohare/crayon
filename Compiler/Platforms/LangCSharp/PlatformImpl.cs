@@ -2,6 +2,7 @@
 using Platform;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace LangCSharp
 {
@@ -27,8 +28,7 @@ namespace LangCSharp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            Build.ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
@@ -36,7 +36,7 @@ namespace LangCSharp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            Build.ResourceDatabase resDb)
+            CbxBundleView cbxBundle)
         {
             Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
             replacements["PROJECT_GUID"] = "project guid goes here.";

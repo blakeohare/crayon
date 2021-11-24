@@ -5,6 +5,7 @@ using CommonUtil.Images;
 using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace Crayon
 {

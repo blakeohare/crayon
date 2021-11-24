@@ -1,5 +1,6 @@
 ﻿using Common;
 using System.Collections.Generic;
+using Wax;
 
 namespace Exporter
 {
@@ -13,10 +14,9 @@ namespace Exporter
     {
         public void GenerateVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> output,
-            string byteCode,
+            CbxBundleView cbxBundle,
             Platform.AbstractPlatform platform,
             ExportRequest nullableExportBundle,
-            Build.ResourceDatabase resourceDatabase,
             bool usesU3,
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
@@ -48,11 +48,7 @@ namespace Exporter
 
                 platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 
-                platform.ExportProject(
-                    output,
-                    byteCode,
-                    resourceDatabase,
-                    options);
+                platform.ExportProject(output, cbxBundle, options);
             }
             else
             {

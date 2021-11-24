@@ -5,6 +5,7 @@ using CommonUtil.Resources;
 using Platform;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace JavaScriptAppIos
 {
@@ -20,21 +21,19 @@ namespace JavaScriptAppIos
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            Build.ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options)
         {
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
             options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, "");
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, cbxBundle);
 
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
-                byteCode,
-                resourceDatabase,
+                cbxBundle,
                 options);
 
             foreach (string filePath in basicProject.Keys)
@@ -144,9 +143,9 @@ namespace JavaScriptAppIos
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            Build.ResourceDatabase resDb)
+            CbxBundleView cbxBundle)
         {
-            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, cbxBundle);
             replacements["ORGANIZATION_NAME"] = "Organization Name";
 
             replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "";

@@ -1,8 +1,10 @@
-﻿using Common;
+﻿using Build.ImageSheets;
+using Common;
 using CommonUtil.Disk;
 using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace Build
 {
@@ -19,6 +21,8 @@ namespace Build
             ResourceDatabase resourceDatabase = CreateResourceDatabase(buildContext);
 
             resourceDatabase.GenerateResourceMapping();
+
+            ImageResourceAllocator.PrepareImageResources(resourceDatabase);
 
             return resourceDatabase;
         }

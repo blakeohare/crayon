@@ -1,8 +1,8 @@
-﻿using Common;
-using CommonUtil.Images;
+﻿using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
 namespace Build.ImageSheets
 {

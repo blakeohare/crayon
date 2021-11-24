@@ -2,6 +2,7 @@
 using Platform;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace LangJavaScript
 {
@@ -22,8 +23,7 @@ namespace LangJavaScript
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            Build.ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options)
         {
             throw new NotImplementedException();
@@ -31,7 +31,7 @@ namespace LangJavaScript
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            Build.ResourceDatabase resDb)
+            CbxBundleView cbxBundle)
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }

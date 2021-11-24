@@ -4,6 +4,7 @@ using CommonUtil.Disk;
 using Exporter;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace Crayon.Pipeline
 {
@@ -199,13 +200,14 @@ namespace Crayon.Pipeline
                         resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
                     }
 
+                    CbxBundleView cbxBundle = new CbxBundleView(compilation.ByteCode, resourceDatabase);
+
                     ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, buildContext);
                     ExportResponse response = CbxVmBundleExporter.Run(
                             buildContext.Platform.ToLowerInvariant(),
                             buildContext.ProjectDirectory,
                             outputDirectory,
-                            compilation.ByteCode,
-                            resourceDatabase,
+                            cbxBundle,
                             compilation.UsesU3,
                             exportBundle,
                             new PlatformProvider(),

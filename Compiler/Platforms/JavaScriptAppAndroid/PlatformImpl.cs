@@ -5,6 +5,7 @@ using Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
 namespace JavaScriptAppAndroid
 {
@@ -20,11 +21,10 @@ namespace JavaScriptAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            Build.ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options)
         {
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, cbxBundle);
             this.OutputAndroidBoilerplate(output, replacements, options);
 
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
@@ -47,8 +47,7 @@ namespace JavaScriptAppAndroid
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
-                byteCode,
-                resourceDatabase,
+                cbxBundle,
                 options);
 
             foreach (string filePath in basicProject.Keys)
@@ -100,9 +99,9 @@ namespace JavaScriptAppAndroid
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            Build.ResourceDatabase resDb)
+            CbxBundleView cbxBundle)
         {
-            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, cbxBundle);
 
             replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION));
 

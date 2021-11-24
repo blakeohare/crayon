@@ -1,4 +1,4 @@
-﻿using Common;
+﻿using Wax;
 
 namespace Build.ImageSheets
 {

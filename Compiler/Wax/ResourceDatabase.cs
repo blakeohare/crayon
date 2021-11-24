@@ -1,7 +1,6 @@
-﻿using Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Build
+namespace Wax
 {
     /*
      * Database of non-code files to be copied.

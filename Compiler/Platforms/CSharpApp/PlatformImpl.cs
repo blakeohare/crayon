@@ -1,10 +1,9 @@
 ﻿using Common;
-using CommonUtil;
-using CommonUtil.Images;
 using CommonUtil.Random;
 using Platform;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
 namespace CSharpApp
 {
@@ -28,8 +27,10 @@ namespace CSharpApp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            Build.ResourceDatabase resDb)
+            CbxBundleView cbxBundle)
         {
+            ResourceDatabase resDb = cbxBundle.ResourceDB;
+
             List<string> embeddedResources = new List<string>()
             {
                 "<EmbeddedResource Include=\"Resources\\ByteCode.txt\"/>",
@@ -74,7 +75,7 @@ namespace CSharpApp
             string guidSeed = IdGenerator.GetRandomSeed();
 
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
-                this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
+                this.ParentPlatform.GenerateReplacementDictionary(options, cbxBundle),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
                     { "ASSEMBLY_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
@@ -127,14 +128,13 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            Build.ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
             bool usesU3 = options.GetBool(ExportOptionKey.USES_U3);
 
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, cbxBundle);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
 
@@ -142,35 +142,36 @@ namespace CSharpApp
 
             this.ExportInterpreter(templateReader, baseDir, output);
 
-            output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = byteCode };
-            output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
+            ResourceDatabase resDb = cbxBundle.ResourceDB;
+            output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = cbxBundle.ByteCode };
+            output[baseDir + "Resources/ResourceManifest.txt"] = cbxBundle.ResourceDB.ResourceManifestFile;
 
-            if (resourceDatabase.ImageResourceManifestFile != null)
+            if (resDb.ImageResourceManifestFile != null)
             {
-                output[baseDir + "Resources/ImageManifest.txt"] = resourceDatabase.ImageResourceManifestFile;
+                output[baseDir + "Resources/ImageManifest.txt"] = resDb.ImageResourceManifestFile;
             }
 
-            foreach (FileOutput imageFile in resourceDatabase.ImageResources.Where(img => img.CanonicalFileName != null))
+            foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
             {
                 output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
             }
 
-            foreach (string imageFilePath in resourceDatabase.ImageResourceFiles.Keys)
+            foreach (string imageFilePath in resDb.ImageResourceFiles.Keys)
             {
-                output[baseDir + "Resources/" + imageFilePath] = resourceDatabase.ImageResourceFiles[imageFilePath];
+                output[baseDir + "Resources/" + imageFilePath] = resDb.ImageResourceFiles[imageFilePath];
             }
 
-            foreach (FileOutput textFile in resourceDatabase.TextResources.Where(img => img.CanonicalFileName != null))
+            foreach (FileOutput textFile in resDb.TextResources.Where(img => img.CanonicalFileName != null))
             {
                 output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
             }
 
-            foreach (FileOutput audioFile in resourceDatabase.AudioResources.Where(file => file.CanonicalFileName != null))
+            foreach (FileOutput audioFile in resDb.AudioResources.Where(file => file.CanonicalFileName != null))
             {
                 output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
             }
 
-            foreach (FileOutput fontFile in resourceDatabase.FontResources.Where(file => file.CanonicalFileName != null))
+            foreach (FileOutput fontFile in resDb.FontResources.Where(file => file.CanonicalFileName != null))
             {
                 output[baseDir + "Resources/" + fontFile.CanonicalFileName] = fontFile;
             }

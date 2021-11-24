@@ -1,9 +1,9 @@
-﻿using Build;
-using Common;
+﻿using Common;
 using CommonUtil;
 using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace Platform
 {
@@ -161,8 +161,7 @@ namespace Platform
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
-            string byteCode,
-            ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             Options options);
 
         public virtual void TranspileCode(Dictionary<string, FileOutput> output, object parserContextObj)
@@ -170,7 +169,7 @@ namespace Platform
             throw new NotImplementedException();
         }
 
-        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
+        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, CbxBundleView cbxBundle);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)
         {

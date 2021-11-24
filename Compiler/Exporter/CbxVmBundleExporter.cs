@@ -1,8 +1,8 @@
-﻿using Build;
-using Common;
+﻿using Common;
 using CommonUtil.Disk;
 using System;
 using System.Collections.Generic;
+using Wax;
 
 namespace Exporter
 {
@@ -12,8 +12,7 @@ namespace Exporter
             string platformId,
             string projectDirectory,
             string outputDirectory,
-            string byteCode,
-            ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider,
@@ -23,7 +22,7 @@ namespace Exporter
             {
                 try
                 {
-                    RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, usesU3, exportRequest, platformProvider);
+                    RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, usesU3, exportRequest, platformProvider);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -35,7 +34,7 @@ namespace Exporter
             }
             else
             {
-                RunImpl(platformId, projectDirectory, outputDirectory, byteCode, resourceDatabase, usesU3, exportRequest, platformProvider);
+                RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, usesU3, exportRequest, platformProvider);
             }
             return new ExportResponse();
         }
@@ -44,8 +43,7 @@ namespace Exporter
             string platformId,
             string projectDirectory,
             string outputDirectory,
-            string byteCode,
-            ResourceDatabase resourceDatabase,
+            CbxBundleView cbxBundle,
             bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider)
@@ -64,10 +62,9 @@ namespace Exporter
             Dictionary<string, FileOutput> result = new Dictionary<string, FileOutput>();
             vmGenerator.GenerateVmSourceCodeForPlatform(
                 result,
-                byteCode,
+                cbxBundle,
                 platform,
                 exportRequest,
-                resourceDatabase,
                 usesU3,
                 outputDirectory,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);

@@ -1,6 +1,6 @@
 ﻿using CommonUtil.Disk;
 
-namespace Common
+namespace Wax
 {
     public enum FileOutputType
     {

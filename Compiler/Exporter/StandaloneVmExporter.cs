@@ -3,7 +3,7 @@ using CommonUtil.Disk;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Wax;
 
 namespace Exporter
 {
@@ -69,9 +69,8 @@ namespace Exporter
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
                 fileOutput,
-                "",
-                platform,
                 null,
+                platform,
                 null,
                 usesU3,
                 vmTargetDir,
