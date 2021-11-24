@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\Languages\*\*.txt" />
+  </ItemGroup>
+
 </Project>
