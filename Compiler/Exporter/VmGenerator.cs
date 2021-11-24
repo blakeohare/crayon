@@ -55,17 +55,5 @@ namespace Exporter
                 platform.ExportStandaloneVm(output);
             }
         }
-
-        private Platform.LibraryForExport CreateLibraryForExport(
-            string libraryName,
-            string libraryVersion,
-            string directory)
-        {
-            return new Platform.LibraryForExport(directory)
-            {
-                Name = libraryName,
-                Version = libraryVersion,
-            };
-        }
     }
 }
