@@ -11,7 +11,7 @@ namespace Wax
 
         public CbxBundleView(string byteCode, ResourceDatabase resDb)
         {
-            this.ByteCode = ByteCode;
+            this.ByteCode = byteCode;
             this.ResourceDB = resDb;
         }
     }
