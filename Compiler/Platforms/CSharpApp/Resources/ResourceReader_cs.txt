@@ -59,7 +59,8 @@ namespace Interpreter
         public static System.IO.Stream GetResourceStream(string path)
         {
             System.Reflection.Assembly assembly = typeof(ResourceReader).Assembly;
-            path = assembly.GetName().Name + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
+            string assemblyPrefix = assembly.GetManifestResourceNames()[0].Split('.')[0];
+            path = assemblyPrefix + "." + path.Replace('\\', '.').Replace('/', '.').TrimStart('.');
             return assembly.GetManifestResourceStream(path);
         }
 
