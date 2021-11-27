@@ -51,10 +51,10 @@ namespace Interpreter
             set { lock (isResumeWantedMutex) { this.isResumeWanted = value; } }
         }
 
-        public void StartListening()
+        public void StartListening(Interpreter.Structs.VmContext vm)
         {
             debuggerNetworkConnection = new DebuggerConnection();
-            debuggerNetworkConnection.StartListeningAsync();
+            debuggerNetworkConnection.StartListeningAsync(vm);
         }
 
         private DebuggerConnection debuggerNetworkConnection;
@@ -70,11 +70,11 @@ namespace Interpreter
             this.debuggerNetworkConnection.BroadcastMessageToAllSessions(value);
         }
 
-        public void FlushMessageQueue()
+        public void FlushMessageQueue(Interpreter.Structs.VmContext vm)
         {
             foreach (DebuggerMessage debuggerMessage in debuggerNetworkConnection.FlushData())
             {
-                string[] response = debuggerMessage.Run();
+                string[] response = debuggerMessage.Run(vm);
                 if (response != null)
                 {
                     debuggerNetworkConnection.SendResponseAsync(debuggerMessage.SourceId, response);
@@ -87,7 +87,7 @@ namespace Interpreter
                 {
                     foreach (Breakpoint breakpoint in AwaitingSet)
                     {
-                        int id = CrayonWrapper.debuggerSetBreakpoint(TranslationHelper.ProgramData, breakpoint.Path, breakpoint.Line);
+                        int id = CrayonWrapper.debuggerSetBreakpoint(vm, breakpoint.Path, breakpoint.Line);
                         if (id != -1)
                         {
                             Breakpoints[id] = breakpoint;
@@ -138,9 +138,9 @@ namespace Interpreter
             return messages;
         }
 
-        public void StartListeningAsync()
+        public void StartListeningAsync(Interpreter.Structs.VmContext vm)
         {
-            new Thread(new ThreadStart(this.StartListeningImpl)).Start();
+            new Thread(new ThreadStart(() => this.StartListeningImpl(vm))).Start();
         }
 
         public void SendResponseAsync(int sessionId, string[] data)
@@ -334,7 +334,7 @@ namespace Interpreter
             }
         }
 
-        private void StartListeningImpl()
+        private void StartListeningImpl(Interpreter.Structs.VmContext vm)
         {
             IPHostEntry host = Dns.GetHostEntry("localhost");
             IPAddress ipAddress = host.AddressList[0];
@@ -342,7 +342,7 @@ namespace Interpreter
             // 9003 is the first port that is neither officially nor unofficially allocated according to the
             // Wikipedia page for list of ports and is also "over 9000".
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 9003);
-            bool useCommandLineOutput = TranslationHelper.ProgramData.environment.stdoutPrefix != null;
+            bool useCommandLineOutput = vm.environment.stdoutPrefix != null;
 
             try
             {
@@ -406,8 +406,7 @@ namespace Interpreter
             }
         }
 
-        internal abstract string[] Run();
-        internal Interpreter.Structs.VmContext VM { get { return TranslationHelper.ProgramData; } }
+        internal abstract string[] Run(Interpreter.Structs.VmContext vm);
 
         protected Dictionary<string, string> ParseArgs(string[] items)
         {
@@ -446,9 +445,9 @@ namespace Interpreter
                 this.RequestToken = lookup["req-token"];
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
-                int breakpointId = CrayonWrapper.debuggerSetBreakpoint(VM, this.Path, this.Line);
+                int breakpointId = CrayonWrapper.debuggerSetBreakpoint(vm, this.Path, this.Line);
                 return new string[] { this.RequestToken, "" + breakpointId, };
             }
         }
@@ -465,9 +464,9 @@ namespace Interpreter
                 this.RequestToken = lookup["req-token"];
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
-                CrayonWrapper.debuggerClearBreakpoint(VM, this.BreakpointId);
+                CrayonWrapper.debuggerClearBreakpoint(vm, this.BreakpointId);
                 return new string[] { this.RequestToken, "1" };
             }
         }
@@ -479,9 +478,9 @@ namespace Interpreter
                 // no arguments
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
-                CrayonWrapper.debugSetStepOverBreakpoint(VM);
+                CrayonWrapper.debugSetStepOverBreakpoint(vm);
                 Debugger.INSTANCE.IsResumeWanted = true;
                 return null;
             }
@@ -494,7 +493,7 @@ namespace Interpreter
                 throw new NotImplementedException();
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
                 throw new NotImplementedException();
             }
@@ -519,9 +518,9 @@ namespace Interpreter
                 this.StackOffset = 0;
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
-                Interpreter.Structs.Value v = CrayonWrapper.queryValue(VM, -1, 0, this.Values);
+                Interpreter.Structs.Value v = CrayonWrapper.queryValue(vm, -1, 0, this.Values);
                 string resultType = "none";
                 string resultValue = "";
                 if (v != null)
@@ -539,7 +538,7 @@ namespace Interpreter
                             resultType = "TYPE:" + v.type;
                             break;
                     }
-                    resultValue = CrayonWrapper.valueToString(VM, v);
+                    resultValue = CrayonWrapper.valueToString(vm, v);
                 }
                 return new string[] { this.RequestToken, resultType, resultValue };
             }
@@ -552,7 +551,7 @@ namespace Interpreter
                 // no args
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
                 Debugger.INSTANCE.IsResumeWanted = true;
                 return null;
@@ -566,7 +565,7 @@ namespace Interpreter
                 throw new NotImplementedException();
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
                 throw new NotImplementedException();
             }
@@ -579,7 +578,7 @@ namespace Interpreter
                 throw new NotImplementedException();
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
                 throw new NotImplementedException();
             }
@@ -592,7 +591,7 @@ namespace Interpreter
                 throw new InvalidOperationException("Cannot identify debug instruction: " + args[0]);
             }
 
-            internal override string[] Run()
+            internal override string[] Run(Interpreter.Structs.VmContext vm)
             {
                 throw new Exception();
             }

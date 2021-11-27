@@ -11,11 +11,10 @@ namespace Interpreter
             string resourceManifest = ResourceReader.ReadTextResource("ResourceManifest.txt");
             string imageManifest = ResourceReader.ReadTextResource("ImageManifest.txt") ?? "";
             VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest, imageManifest);
-            TranslationHelper.ProgramData = vm;
             CrayonWrapper.vmEnableLibStackTrace(vm);
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
             // Debugger.INSTANCE.StartListening();
-            EventLoop.StartInterpreter();
+            EventLoop.StartInterpreter(vm);
         }
     }
 }

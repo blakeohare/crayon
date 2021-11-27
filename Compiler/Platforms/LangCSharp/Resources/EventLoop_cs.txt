@@ -117,7 +117,7 @@ namespace Interpreter.Vm
             }
         }
 
-        public static void StartInterpreter()
+        public static void StartInterpreter(VmContext vm)
         {
             if (startingThreadId != 0) throw new Exception();
             startingThreadId = GetThreadId();
@@ -125,7 +125,7 @@ namespace Interpreter.Vm
             {
                 StartFromBeginning = true,
             });
-            RunEventLoop();
+            RunEventLoop(vm);
         }
 
         private static Value ConvertNativeArg(VmContext vm, object na)
@@ -146,9 +146,8 @@ namespace Interpreter.Vm
             throw new NotImplementedException("Unsupported type for native arg: " + na.GetType());
         }
 
-        private static void RunEventLoopIteration(EventLoopInvocation invocation)
+        private static void RunEventLoopIteration(VmContext vm, EventLoopInvocation invocation)
         {
-            VmContext vm = TranslationHelper.ProgramData;
             EnsureRunningOnStartingThread();
 
             // Debugger.INSTANCE.FlushMessageQueue();
@@ -203,14 +202,14 @@ namespace Interpreter.Vm
             }
         }
 
-        public static void RunEventLoop()
+        public static void RunEventLoop(VmContext vm)
         {
             while (true)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
                 if (invocation != null)
                 {
-                    RunEventLoopIteration(invocation);
+                    RunEventLoopIteration(vm, invocation);
                 }
                 else
                 {
@@ -227,72 +226,6 @@ namespace Interpreter.Vm
                     System.Threading.Thread.SpinWait(aboutHalfAMillisecond);
                 }
             }
-        }
-
-        public static void RunEventLoopThroughCurrentItems()
-        {
-            bool foundAny = true;
-            while (foundAny)
-            {
-                List<EventLoopInvocation> items = new List<EventLoopInvocation>();
-                while (true)
-                {
-                    EventLoopInvocation invocation = PopItemFromQueue();
-                    if (invocation == null) break;
-                    else items.Add(invocation);
-                }
-
-                foundAny = items.Count > 0;
-
-                foreach (EventLoopInvocation item in items)
-                {
-                    RunEventLoopIteration(item);
-                }
-            }
-        }
-
-        public static InterpreterResult RunInterpreter(int executionContextId)
-        {
-            EnsureRunningOnStartingThread();
-            // Debugger.INSTANCE.FlushMessageQueue();
-            return HandleInterpreterStatus(CrayonWrapper.runInterpreter(TranslationHelper.ProgramData, executionContextId));
-        }
-
-        public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
-        {
-            EnsureRunningOnStartingThread();
-            // Debugger.INSTANCE.FlushMessageQueue();
-            return HandleInterpreterStatus(CrayonWrapper.runInterpreterWithFunctionPointer(TranslationHelper.ProgramData, functionPointer, args));
-        }
-
-        private static InterpreterResult HandleInterpreterStatus(InterpreterResult result)
-        {
-            while (result.status == 5) // REINVOKE
-            {
-                double sleepForSeconds = result.reinvokeDelay;
-                System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
-                // Debugger.INSTANCE.FlushMessageQueue();
-                result = CrayonWrapper.runInterpreter(TranslationHelper.ProgramData, result.executionContextId);
-            }
-            if (result.status == 1) // FINISHED
-            {
-                if (result.isRootContext) Environment.Exit(0);
-                return result;
-            }
-            if (result.status == 2 || result.status == 7) return result; // SUSPEND || BREAKPOINT
-            if (result.status == 3) // FATAL
-            {
-                if (result.isRootContext) Environment.Exit(1);
-                return result;
-            }
-            throw new Exception(); // invalid status
-        }
-
-        private static Func<VmContext, Value[], Value> GetStartupFunction(string name)
-        {
-            object fn = TranslationHelper.GetFunctionPointer(name);
-            if (fn == null) return null;
-            return fn as Func<VmContext, Value[], Value>;
         }
     }
 }

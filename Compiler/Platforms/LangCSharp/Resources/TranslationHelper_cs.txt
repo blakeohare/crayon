@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Interpreter.Structs;
 
 namespace Interpreter.Vm
 {
     public static class TranslationHelper
     {
-        public static VmContext ProgramData { get; set; }
         public static string ResourceManifest { get; set; }
         public static string ByteCode { get; set; }
 
@@ -42,26 +39,6 @@ namespace Interpreter.Vm
                 }
                 return environmentDescriptor;
             }
-        }
-
-        private static List<Func<string, object>> functionPointerResolvers = new List<Func<string, object>>();
-
-        public static object GetFunctionPointer(string name)
-        {
-            foreach (Func<string, object> fpResolvers in functionPointerResolvers)
-            {
-                object output = fpResolvers(name);
-                if (output != null)
-                {
-                    return output;
-                }
-            }
-            return null;
-        }
-
-        public static void RegisterFunctionPointerResolver(Func<string, object> resolver)
-        {
-            functionPointerResolvers.Add(resolver);
         }
 
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.Winapi)]
