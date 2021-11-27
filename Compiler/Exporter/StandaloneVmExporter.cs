@@ -12,14 +12,13 @@ namespace Exporter
             string platformId,
             IPlatformProvider platformProvider,
             string vmTargetDirectoryRaw,
-            bool usesU3,
             bool isRelease)
         {
             if (isRelease)
             {
                 try
                 {
-                    RunImpl(platformId, platformProvider, usesU3, vmTargetDirectoryRaw);
+                    RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -31,7 +30,7 @@ namespace Exporter
             }
             else
             {
-                RunImpl(platformId, platformProvider, usesU3, vmTargetDirectoryRaw);
+                RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
             }
             return new ExportResponse();
         }
@@ -39,7 +38,6 @@ namespace Exporter
         public static void RunImpl(
             string platformId,
             IPlatformProvider platformProvider,
-            bool usesU3,
             string vmTargetDirectoryRaw)
         {
             string vmTargetDirectory = vmTargetDirectoryRaw;
@@ -55,7 +53,6 @@ namespace Exporter
             ExportStandaloneVmSourceCodeForPlatform(
                 fileOutputContext,
                 platform,
-                usesU3,
                 vmTargetDirectory);
             ExportUtil.EmitFilesToDisk(fileOutputContext, vmTargetDirectory);
         }
@@ -63,7 +60,6 @@ namespace Exporter
         private static void ExportStandaloneVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> fileOutput,
             AbstractPlatform platform,
-            bool usesU3,
             string vmTargetDir)
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
@@ -71,7 +67,6 @@ namespace Exporter
                 null,
                 platform,
                 null,
-                usesU3,
                 vmTargetDir,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
         }

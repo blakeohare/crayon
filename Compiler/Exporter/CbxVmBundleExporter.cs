@@ -12,7 +12,6 @@ namespace Exporter
             string projectDirectory,
             string outputDirectory,
             CbxBundleView cbxBundle,
-            bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider,
             bool isRelease)
@@ -21,7 +20,7 @@ namespace Exporter
             {
                 try
                 {
-                    RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, usesU3, exportRequest, platformProvider);
+                    RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, exportRequest, platformProvider);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -33,7 +32,7 @@ namespace Exporter
             }
             else
             {
-                RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, usesU3, exportRequest, platformProvider);
+                RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, exportRequest, platformProvider);
             }
             return new ExportResponse();
         }
@@ -43,7 +42,6 @@ namespace Exporter
             string projectDirectory,
             string outputDirectory,
             CbxBundleView cbxBundle,
-            bool usesU3,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider)
         {
@@ -64,7 +62,6 @@ namespace Exporter
                 cbxBundle,
                 platform,
                 exportRequest,
-                usesU3,
                 outputDirectory,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 

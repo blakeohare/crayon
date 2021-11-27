@@ -11,6 +11,12 @@ namespace Parser
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {
+            Dictionary<string, object> response = HandleCompilation(request);
+            cb(response);
+        }
+
+        private Dictionary<string, object> HandleCompilation(Dictionary<string, object> request)
+        {
             CompileRequest cr = new CompileRequest(request);
             InternalCompilationBundle icb = Compiler.Compile(cr, (bool)request["isRelease"], this.Hub);
 
@@ -41,7 +47,7 @@ namespace Parser
             }
             output["errors"] = errors.ToArray();
 
-            cb(output);
+            return output;
         }
     }
 }

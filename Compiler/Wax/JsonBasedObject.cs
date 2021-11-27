@@ -75,6 +75,12 @@ namespace Wax
             this.SetValue(key, value);
         }
 
+        protected bool HasObjects(string key)
+        {
+            JsonBasedObject[] objects = this.GetObjects(key);
+            return objects != null && objects.Length > 0;
+        }
+
         protected JsonBasedObject[] GetObjects(string key)
         {
             object value = this.GetValue(key);

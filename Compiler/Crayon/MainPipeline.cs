@@ -204,7 +204,7 @@ namespace Crayon.Pipeline
                         resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
                     }
 
-                    CbxBundleView cbxBundle = new CbxBundleView(compilation.ByteCode, resourceDatabase);
+                    CbxBundleView cbxBundle = new CbxBundleView(compilation.ByteCode, resourceDatabase, compilation.UsesU3, null);
 
                     ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, buildContext);
                     ExportResponse response = CbxVmBundleExporter.Run(
@@ -212,7 +212,6 @@ namespace Crayon.Pipeline
                             buildContext.ProjectDirectory,
                             outputDirectory,
                             cbxBundle,
-                            compilation.UsesU3,
                             exportBundle,
                             new PlatformProvider(),
                             isRelease);
@@ -251,7 +250,6 @@ namespace Crayon.Pipeline
                         command.VmPlatform,
                         new PlatformProvider(),
                         command.VmExportDirectory,
-                        false,
                         isRelease);
                     return new Result() { Errors = standaloneVmExportResponse.Errors };
 
