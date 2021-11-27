@@ -85,14 +85,14 @@
                     break;
 
                 case 'F':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     i += 4;
                     ctx.fillStyle = hex;
                     ctx.fillRect(0, 0, cvWidth, cvHeight);
                     break;
 
                 case 'R':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     a = buffer[i + 4];
                     x = buffer[i + 5];
                     y = buffer[i + 6];
@@ -111,7 +111,7 @@
                     break;
 
                 case 'E':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     a = buffer[i + 4];
                     x = buffer[i + 5];
                     y = buffer[i + 6];
@@ -147,7 +147,7 @@
                     break;
 
                 case 'T':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     a = buffer[i + 4];
                     x = buffer[i + 5];
                     y = buffer[i + 6];
@@ -171,7 +171,7 @@
                     break;
 
                 case 'L':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     a = buffer[i + 4];
                     x = buffer[i + 5];
                     y = buffer[i + 6];
@@ -221,7 +221,7 @@
                     break;
 
                 case 'I1':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     r = buffer[i + 4]; // version key
                     img = imgLookup[r];
                     if (img) {
@@ -233,7 +233,7 @@
                     break;
 
                 case 'I2':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     r = buffer[i + 4]; // version key
                     img = imgLookup[r];
                     if (img) {
@@ -249,7 +249,7 @@
                     break;
 
                 case 'I3':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     r = buffer[i + 4]; // version key
                     img = imgLookup[r];
                     if (img) {
@@ -276,7 +276,7 @@
                     break;
 
                 case 'IA':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     r = buffer[i + 4]; // version key
                     img = imgLookup[r];
                     a = buffer[i + 13];
@@ -307,7 +307,7 @@
                     break;
 
                 case 'TX':
-                    gl = gl || getCtx(canvas, 2);
+                    ctx = ctx || getCtx(canvas, 2);
                     tx = buffer[i + 4];
                     x = buffer[i + 5];
                     y = buffer[i + 6];
