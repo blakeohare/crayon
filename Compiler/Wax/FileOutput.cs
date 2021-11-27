@@ -24,7 +24,6 @@ namespace Wax
         }
 
         public FileOutput() : base() { }
-
         public FileOutput(IDictionary<string, object> data) : base(data) { }
 
         public FileOutputType Type { get { return TYPE_LOOKUP[this.GetString("type")]; } set { this.SetString("type", value.ToString().ToLowerInvariant()); } }

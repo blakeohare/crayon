@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Wax
 {
-    public abstract class JsonBasedObject
+    public class JsonBasedObject
     {
         private Dictionary<string, object> data;
         public Dictionary<string, object> RawData { get { return this.data; } }
@@ -62,12 +62,29 @@ namespace Wax
             return null;
         }
 
-        protected JsonBasedObject GetObject(string key)
+        private JsonBasedObject GetObject(string key)
         {
             object value = this.GetValue(key);
             if (value == null) return null;
             if (value is JsonBasedObject) return (JsonBasedObject)value;
+            if (value is Dictionary<string, object>) new JsonBasedObject((Dictionary<string, object>)value);
             return null;
+        }
+
+        protected T GetObjectAsType<T>(string key)
+        {
+            JsonBasedObject value = this.GetObject(key);
+            if (value == null) return (T)(object)null;
+            T typedValue = ConvertType<T>(value);
+            this.SetObject(key, (JsonBasedObject)(object)typedValue);
+            return typedValue;
+        }
+
+        private static T ConvertType<T>(JsonBasedObject value)
+        {
+            if (value is T) return (T)(object)value;
+            JsonBasedObject valueAsType = (JsonBasedObject)typeof(T).GetConstructor(new Type[] { typeof(IDictionary<string, object>) }).Invoke(new object[] { value.RawData });
+            return (T)(object)valueAsType;
         }
 
         protected void SetObject(string key, JsonBasedObject value)
@@ -81,12 +98,35 @@ namespace Wax
             return objects != null && objects.Length > 0;
         }
 
-        protected JsonBasedObject[] GetObjects(string key)
+        private JsonBasedObject[] GetObjects(string key)
         {
             object value = this.GetValue(key);
             if (value == null) return null;
+            if (value is object[])
+            {
+                return ((object[])value).Select(o =>
+                {
+                    if (o == null) return null;
+                    if (o is Dictionary<string, object>) return new JsonBasedObject((Dictionary<string, object>)o);
+                    if (o is JsonBasedObject) return (JsonBasedObject)o;
+                    return null;
+                }).ToArray();
+            }
             if (value is JsonBasedObject[]) return (JsonBasedObject[])value;
+            if (value is Dictionary<string, object>[])
+            {
+                return ((Dictionary<string, object>[])value).Select(d => new JsonBasedObject(d)).ToArray();
+            }
             return null;
+        }
+
+        protected T[] GetObjectsAsType<T>(string key)
+        {
+            JsonBasedObject[] values = this.GetObjects(key);
+            if (values == null) return null;
+            T[] typedValues = values.Select(jbo => ConvertType<T>(jbo)).ToArray();
+            this.SetObjects(key, typedValues.Select(v => (JsonBasedObject)(object)v).ToArray());
+            return typedValues;
         }
 
         protected void SetObjects(string key, IEnumerable<JsonBasedObject> items)

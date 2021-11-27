@@ -11,8 +11,8 @@ namespace Wax
         public ResourceDatabase() : base() { }
         public ResourceDatabase(IDictionary<string, object> data) : base(data) { }
 
-        public FileOutput ResourceManifestFile { get { return this.GetObject("manifest") as FileOutput; } set { this.SetObject("manifest", value); } }
-        public FileOutput ImageResourceManifestFile { get { return this.GetObject("imageManifest") as FileOutput; } set { this.SetObject("imageManifest", value); } }
+        public FileOutput ResourceManifestFile { get { return this.GetObjectAsType<FileOutput>("manifest"); } set { this.SetObject("manifest", value); } }
+        public FileOutput ImageResourceManifestFile { get { return this.GetObjectAsType<FileOutput>("imageManifest"); } set { this.SetObject("imageManifest", value); } }
 
         public Dictionary<string, FileOutput> ImageResourceFiles
         {
@@ -27,10 +27,7 @@ namespace Wax
             }
         }
 
-        private FileOutput[] GetFileOutputList(string key)
-        {
-            return (this.GetObjects(key) ?? new JsonBasedObject[0]).Cast<FileOutput>().ToArray();
-        }
+        private FileOutput[] GetFileOutputList(string key) { return this.GetObjectsAsType<FileOutput>(key) ?? new FileOutput[0]; }
 
         public FileOutput[] AudioResources { get { return this.GetFileOutputList("audioResources"); } set { this.SetObjects("audioResource", value.Cast<JsonBasedObject>()); } }
         public FileOutput[] ImageResources { get { return this.GetFileOutputList("imageResources"); } set { this.SetObjects("imageResources", value.Cast<JsonBasedObject>()); } }

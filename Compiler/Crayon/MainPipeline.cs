@@ -120,14 +120,79 @@ namespace Crayon.Pipeline
                 };
         }
 
+        private static Result ExportVmBundle(Command command, WaxHub waxHub, bool isRelease)
+        {
+            BuildContext buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
+            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+            ExternalCompilationBundle compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
+
+            CbxBundleView cbxBundle = new CbxBundleView(compilation.ByteCode, resourceDatabase, compilation.UsesU3, buildContext.Platform, compilation.Errors);
+
+            if (cbxBundle.HasErrors)
+            {
+                return new Result()
+                {
+                    Errors = cbxBundle.Errors,
+                };
+            }
+
+            if (command.ShowDependencyTree)
+            {
+                ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, compilation.DependencyTreeJson);
+            }
+
+            string projectDirectory = buildContext.ProjectDirectory;
+
+            string outputDirectory = command.HasOutputDirectoryOverride
+                ? command.OutputDirectoryOverride
+                : buildContext.OutputFolder;
+
+            ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, buildContext);
+            ExportResponse response = CbxVmBundleExporter.Run(
+                cbxBundle.ExportPlatform.ToLowerInvariant(),
+                projectDirectory,
+                outputDirectory,
+                cbxBundle,
+                exportBundle,
+                new PlatformProvider(),
+                isRelease);
+            if (!response.HasErrors && command.ApkExportPath != null)
+            {
+                if (buildContext.Platform.ToLowerInvariant() != "javascript-app-android")
+                {
+                    throw new InvalidOperationException("Cannot have an APK Export Path for non-Android projects");
+                }
+
+                if (!CommonUtil.Android.AndroidUtil.HasAndroidSdk)
+                {
+                    throw new InvalidOperationException("Cannot export APK because the Android SDK is not present.");
+                }
+
+                if (!command.ApkExportPath.ToLowerInvariant().EndsWith(".apk"))
+                {
+                    throw new InvalidOperationException("Cannot export APK to a file path that doesn't end with .apk");
+                }
+
+                CommonUtil.Android.AndroidApkBuildResult apkResult = CommonUtil.Android.AndroidUtil.BuildApk(outputDirectory);
+
+                if (apkResult.HasError)
+                {
+                    throw new InvalidOperationException("An error occurred while generating the APK: " + apkResult.Error);
+                }
+
+                FileUtil.EnsureParentFolderExists(command.ApkExportPath);
+                System.IO.File.Copy(apkResult.ApkPath, command.ApkExportPath);
+            }
+
+            return new Result() { Errors = response.Errors };
+        }
+
         public static Result RunImpl(Command command, bool isRelease, Wax.WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
                 ConsoleWriter.EnablePrefixes();
             }
-
-            BuildContext buildContext;
 
             switch (IdentifyUseCase(command))
             {
@@ -144,14 +209,11 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    ExternalCompilationBundle compilation;
-
                     if (isRelease)
                     {
                         try
                         {
-                            buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
-                            compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
+                            return ExportVmBundle(command, waxHub, isRelease);
                         }
                         catch (InvalidOperationException ioe)
                         {
@@ -161,89 +223,7 @@ namespace Crayon.Pipeline
                             };
                         }
                     }
-                    else
-                    {
-                        buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
-                        compilation = Compile(CreateCompileRequest(buildContext, isRelease), waxHub);
-                    }
-
-                    if (compilation.HasErrors)
-                    {
-                        return new Result()
-                        {
-                            Errors = compilation.Errors,
-                        };
-                    }
-
-                    if (command.ShowDependencyTree)
-                    {
-                        ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, compilation.DependencyTreeJson);
-                    }
-
-                    string outputDirectory = command.HasOutputDirectoryOverride
-                        ? command.OutputDirectoryOverride
-                        : buildContext.OutputFolder;
-
-                    ResourceDatabase resourceDatabase;
-                    if (isRelease)
-                    {
-                        try
-                        {
-                            resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-                        }
-                        catch (InvalidOperationException ioe)
-                        {
-                            return new Result()
-                            {
-                                Errors = new Error[] { new Error() { Message = ioe.Message } },
-                            };
-                        }
-                    }
-                    else
-                    {
-                        resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-                    }
-
-                    CbxBundleView cbxBundle = new CbxBundleView(compilation.ByteCode, resourceDatabase, compilation.UsesU3, null);
-
-                    ExportRequest exportBundle = BuildExportRequest(compilation.ByteCode, buildContext);
-                    ExportResponse response = CbxVmBundleExporter.Run(
-                            buildContext.Platform.ToLowerInvariant(),
-                            buildContext.ProjectDirectory,
-                            outputDirectory,
-                            cbxBundle,
-                            exportBundle,
-                            new PlatformProvider(),
-                            isRelease);
-                    if (!response.HasErrors && command.ApkExportPath != null)
-                    {
-                        if (buildContext.Platform.ToLowerInvariant() != "javascript-app-android")
-                        {
-                            throw new InvalidOperationException("Cannot have an APK Export Path for non-Android projects");
-                        }
-
-                        if (!CommonUtil.Android.AndroidUtil.HasAndroidSdk)
-                        {
-                            throw new InvalidOperationException("Cannot export APK because the Android SDK is not present.");
-                        }
-
-                        if (!command.ApkExportPath.ToLowerInvariant().EndsWith(".apk"))
-                        {
-                            throw new InvalidOperationException("Cannot export APK to a file path that doesn't end with .apk");
-                        }
-
-                        CommonUtil.Android.AndroidApkBuildResult apkResult = CommonUtil.Android.AndroidUtil.BuildApk(outputDirectory);
-
-                        if (apkResult.HasError)
-                        {
-                            throw new InvalidOperationException("An error occurred while generating the APK: " + apkResult.Error);
-                        }
-
-                        FileUtil.EnsureParentFolderExists(command.ApkExportPath);
-                        System.IO.File.Copy(apkResult.ApkPath, command.ApkExportPath);
-                    }
-
-                    return new Result() { Errors = response.Errors };
+                    return ExportVmBundle(command, waxHub, isRelease);
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
                     ExportResponse standaloneVmExportResponse = StandaloneVmExporter.Run(

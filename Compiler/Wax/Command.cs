@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Wax
 {
     public class Command : JsonBasedObject
     {
+        public Command() : base() { }
+        public Command(IDictionary<string, object> data) : base(data) { }
+
         public string DefaultProjectId { get { return this.GetString("defaultProjectId"); } set { this.SetString("defaultProjectId", value); } }
         public string DefaultProjectLocale { get { return this.GetString("defaultProjectLocale"); } set { this.SetString("defaultProjectLocale", value); } }
         public string DefaultProjectType { get { return this.GetString("defaultProjectType"); } set { this.SetString("defaultProjectType", value); } }
@@ -36,7 +39,7 @@ namespace Wax
         public bool HasErrors { get { return this.Errors != null && this.Errors.Length > 0; } }
         public Error[] Errors
         {
-            get { return (this.GetObjects("errors") ?? new JsonBasedObject[0]).Select(obj => new Error(obj.RawData)).ToArray(); }
+            get { return this.GetObjectsAsType<Error>("errors"); }
             set { this.SetObjects("errors", value); }
         }
     }

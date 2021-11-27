@@ -5,7 +5,6 @@ namespace Wax
     public class Error : JsonBasedObject
     {
         public Error() : base() { }
-
         internal Error(IDictionary<string, object> data) : base(data) { }
 
         public int Line { get { return this.GetInteger("line"); } set { this.SetInteger("line", value); } }
