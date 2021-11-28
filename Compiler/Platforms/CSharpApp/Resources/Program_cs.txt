@@ -14,7 +14,7 @@ namespace Interpreter
             CrayonWrapper.vmEnableLibStackTrace(vm);
             CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
             // Debugger.INSTANCE.StartListening();
-            EventLoop.StartInterpreter(vm);
+            new EventLoop(vm).StartInterpreter();
         }
     }
 }

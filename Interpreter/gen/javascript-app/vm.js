@@ -655,7 +655,7 @@ var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	var executionContext = [0, stack, 0, 100, PST$createNewArray(100), localsStack, localsStackSet, 1, 0, false, null, false, 0, null];
 	var executionContexts = {};
 	executionContexts[0] = executionContext;
-	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
+	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
 	return vm;
 };
 
@@ -1671,7 +1671,7 @@ var ImageHelper_ImageEncode = function(globals, bmp, format) {
 	return bytesToListValue(globals, result);
 };
 
-var ImageHelper_LoadChunk = function(chunkId, allChunkIds, loadedCallback) {
+var ImageHelper_LoadChunk = function(vm, chunkId, allChunkIds, loadedCallback) {
 	var size = allChunkIds[1];
 	var chunkIds = PST$createNewArray(size);
 	var i = 0;
@@ -3553,7 +3553,7 @@ var interpretImpl = function(vm, executionContextId) {
 										break;
 									case 24:
 										if (((argCount == 0) || (argCount > 2))) {
-											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reduce method", 1, argCount));
 										} else if ((funcArgs[0][0] != 9)) {
 											hasInterrupt = EX_InvalidArgument(ec, "list reduce method requires a function pointer as its argument.");
 										} else {
@@ -4821,7 +4821,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = IpcNamedPipeServer_create(arg1, arg2, arg3, arg4, arg5);
+						string1 = IpcNamedPipeServer_create(vm, arg1, arg2, arg3, arg4, arg5);
 						if ((string1 == null)) {
 							output = globals[0];
 						} else {
@@ -4956,7 +4956,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						ImageHelper_LoadChunk(arg1[1], arg2[1], arg3);
+						ImageHelper_LoadChunk(vm, arg1[1], arg2[1], arg3);
 						output = VALUE_NULL;
 						break;
 					case 75:
@@ -5150,7 +5150,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						output = buildInteger(globals, ProcessHelper_processRun(arg1[1], arg2[1], arg3[1], arg4, arg5[1], arg6[1]));
+						output = buildInteger(globals, ProcessHelper_processRun(vm, arg1[1], arg2[1], arg3[1], arg4, arg5[1], arg6[1]));
 						break;
 					case 93:
 						// processKill;
@@ -5342,7 +5342,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = IpcUnixSocketClient_create(arg1[1], arg2[1], arg3, arg4);
+						string1 = IpcUnixSocketClient_create(vm, arg1[1], arg2[1], arg3, arg4);
 						if ((string1 == null)) {
 							output = globals[0];
 						} else {
@@ -5355,7 +5355,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = IpcUnixSocketServer_create(arg1[1], arg2[1], arg3);
+						string1 = IpcUnixSocketServer_create(vm, arg1[1], arg2[1], arg3);
 						if ((string1 == null)) {
 							output = globals[0];
 						} else {
@@ -6499,14 +6499,14 @@ var IpcNamedPipeServer_close = function(objValue) {
 	return (() => {})();
 };
 
-var IpcNamedPipeServer_create = function(objValue, nameValue, startFn, dataFn, closeFn) {
+var IpcNamedPipeServer_create = function(vm, objValue, nameValue, startFn, dataFn, closeFn) {
 	var obj = objValue[1];
 	obj[3] = PST$createNewArray(1);
 	obj[3][0] = (() => {})();
 	return null;
 };
 
-var IpcUnixSocketClient_create = function(inst, path, onReadyCb, onDisconnectCb) {
+var IpcUnixSocketClient_create = function(vm, inst, path, onReadyCb, onDisconnectCb) {
 	inst[3] = PST$createNewArray(1);
 	return (() => {})();
 };
@@ -6515,7 +6515,7 @@ var IpcUnixSocketClient_send = function(client, msg) {
 	return (() => {})();
 };
 
-var IpcUnixSocketServer_create = function(inst, path, onRecvCb) {
+var IpcUnixSocketServer_create = function(vm, inst, path, onRecvCb) {
 	inst[3] = PST$createNewArray(1);
 	return (() => {})();
 };
@@ -7341,7 +7341,7 @@ var ProcessHelper_kill = function(pid) {
 	return false;
 };
 
-var ProcessHelper_processRun = function(wrapper, exPath, args, onDataCb, cwd, flags) {
+var ProcessHelper_processRun = function(vm, wrapper, exPath, args, onDataCb, cwd, flags) {
 	if ((cwd.length == 0)) {
 		cwd = null;
 	}
@@ -8528,8 +8528,16 @@ var vmEnvSetCommandLineArgs = function(vm, args) {
 	vm[11][0] = args;
 };
 
+var vmGetEventLoopObj = function(vm) {
+	return vm[11][4];
+};
+
 var vmGetGlobals = function(vm) {
 	return vm[13];
+};
+
+var vmSetEventLoopObj = function(vm, evLoop) {
+	vm[11][4] = evLoop;
 };
 
 var xml_ampUnescape = function(value, entityLookup) {

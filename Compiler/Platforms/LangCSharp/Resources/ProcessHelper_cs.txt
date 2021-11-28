@@ -41,7 +41,7 @@ namespace Interpreter.Vm
             return true;
         }
 
-        internal static object LaunchProcess(string execName, string[] args, Value callbackFp, int[] intOut, string cwd, int flags)
+        internal static object LaunchProcess(VmContext vm, string execName, string[] args, Value callbackFp, int[] intOut, string cwd, int flags)
         {
             bool isWindows = System.Environment.OSVersion.Platform == System.PlatformID.Win32NT;
             bool useShell = (flags & 1) != 0;
@@ -80,10 +80,10 @@ namespace Interpreter.Vm
                 startInfo.RedirectStandardOutput = true;
                 startInfo.RedirectStandardError = true;
                 p.OutputDataReceived += (sender, e) => {
-                    EmitToBuffer(callbackFp, unifiedStream, "S", e.Data);
+                    EmitToBuffer(vm, callbackFp, unifiedStream, "S", e.Data);
                 };
                 p.ErrorDataReceived += (sender, e) => {
-                    EmitToBuffer(callbackFp, unifiedStream, "E", e.Data);
+                    EmitToBuffer(vm, callbackFp, unifiedStream, "E", e.Data);
                 };
             }
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
@@ -98,10 +98,10 @@ namespace Interpreter.Vm
                     string stdRemaining = p.StandardOutput.ReadToEnd();
                     if (stdRemaining.Length > 0)
                     {
-                        EmitToBuffer(callbackFp, unifiedStream, "S", stdRemaining);
+                        EmitToBuffer(vm, callbackFp, unifiedStream, "S", stdRemaining);
                     }
                 }
-                EmitToBuffer(callbackFp, unifiedStream, "X", "0");
+                EmitToBuffer(vm, callbackFp, unifiedStream, "X", "0");
             };
             bool started = p.Start();
             if (started)
@@ -116,7 +116,7 @@ namespace Interpreter.Vm
             return p;
         }
 
-        private static void EmitToBuffer(Value cb, List<string> unifiedStream, string streamName, string value)
+        private static void EmitToBuffer(VmContext vm, Value cb, List<string> unifiedStream, string streamName, string value)
         {
             string[] lines = value.Split('\n').Select(line => line + "\n").ToArray();
             bool newFlushTriggerRequired = false;
@@ -134,12 +134,12 @@ namespace Interpreter.Vm
             {
                 Task.Delay(2).ContinueWith(t =>
                 {
-                    FlushStream(cb, unifiedStream);
+                    FlushStream(vm, cb, unifiedStream);
                 });
             }
         }
 
-        private static void FlushStream(Value cb, List<string> stream)
+        private static void FlushStream(VmContext vm, Value cb, List<string> stream)
         {
             lock (stream)
             {
@@ -147,7 +147,7 @@ namespace Interpreter.Vm
                 {
                     object[] values = stream.Cast<object>().ToArray();
                     stream.Clear();
-                    EventLoop.ExecuteFunctionPointerNativeArgs(cb, new object[] { values });
+                    TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerNativeArgs(cb, new object[] { values });
                 }
             }
         }

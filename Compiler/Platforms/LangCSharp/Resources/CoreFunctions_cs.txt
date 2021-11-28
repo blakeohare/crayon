@@ -57,7 +57,7 @@ namespace Interpreter.Vm
             return null;
         }
 
-        public static object NamedPipeServerCreate(string name, Value startFn, Value onDataFn, Value closeFn)
+        public static object NamedPipeServerCreate(VmContext vm, string name, Value startFn, Value onDataFn, Value closeFn)
         {
             System.IO.Pipes.NamedPipeServerStream namedPipe = new System.IO.Pipes.NamedPipeServerStream(name, System.IO.Pipes.PipeDirection.In);
             System.IO.StreamReader reader = new System.IO.StreamReader(namedPipe);
@@ -94,7 +94,7 @@ namespace Interpreter.Vm
                             buffer.Clear();
                             if (stringLength == 0)
                             {
-                                EventLoop.ExecuteFunctionPointerNativeArgs(onDataFn, new object[] { "" });
+                                TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerNativeArgs(onDataFn, new object[] { "" });
                             }
                             else
                             {
@@ -112,7 +112,7 @@ namespace Interpreter.Vm
                         stringLength--;
                         if (stringLength == 0)
                         {
-                            EventLoop.ExecuteFunctionPointerNativeArgs(onDataFn, new object[] { buffer.ToString() });
+                            TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerNativeArgs(onDataFn, new object[] { buffer.ToString() });
                             buffer.Clear();
                             isLengthParsing = true;
                         }
@@ -132,7 +132,7 @@ namespace Interpreter.Vm
             return null;
         }
 
-        internal static string UnixSocketClientCreate(object[] clientOut, string path, Value onReadyCb, Value onDisconnectCb)
+        internal static string UnixSocketClientCreate(VmContext vm, object[] clientOut, string path, Value onReadyCb, Value onDisconnectCb)
         {
             System.Net.Sockets.Socket socket = new System.Net.Sockets.Socket(
                 System.Net.Sockets.AddressFamily.Unix,
@@ -144,9 +144,9 @@ namespace Interpreter.Vm
             bgworker.DoWork += (sender, e) => {
                 try {
                     socket.Connect(new System.Net.Sockets.UnixDomainSocketEndPoint(path));
-                    EventLoop.ExecuteFunctionPointer(onReadyCb, new Value[0]);
+                    TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointer(onReadyCb, new Value[0]);
                 } catch (Exception) {
-                    EventLoop.ExecuteFunctionPointer(onDisconnectCb, new Value[0]);
+                    TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointer(onDisconnectCb, new Value[0]);
                 }
             };
             bgworker.RunWorkerAsync();
@@ -162,7 +162,7 @@ namespace Interpreter.Vm
             return null;
         }
 
-        internal static string UnixSocketServerCreate(object[] serverOut, string path, Value onRecvCb)
+        internal static string UnixSocketServerCreate(VmContext vm, object[] serverOut, string path, Value onRecvCb)
         {
             if (System.IO.File.Exists(path)) {
                 System.IO.File.Delete(path);
@@ -217,7 +217,7 @@ namespace Interpreter.Vm
                             intPhase = true;
                             string msg = sb.ToString();
                             sb.Clear();
-                            EventLoop.ExecuteFunctionPointerNativeArgs(onRecvCb, new object[] { msg });
+                            TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerNativeArgs(onRecvCb, new object[] { msg });
                         }
                     }
                 }
@@ -226,7 +226,7 @@ namespace Interpreter.Vm
             return null;
         }
 
-        internal static string UnixSocketServerCreate_CORRECT_NO_HACK(object[] serverOut, string path, Value onRecvCb)
+        internal static string UnixSocketServerCreate_CORRECT_NO_HACK(VmContext vm, object[] serverOut, string path, Value onRecvCb)
         {
             if (System.IO.File.Exists(path)) {
                 System.IO.File.Delete(path);
@@ -251,7 +251,7 @@ namespace Interpreter.Vm
                     // but that would be unperformant in the VM until there's a native byte-array type. The only
                     // use case for this at the moment will only be sending base64 so it's okay (for now).
                     string msg = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    EventLoop.ExecuteFunctionPointerNativeArgs(onRecvCb, new object[] { msg });
+                    TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerNativeArgs(onRecvCb, new object[] { msg });
                 } while (bytesRead > 0);
             };
             bgworker.RunWorkerAsync();
@@ -264,7 +264,7 @@ namespace Interpreter.Vm
             socket.Close();
         }
 
-        public static void HttpSend(Value cb, Value failCb, string url, string method, string contentType, int[] binaryContent, string textContent, string[] headersKvp, Value bytesObj, object[] bytesObjNativeData)
+        public static void HttpSend(VmContext vm, Value cb, Value failCb, string url, string method, string contentType, int[] binaryContent, string textContent, string[] headersKvp, Value bytesObj, object[] bytesObjNativeData)
         {
             System.ComponentModel.BackgroundWorker bgWorker = new System.ComponentModel.BackgroundWorker();
             bgWorker.DoWork += (sender, e) =>
@@ -323,7 +323,7 @@ namespace Interpreter.Vm
                     response = (HttpWebResponse)we.Response;
                     if (response == null && we.Status == WebExceptionStatus.Timeout)
                     {
-                        EventLoop.ExecuteFunctionPointer(failCb, new Value[0]);
+                        TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointer(failCb, new Value[0]);
                         return;
                     }
                     else if (we.Status == WebExceptionStatus.ProtocolError)
@@ -378,7 +378,7 @@ namespace Interpreter.Vm
                     }
                 }
 
-                EventLoop.ExecuteFunctionPointerNativeArgs(cb, new object[] {
+                TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerNativeArgs(cb, new object[] {
                     statusCode,
                     statusMessage,
                     responseContentType,

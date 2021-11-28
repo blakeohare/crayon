@@ -2,4 +2,4 @@
 
 output = buildInteger(
     globals,
-    ProcessHelper_processRun((ObjectInstance) arg1.internalValue, (string) arg2.internalValue, (ListImpl) arg3.internalValue, arg4, (string) arg5.internalValue, (int) arg6.internalValue));
+    ProcessHelper_processRun(vm, (ObjectInstance) arg1.internalValue, (string) arg2.internalValue, (ListImpl) arg3.internalValue, arg4, (string) arg5.internalValue, (int) arg6.internalValue));

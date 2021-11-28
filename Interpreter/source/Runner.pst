@@ -105,7 +105,7 @@
         resources, // resource database
 
         new List<Value>(), // shutdown handlers
-        new VmEnvironment(new Array<string>(0), false, null, null), // VM Environment with default values.
+        new VmEnvironment(new Array<string>(0), false, null, null, null), // VM Environment with default values.
 
         new NamedCallbackStore(
             new List<Func<object, Array<object>>>(),

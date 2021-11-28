@@ -110,7 +110,7 @@ int ImageHelper_SetPixel(ObjectInstance edit, Value xv1, Value yv1, Value xv2, V
         - (int) number of chunks in the set currently loaded
         - (int) total number of chunks in set
 */
-void ImageHelper_LoadChunk(int chunkId, ListImpl allChunkIds, Value loadedCallback) {
+void ImageHelper_LoadChunk(VmContext vm, int chunkId, ListImpl allChunkIds, Value loadedCallback) {
     int size = allChunkIds.size;
     Array<int> chunkIds = new Array<int>(size);
     for (int i = 0; i < size; ++i) {
@@ -120,7 +120,7 @@ void ImageHelper_LoadChunk(int chunkId, ListImpl allChunkIds, Value loadedCallba
             chunkIds[i] = (int)allChunkIds.array[i].internalValue;
         }
     }
-    Extension.CoreFunc_ImageChunkLoadAsync(chunkId, chunkIds, loadedCallback);
+    Extension.CoreFunc_ImageChunkLoadAsync(vm, chunkId, chunkIds, loadedCallback);
 }
 
 /*

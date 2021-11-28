@@ -5,6 +5,11 @@ namespace Interpreter.Vm
 {
     public static class TranslationHelper
     {
+        internal static EventLoop GetEventLoop(Interpreter.Structs.VmContext vm)
+        {
+            return (EventLoop)CrayonWrapper.vmGetEventLoopObj(vm);
+        }
+
         public static string ResourceManifest { get; set; }
         public static string ByteCode { get; set; }
 

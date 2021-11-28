@@ -15,11 +15,11 @@ EXT: CoreFunc_EnvironmentDescriptor: TranslationHelper.EnvironmentDescriptor
 EXT: CoreFunc_EnvironmentGetVariable: System.Environment.GetEnvironmentVariable([ARG:1])
 EXT: CoreFunc_EnvironmentIsMobile: false
 
-EXT: CoreFunc_HttpSend: CoreFunctions.HttpSend([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
+EXT: CoreFunc_HttpSend: CoreFunctions.HttpSend([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10], [ARG:11])
 
 EXT: CoreFunc_ImageB64BytesPreferred: false
 EXT: CoreFunc_ImageBlit: ImageUtil.Blit([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
-EXT: CoreFunc_ImageChunkLoadAsync: ImageUtil.ChunkLoadAsync([ARG:1], [ARG:2], [ARG:3])
+EXT: CoreFunc_ImageChunkLoadAsync: ImageUtil.ChunkLoadAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 EXT: CoreFunc_ImageEncode: ImageUtil.Encode([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_ImageEndEditSession: ImageUtil.EndEditSession([ARG:1], [ARG:2])
 EXT: CoreFunc_ImageFromBytes: ImageUtil.FromBytes((int[])[ARG:1], [ARG:2], [ARG:3])
@@ -41,11 +41,11 @@ EXT: JsInterop_RegisterCallback: TranslationHelper.Noop()
 EXT: CoreFunc_NamedPipeCreate: CoreFunctions.NamedPipeCreate([ARG:1])
 EXT: CoreFunc_NamedPipeSend: CoreFunctions.NamedPipeWriteLine([ARG:1], [ARG:2])
 EXT: CoreFunc_NamedPipeFlush: CoreFunctions.NamedPipeFlush([ARG:1])
-EXT: CoreFunc_NamedPipeServerCreate: CoreFunctions.NamedPipeServerCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: CoreFunc_NamedPipeServerCreate: CoreFunctions.NamedPipeServerCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: CoreFunc_NamedPipeServerClose: CoreFunctions.NamedPipeServerClose([ARG:1])
 
 EXT: CoreFunc_ProcessCurrentId: ProcessHelper.GetCurrentId()
-EXT: CoreFunc_ProcessRun: ProcessHelper.LaunchProcess([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+EXT: CoreFunc_ProcessRun: ProcessHelper.LaunchProcess([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
 EXT: CoreFunc_ProcessList: ProcessHelper.ListProcesses()
 EXT: CoreFunc_ProcessKill: ProcessHelper.KillProcess([ARG:1])
 
@@ -54,11 +54,11 @@ EXT: CoreFunc_ResourceGetText: Interpreter.ResourceReader.ReadTextResource([ARG:
 EXT: CoreFunc_TextEncoding_ConvertBytesToText: TextEncodingHelper.BytesToText([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_TextEncoding_ConvertTextToBytes: TextEncodingHelper.TextToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
 
-EXT: CoreFunc_TimedCallback: EventLoop.ExecuteFunctionPointerWithDelay([ARG:1], [ARG:2])
+EXT: CoreFunc_TimedCallback: TranslationHelper.GetEventLoop([ARG:1]).ExecuteFunctionPointerWithDelay([ARG:2], [ARG:3])
 
-EXT: UnixSocket_ClientCreate: CoreFunctions.UnixSocketClientCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: UnixSocket_ClientCreate: CoreFunctions.UnixSocketClientCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: UnixSocket_ClientSend: CoreFunctions.UnixSocketClientSend([ARG:1], [ARG:2])
-EXT: UnixSocket_ServerCreate: CoreFunctions.UnixSocketServerCreate([ARG:1], [ARG:2], [ARG:3])
+EXT: UnixSocket_ServerCreate: CoreFunctions.UnixSocketServerCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 EXT: UnixSocket_ServerDisconnect: CoreFunctions.UnixSocketServerDisconnect([ARG:1])
 
 EXT: _lib_fileiocommon_directoryCreate: DiskHelper.CreateDirectory([ARG:2])

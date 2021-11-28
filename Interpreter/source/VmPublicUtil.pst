@@ -12,3 +12,10 @@ VmGlobals vmGetGlobals(VmContext vm) { return vm.globals; }
 void vmEnableLibStackTrace(VmContext vm) {
     vm.environment.showLibStack = true;
 }
+
+void vmSetEventLoopObj(VmContext vm, object evLoop) {
+    vm.environment.platformEventLoop = evLoop;
+}
+object vmGetEventLoopObj(VmContext vm) {
+    return vm.environment.platformEventLoop ;
+}

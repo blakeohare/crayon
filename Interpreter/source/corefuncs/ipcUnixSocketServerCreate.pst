@@ -1,5 +1,5 @@
 ﻿@import("inline/3_arg.pst");
-string1 = IpcUnixSocketServer_create((ObjectInstance)arg1.internalValue, (string) arg2.internalValue, arg3);
+string1 = IpcUnixSocketServer_create(vm, (ObjectInstance)arg1.internalValue, (string) arg2.internalValue, arg3);
 if (string1 == null) {
     output = globals.valueNull;
 } else {

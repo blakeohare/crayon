@@ -23,6 +23,7 @@ objInstance1 = (ObjectInstance)arg9.internalValue;
 objInstance1.nativeData = new Array<object>(1);
 
 Extension.CoreFunc_HttpSend(
+    vm,
     arg1, // callback
     arg2, // fail callback
     (string)arg3.internalValue, // URL

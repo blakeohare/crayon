@@ -5,8 +5,16 @@ using System.Linq;
 
 namespace Interpreter.Vm
 {
-    public static class EventLoop
+    public class EventLoop
     {
+        private VmContext vm;
+
+        public EventLoop(VmContext vm)
+        {
+            this.vm = vm;
+            CrayonWrapper.vmSetEventLoopObj(vm, this);
+        }
+
         private class EventLoopInvocation
         {
             public bool StartFromBeginning { get; set; }
@@ -17,9 +25,9 @@ namespace Interpreter.Vm
             public int ExecutionContextId { get; set; }
         }
 
-        private static List<EventLoopInvocation> queue = new List<EventLoopInvocation>();
+        private List<EventLoopInvocation> queue = new List<EventLoopInvocation>();
 
-        public static void ResumeExecution(int executionContextId)
+        public void ResumeExecution(int executionContextId)
         {
             AddItemToQueue(new EventLoopInvocation()
             {
@@ -27,7 +35,7 @@ namespace Interpreter.Vm
             });
         }
 
-        public static void ExecuteFunctionPointer(Value fp, IList<Value> args)
+        public void ExecuteFunctionPointer(Value fp, IList<Value> args)
         {
             AddItemToQueue(new EventLoopInvocation()
             {
@@ -36,7 +44,7 @@ namespace Interpreter.Vm
             });
         }
 
-        public static void ExecuteFunctionPointerNativeArgs(Value fp, IList<object> args)
+        public void ExecuteFunctionPointerNativeArgs(Value fp, IList<object> args)
         {
             AddItemToQueue(new EventLoopInvocation()
             {
@@ -45,7 +53,7 @@ namespace Interpreter.Vm
             });
         }
 
-        public static void ExecuteFunctionPointerWithDelay(Value fp, double delay)
+        public void ExecuteFunctionPointerWithDelay(Value fp, double delay)
         {
             AddItemToQueue(new EventLoopInvocation()
             {
@@ -55,7 +63,7 @@ namespace Interpreter.Vm
             });
         }
 
-        public static void ResumeExecutionAfterDelay(int executionContextId, double delay)
+        public void ResumeExecutionAfterDelay(int executionContextId, double delay)
         {
             if (delay <= 0) ResumeExecution(executionContextId);
             else
@@ -68,7 +76,7 @@ namespace Interpreter.Vm
             }
         }
 
-        private static void AddItemToQueue(EventLoopInvocation invocation)
+        private void AddItemToQueue(EventLoopInvocation invocation)
         {
             if (invocation.Timestamp == 0)
             {
@@ -80,7 +88,7 @@ namespace Interpreter.Vm
             }
         }
 
-        private static EventLoopInvocation PopItemFromQueue()
+        private EventLoopInvocation PopItemFromQueue()
         {
             double currentTime = TranslationHelper.GetCurrentTime();
             EventLoopInvocation lowest = null;
@@ -106,10 +114,10 @@ namespace Interpreter.Vm
             return lowest;
         }
 
-        private static int startingThreadId = 0;
-        private static int GetThreadId() { return System.Threading.Thread.CurrentThread.ManagedThreadId; }
+        private int startingThreadId = 0;
+        private int GetThreadId() { return System.Threading.Thread.CurrentThread.ManagedThreadId; }
 
-        public static void EnsureRunningOnStartingThread()
+        public void EnsureRunningOnStartingThread()
         {
             if (GetThreadId() != startingThreadId)
             {
@@ -117,7 +125,7 @@ namespace Interpreter.Vm
             }
         }
 
-        public static void StartInterpreter(VmContext vm)
+        public void StartInterpreter()
         {
             if (startingThreadId != 0) throw new Exception();
             startingThreadId = GetThreadId();
@@ -125,10 +133,10 @@ namespace Interpreter.Vm
             {
                 StartFromBeginning = true,
             });
-            RunEventLoop(vm);
+            RunEventLoop();
         }
 
-        private static Value ConvertNativeArg(VmContext vm, object na)
+        private Value ConvertNativeArg(object na)
         {
             if (na == null) return vm.globalNull;
             if (na is Value) return (Value)na; // allow mixed native/Value
@@ -139,14 +147,14 @@ namespace Interpreter.Vm
             if (na is float) return CrayonWrapper.buildFloat(vm.globals, (float)na);
             if (na is object[])
             {
-                List<Value> list = new List<Value>(((object[])na).Select(a => ConvertNativeArg(vm, a)));
+                List<Value> list = new List<Value>(((object[])na).Select(a => ConvertNativeArg(a)));
                 return CrayonWrapper.buildList(list);
             }
 
             throw new NotImplementedException("Unsupported type for native arg: " + na.GetType());
         }
 
-        private static void RunEventLoopIteration(VmContext vm, EventLoopInvocation invocation)
+        private void RunEventLoopIteration(EventLoopInvocation invocation)
         {
             EnsureRunningOnStartingThread();
 
@@ -168,7 +176,7 @@ namespace Interpreter.Vm
                     args = new Value[nativeArgs.Length];
                     for (int i = 0; i < args.Length; ++i)
                     {
-                        args[i] = ConvertNativeArg(vm, nativeArgs[i]);
+                        args[i] = ConvertNativeArg(nativeArgs[i]);
                     }
                 }
                 result = CrayonWrapper.runInterpreterWithFunctionPointer(vm, invocation.FunctionPointer, args);
@@ -202,14 +210,14 @@ namespace Interpreter.Vm
             }
         }
 
-        public static void RunEventLoop(VmContext vm)
+        public void RunEventLoop()
         {
             while (true)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
                 if (invocation != null)
                 {
-                    RunEventLoopIteration(vm, invocation);
+                    RunEventLoopIteration(invocation);
                 }
                 else
                 {

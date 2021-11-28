@@ -3,4 +3,5 @@
     bool showLibStack;
     string stdoutPrefix;
     string stacktracePrefix;
+    object platformEventLoop;
 }

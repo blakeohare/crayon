@@ -102,7 +102,7 @@ namespace CrayonRuntime
             CrayonWrapper.vmEnableLibStackTrace(vm);
 
             // Debugger.INSTANCE.StartListening();
-            EventLoop.StartInterpreter(vm);
+            new EventLoop(vm).StartInterpreter();
         }
 
         private static string Base64Decode(string encodedValue)

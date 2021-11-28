@@ -1,4 +1,4 @@
 ﻿@import("inline/2_arg.pst");
 if (arg2.type == Types.INTEGER) float1 = (double) (int) arg2.internalValue;
 else float1 = (double) arg2.internalValue;
-Extension.CoreFunc_TimedCallback(arg1, float1);
+Extension.CoreFunc_TimedCallback(vm, arg1, float1);

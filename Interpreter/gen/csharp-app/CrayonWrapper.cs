@@ -894,7 +894,7 @@ namespace Interpreter.Vm
             ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
             Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
             executionContexts[0] = executionContext;
-            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
             return vm;
         }
 
@@ -2105,7 +2105,7 @@ namespace Interpreter.Vm
             return bytesToListValue(globals, (int[])result);
         }
 
-        public static void ImageHelper_LoadChunk(int chunkId, ListImpl allChunkIds, Value loadedCallback)
+        public static void ImageHelper_LoadChunk(VmContext vm, int chunkId, ListImpl allChunkIds, Value loadedCallback)
         {
             int size = allChunkIds.size;
             int[] chunkIds = new int[size];
@@ -2115,7 +2115,7 @@ namespace Interpreter.Vm
                 chunkIds[i] = (int)allChunkIds.array[i].internalValue;
                 ++i;
             }
-            ImageUtil.ChunkLoadAsync(chunkId, chunkIds, loadedCallback);
+            ImageUtil.ChunkLoadAsync(vm, chunkId, chunkIds, loadedCallback);
         }
 
         public static void ImageHelper_Scale(ObjectInstance src, ObjectInstance dest, int newWidth, int newHeight, int algo)
@@ -4600,7 +4600,7 @@ namespace Interpreter.Vm
                                             case 24:
                                                 if (((argCount == 0) || (argCount > 2)))
                                                 {
-                                                    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount));
+                                                    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reduce method", 1, argCount));
                                                 }
                                                 else if ((funcArgs[0].type != 9))
                                                 {
@@ -6291,7 +6291,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = IpcNamedPipeServer_create(arg1, arg2, arg3, arg4, arg5);
+                                string1 = IpcNamedPipeServer_create(vm, arg1, arg2, arg3, arg4, arg5);
                                 if ((string1 == null))
                                 {
                                     output = globals.valueNull;
@@ -6419,7 +6419,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                ImageHelper_LoadChunk((int)arg1.internalValue, (ListImpl)arg2.internalValue, arg3);
+                                ImageHelper_LoadChunk(vm, (int)arg1.internalValue, (ListImpl)arg2.internalValue, arg3);
                                 output = VALUE_NULL;
                                 break;
                             case 75:
@@ -6478,7 +6478,7 @@ namespace Interpreter.Vm
                                 }
                                 objInstance1 = (ObjectInstance)arg9.internalValue;
                                 objInstance1.nativeData = new object[1];
-                                CoreFunctions.HttpSend(arg1, arg2, (string)arg3.internalValue, (string)arg4.internalValue, (string)arg6.internalValue, intArray1, string1, stringList, arg9, objInstance1.nativeData);
+                                CoreFunctions.HttpSend(vm, arg1, arg2, (string)arg3.internalValue, (string)arg4.internalValue, (string)arg6.internalValue, intArray1, string1, stringList, arg9, objInstance1.nativeData);
                                 output = VALUE_NULL;
                                 break;
                             case 79:
@@ -6627,7 +6627,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                output = buildInteger(globals, ProcessHelper_processRun((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4, (string)arg5.internalValue, (int)arg6.internalValue));
+                                output = buildInteger(globals, ProcessHelper_processRun(vm, (ObjectInstance)arg1.internalValue, (string)arg2.internalValue, (ListImpl)arg3.internalValue, arg4, (string)arg5.internalValue, (int)arg6.internalValue));
                                 break;
                             case 93:
                                 // processKill;
@@ -6647,7 +6647,7 @@ namespace Interpreter.Vm
                                 {
                                     float1 = (double)arg2.internalValue;
                                 }
-                                EventLoop.ExecuteFunctionPointerWithDelay(arg1, float1);
+                                TranslationHelper.GetEventLoop(vm).ExecuteFunctionPointerWithDelay(arg1, float1);
                                 break;
                             case 95:
                                 // diskGetUserDirectory;
@@ -6822,7 +6822,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = IpcUnixSocketClient_create((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, arg3, arg4);
+                                string1 = IpcUnixSocketClient_create(vm, (ObjectInstance)arg1.internalValue, (string)arg2.internalValue, arg3, arg4);
                                 if ((string1 == null))
                                 {
                                     output = globals.valueNull;
@@ -6838,7 +6838,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = IpcUnixSocketServer_create((ObjectInstance)arg1.internalValue, (string)arg2.internalValue, arg3);
+                                string1 = IpcUnixSocketServer_create(vm, (ObjectInstance)arg1.internalValue, (string)arg2.internalValue, arg3);
                                 if ((string1 == null))
                                 {
                                     output = globals.valueNull;
@@ -8301,18 +8301,18 @@ namespace Interpreter.Vm
             return CoreFunctions.NamedPipeServerClose(pipe);
         }
 
-        public static string IpcNamedPipeServer_create(Value objValue, Value nameValue, Value startFn, Value dataFn, Value closeFn)
+        public static string IpcNamedPipeServer_create(VmContext vm, Value objValue, Value nameValue, Value startFn, Value dataFn, Value closeFn)
         {
             ObjectInstance obj = (ObjectInstance)objValue.internalValue;
             obj.nativeData = new object[1];
-            obj.nativeData[0] = CoreFunctions.NamedPipeServerCreate((string)nameValue.internalValue, startFn, dataFn, closeFn);
+            obj.nativeData[0] = CoreFunctions.NamedPipeServerCreate(vm, (string)nameValue.internalValue, startFn, dataFn, closeFn);
             return null;
         }
 
-        public static string IpcUnixSocketClient_create(ObjectInstance inst, string path, Value onReadyCb, Value onDisconnectCb)
+        public static string IpcUnixSocketClient_create(VmContext vm, ObjectInstance inst, string path, Value onReadyCb, Value onDisconnectCb)
         {
             inst.nativeData = new object[1];
-            return CoreFunctions.UnixSocketClientCreate(inst.nativeData, path, onReadyCb, onDisconnectCb);
+            return CoreFunctions.UnixSocketClientCreate(vm, inst.nativeData, path, onReadyCb, onDisconnectCb);
         }
 
         public static string IpcUnixSocketClient_send(object client, string msg)
@@ -8320,10 +8320,10 @@ namespace Interpreter.Vm
             return CoreFunctions.UnixSocketClientSend(client, msg);
         }
 
-        public static string IpcUnixSocketServer_create(ObjectInstance inst, string path, Value onRecvCb)
+        public static string IpcUnixSocketServer_create(VmContext vm, ObjectInstance inst, string path, Value onRecvCb)
         {
             inst.nativeData = new object[1];
-            return CoreFunctions.UnixSocketServerCreate(inst.nativeData, path, onRecvCb);
+            return CoreFunctions.UnixSocketServerCreate(vm, inst.nativeData, path, onRecvCb);
         }
 
         public static int IpcUnixSocketServer_disconnect(object server)
@@ -9398,7 +9398,7 @@ namespace Interpreter.Vm
             return ProcessHelper.KillProcess(pid);
         }
 
-        public static int ProcessHelper_processRun(ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb, string cwd, int flags)
+        public static int ProcessHelper_processRun(VmContext vm, ObjectInstance wrapper, string exPath, ListImpl args, Value onDataCb, string cwd, int flags)
         {
             if ((cwd.Length == 0))
             {
@@ -9406,7 +9406,7 @@ namespace Interpreter.Vm
             }
             int[] intOut = new int[1];
             wrapper.nativeData = new object[1];
-            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(exPath, listImplToStringArray(args), onDataCb, intOut, cwd, flags);
+            wrapper.nativeData[0] = ProcessHelper.LaunchProcess(vm, exPath, listImplToStringArray(args), onDataCb, intOut, cwd, flags);
             return intOut[0];
         }
 
@@ -10864,9 +10864,19 @@ namespace Interpreter.Vm
             vm.environment.commandLineArgs = args;
         }
 
+        public static object vmGetEventLoopObj(VmContext vm)
+        {
+            return vm.environment.platformEventLoop;
+        }
+
         public static VmGlobals vmGetGlobals(VmContext vm)
         {
             return vm.globals;
+        }
+
+        public static void vmSetEventLoopObj(VmContext vm, object evLoop)
+        {
+            vm.environment.platformEventLoop = evLoop;
         }
 
         public static string xml_ampUnescape(string value, Dictionary<string, string> entityLookup)
