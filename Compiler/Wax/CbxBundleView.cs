@@ -21,14 +21,17 @@ namespace Wax
         public string ExportPlatform { get { return this.GetString("exportPlatform"); } set { this.SetString("exportPlatform", value); } }
 
         public CbxBundleView(IDictionary<string, object> data) : base(data) { }
-
-        public CbxBundleView(string byteCode, ResourceDatabase resDb, bool usesU3, string exportPlatform, IList<Error> errors)
+        public CbxBundleView(string byteCode, ResourceDatabase resDb, bool usesU3, string exportPlatform)
         {
             this.ByteCode = byteCode;
             this.ResourceDB = resDb;
             this.UsesU3 = usesU3;
-            this.Errors = (errors ?? new Error[0]).ToArray();
             if (exportPlatform != null) this.ExportPlatform = exportPlatform;
+        }
+
+        public CbxBundleView(IList<Error> errors) : base()
+        {
+            this.Errors = (errors ?? new Error[0]).ToArray();
         }
     }
 }
