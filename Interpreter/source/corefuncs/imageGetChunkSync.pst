@@ -1,5 +1,5 @@
-﻿@import("inline/2_arg.pst");
+﻿@import("inline/3_arg.pst");
 
-ImageHelper_GetChunkSync((ObjectInstance)arg1.internalValue, (int)arg2.internalValue);
+ImageHelper_GetChunkSync((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue, (int)arg3.internalValue);
 
 output = VALUE_NULL;

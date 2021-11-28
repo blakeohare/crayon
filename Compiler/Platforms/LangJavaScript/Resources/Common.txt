@@ -374,12 +374,7 @@ C$http$send = (cb, failCb, url, method, contentType, binaryContent, textContent,
 	}
 };
 
-let C$ImageUtil$canvasByChunkId = {};
-C$ImageUtil$getChunk = cid => {
-	return C$ImageUtil$canvasByChunkId[cid] || null;
-};
-
-C$ImageUtil$chunkLoadAsync = (chunkId, chunkIds, cb) => {
+C$ImageUtil$chunkLoadAsync = (loadedChunks, chunkId, chunkIds, cb) => {
 	let path = C$common$jsFilePrefix + 'resources/images/ch_' + chunkId + '.png';
 	let loader = new Image();
 	loader.onload = () => {
@@ -388,9 +383,9 @@ C$ImageUtil$chunkLoadAsync = (chunkId, chunkIds, cb) => {
 		canvas.height = loader.height;
 		let ctx = canvas.getContext('2d');
 		ctx.drawImage(loader, 0, 0);
-		C$ImageUtil$canvasByChunkId[chunkId] = { canvas, ctx, b64: null };
+		loadedChunks[chunkId] = { canvas, ctx, b64: null };
 		let total = chunkIds.length;
-		let loaded = chunkIds.filter(id => C$ImageUtil$canvasByChunkId[id]).length;
+		let loaded = chunkIds.filter(id => loadedChunks[id]).length;
 		setTimeout(() => C$runInterpreterWithFunctionPointerNativeArgs(cb, [chunkId, loaded, total]), 0);
 	};
 	loader.src = path;

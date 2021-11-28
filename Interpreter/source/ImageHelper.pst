@@ -12,9 +12,21 @@ void ImageHelper_ImageCreate(ObjectInstance o, int w, int h) {
     o.nativeData[0] = Extension.CoreFunc_ImageNewBmp(w, h);
 }
 
-void ImageHelper_GetChunkSync(ObjectInstance o, int cid) {
+Dictionary<int, object> ImageHelper_GetChunkCache(ObjectInstance cacheWrapper) {
+    if (cacheWrapper.nativeData == null) {
+        cacheWrapper.nativeData = new Array<object>(1);
+        cacheWrapper.nativeData[0] = new Dictionary<int, object>();
+    }
+    return (Dictionary<int, object>) cacheWrapper.nativeData[0];
+}
+
+void ImageHelper_GetChunkSync(ObjectInstance cacheWrapper, ObjectInstance o, int cid) {
     o.nativeData = new Array<object>(1);
-    o.nativeData[0] = Extension.CoreFunc_ImageGetChunk(cid);
+    o.nativeData[0] = null;
+    Dictionary<int, object> lookup = ImageHelper_GetChunkCache(cacheWrapper);
+    if (lookup.Contains(cid)) {
+        o.nativeData[0] = lookup[cid];
+    }
 }
 
 // The type checking for the pixel code is done here instead of in Crayon code so that this can be fast since it may be common to run this in a loop.
@@ -110,7 +122,7 @@ int ImageHelper_SetPixel(ObjectInstance edit, Value xv1, Value yv1, Value xv2, V
         - (int) number of chunks in the set currently loaded
         - (int) total number of chunks in set
 */
-void ImageHelper_LoadChunk(VmContext vm, int chunkId, ListImpl allChunkIds, Value loadedCallback) {
+void ImageHelper_LoadChunk(VmContext vm, ObjectInstance cacheWrapper, int chunkId, ListImpl allChunkIds, Value loadedCallback) {
     int size = allChunkIds.size;
     Array<int> chunkIds = new Array<int>(size);
     for (int i = 0; i < size; ++i) {
@@ -120,7 +132,7 @@ void ImageHelper_LoadChunk(VmContext vm, int chunkId, ListImpl allChunkIds, Valu
             chunkIds[i] = (int)allChunkIds.array[i].internalValue;
         }
     }
-    Extension.CoreFunc_ImageChunkLoadAsync(vm, chunkId, chunkIds, loadedCallback);
+    Extension.CoreFunc_ImageChunkLoadAsync(vm, ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
 }
 
 /*

@@ -1,5 +1,5 @@
-﻿@import("inline/3_arg.pst");
+﻿@import("inline/4_arg.pst");
 
-ImageHelper_LoadChunk(vm, (int)arg1.internalValue, (ListImpl)arg2.internalValue, arg3);
+ImageHelper_LoadChunk(vm, (ObjectInstance)arg1.internalValue, (int)arg2.internalValue, (ListImpl)arg3.internalValue, arg4);
 
 output = VALUE_NULL;

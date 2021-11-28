@@ -1626,9 +1626,21 @@ var ImageHelper_fromBytes = function(globals, bmp, isB64, rawData, sizeOut, call
 	return 3;
 };
 
-var ImageHelper_GetChunkSync = function(o, cid) {
+var ImageHelper_GetChunkCache = function(cacheWrapper) {
+	if ((cacheWrapper[3] == null)) {
+		cacheWrapper[3] = PST$createNewArray(1);
+		cacheWrapper[3][0] = {};
+	}
+	return cacheWrapper[3][0];
+};
+
+var ImageHelper_GetChunkSync = function(cacheWrapper, o, cid) {
 	o[3] = PST$createNewArray(1);
-	o[3][0] = C$ImageUtil$getChunk(cid);
+	o[3][0] = null;
+	var lookup = ImageHelper_GetChunkCache(cacheWrapper);
+	if ((lookup[cid] !== undefined)) {
+		o[3][0] = lookup[cid];
+	}
 };
 
 var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
@@ -1671,7 +1683,7 @@ var ImageHelper_ImageEncode = function(globals, bmp, format) {
 	return bytesToListValue(globals, result);
 };
 
-var ImageHelper_LoadChunk = function(vm, chunkId, allChunkIds, loadedCallback) {
+var ImageHelper_LoadChunk = function(vm, cacheWrapper, chunkId, allChunkIds, loadedCallback) {
 	var size = allChunkIds[1];
 	var chunkIds = PST$createNewArray(size);
 	var i = 0;
@@ -1679,7 +1691,7 @@ var ImageHelper_LoadChunk = function(vm, chunkId, allChunkIds, loadedCallback) {
 		chunkIds[i] = allChunkIds[2][i][1];
 		++i;
 	}
-	C$ImageUtil$chunkLoadAsync(chunkId, chunkIds, loadedCallback);
+	C$ImageUtil$chunkLoadAsync(ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
 };
 
 var ImageHelper_Scale = function(src, dest, newWidth, newHeight, algo) {
@@ -4952,19 +4964,21 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 74:
 						// imageLoadChunk;
-						valueStackSize -= 3;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						ImageHelper_LoadChunk(vm, arg1[1], arg2[1], arg3);
+						ImageHelper_LoadChunk(vm, arg1[1], arg2[1], arg3[1], arg4);
 						output = VALUE_NULL;
 						break;
 					case 75:
 						// imageGetChunkSync;
-						valueStackSize -= 2;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						ImageHelper_GetChunkSync(arg1[1], arg2[1]);
+						ImageHelper_GetChunkSync(arg1[1], arg2[1], arg3[1]);
 						output = VALUE_NULL;
 						break;
 					case 76:

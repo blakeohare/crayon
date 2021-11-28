@@ -6,6 +6,7 @@
         static field filePaths = [];
         static field chunkById = {};
         static field allModules = [];
+        static field _nativeChunkCache = new Core.Object();
 
         static field cachedBitmapsByFilename = {};
         static field cachedChunkBitmapsByChunkId = {};
@@ -96,7 +97,7 @@
                     // The native implementation will not double-load things and just
                     // call the tickle function when it updates even if it didn't directly
                     // trigger the load.
-                    $$$('imageLoadChunk', chunkId, allChunkIds, statusChanged);
+                    $$$('imageLoadChunk', ResourceManifest._nativeChunkCache, chunkId, allChunkIds, statusChanged);
                 }
             }
 
@@ -148,7 +149,7 @@
             chunk = ResourceManifest.chunkById[cid];
             if (chunk['bmp'] != null) return;
             b = new Bitmap(Images.Internal.ImagesHelper.INST, null);
-            $$$('imageGetChunkSync', b, cid);
+            $$$('imageGetChunkSync', ResourceManifest._nativeChunkCache, b, cid);
             b.width = chunk['w'];
             b.height = chunk['h'];
             chunk['bmp'] = b;

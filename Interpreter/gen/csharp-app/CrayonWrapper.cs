@@ -2048,10 +2048,25 @@ namespace Interpreter.Vm
             return 3;
         }
 
-        public static void ImageHelper_GetChunkSync(ObjectInstance o, int cid)
+        public static Dictionary<int, object> ImageHelper_GetChunkCache(ObjectInstance cacheWrapper)
+        {
+            if ((cacheWrapper.nativeData == null))
+            {
+                cacheWrapper.nativeData = new object[1];
+                cacheWrapper.nativeData[0] = new Dictionary<int, object>();
+            }
+            return (Dictionary<int, object>)cacheWrapper.nativeData[0];
+        }
+
+        public static void ImageHelper_GetChunkSync(ObjectInstance cacheWrapper, ObjectInstance o, int cid)
         {
             o.nativeData = new object[1];
-            o.nativeData[0] = ImageUtil.GetChunk(cid);
+            o.nativeData[0] = null;
+            Dictionary<int, object> lookup = ImageHelper_GetChunkCache(cacheWrapper);
+            if (lookup.ContainsKey(cid))
+            {
+                o.nativeData[0] = lookup[cid];
+            }
         }
 
         public static int ImageHelper_GetPixel(Value[] nums, ObjectInstance bmp, ObjectInstance edit, Value xv, Value yv, ListImpl pOut, int[] arr)
@@ -2105,7 +2120,7 @@ namespace Interpreter.Vm
             return bytesToListValue(globals, (int[])result);
         }
 
-        public static void ImageHelper_LoadChunk(VmContext vm, int chunkId, ListImpl allChunkIds, Value loadedCallback)
+        public static void ImageHelper_LoadChunk(VmContext vm, ObjectInstance cacheWrapper, int chunkId, ListImpl allChunkIds, Value loadedCallback)
         {
             int size = allChunkIds.size;
             int[] chunkIds = new int[size];
@@ -2115,7 +2130,7 @@ namespace Interpreter.Vm
                 chunkIds[i] = (int)allChunkIds.array[i].internalValue;
                 ++i;
             }
-            ImageUtil.ChunkLoadAsync(vm, chunkId, chunkIds, loadedCallback);
+            ImageUtil.ChunkLoadAsync(vm, ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
         }
 
         public static void ImageHelper_Scale(ObjectInstance src, ObjectInstance dest, int newWidth, int newHeight, int algo)
@@ -6415,19 +6430,21 @@ namespace Interpreter.Vm
                                 break;
                             case 74:
                                 // imageLoadChunk;
-                                valueStackSize -= 3;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                ImageHelper_LoadChunk(vm, (int)arg1.internalValue, (ListImpl)arg2.internalValue, arg3);
+                                ImageHelper_LoadChunk(vm, (ObjectInstance)arg1.internalValue, (int)arg2.internalValue, (ListImpl)arg3.internalValue, arg4);
                                 output = VALUE_NULL;
                                 break;
                             case 75:
                                 // imageGetChunkSync;
-                                valueStackSize -= 2;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                ImageHelper_GetChunkSync((ObjectInstance)arg1.internalValue, (int)arg2.internalValue);
+                                ImageHelper_GetChunkSync((ObjectInstance)arg1.internalValue, (ObjectInstance)arg2.internalValue, (int)arg3.internalValue);
                                 output = VALUE_NULL;
                                 break;
                             case 76:
