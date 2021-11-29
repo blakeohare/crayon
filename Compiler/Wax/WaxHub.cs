@@ -96,6 +96,10 @@ namespace Wax
                     SerializeWireDataImpl(d[key], buffer);
                 }
             }
+            else if (item is JsonBasedObject)
+            {
+                SerializeWireDataImpl(((JsonBasedObject)item).RawData, buffer);
+            }
             else
             {
                 throw new NotImplementedException();

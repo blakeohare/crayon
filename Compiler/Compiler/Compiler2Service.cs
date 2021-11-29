@@ -31,6 +31,9 @@ namespace Compiler
             buildData.ExportProperties.OutputDirectory = command.HasOutputDirectoryOverride
                 ? command.OutputDirectoryOverride
                 : buildContext.OutputFolder;
+
+            buildData.CbxBundle.ResourceDB.ConvertToFlattenedFileData();
+
             return buildData;
         }
 
