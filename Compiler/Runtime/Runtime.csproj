@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
