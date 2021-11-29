@@ -19,6 +19,11 @@ namespace Wax
         public string Orientations { get { return this.GetString("orientations"); } set { this.SetString("orientations", value); } }
         public string Version { get { return this.GetString("version"); } set { this.SetString("version", value); } }
         public string Description { get { return this.GetString("description"); } set { this.SetString("description", value); } }
+
         public string ExportPlatform { get { return this.GetString("exportPlatform"); } set { this.SetString("exportPlatform", value); } }
+        public string ProjectDirectory { get { return this.GetString("projectDirectory"); } set { this.SetString("projectDirectory", value); } }
+        public string OutputDirectory { get { return this.GetString("outputDirectory"); } set { this.SetString("outputDirectory", value); } }
+
+        public bool IsAndroid { get { return this.ExportPlatform.ToLowerInvariant() == "javascript-app-android"; } }
     }
 }

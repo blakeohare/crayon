@@ -125,7 +125,7 @@ namespace Crayon.Pipeline
             return buildData;
         }
 
-        private static Result ExportVmBundle(Command command, WaxHub waxHub, bool isRelease)
+        private static BuildData WrappedCompile(Command command, WaxHub waxHub, bool isRelease)
         {
             BuildContext buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
@@ -133,6 +133,18 @@ namespace Crayon.Pipeline
             BuildData buildData = Compile(compileRequest, resourceDatabase, waxHub);
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
+            buildData.ExportProperties.ProjectDirectory = buildContext.ProjectDirectory;
+
+            buildData.ExportProperties.OutputDirectory = command.HasOutputDirectoryOverride
+                ? command.OutputDirectoryOverride
+                : buildContext.OutputFolder;
+
+            return buildData;
+        }
+
+        private static Result ExportVmBundle(Command command, WaxHub waxHub, bool isRelease)
+        {
+            BuildData buildData = WrappedCompile(command, waxHub, isRelease);
 
             if (buildData.HasErrors)
             {
@@ -147,22 +159,16 @@ namespace Crayon.Pipeline
                 ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.CbxBundle.DependencyTreeJson);
             }
 
-            string projectDirectory = buildContext.ProjectDirectory;
-
-            string outputDirectory = command.HasOutputDirectoryOverride
-                ? command.OutputDirectoryOverride
-                : buildContext.OutputFolder;
-
             ExportResponse response = CbxVmBundleExporter.Run(
                 buildData.ExportProperties.ExportPlatform.ToLowerInvariant(),
-                projectDirectory,
-                outputDirectory,
+                buildData.ExportProperties.ProjectDirectory,
+                buildData.ExportProperties.OutputDirectory,
                 buildData,
                 new PlatformProvider(),
                 isRelease);
             if (!response.HasErrors && command.ApkExportPath != null)
             {
-                if (buildContext.Platform.ToLowerInvariant() != "javascript-app-android")
+                if (!buildData.ExportProperties.IsAndroid)
                 {
                     throw new InvalidOperationException("Cannot have an APK Export Path for non-Android projects");
                 }
@@ -177,7 +183,7 @@ namespace Crayon.Pipeline
                     throw new InvalidOperationException("Cannot export APK to a file path that doesn't end with .apk");
                 }
 
-                CommonUtil.Android.AndroidApkBuildResult apkResult = CommonUtil.Android.AndroidUtil.BuildApk(outputDirectory);
+                CommonUtil.Android.AndroidApkBuildResult apkResult = CommonUtil.Android.AndroidUtil.BuildApk(buildData.ExportProperties.OutputDirectory);
 
                 if (apkResult.HasError)
                 {
@@ -300,26 +306,26 @@ namespace Crayon.Pipeline
         {
             Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
 
-            BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
-            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-            resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
+            BuildData buildData = WrappedCompile(command, waxHub, isRelease);
 
-            BuildData buildData = Compile(CreateCompileRequest(buildContext, !isRelease), resourceDatabase, waxHub);
+            buildData.CbxBundle.ResourceDB.PopulateFileOutputContextForCbx(outputFiles);
+
             if (isDryRunErrorCheck || buildData.HasErrors)
             {
                 return new ExportResponse() { Errors = buildData.Errors };
             }
 
-            string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
-            outputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
+            string outputFolder = FileUtil.JoinPath(
+                buildData.ExportProperties.ProjectDirectory,
+                buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx"));
 
             string cbxLocation = StandaloneCbxExporter.Run(
-                buildContext.ProjectID,
+                buildData.ExportProperties.ProjectID,
                 outputFiles,
                 outputFolder,
                 buildData.CbxBundle.ByteCode,
-                resourceDatabase.ResourceManifestFile.TextContent,
-                resourceDatabase.ImageResourceManifestFile == null ? null : resourceDatabase.ImageResourceManifestFile.TextContent);
+                buildData.CbxBundle.ResourceDB.ResourceManifestFile.TextContent,
+                buildData.CbxBundle.ResourceDB.ImageResourceManifestFile == null ? null : buildData.CbxBundle.ResourceDB.ImageResourceManifestFile.TextContent);
 
             return new ExportResponse()
             {
