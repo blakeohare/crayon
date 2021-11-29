@@ -17,18 +17,31 @@ namespace Crayon
             Dictionary<string, object> request,
             Func<Dictionary<string, object>, bool> cb)
         {
-            string[] commandLineArgs = (string[])request["args"];
-            Wax.Command command = FlagParser.Parse(commandLineArgs, IS_RELEASE);
-            if (command.HasErrors)
+            bool isRelease = IS_RELEASE;
+            if (isRelease)
             {
-                ErrorPrinter.ShowErrors(command.Errors, !IS_RELEASE);
+                try
+                {
+                    this.HandleRequestImpl(request);
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    ErrorPrinter.ShowErrors(new Wax.Error[] { new Wax.Error { Message = ioe.Message } }, false);
+                }
             }
             else
             {
-                Pipeline.MainPipeline.Run(command, IS_RELEASE, this.Hub);
+                this.HandleRequestImpl(request);
             }
 
             cb(new Dictionary<string, object>());
+        }
+
+        private void HandleRequestImpl(Dictionary<string, object> request)
+        {
+            string[] commandLineArgs = (string[])request["args"];
+            Wax.Command command = FlagParser.Parse(commandLineArgs);
+            Pipeline.MainPipeline.Run(command, IS_RELEASE, this.Hub);
         }
     }
 }

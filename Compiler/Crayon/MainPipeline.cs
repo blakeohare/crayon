@@ -211,20 +211,6 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    if (isRelease)
-                    {
-                        try
-                        {
-                            return ExportVmBundle(command, waxHub, isRelease);
-                        }
-                        catch (InvalidOperationException ioe)
-                        {
-                            return new Result()
-                            {
-                                Errors = new Error[] { new Error() { Message = ioe.Message } },
-                            };
-                        }
-                    }
                     return ExportVmBundle(command, waxHub, isRelease);
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
@@ -315,31 +301,10 @@ namespace Crayon.Pipeline
         {
             Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
 
-            ResourceDatabase resourceDatabase;
-            BuildContext buildContext;
-            if (isRelease)
-            {
-                try
-                {
-                    buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
-                    resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-                    resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
-                }
-                catch (InvalidOperationException ioe)
-                {
-                    return new ExportResponse()
-                    {
-                        Errors = new Error[] { new Error() { Message = ioe.Message } },
-                    };
-                }
-            }
-            else
-            {
-                buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
-                resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-                resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
-            }
-
+            BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
+            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+            resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
+            
             CbxBundleView cbxBundle = Compile(CreateCompileRequest(buildContext, isRelease), resourceDatabase, waxHub);
             if (isDryRunErrorCheck || cbxBundle.HasErrors)
             {

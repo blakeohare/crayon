@@ -14,24 +14,7 @@ namespace Exporter
             string vmTargetDirectoryRaw,
             bool isRelease)
         {
-            if (isRelease)
-            {
-                try
-                {
-                    RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
-                }
-                catch (InvalidOperationException ioe)
-                {
-                    return new ExportResponse()
-                    {
-                        Errors = new Error[] { new Error() { Message = ioe.Message } },
-                    };
-                }
-            }
-            else
-            {
-                RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
-            }
+            RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
             return new ExportResponse();
         }
 

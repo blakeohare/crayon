@@ -16,24 +16,7 @@ namespace Exporter
             Platform.IPlatformProvider platformProvider,
             bool isRelease)
         {
-            if (isRelease)
-            {
-                try
-                {
-                    RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, exportRequest, platformProvider);
-                }
-                catch (InvalidOperationException ioe)
-                {
-                    return new ExportResponse()
-                    {
-                        Errors = new Error[] { new Error() { Message = ioe.Message } },
-                    };
-                }
-            }
-            else
-            {
-                RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, exportRequest, platformProvider);
-            }
+            RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, exportRequest, platformProvider);
             return new ExportResponse();
         }
 
