@@ -8,7 +8,7 @@ namespace Wax
     {
         public BuildData() : base() { }
         public BuildData(IDictionary<string, object> data) : base(data) { }
-        
+
         public CbxBundle CbxBundle { get { return this.GetObjectAsType<CbxBundle>("cbxBundle"); } set { this.SetObject("cbxBundle", value); } }
         public ExportProperties ExportProperties { get { return this.GetObjectAsType<ExportProperties>("exportProperties"); } set { this.SetObject("exportProperties", value); } }
 
