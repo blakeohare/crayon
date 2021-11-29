@@ -42,7 +42,7 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             Options options)
         {
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
@@ -80,8 +80,8 @@ namespace JavaScriptApp
 
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
 
-            ResourceDatabase resDb = cbxBundle.ResourceDB;
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, cbxBundle);
+            ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, buildData);
 
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
             TemplateSet vmTemplates = templateReader.GetVmTemplates();
@@ -144,7 +144,7 @@ namespace JavaScriptApp
             output["bytecode.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = "C$bytecode = " + ConvertStringValueToCode(cbxBundle.ByteCode) + ";",
+                TextContent = "C$bytecode = " + ConvertStringValueToCode(buildData.CbxBundle.ByteCode) + ";",
             };
 
             foreach (string imageChunk in resDb.ImageResourceFiles.Keys)
@@ -167,10 +167,10 @@ namespace JavaScriptApp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            CbxBundleView cbxBundle)
+            BuildData buildData)
         {
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
-                this.ParentPlatform.GenerateReplacementDictionary(options, cbxBundle),
+                this.ParentPlatform.GenerateReplacementDictionary(options, buildData),
                 new Dictionary<string, string>()
                 {
                     { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled") },

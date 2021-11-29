@@ -88,7 +88,7 @@ namespace Crayon.Pipeline
             return request;
         }
 
-        private static CbxBundleView Compile(
+        private static BuildData Compile(
             Dictionary<string, object> request,
             ResourceDatabase resDb,
             WaxHub waxHub)
@@ -108,18 +108,21 @@ namespace Crayon.Pipeline
                 };
                 errors.Add(err);
             }
-            CbxBundleView cbxBundle = errors.Count == 0
-                ? new CbxBundleView(
-                    (string)resultRaw["byteCode"],
-                    resDb,
-                    (bool)resultRaw["usesU3"],
-                    null)
-                : new CbxBundleView(errors);
-            if (resultRaw.ContainsKey("depTree"))
+
+            if (errors.Count > 0) return new BuildData() { Errors = errors.ToArray() };
+
+            BuildData buildData = new BuildData()
             {
-                cbxBundle.DependencyTreeJson = (string)resultRaw["depTree"];
-            }
-            return cbxBundle;
+                UsesU3 = (bool)resultRaw["usesU3"],
+                CbxBundle = new CbxBundle()
+                {
+                    ByteCode = (string)resultRaw["byteCode"],
+                    ResourceDB = resDb,
+                    DependencyTreeJson = resultRaw.ContainsKey("depTree") ? (string)resultRaw["depTree"] : null,
+                },
+            };
+
+            return buildData;
         }
 
         private static Result ExportVmBundle(Command command, WaxHub waxHub, bool isRelease)
@@ -127,20 +130,20 @@ namespace Crayon.Pipeline
             BuildContext buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
             Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, !isRelease);
-            CbxBundleView cbxBundle = Compile(compileRequest, resourceDatabase, waxHub);
-            cbxBundle.ExportPlatform = buildContext.Platform;
+            BuildData buildData = Compile(compileRequest, resourceDatabase, waxHub);
+            buildData.ExportPlatform = buildContext.Platform;
 
-            if (cbxBundle.HasErrors)
+            if (buildData.HasErrors)
             {
                 return new Result()
                 {
-                    Errors = cbxBundle.Errors,
+                    Errors = buildData.Errors,
                 };
             }
 
             if (command.ShowDependencyTree)
             {
-                ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, cbxBundle.DependencyTreeJson);
+                ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.CbxBundle.DependencyTreeJson);
             }
 
             string projectDirectory = buildContext.ProjectDirectory;
@@ -149,12 +152,12 @@ namespace Crayon.Pipeline
                 ? command.OutputDirectoryOverride
                 : buildContext.OutputFolder;
 
-            ExportRequest exportBundle = BuildExportRequest(cbxBundle.ByteCode, buildContext);
+            ExportRequest exportBundle = BuildExportRequest(buildData.CbxBundle.ByteCode, buildContext);
             ExportResponse response = CbxVmBundleExporter.Run(
-                cbxBundle.ExportPlatform.ToLowerInvariant(),
+                buildData.ExportPlatform.ToLowerInvariant(),
                 projectDirectory,
                 outputDirectory,
-                cbxBundle,
+                buildData,
                 exportBundle,
                 new PlatformProvider(),
                 isRelease);
@@ -305,10 +308,10 @@ namespace Crayon.Pipeline
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
             resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
 
-            CbxBundleView cbxBundle = Compile(CreateCompileRequest(buildContext, !isRelease), resourceDatabase, waxHub);
-            if (isDryRunErrorCheck || cbxBundle.HasErrors)
+            BuildData buildData = Compile(CreateCompileRequest(buildContext, !isRelease), resourceDatabase, waxHub);
+            if (isDryRunErrorCheck || buildData.HasErrors)
             {
-                return new ExportResponse() { Errors = cbxBundle.Errors };
+                return new ExportResponse() { Errors = buildData.Errors };
             }
 
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
@@ -318,9 +321,10 @@ namespace Crayon.Pipeline
                 buildContext.ProjectID,
                 outputFiles,
                 outputFolder,
-                cbxBundle.ByteCode,
+                buildData.CbxBundle.ByteCode,
                 resourceDatabase.ResourceManifestFile.TextContent,
                 resourceDatabase.ImageResourceManifestFile == null ? null : resourceDatabase.ImageResourceManifestFile.TextContent);
+
             return new ExportResponse()
             {
                 CbxOutputPath = cbxLocation,

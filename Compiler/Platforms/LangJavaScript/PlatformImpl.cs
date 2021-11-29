@@ -23,7 +23,7 @@ namespace LangJavaScript
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             Options options)
         {
             throw new NotImplementedException();
@@ -31,7 +31,7 @@ namespace LangJavaScript
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            CbxBundleView cbxBundle)
+            BuildData buildData)
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }

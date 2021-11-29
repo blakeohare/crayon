@@ -27,9 +27,9 @@ namespace CSharpApp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            CbxBundleView cbxBundle)
+            BuildData buildData)
         {
-            ResourceDatabase resDb = cbxBundle.ResourceDB;
+            ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
 
             List<string> embeddedResources = new List<string>()
             {
@@ -75,7 +75,7 @@ namespace CSharpApp
             string guidSeed = IdGenerator.GetRandomSeed();
 
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
-                this.ParentPlatform.GenerateReplacementDictionary(options, cbxBundle),
+                this.ParentPlatform.GenerateReplacementDictionary(options, buildData),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
                     { "ASSEMBLY_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
@@ -128,13 +128,13 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             Options options)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
             bool usesU3 = options.GetBool(ExportOptionKey.USES_U3);
 
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, cbxBundle);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, buildData);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
 
@@ -142,9 +142,9 @@ namespace CSharpApp
 
             this.ExportInterpreter(templateReader, baseDir, output);
 
-            ResourceDatabase resDb = cbxBundle.ResourceDB;
-            output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = cbxBundle.ByteCode };
-            output[baseDir + "Resources/ResourceManifest.txt"] = cbxBundle.ResourceDB.ResourceManifestFile;
+            ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
+            output[baseDir + "Resources/ByteCode.txt"] = new FileOutput() { Type = FileOutputType.Text, TextContent = buildData.CbxBundle.ByteCode };
+            output[baseDir + "Resources/ResourceManifest.txt"] = buildData.CbxBundle.ResourceDB.ResourceManifestFile;
 
             if (resDb.ImageResourceManifestFile != null)
             {

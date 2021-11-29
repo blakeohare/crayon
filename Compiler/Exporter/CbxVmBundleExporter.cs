@@ -11,12 +11,12 @@ namespace Exporter
             string platformId,
             string projectDirectory,
             string outputDirectory,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider,
             bool isRelease)
         {
-            RunImpl(platformId, projectDirectory, outputDirectory, cbxBundle, exportRequest, platformProvider);
+            RunImpl(platformId, projectDirectory, outputDirectory, buildData, exportRequest, platformProvider);
             return new ExportResponse();
         }
 
@@ -24,7 +24,7 @@ namespace Exporter
             string platformId,
             string projectDirectory,
             string outputDirectory,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider)
         {
@@ -42,7 +42,7 @@ namespace Exporter
             Dictionary<string, FileOutput> result = new Dictionary<string, FileOutput>();
             vmGenerator.GenerateVmSourceCodeForPlatform(
                 result,
-                cbxBundle,
+                buildData,
                 platform,
                 exportRequest,
                 outputDirectory,

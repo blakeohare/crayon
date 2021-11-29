@@ -14,7 +14,7 @@ namespace Exporter
     {
         public void GenerateVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> output,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             Platform.AbstractPlatform platform,
             ExportRequest nullableExportBundle,
             string verifiedAbsoluteOutputPath,
@@ -40,14 +40,14 @@ namespace Exporter
                     .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableExportBundle.JsFilePrefix)
                     .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
                     .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations)
-                    .SetOption(ExportOptionKey.USES_U3, cbxBundle.UsesU3);
+                    .SetOption(ExportOptionKey.USES_U3, buildData.UsesU3);
 
                 if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPaths);
                 if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);
 
                 platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 
-                platform.ExportProject(output, cbxBundle, options);
+                platform.ExportProject(output, buildData, options);
             }
             else
             {

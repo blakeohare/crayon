@@ -28,7 +28,7 @@ namespace LangCSharp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
@@ -36,7 +36,7 @@ namespace LangCSharp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
-            CbxBundleView cbxBundle)
+            BuildData buildData)
         {
             Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
             replacements["PROJECT_GUID"] = "project guid goes here.";

@@ -161,7 +161,7 @@ namespace Platform
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
-            CbxBundleView cbxBundle,
+            BuildData buildData,
             Options options);
 
         public virtual void TranspileCode(Dictionary<string, FileOutput> output, object parserContextObj)
@@ -169,7 +169,7 @@ namespace Platform
             throw new NotImplementedException();
         }
 
-        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, CbxBundleView cbxBundle);
+        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, BuildData buildData);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)
         {
