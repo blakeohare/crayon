@@ -6,10 +6,14 @@ namespace Parser
 {
     internal static class Compiler
     {
-        public static InternalCompilationBundle Compile(CompileRequest compileRequest, bool isRelease, Wax.WaxHub waxHub)
+        public static InternalCompilationBundle Compile(CompileRequest compileRequest, WaxHub waxHub)
         {
             InternalCompilationBundle result;
-            if (isRelease)
+            if (compileRequest.ErrorsAsExceptions)
+            {
+                result = CompileImpl(compileRequest, waxHub);
+            }
+            else
             {
                 try
                 {
@@ -36,10 +40,6 @@ namespace Parser
                         Errors = new Error[] { new Error() { Message = exception.Message } },
                     };
                 }
-            }
-            else
-            {
-                result = CompileImpl(compileRequest, waxHub);
             }
             return result;
         }

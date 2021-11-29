@@ -54,15 +54,15 @@ namespace Crayon.Pipeline
             return ExecutionType.RUN_CBX;
         }
 
-        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool isRelease)
+        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions)
         {
             Dictionary<string, object> request = new Dictionary<string, object>();
             request["projectId"] = buildContext.ProjectID;
-            request["isRelease"] = isRelease;
+            request["errorsAsExceptions"] = errorsAsExceptions;
             request["delegateMainTo"] = buildContext.DelegateMainTo;
             request["locale"] = buildContext.CompilerLocale.ID;
             request["localDeps"] = buildContext.LocalDeps;
-            request["projectDirectory"] = buildContext.ProjectDirectory; // TODO: create a disk service that uses scoped isntances where you can like register an ID for a folder or remote virtual disk of some sort and then pass that ID instead of the hardecoded folder name here.
+            request["projectDirectory"] = buildContext.ProjectDirectory; // TODO: create a disk service that uses scoped instances where you can register an ID for a folder or remote virtual disk of some sort and then pass that ID instead of the hardcoded folder name here.
             request["codeFiles"] = CommonUtil.Collections.DictionaryUtil.DictionaryToFlattenedDictionary(buildContext.GetCodeFiles());
             request["lang"] = buildContext.RootProgrammingLanguage + "";
             request["removeSymbols"] = buildContext.RemoveSymbols;
@@ -126,7 +126,7 @@ namespace Crayon.Pipeline
         {
             BuildContext buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, isRelease);
+            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, !isRelease);
             CbxBundleView cbxBundle = Compile(compileRequest, resourceDatabase, waxHub);
             cbxBundle.ExportPlatform = buildContext.Platform;
 
@@ -189,7 +189,7 @@ namespace Crayon.Pipeline
             return new Result() { Errors = response.Errors };
         }
 
-        public static Result RunImpl(Command command, bool isRelease, Wax.WaxHub waxHub)
+        private static Result RunImpl(Command command, bool isRelease, Wax.WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
@@ -304,13 +304,12 @@ namespace Crayon.Pipeline
             BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command, waxHub);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
             resourceDatabase.PopulateFileOutputContextForCbx(outputFiles);
-            
-            CbxBundleView cbxBundle = Compile(CreateCompileRequest(buildContext, isRelease), resourceDatabase, waxHub);
+
+            CbxBundleView cbxBundle = Compile(CreateCompileRequest(buildContext, !isRelease), resourceDatabase, waxHub);
             if (isDryRunErrorCheck || cbxBundle.HasErrors)
             {
                 return new ExportResponse() { Errors = cbxBundle.Errors };
             }
-
 
             string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
             outputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);

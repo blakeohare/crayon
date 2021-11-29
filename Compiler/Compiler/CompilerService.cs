@@ -18,7 +18,8 @@ namespace Parser
         private Dictionary<string, object> HandleCompilation(Dictionary<string, object> request)
         {
             CompileRequest cr = new CompileRequest(request);
-            InternalCompilationBundle icb = Compiler.Compile(cr, (bool)request["isRelease"], this.Hub);
+
+            InternalCompilationBundle icb = Compiler.Compile(cr, this.Hub);
 
             Dictionary<string, object> output = new Dictionary<string, object>();
             List<string> errors = new List<string>();
