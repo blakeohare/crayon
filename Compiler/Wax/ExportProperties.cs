@@ -10,7 +10,7 @@ namespace Wax
         public string ByteCode { get { return this.GetString("byteCode"); } set { this.SetString("byteCode", value); } }
         public string ProjectID { get { return this.GetString("projectId"); } set { this.SetString("projectId", value); } }
         public string GuidSeed { get { return this.GetString("guidSeed"); } set { this.SetString("guidSeed", value); } }
-        private string IconPathsDelim { get { return this.GetString("iconPaths"); } set { this.SetString("iconPaths", value); } }
+        public string[] IconPaths { get { return this.GetStrings("iconPaths"); } set { this.SetStrings("iconPaths", value); } }
         public string LaunchScreenPath { get { return this.GetString("launchScreenPath"); } set { this.SetString("launchScreenPath", value); } }
         public string ProjectTitle { get { return this.GetString("title"); } set { this.SetString("title", value); } }
         public string JsFilePrefix { get { return this.GetString("jsFilePrefix"); } set { this.SetString("jsFilePrefix", value); } }
@@ -20,19 +20,5 @@ namespace Wax
         public string Orientations { get { return this.GetString("orientations"); } set { this.SetString("orientations", value); } }
         public string Version { get { return this.GetString("version"); } set { this.SetString("version", value); } }
         public string Description { get { return this.GetString("description"); } set { this.SetString("description", value); } }
-
-        public string[] IconPaths
-        {
-            get
-            {
-                string value = this.IconPathsDelim;
-                if (value != null) return value.Split(',');
-                return null;
-            }
-            set
-            {
-                this.IconPathsDelim = string.Join(',', value);
-            }
-        }
     }
 }
