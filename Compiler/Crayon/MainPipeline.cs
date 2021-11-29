@@ -197,16 +197,20 @@ namespace Crayon.Pipeline
 
             BuildData buildData = WrappedCompile(command, waxHub);
 
-            buildData.CbxBundle.ResourceDB.PopulateFileOutputContextForCbx(outputFiles);
-
             if (isDryRunErrorCheck || buildData.HasErrors)
             {
                 return new ExportResponse() { Errors = buildData.Errors };
             }
 
-            string outputFolder = FileUtil.JoinPath(
-                buildData.ExportProperties.ProjectDirectory,
-                buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx"));
+            buildData.CbxBundle.ResourceDB.PopulateFileOutputContextForCbx(outputFiles);
+
+            string outputFolder = buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
+            if (!Path.IsAbsolute(outputFolder))
+            {
+                outputFolder = FileUtil.JoinPath(
+                    buildData.ExportProperties.ProjectDirectory,
+                    outputFolder);
+            }
 
             string cbxLocation = StandaloneCbxExporter.Run(
                 buildData.ExportProperties.ProjectID,

@@ -38,24 +38,24 @@ namespace Compiler
         private static BuildContext GetBuildContext(Command command, WaxHub hub)
         {
             string buildFile = command.BuildFilePath;
-            string target = command.BuildTarget;
 
-            if (buildFile == null || target == null)
+            if (buildFile == null)
             {
-                throw new InvalidOperationException("Build file and target must be specified together.");
+                throw new InvalidOperationException("No build path was provided.");
             }
+
+            string target = command.BuildTarget;
 
             buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile, hub);
 
             string projectDirectory = CommonUtil.Disk.FileUtil.GetParentDirectory(buildFile);
+            string buildFileContent = CommonUtil.Disk.FileUtil.ReadFileText(buildFile);
 
-            BuildContext buildContext = BuildContext.Parse(projectDirectory, CommonUtil.Disk.FileUtil.ReadFileText(buildFile), target, command.ResourceErrorsShowRelativeDir);
-
-            buildContext = buildContext ?? new BuildContext();
+            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, command.ResourceErrorsShowRelativeDir);
 
             // command line arguments override build file values if present.
 
-            if (buildContext.Platform == null)
+            if (target != null && buildContext.Platform == null)
                 throw new InvalidOperationException("No platform specified in build file.");
 
             if (buildContext.SourceFolders.Length == 0)

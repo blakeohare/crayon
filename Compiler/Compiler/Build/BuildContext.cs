@@ -205,7 +205,9 @@ namespace Build
                 SourceFolders = ToFilePaths(projectDir, sources),
             };
 
-            return buildContext.ValidateValues(useRelativePathsInErrors);
+            buildContext.ValidateValues(useRelativePathsInErrors);
+
+            return buildContext;
         }
 
         public Dictionary<string, string> GetCodeFiles()
@@ -262,7 +264,7 @@ namespace Build
             return string.Join("/", output);
         }
 
-        public BuildContext ValidateValues(bool useRelativePathsInErrors)
+        public void ValidateValues(bool useRelativePathsInErrors)
         {
             if (this.ProjectID == null) throw new InvalidOperationException("There is no project-id for this build target.");
             if (this.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
@@ -320,8 +322,6 @@ namespace Build
             }
 
             this.LocalDeps = newLocalDeps.ToArray();
-
-            return this;
         }
 
         private static FilePath[] ToFilePaths(string projectDir, SourceItem[] sourceDirs)
