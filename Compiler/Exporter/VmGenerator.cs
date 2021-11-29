@@ -19,9 +19,6 @@ namespace Exporter
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
         {
-            bool isStandaloneVm = mode == VmGenerationMode.EXPORT_VM_AND_LIBRARIES;
-            Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags(isStandaloneVm) ?? new Dictionary<string, object>();
-
             ExportProperties exportProperties = buildData.ExportProperties;
 
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)

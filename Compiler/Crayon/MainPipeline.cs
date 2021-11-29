@@ -131,7 +131,8 @@ namespace Crayon.Pipeline
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
             Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, !isRelease);
             BuildData buildData = Compile(compileRequest, resourceDatabase, waxHub);
-            buildData.ExportPlatform = buildContext.Platform;
+            buildData.ExportProperties = BuildExportRequest(buildContext);
+            buildData.ExportProperties.ExportPlatform = buildContext.Platform;
 
             if (buildData.HasErrors)
             {
@@ -152,9 +153,8 @@ namespace Crayon.Pipeline
                 ? command.OutputDirectoryOverride
                 : buildContext.OutputFolder;
 
-            buildData.ExportProperties = BuildExportRequest(buildData.CbxBundle.ByteCode, buildContext);
             ExportResponse response = CbxVmBundleExporter.Run(
-                buildData.ExportPlatform.ToLowerInvariant(),
+                buildData.ExportProperties.ExportPlatform.ToLowerInvariant(),
                 projectDirectory,
                 outputDirectory,
                 buildData,
@@ -273,13 +273,10 @@ namespace Crayon.Pipeline
             ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
         }
 
-        private static ExportProperties BuildExportRequest(
-            string byteCode,
-            BuildContext buildContext)
+        private static ExportProperties BuildExportRequest(BuildContext buildContext)
         {
             return new ExportProperties()
             {
-                ByteCode = byteCode,
                 ProjectID = buildContext.ProjectID,
                 Version = buildContext.Version,
                 Description = buildContext.Description,

@@ -7,7 +7,6 @@ namespace Wax
         public ExportProperties() : base() { }
         public ExportProperties(IDictionary<string, object> data) : base(data) { }
 
-        public string ByteCode { get { return this.GetString("byteCode"); } set { this.SetString("byteCode", value); } }
         public string ProjectID { get { return this.GetString("projectId"); } set { this.SetString("projectId", value); } }
         public string GuidSeed { get { return this.GetString("guidSeed"); } set { this.SetString("guidSeed", value); } }
         public string[] IconPaths { get { return this.GetStrings("iconPaths"); } set { this.SetStrings("iconPaths", value); } }
@@ -20,5 +19,6 @@ namespace Wax
         public string Orientations { get { return this.GetString("orientations"); } set { this.SetString("orientations", value); } }
         public string Version { get { return this.GetString("version"); } set { this.SetString("version", value); } }
         public string Description { get { return this.GetString("description"); } set { this.SetString("description", value); } }
+        public string ExportPlatform { get { return this.GetString("exportPlatform"); } set { this.SetString("exportPlatform", value); } }
     }
 }

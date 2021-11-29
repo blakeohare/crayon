@@ -12,9 +12,8 @@ namespace Wax
         public CbxBundle CbxBundle { get { return this.GetObjectAsType<CbxBundle>("cbxBundle"); } set { this.SetObject("cbxBundle", value); } }
         public ExportProperties ExportProperties { get { return this.GetObjectAsType<ExportProperties>("exportProperties"); } set { this.SetObject("exportProperties", value); } }
 
-        // TODO: move these into ExportProperties
+        // TODO: move me to ExportProperties
         public bool UsesU3 { get { return this.GetBoolean("usesU3"); } set { this.SetBoolean("usesU3", value); } }
-        public string ExportPlatform { get { return this.GetString("exportPlatform"); } set { this.SetString("exportPlatform", value); } }
 
         public Error[] Errors
         {
