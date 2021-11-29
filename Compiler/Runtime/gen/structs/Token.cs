@@ -1,4 +1,4 @@
-using Interpreter.Structs;
+﻿using Interpreter.Structs;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -57,17 +57,17 @@ def copy_csharp_to_runtime_service():
   print("Copying C# files to Runtime.csproj")
   dir = os.path.join('..', 'Interpreter', 'gen', 'csharp-app')
   structs_dir = os.path.join(dir, 'structs')
-  
+
   files_to_copy = ['CrayonWrapper.cs']
   for s in os.listdir(structs_dir):
     if s.endswith('.cs'):
       files_to_copy.append(os.path.join('structs', s))
-  
+
   target_dir = os.path.join('..', 'Compiler', 'Runtime', 'gen')
-  
+
   for file in files_to_copy:
     shutil.copy(os.path.join(dir, file), os.path.join(target_dir, file))
-  
+
 def main(args):
 
   p = platform.system()
@@ -119,7 +119,7 @@ def main(args):
         print("Exporting: " + lib['name'] + ' --> ' + manifest)
         cmd = pastel_exe + ' ' + path
         print(run_command(cmd))
-  
+
   copy_csharp_to_runtime_service()
 
 main(sys.argv[1:])
