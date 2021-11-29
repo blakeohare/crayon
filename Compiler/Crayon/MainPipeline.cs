@@ -168,7 +168,7 @@ namespace Crayon.Pipeline
                     }
 
                     NotifyStatusChange("RUN-START");
-                    waxHub.AwaitSendRequest("cbxrunner", new Dictionary<string, object>() {
+                    waxHub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
                         { "realTimePrint", true },
                         { "cbxPath", exportResult.CbxOutputPath },
                         { "args", command.DirectRunArgs },

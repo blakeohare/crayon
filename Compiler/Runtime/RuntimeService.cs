@@ -1,13 +1,13 @@
-﻿using CommonUtil;
-using CommonUtil.Disk;
+﻿using CommonUtil.Disk;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
-namespace Crayon
+namespace Runtime
 {
-    public class CbxRunnerService : Wax.WaxService
+    public class RuntimeService : WaxService
     {
-        public CbxRunnerService() : base("cbxrunner") { }
+        public RuntimeService() : base("runtime") { }
 
         private string CrayonRuntimePath
         {
@@ -39,7 +39,7 @@ namespace Crayon
                 // logic. Also update StdErr below as well.
                 if (this.realTimePrint)
                 {
-                    Print.Line(data);
+                    CommonUtil.Print.Line(data);
                 }
                 else
                 {
@@ -51,7 +51,7 @@ namespace Crayon
             {
                 if (this.realTimePrint)
                 {
-                    Print.ErrorLine(data);
+                    CommonUtil.Print.ErrorLine(data);
                 }
                 else
                 {
@@ -95,7 +95,7 @@ namespace Crayon
             int userCmdLineArgCount = args.Length;
             if (userCmdLineArgCount > 0)
             {
-                flagGroups.Add("runtimeargs:" + userCmdLineArgCount + ":" + string.Join(",", args.Select(s => Base64.ToBase64(s))));
+                flagGroups.Add("runtimeargs:" + userCmdLineArgCount + ":" + string.Join(",", args.Select(s => CommonUtil.Base64.ToBase64(s))));
             }
             else
             {

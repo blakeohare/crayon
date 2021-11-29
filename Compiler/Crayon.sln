@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangJavaScript", "Platforms
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wax", "Wax\Wax.csproj", "{C552E612-E20A-4538-8EC5-994ACA300C2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runtime", "Runtime\Runtime.csproj", "{77E4B6FD-9D45-459D-9997-C1BCFA63E8EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{C552E612-E20A-4538-8EC5-994ACA300C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C552E612-E20A-4538-8EC5-994ACA300C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C552E612-E20A-4538-8EC5-994ACA300C2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77E4B6FD-9D45-459D-9997-C1BCFA63E8EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77E4B6FD-9D45-459D-9997-C1BCFA63E8EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77E4B6FD-9D45-459D-9997-C1BCFA63E8EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77E4B6FD-9D45-459D-9997-C1BCFA63E8EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

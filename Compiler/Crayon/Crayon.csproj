@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj" />
     <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj" />
     <ProjectReference Include="..\Platform\Platform.csproj" />
+    <ProjectReference Include="..\Runtime\Runtime.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
