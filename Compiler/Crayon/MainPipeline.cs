@@ -152,13 +152,12 @@ namespace Crayon.Pipeline
                 ? command.OutputDirectoryOverride
                 : buildContext.OutputFolder;
 
-            ExportRequest exportBundle = BuildExportRequest(buildData.CbxBundle.ByteCode, buildContext);
+            buildData.ExportProperties = BuildExportRequest(buildData.CbxBundle.ByteCode, buildContext);
             ExportResponse response = CbxVmBundleExporter.Run(
                 buildData.ExportPlatform.ToLowerInvariant(),
                 projectDirectory,
                 outputDirectory,
                 buildData,
-                exportBundle,
                 new PlatformProvider(),
                 isRelease);
             if (!response.HasErrors && command.ApkExportPath != null)
@@ -192,7 +191,7 @@ namespace Crayon.Pipeline
             return new Result() { Errors = response.Errors };
         }
 
-        private static Result RunImpl(Command command, bool isRelease, Wax.WaxHub waxHub)
+        private static Result RunImpl(Command command, bool isRelease, WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
@@ -274,11 +273,11 @@ namespace Crayon.Pipeline
             ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
         }
 
-        private static ExportRequest BuildExportRequest(
+        private static ExportProperties BuildExportRequest(
             string byteCode,
             BuildContext buildContext)
         {
-            return new ExportRequest()
+            return new ExportProperties()
             {
                 ByteCode = byteCode,
                 ProjectID = buildContext.ProjectID,

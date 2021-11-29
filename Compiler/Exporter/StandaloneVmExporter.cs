@@ -49,7 +49,6 @@ namespace Exporter
                 fileOutput,
                 null,
                 platform,
-                null,
                 vmTargetDir,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
         }

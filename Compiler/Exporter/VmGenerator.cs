@@ -16,34 +16,35 @@ namespace Exporter
             Dictionary<string, FileOutput> output,
             BuildData buildData,
             Platform.AbstractPlatform platform,
-            ExportRequest nullableExportBundle,
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
         {
             bool isStandaloneVm = mode == VmGenerationMode.EXPORT_VM_AND_LIBRARIES;
             Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags(isStandaloneVm) ?? new Dictionary<string, object>();
 
+            ExportProperties exportProperties = buildData.ExportProperties;
+
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
             {
                 Options options = new Options();
                 options
-                    .SetOption(ExportOptionKey.PROJECT_ID, nullableExportBundle.ProjectID)
-                    .SetOption(ExportOptionKey.DESCRIPTION, nullableExportBundle.Description)
-                    .SetOption(ExportOptionKey.VERSION, nullableExportBundle.Version)
-                    .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableExportBundle.GuidSeed)
+                    .SetOption(ExportOptionKey.PROJECT_ID, exportProperties.ProjectID)
+                    .SetOption(ExportOptionKey.DESCRIPTION, exportProperties.Description)
+                    .SetOption(ExportOptionKey.VERSION, exportProperties.Version)
+                    .SetOption(ExportOptionKey.EMBED_BYTE_CODE, exportProperties.GuidSeed)
                     .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
-                    .SetOption(ExportOptionKey.PROJECT_TITLE, nullableExportBundle.ProjectTitle)
-                    .SetOption(ExportOptionKey.HAS_ICON, nullableExportBundle.IconPaths.Length > 0)
-                    .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableExportBundle.LaunchScreenPath != null)
-                    .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableExportBundle.IosBundlePrefix)
-                    .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableExportBundle.JavaPackage)
-                    .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableExportBundle.JsFilePrefix)
-                    .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
-                    .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations)
+                    .SetOption(ExportOptionKey.PROJECT_TITLE, exportProperties.ProjectTitle)
+                    .SetOption(ExportOptionKey.HAS_ICON, exportProperties.IconPaths.Length > 0)
+                    .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, exportProperties.LaunchScreenPath != null)
+                    .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, exportProperties.IosBundlePrefix)
+                    .SetOption(ExportOptionKey.JAVA_PACKAGE, exportProperties.JavaPackage)
+                    .SetOption(ExportOptionKey.JS_FILE_PREFIX, exportProperties.JsFilePrefix)
+                    .SetOption(ExportOptionKey.JS_FULL_PAGE, exportProperties.JsFullPage)
+                    .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, exportProperties.Orientations)
                     .SetOption(ExportOptionKey.USES_U3, buildData.UsesU3);
 
-                if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPaths);
-                if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);
+                if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, exportProperties.IconPaths);
+                if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, exportProperties.LaunchScreenPath);
 
                 platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 

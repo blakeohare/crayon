@@ -12,11 +12,10 @@ namespace Exporter
             string projectDirectory,
             string outputDirectory,
             BuildData buildData,
-            ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider,
             bool isRelease)
         {
-            RunImpl(platformId, projectDirectory, outputDirectory, buildData, exportRequest, platformProvider);
+            RunImpl(platformId, projectDirectory, outputDirectory, buildData, platformProvider);
             return new ExportResponse();
         }
 
@@ -25,7 +24,6 @@ namespace Exporter
             string projectDirectory,
             string outputDirectory,
             BuildData buildData,
-            ExportRequest exportRequest,
             Platform.IPlatformProvider platformProvider)
         {
             Platform.AbstractPlatform platform = platformProvider.GetPlatform(platformId);
@@ -44,7 +42,6 @@ namespace Exporter
                 result,
                 buildData,
                 platform,
-                exportRequest,
                 outputDirectory,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
