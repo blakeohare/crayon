@@ -67,7 +67,7 @@ namespace Wax
             object value = this.GetValue(key);
             if (value == null) return null;
             if (value is JsonBasedObject) return (JsonBasedObject)value;
-            if (value is Dictionary<string, object>) new JsonBasedObject((Dictionary<string, object>)value);
+            if (value is Dictionary<string, object>) return new JsonBasedObject((Dictionary<string, object>)value);
             return null;
         }
 
@@ -129,14 +129,24 @@ namespace Wax
             return typedValues;
         }
 
+        protected void ClearValue(string key)
+        {
+            if (this.data.ContainsKey(key))
+            {
+                this.data.Remove(key);
+            }
+        }
+
         protected void SetObjects(string key, IEnumerable<JsonBasedObject> items)
         {
-            this.SetValue(key, items.ToArray());
+            if (items == null) this.ClearValue(key);
+            else this.SetValue(key, items.ToArray());
         }
 
         protected void SetStrings(string key, IList<string> values)
         {
-            this.data[key] = values.ToArray();
+            if (values == null) this.ClearValue(key);
+            else this.data[key] = values.ToArray();
         }
 
         protected void SetBoolean(string key, bool value)
@@ -146,7 +156,8 @@ namespace Wax
 
         protected void SetString(string key, string value)
         {
-            this.SetValue(key, value);
+            if (value == null) this.ClearValue(key);
+            else this.SetValue(key, value);
         }
 
         protected void SetInteger(string key, int value)
@@ -164,12 +175,14 @@ namespace Wax
 
         protected void SetDictionary(string key, Dictionary<string, JsonBasedObject> value)
         {
-            this.SetValue(key, value);
+            if (value == null) this.ClearValue(key);
+            else this.SetValue(key, value);
         }
 
         private void SetValue(string key, object value)
         {
-            this.data[key] = value;
+            if (value == null) this.ClearValue(key);
+            else this.data[key] = value;
         }
 
         private void ItemToJson(System.Text.StringBuilder sb, object value)

@@ -23,42 +23,70 @@ namespace Wax
             }
             set
             {
-                this.SetDictionary("imageFiles", value.Keys.ToDictionary(k => k, k => (JsonBasedObject)value[k]));
+                if (value == null) this.ClearValue("imageFiles");
+                else this.SetDictionary("imageFiles", value.Keys.ToDictionary(k => k, k => (JsonBasedObject)value[k]));
             }
         }
 
-        private FileOutput[] GetFileOutputList(string key) { return this.GetObjectsAsType<FileOutput>(key) ?? new FileOutput[0]; }
-
-        public FileOutput[] AudioResources { get { return this.GetFileOutputList("audioResources"); } set { this.SetObjects("audioResource", value.Cast<JsonBasedObject>()); } }
-        public FileOutput[] ImageResources { get { return this.GetFileOutputList("imageResources"); } set { this.SetObjects("imageResources", value.Cast<JsonBasedObject>()); } }
-        public FileOutput[] TextResources { get { return this.GetFileOutputList("textResources"); } set { this.SetObjects("textResources", value.Cast<JsonBasedObject>()); } }
-        public FileOutput[] BinaryResources { get { return this.GetFileOutputList("binaryResources"); } set { this.SetObjects("binaryResources", value.Cast<JsonBasedObject>()); } }
-        public FileOutput[] FontResources { get { return this.GetFileOutputList("fontResources"); } set { this.SetObjects("fontResources", value.Cast<JsonBasedObject>()); } }
-
-        public void PopulateFileOutputContextForCbx(Dictionary<string, FileOutput> output)
+        private FileOutput[] GetFileOutputList(string key)
         {
+            if (this.IsFlattenedMode) throw new System.Exception(); // This should not happen
+            return this.GetObjectsAsType<FileOutput>(key) ?? new FileOutput[0];
+        }
+
+        private void SetFileOutputList(string key, FileOutput[] value)
+        {
+            if (value == null) this.ClearValue(key);
+            else this.SetObjects(key, value.Cast<JsonBasedObject>());
+        }
+
+        public FileOutput[] AudioResources { get { return this.GetFileOutputList("audioResources"); } set { this.SetFileOutputList("audioResource", value); } }
+        public FileOutput[] ImageResources { get { return this.GetFileOutputList("imageResources"); } set { this.SetFileOutputList("imageResources", value); } }
+        public FileOutput[] TextResources { get { return this.GetFileOutputList("textResources"); } set { this.SetFileOutputList("textResources", value); } }
+        public FileOutput[] BinaryResources { get { return this.GetFileOutputList("binaryResources"); } set { this.SetFileOutputList("binaryResources", value); } }
+        public FileOutput[] FontResources { get { return this.GetFileOutputList("fontResources"); } set { this.SetFileOutputList("fontResources", value); } }
+
+        private bool IsFlattenedMode { get { return this.GetBoolean("isFlatMode"); } set { this.SetBoolean("isFlatMode", value); } }
+        public string[] FlatFileNames { get { return this.GetStrings("flatFileNames"); } set { this.SetStrings("flatFileNames", value); } }
+        public FileOutput[] FlatFiles { get { return this.GetObjectsAsType<FileOutput>("flatFiles"); } set { this.SetObjects("flatFiles", value); } }
+
+        public void ConvertToFlattenedFileData()
+        {
+            Dictionary<string, FileOutput> flattenedFiles = new Dictionary<string, FileOutput>();
             foreach (FileOutput txtResource in this.TextResources)
             {
-                output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
+                flattenedFiles["res/txt/" + txtResource.CanonicalFileName] = txtResource;
             }
             foreach (FileOutput sndResource in this.AudioResources)
             {
-                output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
+                flattenedFiles["res/snd/" + sndResource.CanonicalFileName] = sndResource;
             }
             foreach (FileOutput fontResource in this.FontResources)
             {
-                output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
+                flattenedFiles["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
             }
             foreach (FileOutput binResource in this.BinaryResources)
             {
-                output["res/bin/" + binResource.CanonicalFileName] = binResource;
+                flattenedFiles["res/bin/" + binResource.CanonicalFileName] = binResource;
             }
-
             foreach (string name in this.ImageResourceFiles.Keys)
             {
                 FileOutput imgResource = this.ImageResourceFiles[name];
-                output["res/img/" + name] = imgResource;
+                flattenedFiles["res/img/" + name] = imgResource;
             }
+
+            string[] keys = flattenedFiles.Keys.OrderBy(k => k).ToArray();
+            FileOutput[] files = keys.Select(k => flattenedFiles[k]).ToArray();
+            this.FlatFileNames = keys;
+            this.FlatFiles = files;
+
+            this.IsFlattenedMode = true;
+
+            this.TextResources = null;
+            this.AudioResources = null;
+            this.FontResources = null;
+            this.BinaryResources = null;
+            this.ImageResourceFiles = null;
         }
     }
 }

@@ -159,18 +159,18 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse exportResult = DoExportStandaloneCbxFileAndGetPath(command, false, waxHub);
+                    BuildData buildData = ExportInMemoryCbxData(command, false, waxHub);
                     NotifyStatusChange("COMPILE-END");
-                    if (exportResult.HasErrors)
+                    if (buildData.HasErrors)
                     {
                         NotifyStatusChange("RUN-ABORTED");
-                        return new Result() { Errors = exportResult.Errors };
+                        return new Result() { Errors = buildData.Errors };
                     }
 
                     NotifyStatusChange("RUN-START");
                     waxHub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
                         { "realTimePrint", true },
-                        { "cbxPath", exportResult.CbxOutputPath },
+                        { "cbxBundle", buildData.CbxBundle.RawData },
                         { "args", command.DirectRunArgs },
                         { "showLibStack", command.DirectRunShowLibStack },
                         { "useOutputPrefixes", command.UseOutputPrefixes },
@@ -188,13 +188,26 @@ namespace Crayon.Pipeline
             ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
         }
 
+        private static BuildData ExportInMemoryCbxData(
+            Command command,
+            bool isDryRunErrorCheck,
+            WaxHub waxHub)
+        {
+            BuildData buildData = WrappedCompile(command, waxHub);
+
+            if (isDryRunErrorCheck || buildData.HasErrors)
+            {
+                return new BuildData() { Errors = buildData.Errors };
+            }
+
+            return buildData;
+        }
+
         private static ExportResponse DoExportStandaloneCbxFileAndGetPath(
             Command command,
             bool isDryRunErrorCheck,
             WaxHub waxHub)
         {
-            Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
-
             BuildData buildData = WrappedCompile(command, waxHub);
 
             if (isDryRunErrorCheck || buildData.HasErrors)
@@ -202,7 +215,14 @@ namespace Crayon.Pipeline
                 return new ExportResponse() { Errors = buildData.Errors };
             }
 
-            buildData.CbxBundle.ResourceDB.PopulateFileOutputContextForCbx(outputFiles);
+            ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
+            Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
+            string[] fileNames = resDb.FlatFileNames;
+            FileOutput[] files = resDb.FlatFiles;
+            for (int i = 0; i < files.Length; i++)
+            {
+                outputFiles[fileNames[i]] = files[i];
+            }
 
             string outputFolder = buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
             if (!Path.IsAbsolute(outputFolder))
