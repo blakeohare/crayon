@@ -11,9 +11,12 @@ namespace Crayon
             Wax.WaxHub waxHub = new Wax.WaxHub();
             waxHub.RegisterService(new RouterService());
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
-            waxHub.RegisterService(new Parser.CompilerService());
             waxHub.RegisterService(new Disk.DiskService());
             waxHub.RegisterService(new CbxRunnerService());
+
+            // TODO: these two need to be merged.
+            waxHub.RegisterService(new Parser.CompilerService());
+            waxHub.RegisterService(new Compiler.Compiler2Service());
 
             waxHub.AwaitSendRequest(
                 "router",

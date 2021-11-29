@@ -14,28 +14,6 @@ namespace Wax
             this.services[service.Name] = service;
         }
 
-        public void SendRequestX(
-            string serviceName,
-            Dictionary<string, object> request,
-            Func<Dictionary<string, object>, bool> cb)
-        {
-            if (cb == null) cb = d => false;
-
-            WaxService service = this.services.ContainsKey(serviceName) ? this.services[serviceName] : null;
-            if (service == null)
-            {
-                // TODO: check for extensible services online
-                throw new Exception("Invalid service name: '" + serviceName + "'");
-            }
-            string encodedRequest = SerializeWireData(request);
-            System.ComponentModel.BackgroundWorker bg = new System.ComponentModel.BackgroundWorker();
-            bg.DoWork += (e, sender) =>
-            {
-                service.HandleRequest(ParseWireData(encodedRequest), cb);
-            };
-            bg.RunWorkerAsync();
-        }
-
         public Dictionary<string, object> AwaitSendRequest(
             string serviceName,
             Dictionary<string, object> request)
