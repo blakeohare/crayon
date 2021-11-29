@@ -28,6 +28,7 @@ namespace Wax
         public bool DirectRunShowLibStack { get { return this.GetBoolean("directRunShowLibStack"); } set { this.SetBoolean("directRunShowLibStack", value); } }
         public bool IsCSharpToAcrylicTranspiler { get { return this.GetBoolean("isCSharpToAcrylicTranspiler"); } set { this.SetBoolean("isCSharpToAcrylicTranspiler", value); } }
         public string ApkExportPath { get { return this.GetString("apkExportPath"); } set { this.SetString("apkExportPath", value); } }
+        public bool ErrorsAsExceptions { get { return this.GetBoolean("errorsAsExceptions"); } set { this.SetBoolean("errorsAsExceptions", value); } }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }

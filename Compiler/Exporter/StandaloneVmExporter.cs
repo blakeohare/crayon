@@ -11,8 +11,7 @@ namespace Exporter
         public static ExportResponse Run(
             string platformId,
             IPlatformProvider platformProvider,
-            string vmTargetDirectoryRaw,
-            bool isRelease)
+            string vmTargetDirectoryRaw)
         {
             RunImpl(platformId, platformProvider, vmTargetDirectoryRaw);
             return new ExportResponse();

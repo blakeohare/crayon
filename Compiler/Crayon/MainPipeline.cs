@@ -11,9 +11,9 @@ namespace Crayon.Pipeline
 {
     internal static class MainPipeline
     {
-        public static void Run(Command command, bool isRelease, Wax.WaxHub waxHub)
+        public static void Run(Command command, WaxHub waxHub)
         {
-            Result result = RunImpl(command, isRelease, waxHub);
+            Result result = RunImpl(command, waxHub);
 
             if (command.IsJsonOutput)
             {
@@ -24,7 +24,7 @@ namespace Crayon.Pipeline
             }
             else if (result.HasErrors)
             {
-                ErrorPrinter.ShowErrors(result.Errors, !isRelease);
+                ErrorPrinter.ShowErrors(result.Errors, command.ErrorsAsExceptions);
             }
         }
 
@@ -125,11 +125,11 @@ namespace Crayon.Pipeline
             return buildData;
         }
 
-        private static BuildData WrappedCompile(Command command, WaxHub waxHub, bool isRelease)
+        private static BuildData WrappedCompile(Command command, WaxHub waxHub)
         {
             BuildContext buildContext = new GetBuildContextWorker().DoWorkImpl(command, waxHub);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
-            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, !isRelease);
+            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions);
             BuildData buildData = Compile(compileRequest, resourceDatabase, waxHub);
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
@@ -142,9 +142,9 @@ namespace Crayon.Pipeline
             return buildData;
         }
 
-        private static Result ExportVmBundle(Command command, WaxHub waxHub, bool isRelease)
+        private static Result ExportVmBundle(Command command, WaxHub waxHub)
         {
-            BuildData buildData = WrappedCompile(command, waxHub, isRelease);
+            BuildData buildData = WrappedCompile(command, waxHub);
 
             if (buildData.HasErrors)
             {
@@ -164,8 +164,7 @@ namespace Crayon.Pipeline
                 buildData.ExportProperties.ProjectDirectory,
                 buildData.ExportProperties.OutputDirectory,
                 buildData,
-                new PlatformProvider(),
-                isRelease);
+                new PlatformProvider());
             if (!response.HasErrors && command.ApkExportPath != null)
             {
                 if (!buildData.ExportProperties.IsAndroid)
@@ -197,7 +196,7 @@ namespace Crayon.Pipeline
             return new Result() { Errors = response.Errors };
         }
 
-        private static Result RunImpl(Command command, bool isRelease, WaxHub waxHub)
+        private static Result RunImpl(Command command, WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
@@ -219,31 +218,30 @@ namespace Crayon.Pipeline
                     return new Result();
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    return ExportVmBundle(command, waxHub, isRelease);
+                    return ExportVmBundle(command, waxHub);
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
                     ExportResponse standaloneVmExportResponse = StandaloneVmExporter.Run(
                         command.VmPlatform,
                         new PlatformProvider(),
-                        command.VmExportDirectory,
-                        isRelease);
+                        command.VmExportDirectory);
                     return new Result() { Errors = standaloneVmExportResponse.Errors };
 
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, isRelease, waxHub);
+                    ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     return new Result() { Errors = errorCheckOnlyResponse.Errors };
 
                 case ExecutionType.EXPORT_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease, waxHub);
+                    ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     return new Result() { Errors = cbxOnlyResponse.Errors };
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse exportResult = DoExportStandaloneCbxFileAndGetPath(command, false, isRelease, waxHub);
+                    ExportResponse exportResult = DoExportStandaloneCbxFileAndGetPath(command, false, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     if (exportResult.HasErrors)
                     {
@@ -301,12 +299,11 @@ namespace Crayon.Pipeline
         private static ExportResponse DoExportStandaloneCbxFileAndGetPath(
             Command command,
             bool isDryRunErrorCheck,
-            bool isRelease,
             WaxHub waxHub)
         {
             Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
 
-            BuildData buildData = WrappedCompile(command, waxHub, isRelease);
+            BuildData buildData = WrappedCompile(command, waxHub);
 
             buildData.CbxBundle.ResourceDB.PopulateFileOutputContextForCbx(outputFiles);
 

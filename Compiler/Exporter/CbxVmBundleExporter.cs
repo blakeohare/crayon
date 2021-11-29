@@ -12,8 +12,7 @@ namespace Exporter
             string projectDirectory,
             string outputDirectory,
             BuildData buildData,
-            Platform.IPlatformProvider platformProvider,
-            bool isRelease)
+            Platform.IPlatformProvider platformProvider)
         {
             RunImpl(platformId, projectDirectory, outputDirectory, buildData, platformProvider);
             return new ExportResponse();
