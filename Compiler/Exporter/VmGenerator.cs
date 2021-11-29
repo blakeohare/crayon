@@ -19,10 +19,9 @@ namespace Exporter
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
         {
-            ExportProperties exportProperties = buildData.ExportProperties;
-
             if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
             {
+                ExportProperties exportProperties = buildData.ExportProperties;
                 Options options = new Options();
                 options
                     .SetOption(ExportOptionKey.PROJECT_ID, exportProperties.ProjectID)
