@@ -122,7 +122,7 @@ namespace Router
                     return null;
 
                 case ExecutionType.SHOW_VERSION:
-                    ConsoleWriter.Print(ConsoleMessageType.USAGE_NOTES, Common.VersionInfo.VersionString);
+                    ConsoleWriter.Print(ConsoleMessageType.USAGE_NOTES, VersionInfo.VersionString);
                     return null;
 
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:

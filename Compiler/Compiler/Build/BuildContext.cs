@@ -139,7 +139,6 @@ namespace Build
             }
 
             PercentReplacer pr = new PercentReplacer()
-                .AddReplacement("COMPILER_VERSION", VersionInfo.VersionString)
                 .AddReplacement("COMPILER_LANGUAGE", programmingLanguage)
                 .AddReplacement("TARGET_NAME", targetName);
 
