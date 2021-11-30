@@ -8,7 +8,7 @@ namespace Build
         private string[] pathRelativeToRoot;
         private string absolutePathString;
         private string canonicalAbsolutePath;
-       
+
         public ProjectFilePath(string pathRelativeToProjectRoot, string projectRootDirectory)
         {
             pathRelativeToProjectRoot = FileUtil.GetCanonicalizeUniversalPath(pathRelativeToProjectRoot);
