@@ -12,18 +12,18 @@ namespace Crayon.Pipeline
     {
         public static void Run(Command command, WaxHub waxHub)
         {
-            Result result = RunImpl(command, waxHub);
+            Error[] errors = RunImpl(command, waxHub);
 
             if (command.IsJsonOutput)
             {
                 string jsonErrors = "{\"errors\":[" +
-                    string.Join(',', result.Errors.Select(err => err.ToJson())) +
+                    string.Join(',', errors.Select(err => err.ToJson())) +
                     "]}";
                 ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, jsonErrors);
             }
-            else if (result.HasErrors)
+            else if (errors != null && errors.Length > 0)
             {
-                ErrorPrinter.ShowErrors(result.Errors, command.ErrorsAsExceptions);
+                ErrorPrinter.ShowErrors(errors, command.ErrorsAsExceptions);
             }
         }
 
@@ -60,16 +60,13 @@ namespace Crayon.Pipeline
             return buildData;
         }
 
-        private static Result ExportVmBundle(Command command, WaxHub waxHub)
+        private static Error[] ExportVmBundle(Command command, WaxHub waxHub)
         {
             BuildData buildData = WrappedCompile(command, waxHub);
 
             if (buildData.HasErrors)
             {
-                return new Result()
-                {
-                    Errors = buildData.Errors,
-                };
+                return buildData.Errors;
             }
 
             if (command.ShowDependencyTree)
@@ -111,10 +108,10 @@ namespace Crayon.Pipeline
                 System.IO.File.Copy(apkResult.ApkPath, command.ApkExportPath);
             }
 
-            return new Result() { Errors = response.Errors };
+            return response.Errors;
         }
 
-        private static Result RunImpl(Command command, WaxHub waxHub)
+        private static Error[] RunImpl(Command command, WaxHub waxHub)
         {
             if (command.UseOutputPrefixes)
             {
@@ -125,15 +122,15 @@ namespace Crayon.Pipeline
             {
                 case ExecutionType.SHOW_USAGE:
                     ConsoleWriter.Print(ConsoleMessageType.USAGE_NOTES, UsageDisplay.USAGE);
-                    return new Result();
+                    return null;
 
                 case ExecutionType.SHOW_VERSION:
                     ConsoleWriter.Print(ConsoleMessageType.USAGE_NOTES, Common.VersionInfo.VersionString);
-                    return new Result();
+                    return null;
 
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
                     new DefaultProjectGenerator().DoWorkImpl(command.DefaultProjectId, command.DefaultProjectLocale, command.DefaultProjectType);
-                    return new Result();
+                    return null;
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     return ExportVmBundle(command, waxHub);
@@ -143,19 +140,19 @@ namespace Crayon.Pipeline
                         command.VmPlatform,
                         new PlatformProvider(),
                         command.VmExportDirectory);
-                    return new Result() { Errors = standaloneVmExportResponse.Errors };
+                    return standaloneVmExportResponse.Errors;
 
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
                     ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, waxHub);
                     NotifyStatusChange("COMPILE-END");
-                    return new Result() { Errors = errorCheckOnlyResponse.Errors };
+                    return errorCheckOnlyResponse.Errors;
 
                 case ExecutionType.EXPORT_CBX:
                     NotifyStatusChange("COMPILE-START");
                     ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, waxHub);
                     NotifyStatusChange("COMPILE-END");
-                    return new Result() { Errors = cbxOnlyResponse.Errors };
+                    return cbxOnlyResponse.Errors;
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
@@ -164,7 +161,7 @@ namespace Crayon.Pipeline
                     if (buildData.HasErrors)
                     {
                         NotifyStatusChange("RUN-ABORTED");
-                        return new Result() { Errors = buildData.Errors };
+                        return buildData.Errors;
                     }
 
                     NotifyStatusChange("RUN-START");
@@ -177,7 +174,7 @@ namespace Crayon.Pipeline
                     });
                     NotifyStatusChange("RUN-END");
 
-                    return new Result();
+                    return null;
 
                 default: throw new Exception(); // this shouldn't happen.
             }
