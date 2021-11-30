@@ -332,7 +332,7 @@ namespace Build
             {
                 string sourceDirValue = CommonUtil.Environment.EnvironmentVariables.DoReplacementsInString(sourceDir.Value);
                 string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDirValue);
-                FilePath filePath = new FilePath(relative, projectDir, sourceDir.Alias);
+                FilePath filePath = new FilePath(relative, projectDir);
                 paths[filePath.AbsolutePath] = filePath;
             }
 
