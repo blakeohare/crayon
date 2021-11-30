@@ -1,12 +1,11 @@
 ﻿using Common;
 using CommonUtil.Disk;
-using Exporter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wax;
 
-namespace Crayon.Pipeline
+namespace Router
 {
     internal static class MainPipeline
     {
@@ -76,7 +75,7 @@ namespace Crayon.Pipeline
                 "export-" + buildData.ExportProperties.ExportPlatform.ToLowerInvariant(),
                 buildData.GetRawData());
 
-            ExportResponse exportResponse = new ExportResponse(exportResponseRaw); 
+            ExportResponse exportResponse = new ExportResponse(exportResponseRaw);
 
             if (!exportResponse.HasErrors && command.ApkExportPath != null)
             {

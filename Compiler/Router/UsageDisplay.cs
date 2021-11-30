@@ -1,7 +1,7 @@
 ﻿using Common;
 using CommonUtil;
 
-namespace Crayon
+namespace Router
 {
     internal static class UsageDisplay
     {

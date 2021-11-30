@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon
+namespace Router
 {
     public class RouterService : Wax.WaxService
     {
-#if DEBUG
-        private const bool IS_RELEASE = false;
-#else
-        private const bool IS_RELEASE = true;
-#endif
-
         public RouterService() : base("router") { }
 
         public override void HandleRequest(
             Dictionary<string, object> request,
             Func<Dictionary<string, object>, bool> cb)
         {
-            bool errorsAsExceptions = !IS_RELEASE;
+            bool errorsAsExceptions = request.ContainsKey("exceptionsAsErrors") && (request["errorsAsExceptions"] as bool?) == true;
             if (errorsAsExceptions)
             {
                 this.HandleRequestImpl(request, errorsAsExceptions);
@@ -42,7 +36,7 @@ namespace Crayon
             string[] commandLineArgs = (string[])request["args"];
             Wax.Command command = FlagParser.Parse(commandLineArgs);
             command.ErrorsAsExceptions = errorsAsExceptions;
-            Pipeline.MainPipeline.Run(command, this.Hub);
+            MainPipeline.Run(command, this.Hub);
         }
     }
 }

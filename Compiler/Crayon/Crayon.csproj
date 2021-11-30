@@ -6,17 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-  <EmbeddedResource Include="DefaultProjects\*.txt" />
-  <EmbeddedResource Include="DefaultProjects\*.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\Disk\Disk.csproj" />
     <ProjectReference Include="..\Exporter\Exporter.csproj" />
     <ProjectReference Include="..\Platform\Platform.csproj" />
+    <ProjectReference Include="..\Router\Router.csproj" />
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
