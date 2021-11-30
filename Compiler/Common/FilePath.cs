@@ -8,9 +8,8 @@ namespace Common
         private string[] pathRelativeToRoot;
         private string absolutePathString;
         private string canonicalAbsolutePath;
-        private string nullableAlias; // any resources or code files that are generated from this FilePath should alias this FilePath's absolute path to this string instead.
-
-        public FilePath(string pathRelativeToProjectRoot, string projectRootDirectory, string alias)
+       
+        public FilePath(string pathRelativeToProjectRoot, string projectRootDirectory)
         {
             pathRelativeToProjectRoot = FileUtil.GetCanonicalizeUniversalPath(pathRelativeToProjectRoot);
             projectRootDirectory = FileUtil.GetCanonicalizeUniversalPath(projectRootDirectory);
@@ -18,8 +17,6 @@ namespace Common
             this.canonicalAbsolutePath = FileUtil.GetCanonicalizeUniversalPath(projectRootDirectory + "/" + pathRelativeToProjectRoot);
             this.absolutePathString = this.canonicalAbsolutePath;
             this.pathRelativeToRoot = pathRelativeToProjectRoot.Split('/');
-            alias = (alias ?? "").Trim();
-            this.nullableAlias = alias.Length == 0 ? null : alias;
         }
 
         public void AddSuffix(string suffix)
@@ -52,20 +49,7 @@ namespace Common
 
         public string GetAliasedOrRelativePath(string absolutePath)
         {
-            if (this.nullableAlias == null)
-            {
-                return FileUtil.ConvertAbsolutePathToRelativePath(absolutePath, this.absolutePathString);
-            }
-
-            if (absolutePath.StartsWith(this.absolutePathString))
-            {
-                string relativeToAliasPath = absolutePath.Substring(this.absolutePathString.Length).TrimStart('/');
-                return this.nullableAlias + ":" + relativeToAliasPath;
-            }
-
-            // why was this FilePath called with this absolute path?
-            // If this turns out to be a valid use case, return null instead of throwing.
-            throw new System.InvalidOperationException();
+            return FileUtil.ConvertAbsolutePathToRelativePath(absolutePath, this.absolutePathString);
         }
     }
 }
