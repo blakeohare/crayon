@@ -9,9 +9,6 @@ namespace Interpreter
         JPEG,
     }
 
-    /**
-     * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
-     */
     public class UniversalBitmap
     {
         private Image<Rgba32> bitmap;

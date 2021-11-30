@@ -10,9 +10,6 @@ namespace Interpreter.Vm
             return (EventLoop)CrayonWrapper.vmGetEventLoopObj(vm);
         }
 
-        public static string ResourceManifest { get; set; }
-        public static string ByteCode { get; set; }
-
         public static readonly bool IsWindows =
             Environment.OSVersion.Platform == PlatformID.Win32NT ||
             Environment.OSVersion.Platform == PlatformID.Win32S ||

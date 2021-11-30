@@ -15,7 +15,7 @@ namespace Runtime
             bool useOutputPrefixes = (bool)request["useOutputPrefixes"];
             string[] args = (string[])request["args"];
 
-            CbxBundle cbxBundle = null;
+            CbxBundle cbxBundle;
             Interpreter.ResourceReader resourceReader;
 
             if (request.ContainsKey("cbxPath"))
