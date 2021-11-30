@@ -31,7 +31,6 @@ namespace Parser
             // TODO: This is only checking if the library is available in this locale.
             // It needs to check for all libraries.
             // This is currently only used in slim circumstances.
-            Common.TODO.IsValidLibraryNameIsWrong();
 
             Dictionary<string, object> response = this.wax.AwaitSendRequest("assembly", new Dictionary<string, object>() {
                 { "command", "GetAssemblyMetadataFromAnyPossibleKey" },

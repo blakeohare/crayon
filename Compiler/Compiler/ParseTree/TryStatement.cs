@@ -109,7 +109,8 @@ namespace Parser.ParseTree
         {
             this.BatchExecutableEntityNameResolver(parser, this.TryBlock);
 
-            Common.TODO.GetCoreNameFromMetadataWithLocale();
+            // TODO: get this string from metadata with locale info
+            // https://github.com/blakeohare/crayon/issues/303
             string coreExceptionName = "Core.Exception";
 
             ClassDefinition simpleException = this.FileScope.DoClassLookup(this.Owner, null, coreExceptionName);

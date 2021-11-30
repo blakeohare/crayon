@@ -63,7 +63,8 @@ namespace Parser.Crayon
                 tokens.PopExpected("}");
             }
 
-            TODO.CheckForUnusedAnnotations();
+            // TODO: check for annotations that aren't used.
+            // https://github.com/blakeohare/crayon/issues/305
         }
 
         // TODO: don't manually parse static here, just get it from modifiers

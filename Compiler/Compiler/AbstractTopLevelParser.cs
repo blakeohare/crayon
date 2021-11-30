@@ -57,9 +57,8 @@ namespace Parser
                     tokens.Pop());
             }
 
-            // The returns are inline, so you'll have to refactor or put the check inside each parse call.
-            // Or maybe a try/finally.
-            TODO.CheckForUnusedAnnotations();
+            // TODO: check for annotations that aren't used.
+            // https://github.com/blakeohare/crayon/issues/305
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, modifiers, annotations);
