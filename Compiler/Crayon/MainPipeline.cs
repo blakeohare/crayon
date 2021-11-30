@@ -220,17 +220,15 @@ namespace Crayon.Pipeline
                     outputFolder);
             }
 
-            string cbxLocation = StandaloneCbxExporter.Run(
-                buildData.ExportProperties.ProjectID,
-                outputFiles,
-                outputFolder,
-                buildData.CbxBundle.ByteCode,
-                buildData.CbxBundle.ResourceDB.ResourceManifestFile.TextContent,
-                buildData.CbxBundle.ResourceDB.ImageResourceManifestFile == null ? null : buildData.CbxBundle.ResourceDB.ImageResourceManifestFile.TextContent);
+            byte[] cbxFileBytes = CbxFileEncoder.Encode(buildData.CbxBundle);
+
+            FileUtil.EnsureFolderExists(outputFolder);
+            string cbxFilePath = FileUtil.JoinPath(outputFolder, buildData.ExportProperties.ProjectID + ".cbx");
+            System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
 
             return new ExportResponse()
             {
-                CbxOutputPath = cbxLocation,
+                CbxOutputPath = cbxFilePath,
             };
         }
     }
