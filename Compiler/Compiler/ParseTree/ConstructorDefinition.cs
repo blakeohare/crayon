@@ -59,7 +59,6 @@ namespace Parser.ParseTree
             this.ArgNames = argNames.ToArray();
             this.DefaultValues = defaultValues.ToArray();
             this.ArgTypes = argTypes.ToArray();
-            TODO.VerifyDefaultArgumentsAreAtTheEnd();
 
             this.MaxArgCount = this.ArgNames.Length;
             int minArgCount = 0;
