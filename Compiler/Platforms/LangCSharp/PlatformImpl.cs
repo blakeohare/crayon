@@ -1,5 +1,4 @@
-﻿using Common;
-using Platform;
+﻿using Platform;
 using System;
 using System.Collections.Generic;
 using Wax;
@@ -9,7 +8,6 @@ namespace LangCSharp
     public class PlatformImpl : AbstractPlatform
     {
         public override string Name { get { return "lang-csharp"; } }
-        public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()

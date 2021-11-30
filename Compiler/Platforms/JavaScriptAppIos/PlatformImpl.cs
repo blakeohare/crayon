@@ -11,7 +11,6 @@ namespace JavaScriptAppIos
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string InheritsFrom { get { return "javascript-app"; } }
         public override string Name { get { return "javascript-app-ios"; } }
         public override string NL { get { return "\n"; } }
 

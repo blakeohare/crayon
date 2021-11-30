@@ -14,11 +14,9 @@ namespace Platform
             this.Language = language;
         }
 
-        public IPlatformProvider PlatformProvider { get; set; }
 
         public string Language { get; private set; }
         public abstract string Name { get; }
-        public abstract string InheritsFrom { get; }
 
         public abstract IDictionary<string, object> GetConstantFlags();
         public abstract string NL { get; }
@@ -49,8 +47,8 @@ namespace Platform
         {
             if (this.flattenedCached == null)
             {
-                this.flattenedCached = this.InheritsFrom != null
-                    ? new Dictionary<string, object>(this.PlatformProvider.GetPlatform(this.InheritsFrom).GetFlattenedConstantFlags(isStandaloneVm))
+                this.flattenedCached = this.ParentPlatform != null
+                    ? new Dictionary<string, object>(this.ParentPlatform.GetFlattenedConstantFlags(isStandaloneVm))
                     : new Dictionary<string, object>();
 
                 IDictionary<string, object> thisPlatform = this.GetConstantFlags();
@@ -142,20 +140,7 @@ namespace Platform
             return text;
         }
 
-        private bool parentPlatformSet = false;
-        private AbstractPlatform parentPlatform = null;
-        public AbstractPlatform ParentPlatform
-        {
-            get
-            {
-                if (!this.parentPlatformSet)
-                {
-                    this.parentPlatformSet = true;
-                    this.parentPlatform = this.PlatformProvider.GetPlatform(this.InheritsFrom);
-                }
-                return this.parentPlatform;
-            }
-        }
+        public AbstractPlatform ParentPlatform { get; set; }
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,

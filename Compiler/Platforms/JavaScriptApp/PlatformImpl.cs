@@ -1,7 +1,6 @@
 ﻿using Common;
 using CommonUtil;
 using Platform;
-using System;
 using System.Collections.Generic;
 using Wax;
 
@@ -10,7 +9,6 @@ namespace JavaScriptApp
     public class PlatformImpl : AbstractPlatform
     {
         public override string Name { get { return "javascript-app"; } }
-        public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()

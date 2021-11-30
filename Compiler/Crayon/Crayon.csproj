@@ -16,12 +16,6 @@
     <ProjectReference Include="..\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\Disk\Disk.csproj" />
     <ProjectReference Include="..\Exporter\Exporter.csproj" />
-    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj" />
-    <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj" />
-    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj" />
-    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj" />
-    <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj" />
-    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj" />
     <ProjectReference Include="..\Platform\Platform.csproj" />
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
