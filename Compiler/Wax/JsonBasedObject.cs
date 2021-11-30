@@ -7,7 +7,7 @@ namespace Wax
     public class JsonBasedObject
     {
         private Dictionary<string, object> data;
-        public Dictionary<string, object> RawData { get { return this.data; } }
+        protected Dictionary<string, object> RawData { get { return this.data; } }
 
         public JsonBasedObject() : this(null) { }
 
@@ -248,6 +248,11 @@ namespace Wax
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             this.ToJsonImpl(sb);
             return sb.ToString();
+        }
+
+        public virtual Dictionary<string, object> GetRawData()
+        {
+            return this.RawData;
         }
     }
 }

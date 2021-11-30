@@ -98,7 +98,7 @@ namespace Wax
             }
             else if (item is JsonBasedObject)
             {
-                SerializeWireDataImpl(((JsonBasedObject)item).RawData, buffer);
+                SerializeWireDataImpl(((JsonBasedObject)item).GetRawData(), buffer);
             }
             else
             {
