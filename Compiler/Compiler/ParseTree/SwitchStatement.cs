@@ -87,7 +87,8 @@ namespace Parser.ParseTree
 
         internal override IList<Executable> Resolve(ParserContext parser)
         {
-            TODO.MakeSwitchStatementFallthroughsErrors();
+            // TODO: Make switch statement fallthroughs compile-time errors.
+            // https://github.com/blakeohare/crayon/issues/302
             if (this.explicitMax != null)
             {
                 throw new ParserException(this.explicitMaxToken, "Unexpected token: '{'");

@@ -113,7 +113,6 @@ namespace Build
             };
         }
 
-
         internal static ResourceDatabase CreateResourceDatabase(BuildContext buildContext)
         {
             ResourceDatabase resDb = new ResourceDatabase();
@@ -148,7 +147,8 @@ namespace Build
                     }
                     else
                     {
-                        TODO.BuildFileShouldIndicateWhichResourcesAreTextVsBinary();
+                        // TODO: way to distinguish binary and text resources in the build file
+                        // https://github.com/blakeohare/crayon/issues/301
                         category = FileCategory.TEXT;
                     }
 
@@ -207,8 +207,6 @@ namespace Build
                             break;
 
                         case FileCategory.IMAGE:
-                            TODO.GetImageDimensionsFromFirstFewBytesInsteadOfLoadingIntoMemory();
-
                             if (extension == "png")
                             {
                                 // Re-encode PNGs into a common format/palette configuration since there are some issues
@@ -236,8 +234,6 @@ namespace Build
                             }
                             else
                             {
-                                TODO.PutImageWidthAndHeightIntoFileOutputPropertiesSoThatBitmapDoesntNeedToBePersistedInMemory();
-
                                 imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Copy,

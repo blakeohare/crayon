@@ -8,8 +8,6 @@ namespace Parser.ByteCode.Nodes
     {
         public static void Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
         {
-            TODO.ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor();
-
             ByteBuffer tBuffer = new ByteBuffer();
 
             ClassDefinition cd = (ClassDefinition)constructor.Owner;
