@@ -34,12 +34,11 @@ namespace CommonUtil.Random
             return GenerateGuid(seed, salt + "-xc", XCODE_PROJ.ToCharArray());
         }
 
-        private static readonly System.Random random = new System.Random(
-            (int)(System.Math.Floor(CommonUtil.DateTime.Time.UnixTimeFloat  * 100000) % 2000000000));
+        private static readonly System.Random random = new System.Random((int)(System.DateTime.UtcNow.Ticks % Int32.MaxValue));
 
         public static string GetRandomSeed()
         {
-            return CommonUtil.DateTime.Time.UnixTimeFloat + "," + random.NextDouble();
+            return System.DateTime.UtcNow.Ticks + "," + random.NextDouble();
         }
 
         private static string GenerateGuid(string seed, string salt, char[] format)
