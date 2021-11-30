@@ -22,19 +22,19 @@ namespace JavaScriptAppIos
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options)
+            ExportProperties exportProperties)
         {
-            options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
-            options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
-            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, "");
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, buildData);
+            exportProperties.JsFilePrefix = null;
+            exportProperties.JsFullPage = false; // iOS export has its own enforced fullscreen logic
+            exportProperties.JsHeadExtras = "";
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
 
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
                 buildData,
-                options);
+                exportProperties);
 
             foreach (string filePath in basicProject.Keys)
             {
@@ -42,18 +42,18 @@ namespace JavaScriptAppIos
             }
 
             // TODO: use this in the pbxproj file.
-            string uuidSeed = options.GetStringOrNull(ExportOptionKey.GUID_SEED);
+            string uuidSeed = exportProperties.GuidSeed;
 
 
-            OrientationParser orientations = new OrientationParser(options);
+            OrientationParser orientations = new OrientationParser(exportProperties);
             bool useLandscapeForLaunchscreen = orientations.SupportsLandscapeLeft || orientations.SupportsLandscapeRight;
             FileOutput launchScreen;
-            if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN))
+            if (exportProperties.HasLaunchScreen)
             {
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,
-                    Bitmap = new Bitmap(options.GetString(ExportOptionKey.LAUNCHSCREEN_PATH)),
+                    Bitmap = new Bitmap(exportProperties.LaunchScreenPath),
                 };
             }
             else
@@ -72,10 +72,9 @@ namespace JavaScriptAppIos
             replacements["LAUNCH_SCREEN_HEIGHT"] = launchScreen.Bitmap.Height.ToString();
 
             IconSetGenerator icons = new IconSetGenerator();
-            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            if (exportProperties.HasIcon)
             {
-                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
-                foreach (string iconPath in iconPaths)
+                foreach (string iconPath in exportProperties.IconPaths)
                 {
                     Bitmap icon = new Bitmap(iconPath);
                     icons.AddInputImage(icon);
@@ -142,27 +141,27 @@ namespace JavaScriptAppIos
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
-            Options options,
+            ExportProperties exportProperties,
             BuildData buildData)
         {
-            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, buildData);
+            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData);
             replacements["ORGANIZATION_NAME"] = "Organization Name";
 
             replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "";
             replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "";
-            string developmentTeam = options.GetStringOrNull(ExportOptionKey.IOS_DEV_TEAM_ID);
+            string developmentTeam = exportProperties.IosDevTeamId;
             if (developmentTeam != null)
             {
                 replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "DevelopmentTeam = " + developmentTeam + ";";
                 replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "DEVELOPMENT_TEAM = " + developmentTeam + ";";
             }
 
-            string bundleIdPrefix = options.GetStringOrNull(ExportOptionKey.IOS_BUNDLE_PREFIX);
+            string bundleIdPrefix = exportProperties.IosBundlePrefix;
             replacements["IOS_BUNDLE_ID"] = bundleIdPrefix == null
-                ? options.GetString(ExportOptionKey.PROJECT_ID)
-                : bundleIdPrefix + "." + options.GetString(ExportOptionKey.PROJECT_ID);
+                ? exportProperties.ProjectID
+                : bundleIdPrefix + "." + exportProperties.ProjectID;
 
-            OrientationParser orientations = new OrientationParser(options);
+            OrientationParser orientations = new OrientationParser(exportProperties);
             replacements["IOS_SUPPORTED_ORIENTATIONS_INFO_PLIST"] = string.Join("",
                 "\t<array>\n",
                 orientations.SupportsPortrait ? "\t\t<string>UIInterfaceOrientationPortrait</string>\n" : "",
@@ -179,12 +178,12 @@ namespace JavaScriptAppIos
             return this.ParentPlatform.GetConstantFlags();
         }
 
-        public override void GleanInformationFromPreviouslyExportedProject(Options options, string outputDirectory)
+        public override void GleanInformationFromPreviouslyExportedProject(ExportProperties exportProperties, string outputDirectory)
         {
             string pbxproj = FileUtil.JoinPath(
                 outputDirectory,
-                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID),
-                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID) + ".xcodeproj",
+                exportProperties.ProjectID ?? "",
+                (exportProperties.ProjectID ?? "") + ".xcodeproj",
                 "project.pbxproj");
             if (FileUtil.FileExists(pbxproj))
             {
@@ -199,7 +198,7 @@ namespace JavaScriptAppIos
                         string value = contents.Substring(devTeam, devTeamEnd - devTeam).Trim();
                         if (value.Length > 0 && !value.Contains("\n"))
                         {
-                            options.SetOption(ExportOptionKey.IOS_DEV_TEAM_ID, value);
+                            exportProperties.IosDevTeamId = value;
                         }
                     }
                 }

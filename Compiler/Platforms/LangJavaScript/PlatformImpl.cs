@@ -24,16 +24,16 @@ namespace LangJavaScript
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options)
+            ExportProperties exportProperties)
         {
             throw new NotImplementedException();
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
-            Options options,
+            ExportProperties exportProperties,
             BuildData buildData)
         {
-            return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
+            return AbstractPlatform.GenerateGeneralReplacementsDictionary(exportProperties);
         }
 
         public override IDictionary<string, object> GetConstantFlags()

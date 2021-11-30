@@ -43,13 +43,11 @@ namespace JavaScriptApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options)
+            ExportProperties exportProperties)
         {
-            List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
+            List<string> jsExtraHead = new List<string>() { exportProperties.JsHeadExtras ?? "" };
 
-            bool usesU3 = options.GetBool(ExportOptionKey.USES_U3);
-
-            if (options.GetBool(ExportOptionKey.JS_FULL_PAGE))
+            if (exportProperties.JsFullPage)
             {
                 jsExtraHead.Add(
                     "<script type=\"text/javascript\">"
@@ -57,7 +55,7 @@ namespace JavaScriptApp
                     + "</script>");
             }
 
-            if (usesU3)
+            if (buildData.UsesU3)
             {
                 Dictionary<string, FileOutput> u3Files = new Dictionary<string, FileOutput>();
                 foreach (string file in noriFiles)
@@ -78,10 +76,10 @@ namespace JavaScriptApp
                 jsExtraHead.Add("<script src=\"u3.js\"></script>");
             }
 
-            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
+            exportProperties.JsHeadExtras = string.Join("\n", jsExtraHead);
 
             ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, buildData);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
 
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
             TemplateSet vmTemplates = templateReader.GetVmTemplates();
@@ -123,7 +121,7 @@ namespace JavaScriptApp
             resourcesJs.Append(ConvertStringValueToCode(resDb.ResourceManifestFile.TextContent));
             resourcesJs.Append(";\n");
 
-            string filePrefix = options.GetStringOrNull(ExportOptionKey.JS_FILE_PREFIX);
+            string filePrefix = exportProperties.JsFilePrefix;
             if (filePrefix != null)
             {
                 resourcesJs.Append("C$common$jsFilePrefix = ");
@@ -157,37 +155,37 @@ namespace JavaScriptApp
                 output["resources/audio/" + audioResourceFile.CanonicalFileName] = audioResourceFile;
             }
 
-            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            if (exportProperties.HasIcon)
             {
-                this.GenerateIconFile(output, "favicon.ico", options);
+                this.GenerateIconFile(output, "favicon.ico", exportProperties);
             }
 
             // TODO: minify JavaScript across all of output dictionary
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
-            Options options,
+            ExportProperties exportProperties,
             BuildData buildData)
         {
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
-                this.ParentPlatform.GenerateReplacementDictionary(options, buildData),
+                this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData),
                 new Dictionary<string, string>()
                 {
-                    { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled") },
+                    { "PROJECT_TITLE", exportProperties.ProjectTitle },
                     {
                         "FAVICON",
-                        options.GetBool(ExportOptionKey.HAS_ICON)
-                            ? "<link rel=\"shortcut icon\" href=\"" + options.GetStringOrEmpty(ExportOptionKey.JS_FILE_PREFIX) + "favicon.ico\">"
+                        exportProperties.HasIcon
+                            ? "<link rel=\"shortcut icon\" href=\"" + exportProperties.JsFilePrefix + "favicon.ico\">"
                             : ""
                     },
                     {
                         "CSS_EXTRA",
-                        options.GetBool(ExportOptionKey.JS_FULL_PAGE)
+                        exportProperties.JsFullPage
                             ? ("#crayon_host { background-color:#000; text-align:left; width: 100%; height: 100%; }\n"
                                 + "body { overflow:hidden; }")
                             : ""
                     },
-                    { "JS_EXTRA_HEAD", options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) },
+                    { "JS_EXTRA_HEAD", exportProperties.JsHeadExtras },
                 });
         }
 

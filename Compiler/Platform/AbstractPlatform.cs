@@ -162,37 +162,37 @@ namespace Platform
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options);
+            ExportProperties exportProperties);
 
         public virtual void TranspileCode(Dictionary<string, FileOutput> output, object parserContextObj)
         {
             throw new NotImplementedException();
         }
 
-        public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, BuildData buildData);
+        public abstract Dictionary<string, string> GenerateReplacementDictionary(ExportProperties exportProperties, BuildData buildData);
 
-        protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)
+        protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(ExportProperties exportProperties)
         {
             return new Dictionary<string, string>()
             {
-                { "PROJECT_ID", options.GetString(ExportOptionKey.PROJECT_ID) },
-                { "PROJECT_ID_LOWERCASE", options.GetString(ExportOptionKey.PROJECT_ID).ToLowerInvariant() },
-                { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled Project") },
-                { "PROJECT_DESCRIPTION", options.GetStringOrEmpty(ExportOptionKey.DESCRIPTION) },
-                { "PROJECT_VERSION", options.GetStringOrEmpty(ExportOptionKey.VERSION) },
-                { "DEFAULT_WINDOW_WIDTH", options.GetInteger(ExportOptionKey.WINDOW_WIDTH, 800).ToString() },
-                { "DEFAULT_WINDOW_HEIGHT", options.GetInteger(ExportOptionKey.WINDOW_HEIGHT, 600).ToString() },
+                { "PROJECT_ID", exportProperties.ProjectID },
+                { "PROJECT_ID_LOWERCASE", exportProperties.ProjectID.ToLowerInvariant() },
+                { "PROJECT_TITLE", exportProperties.ProjectTitle ?? "Untitled Project" },
+                { "PROJECT_DESCRIPTION", exportProperties.Description ?? "" },
+                { "PROJECT_VERSION", exportProperties.Version ?? "" },
+                { "DEFAULT_WINDOW_WIDTH", "800" },
+                { "DEFAULT_WINDOW_HEIGHT", "600" },
             };
         }
 
         public virtual void GleanInformationFromPreviouslyExportedProject(
-            Options options,
+            ExportProperties exportProperties,
             string outputDirectory)
         { }
 
-        public void GenerateIconFile(Dictionary<string, FileOutput> files, string iconOutputPath, Options options)
+        public void GenerateIconFile(Dictionary<string, FileOutput> files, string iconOutputPath, ExportProperties exportProperties)
         {
-            string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
+            string[] iconPaths = exportProperties.IconPaths;
             CommonUtil.Images.IconGenerator iconGen = new CommonUtil.Images.IconGenerator();
             foreach (string path in iconPaths)
             {

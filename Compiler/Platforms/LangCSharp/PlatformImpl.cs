@@ -29,16 +29,16 @@ namespace LangCSharp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options)
+            ExportProperties exportProperties)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
-            Options options,
+            ExportProperties exportProperties,
             BuildData buildData)
         {
-            Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
+            Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(exportProperties);
             replacements["PROJECT_GUID"] = "project guid goes here.";
             return replacements;
         }

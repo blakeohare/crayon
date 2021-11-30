@@ -26,7 +26,7 @@ namespace CSharpApp
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
-            Options options,
+            ExportProperties exportProperties,
             BuildData buildData)
         {
             ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
@@ -42,7 +42,7 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\ImageManifest.txt\"/>");
             }
 
-            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            if (exportProperties.HasIcon)
             {
                 embeddedResources.Add("<EmbeddedResource Include=\"icon.ico\" />");
             }
@@ -75,12 +75,12 @@ namespace CSharpApp
             string guidSeed = IdGenerator.GetRandomSeed();
 
             return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
-                this.ParentPlatform.GenerateReplacementDictionary(options, buildData),
+                this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData),
                 new Dictionary<string, string>() {
-                    { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
-                    { "ASSEMBLY_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
+                    { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(exportProperties.GuidSeed ?? guidSeed, "project") },
+                    { "ASSEMBLY_GUID", IdGenerator.GenerateCSharpGuid(exportProperties.GuidSeed ?? guidSeed, "assembly") },
                     { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
-                    { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
+                    { "CSHARP_APP_ICON", exportProperties.HasIcon ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                 });
         }
 
@@ -129,13 +129,13 @@ namespace CSharpApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options)
+            ExportProperties exportProperties)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
-            bool usesU3 = options.GetBool(ExportOptionKey.USES_U3);
+            bool usesU3 = buildData.UsesU3;
 
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, buildData);
-            string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
+            string projectId = exportProperties.ProjectID;
             string baseDir = projectId + "/";
 
             this.CopyTemplatedFiles(baseDir, output, replacements, false);
@@ -176,9 +176,9 @@ namespace CSharpApp
                 output[baseDir + "Resources/" + fontFile.CanonicalFileName] = fontFile;
             }
 
-            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            if (exportProperties.HasIcon)
             {
-                this.GenerateIconFile(output, baseDir + "icon.ico", options);
+                this.GenerateIconFile(output, baseDir + "icon.ico", exportProperties);
             }
 
             this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);

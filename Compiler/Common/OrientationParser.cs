@@ -10,9 +10,9 @@ namespace Common
         public bool SupportsLandscapeLeft { get; private set; }
         public bool SupportsLandscapeRight { get; private set; }
 
-        public OrientationParser(Options options)
+        public OrientationParser(Wax.ExportProperties exportProperties)
         {
-            string rawValue = options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION).Trim();
+            string rawValue = (exportProperties.Orientations ?? "").Trim();
             bool down = false;
             bool up = false;
             bool left = false;
