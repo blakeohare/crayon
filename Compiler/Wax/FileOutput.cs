@@ -101,5 +101,23 @@ namespace Wax
                     throw new System.NotImplementedException();
             }
         }
+
+        public override Dictionary<string, object> GetRawData()
+        {
+            if (this.Type == FileOutputType.Text)
+            {
+                return base.GetRawData();
+            }
+
+            if (this.BinaryContentB64 == null)
+            {
+                if (this.binaryContentCache == null)
+                {
+                    this.binaryContentCache = this.GetFinalBinaryContent();
+                }
+                this.BinaryContentB64 = System.Convert.ToBase64String(this.binaryContentCache);
+            }
+            return base.GetRawData();
+        }
     }
 }

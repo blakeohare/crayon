@@ -55,7 +55,7 @@ namespace Crayon.Pipeline
 
         private static BuildData WrappedCompile(Command command, WaxHub waxHub)
         {
-            Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler2", command.RawData);
+            Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler2", command.GetRawData());
             BuildData buildData = new BuildData(result);
             return buildData;
         }
@@ -170,7 +170,7 @@ namespace Crayon.Pipeline
                     NotifyStatusChange("RUN-START");
                     waxHub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
                         { "realTimePrint", true },
-                        { "cbxBundle", buildData.CbxBundle.RawData },
+                        { "cbxBundle", buildData.CbxBundle.GetRawData() },
                         { "args", command.DirectRunArgs },
                         { "showLibStack", command.DirectRunShowLibStack },
                         { "useOutputPrefixes", command.UseOutputPrefixes },

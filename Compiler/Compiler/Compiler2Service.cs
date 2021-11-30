@@ -12,7 +12,7 @@ namespace Compiler
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {
             BuildData result = this.HandleRequestImpl(new Command(request));
-            cb(result.RawData);
+            cb(result.GetRawData());
         }
 
         private BuildData HandleRequestImpl(Command command)
