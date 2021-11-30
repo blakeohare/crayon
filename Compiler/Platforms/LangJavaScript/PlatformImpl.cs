@@ -16,11 +16,6 @@ namespace LangJavaScript
             : base("JAVASCRIPT")
         { }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,

@@ -12,8 +12,6 @@ namespace Wax
         public string DefaultProjectType { get { return this.GetString("defaultProjectType"); } set { this.SetString("defaultProjectType", value); } }
         public string BuildFilePath { get { return this.GetString("buildFilePath"); } set { this.SetString("buildFilePath", value); } }
         public string BuildTarget { get { return this.GetString("buildTarget"); } set { this.SetString("buildTarget", value); } }
-        public string VmPlatform { get { return this.GetString("vmPlatform"); } set { this.SetString("vmPlatform", value); } }
-        public string VmExportDirectory { get { return this.GetString("vmExportDirectory"); } set { this.SetString("vmExportDirectory", value); } }
         public bool IsEmpty { get { return this.GetBoolean("isEmpty"); } set { this.SetBoolean("isEmpty", value); } }
         public string CbxExportPath { get { return this.GetString("cbxExportPath"); } set { this.SetString("cbxExportPath", value); } }
         public bool ShowVersion { get { return this.GetBoolean("showVersion"); } set { this.SetBoolean("showVersion", value); } }
@@ -34,7 +32,6 @@ namespace Wax
         public bool HasTarget { get { return this.BuildTarget != null; } }
         public bool HasOutputDirectoryOverride { get { return this.OutputDirectoryOverride != null; } }
         public bool IsGenerateDefaultProject { get { return this.DefaultProjectId != null; } }
-        public bool IsVmExportCommand { get { return this.VmExportDirectory != null || this.VmPlatform != null; } } // The actual VM exporter will throw the error if one is not specified.
         public bool IsCbxExport { get { return this.CbxExportPath != null; } }
     }
 }

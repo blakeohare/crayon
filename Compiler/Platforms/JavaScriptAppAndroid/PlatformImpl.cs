@@ -132,11 +132,6 @@ namespace JavaScriptAppAndroid
             return this.ParentPlatform.GetConstantFlags();
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
-        {
-            throw new NotImplementedException();
-        }
-
         private string EscapeAndroidSdkPath(string original)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

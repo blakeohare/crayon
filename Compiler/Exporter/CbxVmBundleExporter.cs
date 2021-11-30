@@ -41,8 +41,7 @@ namespace Exporter
                 result,
                 buildData,
                 platform,
-                outputDirectory,
-                VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
+                outputDirectory);
 
             exporter.ExportFiles(result);
         }

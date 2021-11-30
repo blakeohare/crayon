@@ -134,11 +134,6 @@ namespace JavaScriptAppIos
             }
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Dictionary<string, string> GenerateReplacementDictionary(
             ExportProperties exportProperties,
             BuildData buildData)

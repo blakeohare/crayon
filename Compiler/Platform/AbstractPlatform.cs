@@ -157,8 +157,6 @@ namespace Platform
             }
         }
 
-        public abstract void ExportStandaloneVm(Dictionary<string, FileOutput> output);
-
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,

@@ -84,47 +84,6 @@ namespace CSharpApp
                 });
         }
 
-        private Dictionary<string, string> HACK_libraryProjectGuidToPath = new Dictionary<string, string>();
-
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
-        {
-            Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
-
-            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
-
-            string runtimeProjectGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-project");
-            string runtimeAssemblyGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-assembly");
-
-            Dictionary<string, string> replacements = new Dictionary<string, string>()
-            {
-                { "PROJECT_ID", "CrayonRuntime" },
-                { "PROJECT_GUID", runtimeProjectGuid },
-                { "INTERPRETER_PROJECT_GUID", runtimeProjectGuid },
-                { "ASSEMBLY_GUID", runtimeAssemblyGuid },
-                { "PROJECT_TITLE", "Crayon Runtime" },
-                { "COPYRIGHT", "©" },
-                { "CURRENT_YEAR", System.DateTime.Now.Year + "" },
-                { "CSHARP_APP_ICON", "<ApplicationIcon>icon.ico</ApplicationIcon>" },
-                { "EMBEDDED_RESOURCES", "<EmbeddedResource Include=\"icon.ico\" />" },
-                { "CSHARP_CONTENT_ICON", "" },
-            };
-            string baseDir = "CrayonRuntime/";
-
-            string embeddedResources = replacements["EMBEDDED_RESOURCES"];
-            replacements["EMBEDDED_RESOURCES"] = "";
-
-            replacements["EMBEDDED_RESOURCES"] = embeddedResources;
-            replacements["PROJECT_GUID"] = runtimeProjectGuid;
-            replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
-
-            this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(templateReader, baseDir, output);
-            this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
-            this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
-
-            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.cs", replacements);
-        }
-
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,

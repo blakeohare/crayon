@@ -31,7 +31,6 @@ namespace Crayon.Pipeline
         {
             GENERATE_DEFAULT_PROJECT,
             EXPORT_VM_BUNDLE,
-            EXPORT_VM_STANDALONE,
             EXPORT_CBX,
             RUN_CBX,
             SHOW_USAGE,
@@ -47,7 +46,6 @@ namespace Crayon.Pipeline
             if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
             if (command.IsEmpty) return ExecutionType.SHOW_USAGE;
             if (command.IsErrorCheckOnly) return ExecutionType.ERROR_CHECK_ONLY;
-            if (command.IsVmExportCommand) return ExecutionType.EXPORT_VM_STANDALONE;
             if (command.HasTarget) return ExecutionType.EXPORT_VM_BUNDLE;
             if (command.IsCbxExport) return ExecutionType.EXPORT_CBX;
             return ExecutionType.RUN_CBX;
@@ -134,13 +132,6 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     return ExportVmBundle(command, waxHub);
-
-                case ExecutionType.EXPORT_VM_STANDALONE:
-                    ExportResponse standaloneVmExportResponse = StandaloneVmExporter.Run(
-                        command.VmPlatform,
-                        new PlatformProvider(),
-                        command.VmExportDirectory);
-                    return standaloneVmExportResponse.Errors;
 
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
