@@ -22,7 +22,7 @@ namespace Build
         public string GuidSeed { get; set; }
         public string LaunchScreenPath { get; set; }
         public string ProjectTitle { get; set; }
-        public string Orientation { get; set; }
+        public Wax.Orientations Orientation { get; set; }
         public string[] LocalDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; private set; }
@@ -190,7 +190,7 @@ namespace Build
                 IconFilePaths = iconFilePaths,
                 LaunchScreenPath = launchScreen,
                 ProjectTitle = projectTitle,
-                Orientation = orientation,
+                Orientation = ParseOrientations(orientation),
                 LocalDeps = localDeps,
                 IosBundlePrefix = iosBundlePrefix,
                 JavaPackage = javaPackage,
@@ -420,6 +420,59 @@ namespace Build
             }
 
             return buildFilePath;
+        }
+
+        private static Wax.Orientations ParseOrientations(string rawValue)
+        {
+            bool down = false;
+            bool up = false;
+            bool left = false;
+            bool right = false;
+            if (rawValue == null || rawValue.Length == 0)
+            {
+                down = true;
+            }
+            else
+            {
+                foreach (string orientation in StringUtil.SplitRemoveEmpty(rawValue, ","))
+                {
+                    switch (orientation.Trim())
+                    {
+                        case "portrait":
+                            down = true;
+                            break;
+                        case "upsidedown":
+                            up = true;
+                            break;
+                        case "landscape":
+                            left = true;
+                            right = true;
+                            break;
+                        case "landscapeleft":
+                            left = true;
+                            break;
+                        case "landscaperight":
+                            right = true;
+                            break;
+                        case "all":
+                            down = true;
+                            up = true;
+                            left = true;
+                            right = true;
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unrecognized screen orientation: '" + orientation + "'");
+                    }
+                }
+            }
+
+            return new Wax.Orientations()
+            {
+                SupportsPortrait = down,
+                SupportsUpsideDown = up,
+                SupportsLandscapeLeft = left,
+                SupportsLandscapeRight = right,
+            };
         }
     }
 }

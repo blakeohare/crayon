@@ -72,7 +72,7 @@ namespace JavaScriptAppAndroid
             }
 
             // TODO: use orientations
-            OrientationParser orientations = new OrientationParser(exportProperties);
+            Orientations orientations = exportProperties.Orientations;
 
             foreach (string filename in files.Keys)
             {
@@ -80,21 +80,33 @@ namespace JavaScriptAppAndroid
             }
         }
 
-        private string ConvertOrientationString(string buildFileString)
+        private string ConvertOrientationString(Orientations orientations)
         {
-            switch (buildFileString)
-            {
-                case "landscapeleft": return "landscape";
-                case "landscaperight": return "reverseLandscape";
-                case "landscape": return "sensorLandscape";
-                case "upsidedown": return "reversePortrait";
-                case "portrait": return "portrait";
+            bool portrait = orientations.SupportsPortrait;
+            bool invPortrait = orientations.SupportsUpsideDown;
+            bool left = orientations.SupportsLandscapeLeft;
+            bool right = orientations.SupportsLandscapeRight;
 
-                case "":
-                case "all":
-                default:
-                    return "unspecified";
+            bool vert = portrait && invPortrait;
+            bool hor = left && right;
+
+            if (!vert && !hor) return "unspecified";
+            if (hor && vert) return "unspecified";
+
+            if (!hor)
+            {
+                if (vert) return "sensorPortrait";
+                if (portrait) return "portrait";
+                return "reversePortrait";
             }
+
+            if (!vert)
+            {
+                if (hor) return "sensorLandscape";
+                if (left) return "landscape";
+                return "reverseLandscape";
+            }
+            return "unspecified";
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
@@ -103,7 +115,7 @@ namespace JavaScriptAppAndroid
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData);
 
-            replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(exportProperties.Orientations ?? "");
+            replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(exportProperties.Orientations);
 
             // This logic is duplicated in LangJava's PlatformImpl
             replacements["JAVA_PACKAGE"] = (exportProperties.JavaPackage ?? exportProperties.ProjectID).ToLowerInvariant();

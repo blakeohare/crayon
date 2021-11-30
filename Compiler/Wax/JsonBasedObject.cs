@@ -154,6 +154,12 @@ namespace Wax
             this.SetValue(key, value);
         }
 
+        protected void SetTrueBoolean(string key, bool value)
+        {
+            if (value == false) this.ClearValue(key);
+            else this.SetValue(key, true);
+        }
+
         protected void SetString(string key, string value)
         {
             if (value == null) this.ClearValue(key);

@@ -44,8 +44,7 @@ namespace JavaScriptAppIos
             // TODO: use this in the pbxproj file.
             string uuidSeed = exportProperties.GuidSeed;
 
-
-            OrientationParser orientations = new OrientationParser(exportProperties);
+            Orientations orientations = exportProperties.Orientations;
             bool useLandscapeForLaunchscreen = orientations.SupportsLandscapeLeft || orientations.SupportsLandscapeRight;
             FileOutput launchScreen;
             if (exportProperties.HasLaunchScreen)
@@ -161,7 +160,7 @@ namespace JavaScriptAppIos
                 ? exportProperties.ProjectID
                 : bundleIdPrefix + "." + exportProperties.ProjectID;
 
-            OrientationParser orientations = new OrientationParser(exportProperties);
+            Orientations orientations = exportProperties.Orientations;
             replacements["IOS_SUPPORTED_ORIENTATIONS_INFO_PLIST"] = string.Join("",
                 "\t<array>\n",
                 orientations.SupportsPortrait ? "\t\t<string>UIInterfaceOrientationPortrait</string>\n" : "",

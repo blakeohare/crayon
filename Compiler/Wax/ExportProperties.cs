@@ -20,7 +20,7 @@ namespace Wax
         public string IosBundlePrefix { get { return this.GetString("iosBundlePrefix"); } set { this.SetString("iosBundlePrefix", value); } }
         public string IosDevTeamId { get { return this.GetString("iosDevTeamId"); } set { this.SetString("iosDevTeamId", value); } }
         public string JavaPackage { get { return this.GetString("javaPackage"); } set { this.SetString("javaPackage", value); } }
-        public string Orientations { get { return this.GetString("orientations"); } set { this.SetString("orientations", value); } }
+        public Orientations Orientations { get { return this.GetObjectAsType<Orientations>("orientations"); } set { this.SetObject("orientations", value); } }
         public string Version { get { return this.GetString("version"); } set { this.SetString("version", value); } }
         public string Description { get { return this.GetString("description"); } set { this.SetString("description", value); } }
         public string AndroidSdkLocation { get { return this.GetString("androidSdk"); } set { this.SetString("androidSdk", value); } }
