@@ -1,4 +1,4 @@
-﻿namespace Common
+﻿namespace Router
 {
     public static class VersionInfo
     {
