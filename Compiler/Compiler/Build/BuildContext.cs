@@ -31,7 +31,7 @@ namespace Build
         public string[] IconFilePaths { get; set; }
         public string DelegateMainTo { get; set; }
         public bool RemoveSymbols { get; set; }
-        public FilePath[] SourceFolders { get; set; }
+        public ProjectFilePath[] SourceFolders { get; set; }
         public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
@@ -214,7 +214,7 @@ namespace Build
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             string fileExtension = ProgrammingLanguageParser.LangToFileExtension(this.RootProgrammingLanguage);
-            foreach (FilePath sourceDir in this.SourceFolders)
+            foreach (ProjectFilePath sourceDir in this.SourceFolders)
             {
                 string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
                 foreach (string filepath in files)
@@ -324,19 +324,19 @@ namespace Build
             this.LocalDeps = newLocalDeps.ToArray();
         }
 
-        private static FilePath[] ToFilePaths(string projectDir, SourceItem[] sourceDirs)
+        private static ProjectFilePath[] ToFilePaths(string projectDir, SourceItem[] sourceDirs)
         {
-            Dictionary<string, FilePath> paths = new Dictionary<string, FilePath>();
+            Dictionary<string, ProjectFilePath> paths = new Dictionary<string, ProjectFilePath>();
 
             foreach (SourceItem sourceDir in sourceDirs)
             {
                 string sourceDirValue = CommonUtil.Environment.EnvironmentVariables.DoReplacementsInString(sourceDir.Value);
                 string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDirValue);
-                FilePath filePath = new FilePath(relative, projectDir);
+                ProjectFilePath filePath = new ProjectFilePath(relative, projectDir);
                 paths[filePath.AbsolutePath] = filePath;
             }
 
-            List<FilePath> output = new List<FilePath>();
+            List<ProjectFilePath> output = new List<ProjectFilePath>();
             foreach (string key in paths.Keys.OrderBy<string, string>(k => k))
             {
                 output.Add(paths[key]);

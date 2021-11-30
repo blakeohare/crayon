@@ -1,15 +1,15 @@
 ﻿using CommonUtil.Disk;
 
-namespace Common
+namespace Build
 {
     // Represents a source path root in the build file that may have an alias.
-    public class FilePath
+    public class ProjectFilePath
     {
         private string[] pathRelativeToRoot;
         private string absolutePathString;
         private string canonicalAbsolutePath;
        
-        public FilePath(string pathRelativeToProjectRoot, string projectRootDirectory)
+        public ProjectFilePath(string pathRelativeToProjectRoot, string projectRootDirectory)
         {
             pathRelativeToProjectRoot = FileUtil.GetCanonicalizeUniversalPath(pathRelativeToProjectRoot);
             projectRootDirectory = FileUtil.GetCanonicalizeUniversalPath(projectRootDirectory);
@@ -28,9 +28,9 @@ namespace Common
 
         public override bool Equals(object obj)
         {
-            if (obj is FilePath)
+            if (obj is ProjectFilePath)
             {
-                return ((FilePath)obj).canonicalAbsolutePath == this.canonicalAbsolutePath;
+                return ((ProjectFilePath)obj).canonicalAbsolutePath == this.canonicalAbsolutePath;
             }
             return false;
         }
