@@ -99,7 +99,8 @@ namespace Parser
 
                     if (localizedName != null && newLocalizedName != localizedName)
                     {
-                        TODO.ThisErrorMessageIsNotVeryHelpeful();
+                        // TODO: this error message is not very helpful
+                        // https://github.com/blakeohare/crayon/issues/304
                         throw new ParserException(ns, "This namespace definition has a different localized name somewhere else.");
                     }
                     localizedName = newLocalizedName;

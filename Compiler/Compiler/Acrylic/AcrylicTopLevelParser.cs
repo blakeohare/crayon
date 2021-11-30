@@ -78,7 +78,8 @@ namespace Parser.Acrylic
                 }
             }
 
-            TODO.CheckForUnusedAnnotations();
+            // TODO: check for annotations that aren't used.
+            // https://github.com/blakeohare/crayon/issues/305
         }
 
         protected override FieldDefinition ParseField(
