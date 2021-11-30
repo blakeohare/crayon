@@ -22,11 +22,6 @@ namespace JavaScriptApp
             return new Dictionary<string, object>();
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output)
-        {
-            throw new NotImplementedException();
-        }
-
         private static readonly string[] noriFiles = new string[] {
             "messagehub.js",
             "nori.js",
