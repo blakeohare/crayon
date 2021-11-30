@@ -35,13 +35,11 @@ namespace Exporter
             outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
             FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
 
-            VmGenerator vmGenerator = new VmGenerator();
             Dictionary<string, FileOutput> result = new Dictionary<string, FileOutput>();
-            vmGenerator.GenerateVmSourceCodeForPlatform(
-                result,
-                buildData,
-                platform,
-                outputDirectory);
+
+            ExportProperties exportProperties = buildData.ExportProperties;
+            platform.GleanInformationFromPreviouslyExportedProject(exportProperties, outputDirectory);
+            platform.ExportProject(result, buildData, exportProperties);
 
             exporter.ExportFiles(result);
         }
