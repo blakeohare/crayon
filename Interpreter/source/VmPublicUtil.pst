@@ -19,3 +19,10 @@ void vmSetEventLoopObj(VmContext vm, object evLoop) {
 object vmGetEventLoopObj(VmContext vm) {
     return vm.environment.platformEventLoop ;
 }
+
+void vmSetResourceReaderObj(VmContext vm, object rr) {
+    vm.environment.resourceReader = rr;
+}
+object vmGetResourceReaderObj(VmContext vm) {
+    return vm.environment.resourceReader ;
+}

@@ -15,7 +15,7 @@ namespace Interpreter.Vm
         public static void ChunkLoadAsync(VmContext vm, Dictionary<int, object> loadedChunks, int chunkId, int[] chunkIds, Value loadedCallback)
         {
             string path = "ch_" + chunkId + ".png";
-            loadedChunks[chunkId] = ResourceReader.ReadImageResource(path);
+            loadedChunks[chunkId] = ((ResourceReader)vm.environment.resourceReader).ReadImageResource(path);
             if (loadedChunks[chunkId] == null)
             {
                 throw new Exception("Image resource not available: " + path);

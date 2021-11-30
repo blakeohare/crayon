@@ -16,6 +16,8 @@ namespace Runtime
             string[] args = (string[])request["args"];
 
             CbxBundle cbxBundle = null;
+            Interpreter.ResourceReader resourceReader;
+
             if (request.ContainsKey("cbxPath"))
             {
                 string cbxPath = (string)request["cbxPath"];
@@ -24,19 +26,24 @@ namespace Runtime
                 string byteCode = cbxDecoder.ByteCode;
                 string resourceManifest = cbxDecoder.ResourceManifest;
                 string imageManifest = cbxDecoder.ImageManifest;
+                resourceReader = new Interpreter.FileBasedResourceReader();
                 throw new System.NotImplementedException();
             }
             else if (request.ContainsKey("cbxBundle"))
             {
                 cbxBundle = new CbxBundle((Dictionary<string, object>)request["cbxBundle"]);
+                resourceReader = new Interpreter.InMemoryResourceReader(cbxBundle.ResourceDB.FlatFileNames, cbxBundle.ResourceDB.FlatFiles);
+            } else
+            {
+                throw new System.ArgumentException(); // no valid CBX to run
             }
 
-            this.RunInlineVm(args, cbxBundle, showLibStack, useOutputPrefixes);
+            this.RunInlineVm(args, cbxBundle, showLibStack, useOutputPrefixes, resourceReader);
 
             cb(new Dictionary<string, object>());
         }
 
-        private Dictionary<string, object> RunInlineVm(string[] runtimeArgs, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes)
+        private Dictionary<string, object> RunInlineVm(string[] runtimeArgs, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
         {
             string byteCode = cbxBundle.ByteCode;
             string resourceManifest = cbxBundle.ResourceDB.ResourceManifestFile.TextContent;
@@ -44,6 +51,7 @@ namespace Runtime
 
             Interpreter.Structs.VmContext vm = Interpreter.Vm.CrayonWrapper.createVm(byteCode, resourceManifest, imageManifest);
             Interpreter.Vm.CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
+            Interpreter.Vm.CrayonWrapper.vmSetResourceReaderObj(vm, resourceReader);
 
             vm.environment.stdoutPrefix = showOutputPrefixes ? "STDOUT" : null;
             vm.environment.stacktracePrefix = showOutputPrefixes ? "STACKTRACE" : null;

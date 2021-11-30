@@ -55,24 +55,24 @@ namespace Wax
             Dictionary<string, FileOutput> flattenedFiles = new Dictionary<string, FileOutput>();
             foreach (FileOutput txtResource in this.TextResources)
             {
-                flattenedFiles["res/txt/" + txtResource.CanonicalFileName] = txtResource;
+                flattenedFiles["res/" + txtResource.CanonicalFileName] = txtResource;
             }
             foreach (FileOutput sndResource in this.AudioResources)
             {
-                flattenedFiles["res/snd/" + sndResource.CanonicalFileName] = sndResource;
+                flattenedFiles["res/" + sndResource.CanonicalFileName] = sndResource;
             }
             foreach (FileOutput fontResource in this.FontResources)
             {
-                flattenedFiles["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
+                flattenedFiles["res/" + fontResource.CanonicalFileName] = fontResource;
             }
             foreach (FileOutput binResource in this.BinaryResources)
             {
-                flattenedFiles["res/bin/" + binResource.CanonicalFileName] = binResource;
+                flattenedFiles["res/" + binResource.CanonicalFileName] = binResource;
             }
             foreach (string name in this.ImageResourceFiles.Keys)
             {
                 FileOutput imgResource = this.ImageResourceFiles[name];
-                flattenedFiles["res/img/" + name] = imgResource;
+                flattenedFiles["res/" + name] = imgResource;
             }
 
             string[] keys = flattenedFiles.Keys.OrderBy(k => k).ToArray();

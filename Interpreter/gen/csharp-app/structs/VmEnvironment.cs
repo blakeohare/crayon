@@ -11,14 +11,16 @@ namespace Interpreter.Structs
         public string stdoutPrefix;
         public string stacktracePrefix;
         public object platformEventLoop;
+        public object resourceReader;
 
-        public VmEnvironment(string[] commandLineArgs, bool showLibStack, string stdoutPrefix, string stacktracePrefix, object platformEventLoop)
+        public VmEnvironment(string[] commandLineArgs, bool showLibStack, string stdoutPrefix, string stacktracePrefix, object platformEventLoop, object resourceReader)
         {
             this.commandLineArgs = commandLineArgs;
             this.showLibStack = showLibStack;
             this.stdoutPrefix = stdoutPrefix;
             this.stacktracePrefix = stacktracePrefix;
             this.platformEventLoop = platformEventLoop;
+            this.resourceReader = resourceReader;
         }
     }
 
