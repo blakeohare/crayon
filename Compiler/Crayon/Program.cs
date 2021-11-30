@@ -18,6 +18,12 @@ namespace Crayon
             waxHub.RegisterService(new Parser.CompilerService());
             waxHub.RegisterService(new Compiler.Compiler2Service());
 
+            // TODO: these need to be turned into extensions
+            waxHub.RegisterService(new Exporter.ExportService("csharp-app"));
+            waxHub.RegisterService(new Exporter.ExportService("javascript-app"));
+            waxHub.RegisterService(new Exporter.ExportService("javascript-app-android"));
+            waxHub.RegisterService(new Exporter.ExportService("javascript-app-ios"));
+
             waxHub.AwaitSendRequest(
                 "router",
                 new System.Collections.Generic.Dictionary<string, object>() {

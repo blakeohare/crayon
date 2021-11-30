@@ -72,13 +72,13 @@ namespace Crayon.Pipeline
                 ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.CbxBundle.DependencyTreeJson);
             }
 
-            ExportResponse response = CbxVmBundleExporter.Run(
-                buildData.ExportProperties.ExportPlatform.ToLowerInvariant(),
-                buildData.ExportProperties.ProjectDirectory,
-                buildData.ExportProperties.OutputDirectory,
-                buildData,
-                new PlatformProvider());
-            if (!response.HasErrors && command.ApkExportPath != null)
+            Dictionary<string, object> exportResponseRaw = waxHub.AwaitSendRequest(
+                "export-" + buildData.ExportProperties.ExportPlatform.ToLowerInvariant(),
+                buildData.GetRawData());
+
+            ExportResponse exportResponse = new ExportResponse(exportResponseRaw); 
+
+            if (!exportResponse.HasErrors && command.ApkExportPath != null)
             {
                 if (!buildData.ExportProperties.IsAndroid)
                 {
@@ -106,7 +106,7 @@ namespace Crayon.Pipeline
                 System.IO.File.Copy(apkResult.ApkPath, command.ApkExportPath);
             }
 
-            return response.Errors;
+            return exportResponse.Errors;
         }
 
         private static Error[] RunImpl(Command command, WaxHub waxHub)
@@ -141,9 +141,10 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.EXPORT_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse cbxOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, false, waxHub);
+                    List<Error> errors = new List<Error>();
+                    DoExportStandaloneCbxFileAndGetPath(command, false, waxHub, errors);
                     NotifyStatusChange("COMPILE-END");
-                    return cbxOnlyResponse.Errors;
+                    return errors.ToArray();
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
@@ -191,16 +192,20 @@ namespace Crayon.Pipeline
             return buildData;
         }
 
-        private static ExportResponse DoExportStandaloneCbxFileAndGetPath(
+        // TODO: ew, out params. Figure out a way to clean this up or avoid it.
+        // This used to be ExportResponse but that's for a different purpose.
+        private static string DoExportStandaloneCbxFileAndGetPath(
             Command command,
             bool isDryRunErrorCheck,
-            WaxHub waxHub)
+            WaxHub waxHub,
+            List<Error> errorsOut)
         {
             BuildData buildData = WrappedCompile(command, waxHub);
 
             if (isDryRunErrorCheck || buildData.HasErrors)
             {
-                return new ExportResponse() { Errors = buildData.Errors };
+                errorsOut.AddRange(buildData.Errors);
+                return null;
             }
 
             ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
@@ -226,10 +231,7 @@ namespace Crayon.Pipeline
             string cbxFilePath = FileUtil.JoinPath(outputFolder, buildData.ExportProperties.ProjectID + ".cbx");
             System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
 
-            return new ExportResponse()
-            {
-                CbxOutputPath = cbxFilePath,
-            };
+            return cbxFilePath;
         }
     }
 }

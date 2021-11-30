@@ -8,24 +8,11 @@ namespace Exporter
     public static class CbxVmBundleExporter
     {
         public static ExportResponse Run(
-            string platformId,
+            Platform.AbstractPlatform platform,
             string projectDirectory,
             string outputDirectory,
-            BuildData buildData,
-            Platform.IPlatformProvider platformProvider)
+            BuildData buildData)
         {
-            RunImpl(platformId, projectDirectory, outputDirectory, buildData, platformProvider);
-            return new ExportResponse();
-        }
-
-        public static void RunImpl(
-            string platformId,
-            string projectDirectory,
-            string outputDirectory,
-            BuildData buildData,
-            Platform.IPlatformProvider platformProvider)
-        {
-            Platform.AbstractPlatform platform = platformProvider.GetPlatform(platformId);
             if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
             if (!Path.IsAbsolute(outputDirectory))
@@ -42,6 +29,8 @@ namespace Exporter
             platform.ExportProject(result, buildData, exportProperties);
 
             exporter.ExportFiles(result);
+
+            return new ExportResponse();
         }
     }
 }

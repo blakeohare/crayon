@@ -10,7 +10,6 @@ namespace CSharpApp
     public class PlatformImpl : AbstractPlatform
     {
         public override string Name { get { return "csharp-app"; } }
-        public override string InheritsFrom { get { return "lang-csharp"; } }
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()
@@ -47,29 +46,9 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"icon.ico\" />");
             }
 
-            foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
+            foreach (string resourceName in resDb.FlatFileNames)
             {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageFile.CanonicalFileName + "\"/>");
-            }
-
-            foreach (string imageChunk in resDb.ImageResourceFiles.Keys)
-            {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + imageChunk + "\"/>");
-            }
-
-            foreach (FileOutput textFile in resDb.TextResources.Where(img => img.CanonicalFileName != null))
-            {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + textFile.CanonicalFileName + "\"/>");
-            }
-
-            foreach (FileOutput audioFile in resDb.AudioResources.Where(file => file.CanonicalFileName != null))
-            {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
-            }
-
-            foreach (FileOutput fontFile in resDb.FontResources.Where(file => file.CanonicalFileName != null))
-            {
-                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + fontFile.CanonicalFileName + "\"/>");
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + resourceName + "\"/>");
             }
 
             string guidSeed = IdGenerator.GetRandomSeed();
@@ -90,7 +69,6 @@ namespace CSharpApp
             ExportProperties exportProperties)
         {
             TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
-            bool usesU3 = buildData.UsesU3;
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
             string projectId = exportProperties.ProjectID;
@@ -109,29 +87,11 @@ namespace CSharpApp
                 output[baseDir + "Resources/ImageManifest.txt"] = resDb.ImageResourceManifestFile;
             }
 
-            foreach (FileOutput imageFile in resDb.ImageResources.Where(img => img.CanonicalFileName != null))
+            string[] resourceNames = resDb.FlatFileNames;
+            FileOutput[] resources = resDb.FlatFiles;
+            for (int i = 0; i < resources.Length; i++)
             {
-                output[baseDir + "Resources/" + imageFile.CanonicalFileName] = imageFile;
-            }
-
-            foreach (string imageFilePath in resDb.ImageResourceFiles.Keys)
-            {
-                output[baseDir + "Resources/" + imageFilePath] = resDb.ImageResourceFiles[imageFilePath];
-            }
-
-            foreach (FileOutput textFile in resDb.TextResources.Where(img => img.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + textFile.CanonicalFileName] = textFile;
-            }
-
-            foreach (FileOutput audioFile in resDb.AudioResources.Where(file => file.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
-            }
-
-            foreach (FileOutput fontFile in resDb.FontResources.Where(file => file.CanonicalFileName != null))
-            {
-                output[baseDir + "Resources/" + fontFile.CanonicalFileName] = fontFile;
+                output[baseDir + "Resources/" + resourceNames[i]] = resources[i];
             }
 
             if (exportProperties.HasIcon)

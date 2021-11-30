@@ -1,5 +1,4 @@
-﻿using Common;
-using CommonUtil.Disk;
+﻿using CommonUtil.Disk;
 using CommonUtil.Images;
 using Platform;
 using System;
@@ -11,7 +10,6 @@ namespace JavaScriptAppAndroid
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string InheritsFrom { get { return "javascript-app"; } }
         public override string Name { get { return "javascript-app-android"; } }
         public override string NL { get { return "\n"; } }
 

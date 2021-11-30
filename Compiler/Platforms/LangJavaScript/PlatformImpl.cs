@@ -1,5 +1,4 @@
-﻿using Common;
-using Platform;
+﻿using Platform;
 using System;
 using System.Collections.Generic;
 using Wax;
@@ -9,7 +8,6 @@ namespace LangJavaScript
     public class PlatformImpl : AbstractPlatform
     {
         public override string Name { get { return "lang-javascript"; } }
-        public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
