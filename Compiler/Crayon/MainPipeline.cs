@@ -135,7 +135,7 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
-                    ExportResponse errorCheckOnlyResponse = DoExportStandaloneCbxFileAndGetPath(command, true, waxHub);
+                    BuildData errorCheckOnlyResponse = ExportInMemoryCbxData(command, true, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     return errorCheckOnlyResponse.Errors;
 
