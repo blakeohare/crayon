@@ -1,25 +1,23 @@
 ﻿namespace Build
 {
-    public static class ProgrammingLanguageParser
+    internal static class ProgrammingLanguageParser
     {
-        public static Common.ProgrammingLanguage? Parse(string value)
+        internal static ProgrammingLanguage? Parse(string value)
         {
             switch (value.ToLowerInvariant())
             {
-                case "acrylic": return Common.ProgrammingLanguage.ACRYLIC;
-                case "crayon": return Common.ProgrammingLanguage.CRAYON;
-                case "python": return Common.ProgrammingLanguage.PYTHON;
+                case "acrylic": return ProgrammingLanguage.ACRYLIC;
+                case "crayon": return ProgrammingLanguage.CRAYON;
                 default: return null;
             }
         }
 
-        public static string LangToFileExtension(Common.ProgrammingLanguage lang)
+        internal static string LangToFileExtension(ProgrammingLanguage lang)
         {
             switch (lang)
             {
-                case Common.ProgrammingLanguage.ACRYLIC: return ".acr";
-                case Common.ProgrammingLanguage.CRAYON: return ".cry";
-                case Common.ProgrammingLanguage.PYTHON: return ".py";
+                case ProgrammingLanguage.ACRYLIC: return ".acr";
+                case ProgrammingLanguage.CRAYON: return ".cry";
                 default: throw new System.InvalidOperationException();
             }
         }

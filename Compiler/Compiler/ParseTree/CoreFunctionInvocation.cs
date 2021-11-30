@@ -50,7 +50,7 @@ namespace Parser.ParseTree
             }
 
             this.ResolvedType =
-                this.FileScope.CompilationScope.ProgrammingLanguage == Common.ProgrammingLanguage.ACRYLIC
+                this.FileScope.CompilationScope.ProgrammingLanguage == Build.ProgrammingLanguage.ACRYLIC
                     ? ResolvedType.OBJECT
                     : ResolvedType.ANY;
 

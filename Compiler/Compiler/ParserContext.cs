@@ -137,14 +137,14 @@ namespace Parser
 
             switch (scope.ProgrammingLanguage)
             {
-                case ProgrammingLanguage.CRAYON:
+                case Build.ProgrammingLanguage.CRAYON:
                     this.TopLevelParser = new Crayon.CrayonTopLevelParser(this);
                     this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
                     this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
                     this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
                     this.TypeParser = new Crayon.CrayonTypeParser();
                     break;
-                case ProgrammingLanguage.ACRYLIC:
+                case Build.ProgrammingLanguage.ACRYLIC:
                     this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
                     this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
                     this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);

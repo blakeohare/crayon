@@ -14,7 +14,7 @@ namespace Parser
             this.LocalDeps = (string[])rawRequest["localDeps"];
             this.ProjectDirectory = (string)rawRequest["projectDirectory"];
             this.codeFiles = CommonUtil.Collections.DictionaryUtil.FlattenedDictionaryToDictionary((string[])rawRequest["codeFiles"]);
-            this.RootProgrammingLanguage = ((string)rawRequest["lang"]).ToUpper() == "CRAYON" ? Common.ProgrammingLanguage.CRAYON : Common.ProgrammingLanguage.ACRYLIC;
+            this.RootProgrammingLanguage = ((string)rawRequest["lang"]).ToUpper() == "CRAYON" ? Build.ProgrammingLanguage.CRAYON : Build.ProgrammingLanguage.ACRYLIC;
             this.RemoveSymbols = (bool)rawRequest["removeSymbols"];
             this.ErrorsAsExceptions = rawRequest.ContainsKey("errorsAsExceptions") ? (bool)rawRequest["errorsAsExceptions"] : false;
             string[] buildVarData = (string[])rawRequest["buildVars"];
@@ -39,7 +39,7 @@ namespace Parser
         public Parser.Localization.Locale CompilerLocale { get; private set; }
         public string[] LocalDeps { get; private set; }
         public string ProjectDirectory { get; private set; }
-        public Common.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
+        public Build.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
         public bool ErrorsAsExceptions { get; private set; }
 
         public Dictionary<string, string> GetCodeFiles()
