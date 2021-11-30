@@ -1,2 +1,2 @@
 ﻿@import("inline/1_arg.pst");
-output = buildString(globals, Extension.CoreFunc_ResourceGetText((string) arg1.internalValue));
+output = buildString(globals, Extension.CoreFunc_ResourceGetText(vm.environment.resourceReader, (string) arg1.internalValue));

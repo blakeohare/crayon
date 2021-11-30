@@ -894,7 +894,7 @@ namespace Interpreter.Vm
             ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
             Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
             executionContexts[0] = executionContext;
-            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
             return vm;
         }
 
@@ -6240,7 +6240,7 @@ namespace Interpreter.Vm
                             case 51:
                                 // resourceGetText;
                                 arg1 = valueStack[--valueStackSize];
-                                output = buildString(globals, Interpreter.ResourceReader.ReadTextResource((string)arg1.internalValue));
+                                output = buildString(globals, ((ResourceReader)vm.environment.resourceReader).ReadTextResource((string)arg1.internalValue));
                                 break;
                             case 52:
                                 // environmentGetVariable;
@@ -10891,9 +10891,19 @@ namespace Interpreter.Vm
             return vm.globals;
         }
 
+        public static object vmGetResourceReaderObj(VmContext vm)
+        {
+            return vm.environment.resourceReader;
+        }
+
         public static void vmSetEventLoopObj(VmContext vm, object evLoop)
         {
             vm.environment.platformEventLoop = evLoop;
+        }
+
+        public static void vmSetResourceReaderObj(VmContext vm, object rr)
+        {
+            vm.environment.resourceReader = rr;
         }
 
         public static string xml_ampUnescape(string value, Dictionary<string, string> entityLookup)
