@@ -3,16 +3,16 @@ using System;
 
 namespace Common
 {
-    public class OrientationParser
+    public class OrientationParserOld
     {
         public bool SupportsPortrait { get; private set; }
         public bool SupportsUpsideDown { get; private set; }
         public bool SupportsLandscapeLeft { get; private set; }
         public bool SupportsLandscapeRight { get; private set; }
 
-        public OrientationParser(Wax.ExportProperties exportProperties)
+        public OrientationParserOld(Wax.ExportProperties exportProperties)
         {
-            string rawValue = (exportProperties.Orientations ?? "").Trim();
+            string rawValue = "";
             bool down = false;
             bool up = false;
             bool left = false;
