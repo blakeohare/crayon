@@ -166,9 +166,9 @@ namespace Parser
             Dictionary<string, string> sourceCode = assemblyMetadata.SourceCode;
 
             string arbitraryFilename = sourceCode.Keys.Where(t => t.Contains('.')).Select(t => t.ToLowerInvariant()).FirstOrDefault();
-            Common.ProgrammingLanguage programmingLanguage = arbitraryFilename != null && arbitraryFilename.EndsWith(".acr")
-                ? Common.ProgrammingLanguage.ACRYLIC
-                : Common.ProgrammingLanguage.CRAYON;
+            Build.ProgrammingLanguage programmingLanguage = arbitraryFilename != null && arbitraryFilename.EndsWith(".acr")
+                ? Build.ProgrammingLanguage.ACRYLIC
+                : Build.ProgrammingLanguage.CRAYON;
 
             // If the assembly exists but hasn't been imported before, instantiate it and
             // add it to all the lookups. This needs to happen before parsing the embedded

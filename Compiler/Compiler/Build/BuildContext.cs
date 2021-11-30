@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Build
 {
-    public class BuildContext
+    internal class BuildContext
     {
         public string ProjectID { get; set; }
         public string ProjectDirectory { get; set; }

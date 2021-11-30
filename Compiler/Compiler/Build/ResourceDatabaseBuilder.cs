@@ -66,7 +66,7 @@ namespace Build
             { "xcf", FileCategory.IGNORE_IMAGE_ASSET },
         };
 
-        public static ResourceDatabase PrepareResources(BuildContext buildContext)
+        internal static ResourceDatabase PrepareResources(BuildContext buildContext)
         {
             // This really needs to go in a separate helper file.
             ResourceDatabase resourceDatabase = CreateResourceDatabase(buildContext);
@@ -114,7 +114,7 @@ namespace Build
         }
 
 
-        public static ResourceDatabase CreateResourceDatabase(BuildContext buildContext)
+        internal static ResourceDatabase CreateResourceDatabase(BuildContext buildContext)
         {
             ResourceDatabase resDb = new ResourceDatabase();
 
