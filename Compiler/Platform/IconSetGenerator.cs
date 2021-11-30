@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace Platform
 {
     // Add some image sources
     // Add some desired sizes

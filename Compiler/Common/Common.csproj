@@ -9,8 +9,4 @@
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="icons\*.png" />
-  </ItemGroup>
-
 </Project>
