@@ -22,14 +22,14 @@ namespace JavaScriptAppAndroid
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             BuildData buildData,
-            Options options)
+            ExportProperties exportProperties)
         {
-            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, buildData);
-            this.OutputAndroidBoilerplate(output, replacements, options);
+            Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
+            this.OutputAndroidBoilerplate(output, replacements, exportProperties);
 
-            options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
-            options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // TODO: figure out if logic should be implemented in the web view for this.
-            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join(
+            exportProperties.JsFilePrefix = null;
+            exportProperties.JsFullPage = false;
+            exportProperties.JsHeadExtras = string.Join(
                 "\n",
                 "<script type=\"text/javascript\" src=\"android.js\"></script>",
                 "<style type=\"text/css\">",
@@ -41,14 +41,14 @@ namespace JavaScriptAppAndroid
                 "    height:100%;",
                 "  }",
                 "</style>"
-            ));
+            );
 
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
                 buildData,
-                options);
+                exportProperties);
 
             foreach (string filePath in basicProject.Keys)
             {
@@ -72,7 +72,7 @@ namespace JavaScriptAppAndroid
             }
 
             // TODO: use orientations
-            OrientationParser orientations = new OrientationParser(options);
+            OrientationParser orientations = new OrientationParser(exportProperties);
 
             foreach (string filename in files.Keys)
             {
@@ -98,15 +98,15 @@ namespace JavaScriptAppAndroid
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(
-            Options options,
+            ExportProperties exportProperties,
             BuildData buildData)
         {
-            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, buildData);
+            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData);
 
-            replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION));
+            replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(exportProperties.Orientations ?? "");
 
             // This logic is duplicated in LangJava's PlatformImpl
-            replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLowerInvariant();
+            replacements["JAVA_PACKAGE"] = (exportProperties.JavaPackage ?? exportProperties.ProjectID).ToLowerInvariant();
             if (replacements["JAVA_PACKAGE"].StartsWith("org.crayonlang.interpreter"))
             {
                 throw new InvalidOperationException("Cannot use org.crayonlang.interpreter as the project's package.");
@@ -140,9 +140,9 @@ namespace JavaScriptAppAndroid
             return sb.ToString();
         }
 
-        public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
+        public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, ExportProperties exportProperties)
         {
-            string androidSdkLocation = options.GetString(ExportOptionKey.ANDROID_SDK_LOCATION);
+            string androidSdkLocation = exportProperties.AndroidSdkLocation;
             replacements["ANDROID_SDK_LOCATION"] = this.EscapeAndroidSdkPath(androidSdkLocation);
 
             string packagedDir = replacements["JAVA_PACKAGE"].Replace('.', '/');
@@ -167,7 +167,7 @@ namespace JavaScriptAppAndroid
             output[".idea/copyright/profiles_settings.xml"] = this.LoadTextFile("JsAndroidResources/idea/copyright/profileSettings.txt", replacements);
             output[".idea/scopes/scope_settings.xml"] = this.LoadTextFile("JsAndroidResources/idea/scopes/scopeSettings.txt", replacements);
 
-            if (!options.GetBool(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML))
+            if (!exportProperties.SkipAndroidWorkspaceXml)
             {
                 output[".idea/workspace.xml"] = this.LoadTextFile("JsAndroidResources/idea/workspaceXml.txt", replacements);
             }
@@ -190,9 +190,9 @@ namespace JavaScriptAppAndroid
             output["app/src/main/AndroidManifest.xml"] = androidManifest;
 
             IconSetGenerator icons = new IconSetGenerator();
-            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            if (exportProperties.HasIcon)
             {
-                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
+                string[] iconPaths = exportProperties.IconPaths;
                 foreach (string iconPath in iconPaths)
                 {
                     Bitmap icon = new Bitmap(iconPath);
@@ -235,14 +235,11 @@ namespace JavaScriptAppAndroid
             };
         }
 
-        public override void GleanInformationFromPreviouslyExportedProject(Options options, string outputDirectory)
+        public override void GleanInformationFromPreviouslyExportedProject(ExportProperties exportProperties, string outputDirectory)
         {
             bool skipWorkspaceXml = FileUtil.FileExists(outputDirectory + "/.idea/workspace.xml");
-            options.SetOption(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML, skipWorkspaceXml);
-
-            options.SetOption(
-                ExportOptionKey.ANDROID_SDK_LOCATION,
-                this.GetAndroidSdkLocation(outputDirectory));
+            exportProperties.SkipAndroidWorkspaceXml = skipWorkspaceXml;
+            exportProperties.AndroidSdkLocation = this.GetAndroidSdkLocation(outputDirectory);
         }
 
         private string GetAndroidSdkLocation(string outputDirectory)
