@@ -74,7 +74,7 @@ namespace Compiler
                 buildContext.LaunchScreenPath = CommonUtil.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);
             }
 
-            foreach (Common.FilePath sourceFolder in buildContext.SourceFolders)
+            foreach (ProjectFilePath sourceFolder in buildContext.SourceFolders)
             {
                 if (!CommonUtil.Disk.FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
                 {

@@ -123,7 +123,7 @@ namespace Build
             List<FileOutput> binaryResources = new List<FileOutput>();
             List<FileOutput> fontResources = new List<FileOutput>();
 
-            foreach (FilePath sourceRoot in buildContext.SourceFolders)
+            foreach (ProjectFilePath sourceRoot in buildContext.SourceFolders)
             {
                 string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
 
