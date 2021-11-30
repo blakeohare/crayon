@@ -66,12 +66,12 @@ namespace Crayon
                 };
 
                 Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-                Dictionary<int, Bitmap> icons = new IconSetGenerator()
-                    .AddOutputSize(32)
-                    .AddOutputSize(256)
-                    .GenerateWithDefaultFallback();
-                output["assets/icon32.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[32] };
-                output["assets/icon256.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[256] };
+
+                byte[] iconBytes = new ResourceStore(typeof(DefaultProjectGeneratorImpl)).ReadAssemblyFileBytes("DefaultProjects/crayon_logo.png");
+                Bitmap iconFile = new Bitmap(iconBytes);
+
+                output["assets/icon32.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconFile.CloneToNewSize(32, 32) };
+                output["assets/icon256.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconFile.CloneToNewSize(256, 256) };
 
                 List<string> files = new List<string>() {
                     "DefaultProjects/BuildFile.txt|%%%PROJECT_ID%%%.build",

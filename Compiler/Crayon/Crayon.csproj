@@ -7,6 +7,7 @@
 
   <ItemGroup>
   <EmbeddedResource Include="DefaultProjects\*.txt" />
+  <EmbeddedResource Include="DefaultProjects\*.png" />
   </ItemGroup>
 
   <ItemGroup>
