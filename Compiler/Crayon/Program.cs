@@ -4,12 +4,18 @@ namespace Crayon
 {
     internal class Program
     {
+#if DEBUG
+        private const bool IS_RELEASE = false;
+#else
+        private const bool IS_RELEASE = true;
+#endif
+
         static void Main(string[] args)
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
 
             Wax.WaxHub waxHub = new Wax.WaxHub();
-            waxHub.RegisterService(new RouterService());
+            waxHub.RegisterService(new Router.RouterService());
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Disk.DiskService());
             waxHub.RegisterService(new Runtime.RuntimeService());
@@ -27,7 +33,8 @@ namespace Crayon
             waxHub.AwaitSendRequest(
                 "router",
                 new System.Collections.Generic.Dictionary<string, object>() {
-                    { "args", commandLineArgs }
+                    { "args", commandLineArgs },
+                    { "errorsAsExceptions", !IS_RELEASE }
                 });
         }
 

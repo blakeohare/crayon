@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Wax;
 
-namespace Crayon
+namespace Router
 {
     public class DefaultProjectGenerator
     {
@@ -29,14 +29,24 @@ namespace Crayon
         private class DefaultProjectGeneratorImpl
         {
             private string originalProjectId;
-            private Parser.Localization.Locale projectLocale;
+            private string localeId;
 
             public string ProjectID { get; private set; }
 
             public DefaultProjectGeneratorImpl(string projectId, string localeId)
             {
+                // TODO: make this extensible
+                switch (localeId.ToLowerInvariant())
+                {
+                    case "en":
+                    case "es":
+                    case "jp":
+                        break;
+                    default: throw new InvalidOperationException("Unsupported locale for default project builder: '" + localeId + "'");
+                }
+
                 this.originalProjectId = projectId.Trim();
-                this.projectLocale = Parser.Localization.Locale.Get(localeId);
+                this.localeId = localeId;
                 this.ProjectID = StringUtil.FilterStringToAlphanumerics(this.originalProjectId);
             }
 
@@ -62,7 +72,7 @@ namespace Crayon
                 {
                     { "PROJECT_ID", this.ProjectID },
                     { "TITLE", this.originalProjectId },
-                    { "COMPILER_LOCALE", this.projectLocale.ID.ToLowerInvariant() }
+                    { "COMPILER_LOCALE", this.localeId.ToLowerInvariant() }
                 };
 
                 Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
@@ -80,7 +90,7 @@ namespace Crayon
                 switch (projectType)
                 {
                     case "basic":
-                        files.Add("DefaultProjects/main" + this.projectLocale.ID.ToUpperInvariant() + ".txt|source/main.cry");
+                        files.Add("DefaultProjects/main" + this.localeId.ToUpperInvariant() + ".txt|source/main.cry");
                         break;
 
                     case "game":
