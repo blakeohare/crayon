@@ -37,7 +37,7 @@ namespace Platform
                     if (File.Exists(packagedVmSource))
                     {
                         byte[] pkgBytes = File.ReadBytes(packagedVmSource);
-                        Common.CryPkgDecoder pkgDecoder = new Common.CryPkgDecoder(pkgBytes);
+                        Wax.CryPkgDecoder pkgDecoder = new Wax.CryPkgDecoder(pkgBytes);
                         ReadAllFilesCryPkg(pkgDecoder, output, "");
                     }
                 }
@@ -69,7 +69,7 @@ namespace Platform
             return new TemplateSet(output);
         }
 
-        private void ReadAllFilesCryPkg(Common.CryPkgDecoder pkg, Dictionary<string, byte[]> output, string prefix)
+        private void ReadAllFilesCryPkg(Wax.CryPkgDecoder pkg, Dictionary<string, byte[]> output, string prefix)
         {
             string currentDir = prefix.Length == 0 ? "." : prefix;
 

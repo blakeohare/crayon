@@ -26,14 +26,24 @@ namespace Runtime
                 string byteCode = cbxDecoder.ByteCode;
                 string resourceManifest = cbxDecoder.ResourceManifest;
                 string imageManifest = cbxDecoder.ImageManifest;
-                resourceReader = new Interpreter.FileBasedResourceReader();
-                throw new System.NotImplementedException();
+                cbxBundle = new CbxBundle()
+                {
+                    ByteCode = byteCode,
+                    ResourceDB = new ResourceDatabase()
+                    {
+                        ResourceManifestFile = new FileOutput() { Type = FileOutputType.Text, TextContent = resourceManifest },
+                        ImageResourceManifestFile = new FileOutput() { Type = FileOutputType.Text, TextContent = imageManifest },
+                    },
+                };
+                cbxBundle.ResourceDB.ConvertToFlattenedFileData();
+                resourceReader = new Interpreter.InMemoryResourceReader(cbxBundle.ResourceDB.FlatFileNames, cbxBundle.ResourceDB.FlatFiles);
             }
             else if (request.ContainsKey("cbxBundle"))
             {
                 cbxBundle = new CbxBundle((Dictionary<string, object>)request["cbxBundle"]);
                 resourceReader = new Interpreter.InMemoryResourceReader(cbxBundle.ResourceDB.FlatFileNames, cbxBundle.ResourceDB.FlatFiles);
-            } else
+            }
+            else
             {
                 throw new System.ArgumentException(); // no valid CBX to run
             }

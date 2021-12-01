@@ -3,14 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace Wax
 {
     /*
         CryPkg format: like TAR but much much simpler
 
         (all numbers are in big endian)
 
-        4 bytes --> size of header in bytes
         4 bytes --> file count
 
         for each file:

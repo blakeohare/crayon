@@ -46,7 +46,7 @@ namespace Wax
 
             Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
             WaxService service = this.GetService(serviceName);
-            
+
             if (service == null)
             {
                 throw new InvalidOperationException("The extension '" + serviceName + "' could not be found or downloaded.");
