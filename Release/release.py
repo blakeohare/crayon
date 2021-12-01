@@ -168,21 +168,25 @@ def buildRelease(args):
 
 	if len(args) != 1:
 		log("incorrect usage")
-		print("usage: python release.py windows|mono")
+		print("usage: python release.py windows|mac|linux")
 		return
 
 	os_platform = args[0]
 
-	isWindows = os_platform == 'windows'
-	isMac = os_platform == 'mac'
-	isLinux = os_platform == 'linux'
+	isWindows = False
+	isMac = False
+	isLinux = False
 
-	if isLinux:
+	if os_platform == 'windows':
+		isWindows = True
+	elif os_platform == 'mac':
+		isMac = True
+	elif os_platform == 'linux':
+		isLinux = True
 		log("not supported yet")
 		print("Linux support isn't here yet. But soon!")
 		return
-
-	if not isWindows and not isMac:
+	else:
 		log("incorrect platform")
 		print ("Invalid platform: " + os_platform)
 		return
@@ -237,7 +241,8 @@ def buildRelease(args):
 	else:
 		raise Exception("Invalid platform")
 
-	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), canonicalize_sep(copyToDir + '/' + crayon_exe_name.lower()))
+	new_crayon_executable = canonicalize_sep(copyToDir + '/' + crayon_exe_name.lower())
+	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), new_crayon_executable)
 	
 	shutil.copyfile(canonicalize_sep('../Compiler/Crayon/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
 	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
@@ -273,52 +278,13 @@ def buildRelease(args):
 		ensure_directory_exists(get_parent_path(target_pkg_path))
 		crypkgmake.make_pkg(canonicalize_sep(interpreter_generated_code), canonicalize_sep(target_pkg_path))
 		print("Done!\n")
-	
+
 
 	# Artifically set the CRAYON_HOME environment variable to the target directory with all the libraries
 	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copyToDir))
 	log("Set the CRAYON_HOME to " + os.environ['CRAYON_HOME'])
 	
-	# Use the newly built compiler to generate the VM source code (in temp)
-	print("Generating VM code...")
-	new_crayon_executable = canonicalize_sep(copyToDir + '/crayon' + ('' if isMac else '.exe'))
-	if isMac:
-		runCommand('chmod +x ' + new_crayon_executable)
-	runtimeCompilationCommand = canonicalize_sep(new_crayon_executable) + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
-
-	log("Generating the VM C# project in temp/ with the command: " + runtimeCompilationCommand)
-	print('running:')
-	print('  ' + runtimeCompilationCommand)
-	print(runCommand(runtimeCompilationCommand))
-
-	# Now compile the generated VM source code	
-	print("Compiling VM for distribution...")
-	dot_net_platform_name = 'osx-x64' if isMac else 'win-x64'
-	cmd = ' '.join([
-		'dotnet publish',
-		os.path.join(VM_TEMP_DIR_SOURCE, 'CrayonRuntime', 'Interpreter.csproj'),
-		'-c Release',
-		'-r', dot_net_platform_name,
-		'--self-contained true',
-		'-p:PublishTrimmed=true',
-		'-p:PublishSingleFile=true'
-	])
-	log("Compiling the VM in temp using the command: " + cmd)
-	print(runCommand(cmd))
 	
-	# Copy the Crayon runtime
-	runtime_from_dir = VM_TEMP_DIR + '/Source/CrayonRuntime/bin/Release/netcoreapp3.1/' + dot_net_platform_name + '/publish'
-	runtime_to_dir = copyToDir + '/vm'
-	ensure_directory_exists(runtime_to_dir)
-	if isWindows:
-		copy_file(runtime_from_dir + '/Interpreter.exe', runtime_to_dir + '/CrayonRuntime.exe')
-	elif isMac:
-		to_path = runtime_to_dir + '/CrayonRuntime'
-		copy_file(runtime_from_dir + '/Interpreter', to_path)
-		runCommand('chmod +x ' + to_path)
-	else:
-		raise Exception()
-
 	# Copy U3 window
 	copyDirectory(u3_dir, copyToDir + '/u3')
 
@@ -340,10 +306,6 @@ def buildRelease(args):
 	else:
 		raise Exception("Invalid platform")
 
-
-	# Copy the Interpreter source to vmsrc
-	# TODO: no longer needed! Need to copy the generated bits instead as a crypkg
-	#copyDirectory('../Interpreter/source', copyToDir + '/vmsrc', '.pst')
 
 
 	# Create a dummy project with ALL libraries
