@@ -189,7 +189,7 @@ namespace Interpreter.Vm
             switch (result.status)
             {
                 case 1: // execution context is FINISHED
-                    if (result.isRootContext) Environment.Exit(0);
+                    if (result.isRootContext) this.eventLoopAlive = false;
                     break;
 
                 case 2: // SUSPEND
@@ -197,7 +197,7 @@ namespace Interpreter.Vm
                     break;
 
                 case 3: // FATAL ERROR
-                    if (result.isRootContext) Environment.Exit(1);
+                    if (result.isRootContext) this.eventLoopAlive = false;
                     break;
 
                 case 5: // RE-INVOKE, possibly with a delay
@@ -210,9 +210,11 @@ namespace Interpreter.Vm
             }
         }
 
+        private bool eventLoopAlive = true;
+
         public void RunEventLoop()
         {
-            while (true)
+            while (this.eventLoopAlive)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
                 if (invocation != null)
