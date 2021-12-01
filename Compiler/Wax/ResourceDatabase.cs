@@ -19,6 +19,7 @@ namespace Wax
             get
             {
                 Dictionary<string, JsonBasedObject> dict = this.GetDictionary("imageFiles");
+                if (dict == null) return new Dictionary<string, FileOutput>();
                 return dict.Keys.ToDictionary(k => k, k => (FileOutput)dict[k]);
             }
             set

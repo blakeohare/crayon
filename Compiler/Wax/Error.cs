@@ -31,7 +31,7 @@ namespace Wax
             {
                 return (Error[])jsonData;
             }
- 
+
             if (jsonData is JsonBasedObject[])
             {
                 return ((JsonBasedObject[])jsonData).OfType<JsonBasedObject>().Select(jbo => new Error(jbo.GetRawData())).ToArray();

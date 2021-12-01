@@ -35,7 +35,6 @@ namespace Wax
                 payloadSection.AddRange(fileData);
             }
             List<byte> finalBytes = new List<byte>();
-            finalBytes.AddRange(ToBigEndian(headerSection.Count));
             finalBytes.AddRange(ToBigEndian(this.files.Count));
             finalBytes.AddRange(headerSection);
             finalBytes.AddRange(payloadSection);

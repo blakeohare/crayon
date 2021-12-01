@@ -21,7 +21,7 @@ namespace Common
     public class PkgAwareFileUtil
     {
         // TODO: I don't like that this is static. Should pass around an instance.
-        private static Dictionary<string, CryPkgDecoder> packageStatuses = new Dictionary<string, CryPkgDecoder>();
+        private static Dictionary<string, Wax.CryPkgDecoder> packageStatuses = new Dictionary<string, Wax.CryPkgDecoder>();
 
         public PkgAwareFileUtil()
         { }
@@ -97,7 +97,7 @@ namespace Common
             string pkgPath = this.GetPathOfHighestCryPkg(canonicalPath, isDir);
             if (pkgPath == null) return null;
             string pkgDir = pkgPath.Substring(0, pkgPath.Length - ".crypkg".Length);
-            CryPkgDecoder pkg = packageStatuses[pkgPath];
+            Wax.CryPkgDecoder pkg = packageStatuses[pkgPath];
             string relativeDir = (pkgDir == canonicalPath)
                 ? "."
                 : canonicalPath.Substring(pkgDir.Length + 1);
@@ -106,13 +106,13 @@ namespace Common
 
         private class CryPkgPath
         {
-            public CryPkgPath(string path, CryPkgDecoder package)
+            public CryPkgPath(string path, Wax.CryPkgDecoder package)
             {
                 this.Package = package;
                 this.Path = path;
             }
 
-            public CryPkgDecoder Package { get; set; }
+            public Wax.CryPkgDecoder Package { get; set; }
             public string Path { get; set; }
         }
 
@@ -145,7 +145,7 @@ namespace Common
                     string pkgRealPath = pkgPath.Replace("/", Path.Separator);
                     if (File.Exists(pkgRealPath))
                     {
-                        CryPkgDecoder pkg = new CryPkgDecoder(File.ReadBytes(pkgRealPath));
+                        Wax.CryPkgDecoder pkg = new Wax.CryPkgDecoder(File.ReadBytes(pkgRealPath));
                         packageStatuses[pkgPath] = pkg;
                     }
                     else
