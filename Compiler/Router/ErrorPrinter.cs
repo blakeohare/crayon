@@ -31,7 +31,7 @@ namespace Router
             {
                 throw new System.Exception(finalErrorString);
             }
-            Common.ConsoleWriter.Print(Common.ConsoleMessageType.PARSER_ERROR, finalErrorString);
+            ConsoleWriter.Print(ConsoleMessageType.PARSER_ERROR, finalErrorString);
         }
     }
 }
