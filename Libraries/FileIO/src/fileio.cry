@@ -39,7 +39,21 @@ namespace FileIO {
     function pathExists(path) {
         return _FileIOHelper.FIOC.pathExists(path);
     }
-
+    
+    @localized('en', 'pathIsAbsolute')
+    @localized('es', 'ESpathIsAbsolute')
+    @localized('jp', 'JPpathIsAbsolute')
+    function pathIsAbsolute(path) {
+        return _FileIOHelper.FIOC.pathIsAbsolute(path);
+    }
+    
+    @localized('en', 'pathGetParent')
+    @localized('es', 'ESpathGetParent')
+    @localized('jp', 'JPpathGetParent')
+    function pathGetParent(path) {
+        return _FileIOHelper.FIOC.pathGetParent(path);
+    }
+    
     @localized('en', 'fileExists')
     @localized('es', 'ESfileExists')
     @localized('jp', 'JPfileExists')
