@@ -19,13 +19,11 @@ namespace Common
     {
         private static bool prefixesEnabled = false;
 
-        private static InstConsoleWriter instance = new InstConsoleWriter();
-
-        public static InstConsoleWriter Print(ConsoleMessageType messageType, string message)
+        public static void Print(ConsoleMessageType messageType, string message)
         {
             if (messageType == ConsoleMessageType.STATUS_CHANGE && !prefixesEnabled)
             {
-                return instance;
+                return;
             }
 
             string prefix = prefixesEnabled ? (messageType.ToString() + ":") : "";
@@ -34,20 +32,12 @@ namespace Common
                 CommonUtil.Print.Line(prefix + line);
             }
 
-            return instance;
+            return;
         }
 
         public static void EnablePrefixes()
         {
             prefixesEnabled = true;
-        }
-    }
-
-    public class InstConsoleWriter
-    {
-        public InstConsoleWriter Print(ConsoleMessageType messageType, string message)
-        {
-            return ConsoleWriter.Print(messageType, message);
         }
     }
 }

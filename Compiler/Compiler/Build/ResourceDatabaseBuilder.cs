@@ -122,7 +122,7 @@ namespace Build
             List<FileOutput> textResources = new List<FileOutput>();
             List<FileOutput> binaryResources = new List<FileOutput>();
             List<FileOutput> fontResources = new List<FileOutput>();
-
+            List<string> ignoredFileWarnings = new List<string>();
             foreach (ProjectFilePath sourceRoot in buildContext.SourceFolders)
             {
                 string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
@@ -131,7 +131,7 @@ namespace Build
                 foreach (string relativeFilePath in relativePaths)
                 {
                     string absolutePath = FileUtil.GetCanonicalizeUniversalPath(sourceRoot.AbsolutePath + "/" + relativeFilePath);
-                    string aliasedPath = sourceRoot.GetAliasedOrRelativePath(absolutePath);
+                    string relativePath = sourceRoot.GetRelativePath(absolutePath);
                     string fileName = Path.GetFileName(absolutePath);
                     string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
 
@@ -158,29 +158,23 @@ namespace Build
                             break;
 
                         case FileCategory.IGNORE_IMAGE:
-                            ConsoleWriter.Print(
-                                ConsoleMessageType.BUILD_WARNING,
-                                aliasedPath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
+                            ignoredFileWarnings.Add(relativePath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
                             break;
 
                         case FileCategory.IGNORE_AUDIO:
-                            ConsoleWriter.Print(
-                                ConsoleMessageType.BUILD_WARNING,
-                                aliasedPath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
+                            ignoredFileWarnings.Add(relativePath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
                             break;
 
                         case FileCategory.IGNORE_IMAGE_ASSET:
-                            ConsoleWriter.Print(
-                                ConsoleMessageType.BUILD_WARNING,
-                                aliasedPath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
+                            ignoredFileWarnings.Add(relativePath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
                             break;
 
                         case FileCategory.AUDIO:
                             audioResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
-                                RelativeInputPath = aliasedPath,
-                                OriginalPath = aliasedPath,
+                                RelativeInputPath = relativePath,
+                                OriginalPath = relativePath,
                                 AbsoluteInputPath = absolutePath,
                             });
                             break;
@@ -189,8 +183,8 @@ namespace Build
                             binaryResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
-                                RelativeInputPath = aliasedPath,
-                                OriginalPath = aliasedPath,
+                                RelativeInputPath = relativePath,
+                                OriginalPath = relativePath,
                                 AbsoluteInputPath = absolutePath,
                             });
                             break;
@@ -201,7 +195,7 @@ namespace Build
                             {
                                 Type = FileOutputType.Text,
                                 TextContent = content,
-                                OriginalPath = aliasedPath,
+                                OriginalPath = relativePath,
                                 AbsoluteInputPath = absolutePath,
                             });
                             break;
@@ -217,7 +211,7 @@ namespace Build
                                 {
                                     Type = FileOutputType.Image,
                                     Bitmap = new Bitmap(absolutePath),
-                                    OriginalPath = aliasedPath,
+                                    OriginalPath = relativePath,
                                     AbsoluteInputPath = absolutePath,
                                 });
                             }
@@ -227,7 +221,7 @@ namespace Build
                                 {
                                     Type = FileOutputType.Image,
                                     Bitmap = new Bitmap(absolutePath),
-                                    OriginalPath = aliasedPath,
+                                    OriginalPath = relativePath,
                                     AbsoluteInputPath = absolutePath,
                                     IsLossy = true,
                                 });
@@ -238,8 +232,8 @@ namespace Build
                                 {
                                     Type = FileOutputType.Copy,
                                     Bitmap = new Bitmap(absolutePath),
-                                    RelativeInputPath = aliasedPath,
-                                    OriginalPath = aliasedPath,
+                                    RelativeInputPath = relativePath,
+                                    OriginalPath = relativePath,
                                     AbsoluteInputPath = absolutePath,
                                 });
                             }
@@ -249,8 +243,8 @@ namespace Build
                             fontResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Copy,
-                                RelativeInputPath = aliasedPath,
-                                OriginalPath = aliasedPath,
+                                RelativeInputPath = relativePath,
+                                OriginalPath = relativePath,
                                 AbsoluteInputPath = absolutePath,
                             });
                             break;
@@ -266,6 +260,8 @@ namespace Build
             resDb.FontResources = fontResources.ToArray();
             resDb.TextResources = textResources.ToArray();
             resDb.BinaryResources = binaryResources.ToArray();
+
+            resDb.IgnoredFileWarnings = ignoredFileWarnings.Count > 0 ? ignoredFileWarnings.ToArray() : null;
 
             return resDb;
         }

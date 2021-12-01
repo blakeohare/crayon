@@ -89,7 +89,7 @@ namespace Compiler
         private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions, string crayonSourceRoot)
         {
             Dictionary<string, object> request = new Dictionary<string, object>();
-            
+
             request["projectId"] = buildContext.ProjectID;
             request["delegateMainTo"] = buildContext.DelegateMainTo;
             request["locale"] = buildContext.CompilerLocale.ID;

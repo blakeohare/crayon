@@ -47,7 +47,7 @@ namespace Build
 
         public string AbsolutePath { get { return this.absolutePathString; } }
 
-        public string GetAliasedOrRelativePath(string absolutePath)
+        public string GetRelativePath(string absolutePath)
         {
             return FileUtil.ConvertAbsolutePathToRelativePath(absolutePath, this.absolutePathString);
         }
