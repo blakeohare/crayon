@@ -34,7 +34,13 @@ namespace Crayon
             Dictionary<string, object> request = new Dictionary<string, object>();
             request["args"] = commandLineArgs;
 
-            if (!IS_RELEASE) {
+            foreach (string directory in GetExtensionDirectories())
+            {
+                waxHub.RegisterExtensionDirectory(directory);
+            }
+
+            if (!IS_RELEASE)
+            {
                 request["errorsAsExceptions"] = true;
                 string crayonSourcePath = SourceDirectoryFinder.CrayonSourceDirectory;
                 if (crayonSourcePath != null)
@@ -44,6 +50,23 @@ namespace Crayon
             }
 
             waxHub.AwaitSendRequest("router", request);
+        }
+
+        private static IList<string> GetExtensionDirectories()
+        {
+            string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
+            List<string> directories = new List<string>();
+            if (crayonHome != null)
+            {
+                directories.Add(System.IO.Path.Combine(crayonHome, "extensions"));
+            }
+
+            string crayonSource = SourceDirectoryFinder.CrayonSourceDirectory;
+            if (crayonSource != null)
+            {
+                directories.Add(System.IO.Path.Combine(crayonSource, "Extensions"));
+            }
+            return directories;
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)

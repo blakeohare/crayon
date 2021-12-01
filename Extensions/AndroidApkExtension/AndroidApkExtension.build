@@ -1,0 +1,24 @@
+﻿{
+    "id": "AndroidApkExtension",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "title": "AndroidApkExtension",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
+    "version": "1.0",
+    "iosBundlePrefix": "org.crayonlang.extensions.AndroidApkExtension,%VERSION%",
+    "guidSeed": "org.crayonlang.extensions.AndroidApkExtension,v1,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "javascript",
+            "platform": "javascript-app"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}

@@ -32,7 +32,10 @@ namespace Compiler
                 ? command.OutputDirectoryOverride
                 : buildContext.OutputFolder;
 
-            buildData.CbxBundle.ResourceDB.ConvertToFlattenedFileData();
+            if (!buildData.HasErrors)
+            {
+                buildData.CbxBundle.ResourceDB.ConvertToFlattenedFileData();
+            }
 
             return buildData;
         }

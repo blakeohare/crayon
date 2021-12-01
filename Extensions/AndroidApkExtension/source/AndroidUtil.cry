@@ -1,0 +1,9 @@
+static class AndroidUtil {
+    static function hasAndroidSdk() {
+        throw new NotImplementedException();
+    }
+
+    static function buildApk(androidProjectDir) {
+        throw new NotImplementedException();
+    }
+}

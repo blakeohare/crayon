@@ -44,7 +44,18 @@ namespace Wax
                     break;
 
                 case FileOutputType.Image:
-                    this.ExportImageFile(absolutePath, file.Bitmap);
+                    if (file.BinaryContent != null)
+                    {
+                        this.ExportBinaryFile(absolutePath, file.BinaryContent);
+                    }
+                    else if (file.BinaryContentB64 != null)
+                    {
+                        this.ExportBinaryFile(absolutePath, file.GetFinalBinaryContent());
+                    }
+                    else
+                    {
+                        this.ExportImageFile(absolutePath, file.Bitmap);
+                    }
                     break;
 
                 case FileOutputType.Text:

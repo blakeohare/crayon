@@ -88,30 +88,13 @@ namespace Router
 
             if (!exportResponse.HasErrors && command.ApkExportPath != null)
             {
-                if (!buildData.ExportProperties.IsAndroid)
-                {
-                    throw new InvalidOperationException("Cannot have an APK Export Path for non-Android projects");
-                }
+                Dictionary<string, object> result = waxHub.AwaitSendRequest("AndroidApkExtension", new Dictionary<string, object>() {
+                    { "isAndroid", buildData.ExportProperties.IsAndroid },
+                    { "apkExportPath", command.ApkExportPath },
+                    { "projOutputDir", buildData.ExportProperties.OutputDirectory },
+                });
 
-                if (!CommonUtil.Android.AndroidUtil.HasAndroidSdk)
-                {
-                    throw new InvalidOperationException("Cannot export APK because the Android SDK is not present.");
-                }
-
-                if (!command.ApkExportPath.ToLowerInvariant().EndsWith(".apk"))
-                {
-                    throw new InvalidOperationException("Cannot export APK to a file path that doesn't end with .apk");
-                }
-
-                CommonUtil.Android.AndroidApkBuildResult apkResult = CommonUtil.Android.AndroidUtil.BuildApk(buildData.ExportProperties.OutputDirectory);
-
-                if (apkResult.HasError)
-                {
-                    throw new InvalidOperationException("An error occurred while generating the APK: " + apkResult.Error);
-                }
-
-                FileUtil.EnsureParentFolderExists(command.ApkExportPath);
-                System.IO.File.Copy(apkResult.ApkPath, command.ApkExportPath);
+                return result.ContainsKey("errors") ? Error.GetErrorList(result["errors"]) : new Error[0];
             }
 
             return exportResponse.Errors;
