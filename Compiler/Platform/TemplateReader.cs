@@ -7,9 +7,11 @@ namespace Platform
     {
         private List<string> platformNamesMostGeneralFirst = new List<string>();
         private Common.PkgAwareFileUtil fileUtil;
+        private string activeCrayonSourceRoot;
 
-        public TemplateReader(Common.PkgAwareFileUtil fileUtil, AbstractPlatform platform)
+        public TemplateReader(Common.PkgAwareFileUtil fileUtil, AbstractPlatform platform, string activeCrayonSourceRoot)
         {
+            this.activeCrayonSourceRoot = activeCrayonSourceRoot;
             this.fileUtil = fileUtil;
             AbstractPlatform walker = platform;
             while (walker != null)
@@ -44,15 +46,13 @@ namespace Platform
 #if DEBUG
             // If you're running a debug build and have the source directory present,
             // then use the Interpreter/gen files instead of the crypkg versions in CRAYON_HOME.
-            string crayonSourceDir = Common.SourceDirectoryFinder.CrayonSourceDirectory;
-
-            if (crayonSourceDir != null)
+            if (this.activeCrayonSourceRoot != null)
             {
                 output.Clear(); // reset.
 
                 foreach (string platformName in this.platformNamesMostGeneralFirst)
                 {
-                    string vmTemplateDir = Path.Join(crayonSourceDir, "Interpreter", "gen", platformName);
+                    string vmTemplateDir = Path.Join(this.activeCrayonSourceRoot, "Interpreter", "gen", platformName);
                     if (Directory.Exists(vmTemplateDir))
                     {
                         ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);

@@ -21,7 +21,7 @@ namespace Compiler
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
-            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions);
+            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions, command.ActiveCrayonSourceRoot);
             BuildData buildData = Compile(compileRequest, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
@@ -36,7 +36,6 @@ namespace Compiler
 
             return buildData;
         }
-
 
         private static BuildContext GetBuildContext(Command command, WaxHub hub)
         {
@@ -87,11 +86,11 @@ namespace Compiler
             return buildContext;
         }
 
-        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions)
+        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions, string crayonSourceRoot)
         {
             Dictionary<string, object> request = new Dictionary<string, object>();
+            
             request["projectId"] = buildContext.ProjectID;
-            request["errorsAsExceptions"] = errorsAsExceptions;
             request["delegateMainTo"] = buildContext.DelegateMainTo;
             request["locale"] = buildContext.CompilerLocale.ID;
             request["localDeps"] = buildContext.LocalDeps;
@@ -99,6 +98,10 @@ namespace Compiler
             request["codeFiles"] = CommonUtil.Collections.DictionaryUtil.DictionaryToFlattenedDictionary(buildContext.GetCodeFiles());
             request["lang"] = buildContext.RootProgrammingLanguage + "";
             request["removeSymbols"] = buildContext.RemoveSymbols;
+
+            request["errorsAsExceptions"] = errorsAsExceptions;
+            request["crayonSourceRoot"] = crayonSourceRoot;
+
             List<string> vars = new List<string>();
 
             foreach (string key in buildContext.BuildVariableLookup.Keys)

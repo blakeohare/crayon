@@ -68,7 +68,7 @@ namespace CSharpApp
             BuildData buildData,
             ExportProperties exportProperties)
         {
-            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
+            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this, exportProperties.ActiveCrayonSourceRoot);
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
             string projectId = exportProperties.ProjectID;

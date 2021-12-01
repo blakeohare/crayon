@@ -17,6 +17,7 @@ namespace Parser
             this.RootProgrammingLanguage = ((string)rawRequest["lang"]).ToUpper() == "CRAYON" ? Build.ProgrammingLanguage.CRAYON : Build.ProgrammingLanguage.ACRYLIC;
             this.RemoveSymbols = (bool)rawRequest["removeSymbols"];
             this.ErrorsAsExceptions = rawRequest.ContainsKey("errorsAsExceptions") ? (bool)rawRequest["errorsAsExceptions"] : false;
+            this.ActiveCrayonSourceRoot = rawRequest.ContainsKey("crayonSourceRoot") ? rawRequest["crayonSourceRoot"].ToString() : null;
             string[] buildVarData = (string[])rawRequest["buildVars"];
             for (int i = 0; i < buildVarData.Length; i += 3)
             {
@@ -41,6 +42,7 @@ namespace Parser
         public string ProjectDirectory { get; private set; }
         public Build.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
         public bool ErrorsAsExceptions { get; private set; }
+        public string ActiveCrayonSourceRoot { get; private set; }
 
         public Dictionary<string, string> GetCodeFiles()
         {

@@ -12,15 +12,17 @@ namespace Router
             Func<Dictionary<string, object>, bool> cb)
         {
             bool errorsAsExceptions = request.ContainsKey("exceptionsAsErrors") && (request["errorsAsExceptions"] as bool?) == true;
+            string crayonSourceRoot = request.ContainsKey("crayonSourceRoot") ? request["crayonSourceRoot"].ToString() : null;
+
             if (errorsAsExceptions)
             {
-                this.HandleRequestImpl(request, errorsAsExceptions);
+                this.HandleRequestImpl(request, errorsAsExceptions, crayonSourceRoot);
             }
             else
             {
                 try
                 {
-                    this.HandleRequestImpl(request, errorsAsExceptions);
+                    this.HandleRequestImpl(request, errorsAsExceptions, crayonSourceRoot);
                 }
                 catch (InvalidOperationException ioe)
                 {
@@ -31,11 +33,12 @@ namespace Router
             cb(new Dictionary<string, object>());
         }
 
-        private void HandleRequestImpl(Dictionary<string, object> request, bool errorsAsExceptions)
+        private void HandleRequestImpl(Dictionary<string, object> request, bool errorsAsExceptions, string crayonSourceRoot)
         {
             string[] commandLineArgs = (string[])request["args"];
             Wax.Command command = FlagParser.Parse(commandLineArgs);
             command.ErrorsAsExceptions = errorsAsExceptions;
+            command.ActiveCrayonSourceRoot = crayonSourceRoot;
             MainPipeline.Run(command, this.Hub);
         }
     }

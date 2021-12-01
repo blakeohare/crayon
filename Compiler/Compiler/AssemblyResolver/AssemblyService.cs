@@ -10,12 +10,12 @@ namespace AssemblyResolver
 
         public AssemblyService() : base("assembly") { }
 
-        private AssemblyFinder GetAssemblyFinder(string[] localDeps, string projectDir)
+        private AssemblyFinder GetAssemblyFinder(string[] localDeps, string projectDir, string nullableCrayonSourceRoot)
         {
             string finderKey = string.Join(';', localDeps) + ";PROJ:" + projectDir;
             if (!this.assemblyFinderCache.ContainsKey(finderKey))
             {
-                this.assemblyFinderCache[finderKey] = new AssemblyFinder(localDeps, projectDir);
+                this.assemblyFinderCache[finderKey] = new AssemblyFinder(localDeps, projectDir, nullableCrayonSourceRoot);
             }
             return this.assemblyFinderCache[finderKey];
         }
@@ -32,7 +32,8 @@ namespace AssemblyResolver
                     string[] localDeps = (string[])request["localDeps"];
                     string projectDir = (string)request["projectDir"];
                     bool includeSource = (bool)request["includeSource"];
-                    AssemblyFinder af = this.GetAssemblyFinder(localDeps, projectDir);
+                    string crayonSourceRoot = request.ContainsKey("crayonSourceRoot") ? request["crayonSourceRoot"].ToString() : null;
+                    AssemblyFinder af = this.GetAssemblyFinder(localDeps, projectDir, crayonSourceRoot);
                     InternalAssemblyMetadata md = af.GetAssemblyMetadataFromAnyPossibleKey(locale == null ? name : (locale + ":" + name));
                     Dictionary<string, object> output = new Dictionary<string, object>();
                     if (md == null)

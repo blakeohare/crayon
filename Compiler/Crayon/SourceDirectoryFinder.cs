@@ -1,8 +1,8 @@
 ﻿using CommonUtil.Disk;
 
-namespace Common
+namespace Crayon
 {
-    public static class SourceDirectoryFinder
+    internal static class SourceDirectoryFinder
     {
         private static string crayonSourceDirectoryCached = null;
         public static string CrayonSourceDirectory

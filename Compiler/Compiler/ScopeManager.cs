@@ -10,6 +10,7 @@ namespace Parser
         private Wax.WaxHub wax;
         private string[] localDeps;
         private string projectDirectory;
+        private string nullableCrayonSourceRoot;
 
         private Dictionary<string, CompilationScope> importedAssembliesById = new Dictionary<string, CompilationScope>();
         private Dictionary<Locale, Dictionary<string, LocalizedAssemblyView>> importedAssembliesByLocalizedName = new Dictionary<Locale, Dictionary<string, LocalizedAssemblyView>>();
@@ -24,6 +25,7 @@ namespace Parser
             this.localDeps = compileRequest.LocalDeps;
             this.projectDirectory = compileRequest.ProjectDirectory;
             this.ImportedAssemblyScopes = new List<CompilationScope>();
+            this.nullableCrayonSourceRoot = compileRequest.ActiveCrayonSourceRoot;
         }
 
         public bool IsValidAssemblyNameFromLocale(Locale locale, string name)
@@ -39,6 +41,7 @@ namespace Parser
                 { "localDeps", this.localDeps },
                 { "projectDir", this.projectDirectory },
                 { "includeSource", false },
+                { "crayonSourceRoot", this.nullableCrayonSourceRoot }
             });
 
             return (bool)response["found"];
@@ -58,6 +61,7 @@ namespace Parser
                     { "localDeps", this.localDeps },
                     { "projectDir", this.projectDirectory },
                     { "includeSource", true },
+                    { "crayonSourceRoot", this.nullableCrayonSourceRoot },
                 });
                 if (!(bool)response["found"])
                 {
