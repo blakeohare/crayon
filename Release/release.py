@@ -71,29 +71,29 @@ def copy_file(from_path, to_path):
 			os.remove(to_path)
 	shutil.copyfile(from_path, to_path)
 
-def copyDirectory(source, target, ext_filter = None, recursive = True):
+def copy_directory(source, target, ext_filter = None, recursive = True):
 	source = canonicalize_sep(source)
 	target = canonicalize_sep(target)
 	if not os.path.exists(target):
 		os.makedirs(target)
 	for file in os.listdir(source):
-		fullpath = os.path.join(source, file)
-		fulltargetpath = os.path.join(target, file)
-		if os.path.isdir(fullpath):
+		full_path = os.path.join(source, file)
+		full_target_path = os.path.join(target, file)
+		if os.path.isdir(full_path):
 			if recursive:
-				copyDirectory(fullpath, fulltargetpath, ext_filter)
+				copy_directory(full_path, full_target_path, ext_filter)
 		elif file.lower() in ('.ds_store', 'thumbs.db'):
 			pass
 		elif ext_filter == None or file.endswith(ext_filter):
-			shutil.copyfile(fullpath, fulltargetpath)
+			shutil.copyfile(full_path, full_target_path)
 
-def readFile(path):
+def read_file(path):
 	c = open(canonicalize_sep(path), 'rt')
 	text = c.read()
 	c.close()
 	return text
 
-def writeFile(path, content, lineEnding):
+def write_file(path, content, lineEnding):
 	content = canonicalize_newline(content, lineEnding)
 	bytes = bytearray(content, 'utf-8')
 	path = canonicalize_sep(path)
@@ -138,7 +138,7 @@ def list_all_files_recursive_impl(abs_path, rel_path, output):
 		else:
 			output.append(rel_file)
 
-def runCommand(cmd):
+def run_command(cmd):
 	c = os.popen(cmd)
 	output = c.read()
 	c.close()
@@ -149,7 +149,7 @@ _logRef = [None]
 def main(args):
 	_logRef[0] = []
 	try:
-		buildRelease(args)
+		build_release(args)
 	except Exception as err:
 		_logRef[0].append('EXCEPTION: ' + str(err))
 		
@@ -158,10 +158,10 @@ def main(args):
 def log(value):
 	_logRef[0].append(str(value))
 
-def buildRelease(args):
+def build_release(args):
 	log('begin')
 	
-	platformsForInterpreterGen = [
+	platforms_for_interpreter_gen = [
 		'csharp-app',
 		'javascript-app',
 	]
@@ -173,16 +173,16 @@ def buildRelease(args):
 
 	os_platform = args[0]
 
-	isWindows = False
-	isMac = False
-	isLinux = False
+	is_windows = False
+	is_mac = False
+	is_linux = False
 
 	if os_platform == 'windows':
-		isWindows = True
+		is_Windows = True
 	elif os_platform == 'mac':
-		isMac = True
+		is_mac = True
 	elif os_platform == 'linux':
-		isLinux = True
+		is_linux = True
 		log("not supported yet")
 		print("Linux support isn't here yet. But soon!")
 		return
@@ -194,16 +194,16 @@ def buildRelease(args):
 	# Clean up pre-existing release and ensure output directory exists
 
 	log("cleanup old directory")
-	copyToDir = 'crayon-' + VERSION + '-' + os_platform
-	if os.path.exists(copyToDir):
-		shutil.rmtree(copyToDir)
+	copy_to_dir = 'crayon-' + VERSION + '-' + os_platform
+	if os.path.exists(copy_to_dir):
+		shutil.rmtree(copy_to_dir)
 		time.sleep(0.1)
 	log("create new output directory")
-	os.makedirs(copyToDir)
+	os.makedirs(copy_to_dir)
 
-	if isWindows:
+	if is_windows:
 		u3_dir = os.path.join('..', 'U3', 'dist', 'win')
-	elif isMac:
+	elif is_mac:
 		u3_dir = os.path.join('..', 'U3', 'dist', 'mac')
 	else:
 		raise Exception("Not implemented")
@@ -219,7 +219,7 @@ def buildRelease(args):
 		'dotnet publish',
 		os.path.join('..', 'Compiler', 'Crayon', 'Crayon.csproj'),
 		'-c Release',
-		'-r', 'osx-x64' if isMac else 'win-x64',
+		'-r', 'osx-x64' if is_mac else 'win-x64',
 		'--self-contained true',
 		'-p:PublishTrimmed=true',
 		'-p:PublishSingleFile=true'
@@ -227,25 +227,25 @@ def buildRelease(args):
 	
 	log("Compiling the .sln file with command: " + cmd)
 	print("Running: " + cmd)
-	print(runCommand(cmd))
+	print(run_command(cmd))
 
 
 	# Copy the compiler's release bits into the newly created release directory
-	releaseDir = '../Compiler/Crayon/bin/Release/netcoreapp3.1/' + ('osx-x64' if isMac else 'win-x64') + '/publish'
+	release_dir = '../Compiler/Crayon/bin/Release/netcoreapp3.1/' + ('osx-x64' if is_mac else 'win-x64') + '/publish'
 	
 	log("Copying crayon.exe, readme, and license to output directory")
-	if isWindows:
+	if is_windows:
 		crayon_exe_name = 'Crayon.exe'
-	elif isMac:
+	elif is_mac:
 		crayon_exe_name = 'Crayon'
 	else:
 		raise Exception("Invalid platform")
 
-	new_crayon_executable = canonicalize_sep(copyToDir + '/' + crayon_exe_name.lower())
-	shutil.copyfile(canonicalize_sep(releaseDir + '/' + crayon_exe_name), new_crayon_executable)
+	new_crayon_executable = canonicalize_sep(copy_to_dir + '/' + crayon_exe_name.lower())
+	shutil.copyfile(canonicalize_sep(release_dir + '/' + crayon_exe_name), new_crayon_executable)
 	
-	shutil.copyfile(canonicalize_sep('../Compiler/Crayon/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
-	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
+	shutil.copyfile(canonicalize_sep('../Compiler/Crayon/LICENSE.txt'), canonicalize_sep(copy_to_dir + '/LICENSE.txt'))
+	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copy_to_dir + '/README.md'))
 
 
 	# Go through the libraries (just the ones listed at the top of this file)
@@ -254,26 +254,26 @@ def buildRelease(args):
 
 	# TODO: also crypkg the src files, possibly
 	for lib in LIBRARIES:
-		sourcePathRoot = '../Libraries/' + lib
-		targetPathRoot = copyToDir + '/libs/' + lib
-		copyDirectory(sourcePathRoot, targetPathRoot, recursive = False)
-		copyDirectory(sourcePathRoot + '/src', targetPathRoot + '/src')
+		source_path_root = '../Libraries/' + lib
+		target_path_root = copy_to_dir + '/libs/' + lib
+		copy_directory(source_path_root, target_path_root, recursive = False)
+		copy_directory(source_path_root + '/src', target_path_root + '/src')
 
 	# Go through the source's bin/Release directory and find all the library DLL's.
 	# Copy those to the output release directory.
 
-	files = os.listdir(releaseDir)
+	files = os.listdir(release_dir)
 	#for file in filter(lambda x:x.endswith('.dll'), files):
 	for file in filter(lambda f:not f.endswith('.pdb'), files):
 		log("Copy " + file + " to the output directory")
-		shutil.copyfile(releaseDir + '/' + file, copyToDir + '/' + file)
+		shutil.copyfile(release_dir + '/' + file, copy_to_dir + '/' + file)
 
 
 	print("\nCopying Interpreter/gen to crypkg files in vmsrc...")
-	for platform in platformsForInterpreterGen:
+	for platform in platforms_for_interpreter_gen:
 		log("Copying " + platform + "'s files from Interpreter/gen to vmsrc/" + platform + ".crypkg")
 		print('  ' + platform + '...')
-		target_pkg_path = copyToDir + '/vmsrc/' + platform + '.crypkg'
+		target_pkg_path = copy_to_dir + '/vmsrc/' + platform + '.crypkg'
 		interpreter_generated_code = '../Interpreter/gen/' + platform
 		ensure_directory_exists(get_parent_path(target_pkg_path))
 		crypkgmake.make_pkg(canonicalize_sep(interpreter_generated_code), canonicalize_sep(target_pkg_path))
@@ -281,28 +281,28 @@ def buildRelease(args):
 
 
 	# Artifically set the CRAYON_HOME environment variable to the target directory with all the libraries
-	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copyToDir))
+	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copy_to_dir))
 	log("Set the CRAYON_HOME to " + os.environ['CRAYON_HOME'])
 	
 	
 	# Copy U3 window
-	copyDirectory(u3_dir, copyToDir + '/u3')
+	copy_directory(u3_dir, copy_to_dir + '/u3')
 
-	if isMac:
-		u3win_app = copyToDir + '/u3/u3window.app'
+	if is_mac:
+		u3win_app = copy_to_dir + '/u3/u3window.app'
 		for file in list_all_files_recursive(u3win_app):
-			runCommand('chmod +x ' + u3win_app + '/' + file.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)'))
+			run_command('chmod +x ' + u3win_app + '/' + file.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)'))
 
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
-	if isWindows:
-		setupFile = readFile("setup-windows.txt")
-		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
-		syntaxHighlighter = readFile("notepadplusplus_crayon_syntax.xml")
-		writeFile(copyToDir + '/notepadplusplus_crayon_syntax.xml', syntaxHighlighter, '\n')
-	elif isMac:
-		setupFile = readFile("setup-mono.txt")
-		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
+	if is_windows:
+		setup_file = read_file("setup-windows.txt")
+		write_file(copy_to_dir + '/Setup Instructions.txt', setup_file, '\r\n')
+		syntax_highlighter = read_file("notepadplusplus_crayon_syntax.xml")
+		write_file(copy_to_dir + '/notepadplusplus_crayon_syntax.xml', syntax_highlighter, '\n')
+	elif is_mac:
+		setup_file = read_file("setup-mono.txt")
+		write_file(copy_to_dir + '/Setup Instructions.txt', setup_file, '\n')
 	else:
 		raise Exception("Invalid platform")
 
@@ -313,7 +313,7 @@ def buildRelease(args):
 	print("Ensure libraries compile\n")
 	old_cwd = os.getcwd()
 	os.chdir(os.path.join('.', VM_TEMP_DIR))
-	runCommand(os.path.join('..', new_crayon_executable) + ' -genDefaultProj LibTest')
+	run_command(os.path.join('..', new_crayon_executable) + ' -genDefaultProj LibTest')
 	os.chdir(old_cwd)
 
 	code = []
@@ -321,8 +321,8 @@ def buildRelease(args):
 		if lib in ('FileIOCommon', ): continue
 		code.append('import ' + lib + ';\n')
 	code.append('\nfunction main() { }\n')
-	writeFile(VM_TEMP_DIR + '/LibTest/source/main.cry', ''.join(code), '\n')
-	result = runCommand(new_crayon_executable + ' ' + canonicalize_sep(VM_TEMP_DIR + '/LibTest/LibTest.build') + ' -target csharp')
+	write_file(VM_TEMP_DIR + '/LibTest/source/main.cry', ''.join(code), '\n')
+	result = run_command(new_crayon_executable + ' ' + canonicalize_sep(VM_TEMP_DIR + '/LibTest/LibTest.build') + ' -target csharp')
 	if result.strip() != '':
 		err = "*** ERROR: Libraries did not compile cleanly!!! ***"
 		print('*' * len(err))
@@ -334,6 +334,6 @@ def buildRelease(args):
 
 	# Hooray, you're done!
 	log("Completed")
-	print("Release directory created: " + copyToDir)
+	print("Release directory created: " + copy_to_dir)
 
 main(sys.argv[1:])
