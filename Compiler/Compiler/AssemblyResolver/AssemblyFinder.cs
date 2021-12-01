@@ -13,13 +13,12 @@ namespace AssemblyResolver
         public InternalAssemblyMetadata[] AssemblyFlatList { get; private set; }
         private Dictionary<string, InternalAssemblyMetadata> libraryLookup;
 
-        public AssemblyFinder() : this(null, null) { }
-
         public AssemblyFinder(
             string[] nullableBuildFileLocalDepsList,
-            string nullableProjectDirectory)
+            string nullableProjectDirectory,
+            string nullableCrayonSourceRoot)
         {
-            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory).ToArray();
+            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory, nullableCrayonSourceRoot).ToArray();
 
             libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
             foreach (InternalAssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
@@ -41,7 +40,8 @@ namespace AssemblyResolver
 
         private static InternalAssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
             string[] nullableBuildFileLocalDepsList,
-            string nullableProjectDirectory)
+            string nullableProjectDirectory,
+            string nullableCrayonSourceRoot)
         {
             string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
 
@@ -86,10 +86,9 @@ namespace AssemblyResolver
                 }
             }
 
-            string runningFromSourceDirectory = SourceDirectoryFinder.CrayonSourceDirectory;
-            if (runningFromSourceDirectory != null) // returns null on release builds.
+            if (nullableCrayonSourceRoot != null) // returns null on release builds.
             {
-                string libraryPath = FileUtil.JoinPath(runningFromSourceDirectory, "Libraries");
+                string libraryPath = FileUtil.JoinPath(nullableCrayonSourceRoot, "Libraries");
                 unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(libraryPath));
             }
 

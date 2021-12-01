@@ -54,6 +54,7 @@ namespace Router
         {
             Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler2", command.GetRawData());
             BuildData buildData = new BuildData(result);
+            buildData.ExportProperties.ActiveCrayonSourceRoot = command.ActiveCrayonSourceRoot;
             return buildData;
         }
 

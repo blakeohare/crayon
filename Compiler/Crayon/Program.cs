@@ -1,4 +1,5 @@
 ﻿using CommonUtil.Disk;
+using System.Collections.Generic;
 
 namespace Crayon
 {
@@ -30,12 +31,19 @@ namespace Crayon
             waxHub.RegisterService(new Exporter.ExportService("javascript-app-android"));
             waxHub.RegisterService(new Exporter.ExportService("javascript-app-ios"));
 
-            waxHub.AwaitSendRequest(
-                "router",
-                new System.Collections.Generic.Dictionary<string, object>() {
-                    { "args", commandLineArgs },
-                    { "errorsAsExceptions", !IS_RELEASE }
-                });
+            Dictionary<string, object> request = new Dictionary<string, object>();
+            request["args"] = commandLineArgs;
+
+            if (!IS_RELEASE) {
+                request["errorsAsExceptions"] = true;
+                string crayonSourcePath = SourceDirectoryFinder.CrayonSourceDirectory;
+                if (crayonSourcePath != null)
+                {
+                    request["crayonSourceRoot"] = crayonSourcePath;
+                }
+            }
+
+            waxHub.AwaitSendRequest("router", request);
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
