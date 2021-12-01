@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Wax
 {
@@ -13,5 +14,30 @@ namespace Wax
         public string Message { get { return this.GetString("msg"); } set { this.SetString("msg", value); } }
 
         public bool HasLineInfo { get { return this.Line != 0; } }
+
+        public static Error[] GetErrorList(object jsonData)
+        {
+            if (jsonData is object[])
+            {
+                object[] array = (object[])jsonData;
+                return array
+                    .OfType<Dictionary<string, object>>().Select(d => new Error(d))
+                    .Concat(
+                        array.OfType<JsonBasedObject>().Select(jbo => new Error(jbo.GetRawData())))
+                    .ToArray();
+            }
+
+            if (jsonData is Error[])
+            {
+                return (Error[])jsonData;
+            }
+ 
+            if (jsonData is JsonBasedObject[])
+            {
+                return ((JsonBasedObject[])jsonData).OfType<JsonBasedObject>().Select(jbo => new Error(jbo.GetRawData())).ToArray();
+            }
+
+            return new Error[0];
+        }
     }
 }

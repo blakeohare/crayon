@@ -1,0 +1,42 @@
+﻿import Json;
+
+function main(args) {
+	requestArgs = Json.parseJson(args[0]);
+
+	print("I'm the Android extension and I received this request: " + requestArgs);
+	
+	responseArgs = handleRequest(requestArgs);
+	print("WAX_RESPONSE_JSON: " + Json.serializeJson(responseArgs));
+}
+
+function errorResponse(msg) {
+	return { 'errors': [ msg ] };
+}
+
+function handleRequest(args) {
+
+	if (args.get('isAndroid') != true) {
+		return errorResponse("Cannot have an APK Export Path for non-Android projects.");
+	}
+
+	if (!AndroidUtil.hasAndroidSdk()) {
+		return errorResponse("Cannot export APK because the Android SDK is not present.");
+	}
+
+	exportPath = args.get('apkExportPath') + '';
+	if (!exportPath.lower().endsWith('.apk')) {
+		return errorResponse("Cannot export APK to a file path that doesn't end with .apk");
+	}
+
+	outputDir = args.get('projOutputDir') + '';
+	apkResult = AndroidUtil.buildApk(outputDir);
+
+	if (apkResult.get('error') != null) {
+		return errorResponse(("An error occurred while generating the APK: " + apkResult['error']));
+	}
+
+	ensureParentFolderExists(exportPath);
+	copyFile(apkResult['apkPath'], exportPath);
+
+	return { "errors": [] };
+}

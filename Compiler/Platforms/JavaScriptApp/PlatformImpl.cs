@@ -92,22 +92,36 @@ namespace JavaScriptApp
 
             System.Text.StringBuilder resourcesJs = new System.Text.StringBuilder();
 
-            foreach (FileOutput textResource in resDb.TextResources)
+            string[] fileNames = resDb.FlatFileNames;
+            FileOutput[] files = resDb.FlatFiles;
+            for (int i = 0; i < files.Length; i++)
             {
-                resourcesJs.Append("C$common$addTextRes(");
-                resourcesJs.Append(ConvertStringValueToCode(textResource.CanonicalFileName));
-                resourcesJs.Append(", ");
-                resourcesJs.Append(ConvertStringValueToCode(textResource.TextContent));
-                resourcesJs.Append(");\n");
-            }
-
-            foreach (FileOutput fontResource in resDb.FontResources)
-            {
-                resourcesJs.Append("C$common$addBinaryRes(");
-                resourcesJs.Append(ConvertStringValueToCode(fontResource.CanonicalFileName));
-                resourcesJs.Append(", '");
-                resourcesJs.Append(Base64.ToBase64(fontResource.GetFinalBinaryContent()));
-                resourcesJs.Append("');\n");
+                FileOutput file = files[i];
+                string name = fileNames[i];
+                if (file.Type == FileOutputType.Text)
+                {
+                    resourcesJs.Append("C$common$addTextRes(");
+                    resourcesJs.Append(ConvertStringValueToCode(name));
+                    resourcesJs.Append(", ");
+                    resourcesJs.Append(ConvertStringValueToCode(file.TextContent));
+                    resourcesJs.Append(");\n");
+                }
+                else if (name.EndsWith(".png") || name.EndsWith(".jpg"))
+                {
+                    output["resources/" + name] = file;
+                }
+                else if (name.EndsWith(".wav") || name.EndsWith(".ogg") || name.EndsWith(".mp3"))
+                {
+                    output["resources/" + name] = file;
+                }
+                else
+                {
+                    resourcesJs.Append("C$common$addBinaryRes(");
+                    resourcesJs.Append(ConvertStringValueToCode(name));
+                    resourcesJs.Append(", '");
+                    resourcesJs.Append(Base64.ToBase64(file.GetFinalBinaryContent()));
+                    resourcesJs.Append("');\n");
+                }
             }
 
             resourcesJs.Append("C$common$resourceManifest = ");
@@ -137,16 +151,6 @@ namespace JavaScriptApp
                 Type = FileOutputType.Text,
                 TextContent = "C$bytecode = " + ConvertStringValueToCode(buildData.CbxBundle.ByteCode) + ";",
             };
-
-            foreach (string imageChunk in resDb.ImageResourceFiles.Keys)
-            {
-                output["resources/images/" + imageChunk] = resDb.ImageResourceFiles[imageChunk];
-            }
-
-            foreach (FileOutput audioResourceFile in resDb.AudioResources)
-            {
-                output["resources/audio/" + audioResourceFile.CanonicalFileName] = audioResourceFile;
-            }
 
             if (exportProperties.HasIcon)
             {

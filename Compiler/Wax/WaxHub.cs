@@ -8,10 +8,34 @@ namespace Wax
     {
         private Dictionary<string, WaxService> services = new Dictionary<string, WaxService>();
 
+        internal List<string> ExtensionDirectories { get; private set; }
+
+        public WaxHub()
+        {
+            this.ExtensionDirectories = new List<string>();
+        }
+
         public void RegisterService(WaxService service)
         {
             service.Hub = this;
             this.services[service.Name] = service;
+        }
+
+        public void RegisterExtensionDirectory(string path)
+        {
+            this.ExtensionDirectories.Add(path);
+        }
+
+        private WaxService GetService(string serviceName)
+        {
+            if (!this.services.ContainsKey(serviceName))
+            {
+                CbxExtensionService service = new CbxExtensionService(this, serviceName);
+                if (!service.IsPresent) return null;
+
+                this.services[serviceName] = service;
+            }
+            return this.services[serviceName];
         }
 
         public Dictionary<string, object> AwaitSendRequest(
@@ -21,7 +45,14 @@ namespace Wax
             List<Dictionary<string, object>> responsePtr = new List<Dictionary<string, object>>();
 
             Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
-            this.services[serviceName].HandleRequest(
+            WaxService service = this.GetService(serviceName);
+            
+            if (service == null)
+            {
+                throw new InvalidOperationException("The extension '" + serviceName + "' could not be found or downloaded.");
+            }
+
+            service.HandleRequest(
                 immutableEnsuredCopy,
                 response =>
                 {
