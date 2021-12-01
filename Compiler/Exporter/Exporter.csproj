@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj" />
     <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj" />
     <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj" />

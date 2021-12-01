@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\Disk\Disk.csproj" />
     <ProjectReference Include="..\Exporter\Exporter.csproj" />
