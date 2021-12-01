@@ -1,6 +1,4 @@
 VERSION = '2.9.0'
-VM_TEMP_DIR = 'temp'
-VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
 
 LIBRARIES = [
 	'Audio',
@@ -145,6 +143,15 @@ def run_command(cmd):
 	return output
 
 _logRef = [None]
+
+def copy_extensions(crayon_exe, copy_to_dir):
+	ext_src_dir = '../Extensions'
+	for ext_name in list_directories(ext_src_dir):
+		build_file = ext_src_dir + '/' + ext_name + '/' + ext_name + '.build'
+		if path_exists(build_file):
+			print("Exporting extension: " + ext_name)
+			print("TODO: standalone cbx export support via command line args")
+			#run_command(crayon_exe + ' ' + ext_src_dir)
 	
 def main(args):
 	_logRef[0] = []
@@ -178,7 +185,7 @@ def build_release(args):
 	is_linux = False
 
 	if os_platform == 'windows':
-		is_Windows = True
+		is_windows = True
 	elif os_platform == 'mac':
 		is_mac = True
 	elif os_platform == 'linux':
@@ -307,12 +314,14 @@ def build_release(args):
 		raise Exception("Invalid platform")
 
 
-
 	# Create a dummy project with ALL libraries
 	log("Ensuring libraries compile")
 	print("Ensure libraries compile\n")
 	old_cwd = os.getcwd()
-	os.chdir(os.path.join('.', VM_TEMP_DIR))
+	temp_dir = os.path.join('.', 'temp')
+	ensure_directory_exists(temp_dir)
+	os.chdir(temp_dir)
+	
 	run_command(os.path.join('..', new_crayon_executable) + ' -genDefaultProj LibTest')
 	os.chdir(old_cwd)
 
@@ -321,8 +330,8 @@ def build_release(args):
 		if lib in ('FileIOCommon', ): continue
 		code.append('import ' + lib + ';\n')
 	code.append('\nfunction main() { }\n')
-	write_file(VM_TEMP_DIR + '/LibTest/source/main.cry', ''.join(code), '\n')
-	result = run_command(new_crayon_executable + ' ' + canonicalize_sep(VM_TEMP_DIR + '/LibTest/LibTest.build') + ' -target csharp')
+	write_file(temp_dir + '/LibTest/source/main.cry', ''.join(code), '\n')
+	result = run_command(new_crayon_executable + ' ' + canonicalize_sep(temp_dir + '/LibTest/LibTest.build') + ' -target csharp')
 	if result.strip() != '':
 		err = "*** ERROR: Libraries did not compile cleanly!!! ***"
 		print('*' * len(err))
@@ -331,6 +340,8 @@ def build_release(args):
 		print("The build output was this:")
 		print(result)
 		return
+
+	copy_extensions(new_crayon_executable, copy_to_dir)
 
 	# Hooray, you're done!
 	log("Completed")
