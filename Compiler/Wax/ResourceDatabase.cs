@@ -50,6 +50,8 @@ namespace Wax
         public string[] FlatFileNames { get { return this.GetStrings("flatFileNames"); } set { this.SetStrings("flatFileNames", value); } }
         public FileOutput[] FlatFiles { get { return this.GetObjectsAsType<FileOutput>("flatFiles"); } set { this.SetObjects("flatFiles", value); } }
 
+        public string[] IgnoredFileWarnings {  get { return this.GetStrings("ignoredFileWarnings"); } set { this.SetStrings("ignoredFileWarnings", value); } }
+
         public void ConvertToFlattenedFileData()
         {
             Dictionary<string, FileOutput> flattenedFiles = new Dictionary<string, FileOutput>();

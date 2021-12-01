@@ -54,7 +54,15 @@ namespace Router
         {
             Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler2", command.GetRawData());
             BuildData buildData = new BuildData(result);
-            buildData.ExportProperties.ActiveCrayonSourceRoot = command.ActiveCrayonSourceRoot;
+            if (!buildData.HasErrors)
+            {
+                buildData.ExportProperties.ActiveCrayonSourceRoot = command.ActiveCrayonSourceRoot;
+
+                foreach (string buildWarning in buildData.CbxBundle.ResourceDB.IgnoredFileWarnings ?? new string[0])
+                {
+                    ConsoleWriter.Print(ConsoleMessageType.BUILD_WARNING, buildWarning);
+                }
+            }
             return buildData;
         }
 
