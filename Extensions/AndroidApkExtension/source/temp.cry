@@ -1,0 +1,47 @@
+import FileIO;
+
+// These files were added to the FileIO library but won't be available for testing until a new build can be successfully released and so they've been temporarily copied here.
+
+function getSep() {
+    return FileIO.pathJoin(['', '']).trim();
+}
+
+function pathIsAbsolute(path) {
+    if (getSep() == '\\') {
+        return path.length >= 2 && path[1] == ':';
+    }
+    return path.length > 0 && (path[0] == '/' || path[0] == '~');
+}
+
+function pathGetParent(path) {
+    sep = getSep();
+    parts = path.split(sep);
+    while (parts.length > 1 && parts[-1] == '') parts.pop();
+
+    if (pathIsAbsolute(path.join(sep))) {
+        if (sep == '\\') {
+            if (parts.length < 2) throw new InvalidArgumentException("Invalid path");
+            parts.pop();
+            return parts.join(sep);
+        } else {
+            if (parts.length > 1) {
+                parts.pop();
+                return parts.join(sep);
+            } else if (parts[0] == '~') {
+                return '~/..';
+            } else {
+                throw new InvalidArgumentException("Invalid path");
+            }
+        }
+    } else {
+        if (parts.length > 0) {
+            parts.pop();
+            if (parts.length == 0) {
+                return '.';
+            }
+            return parts.join(sep);
+        } else {
+            return '..';
+        }
+    }
+}

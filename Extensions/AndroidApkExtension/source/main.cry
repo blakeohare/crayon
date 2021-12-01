@@ -1,7 +1,17 @@
-﻿import Json;
+﻿import FileIO;
+import Json;
+
+function argParse(args) {
+	if (args.length == 1 && args[0][0] == '{') return Json.parseJson(args[0]);
+	output = {};
+	for (i = 0; i < args.length; i += 2) {
+		output[args[i]] = args[i + 1];
+	}
+	return output;
+}
 
 function main(args) {
-	requestArgs = Json.parseJson(args[0]);
+	requestArgs = argParse(args);
 
 	print("I'm the Android extension and I received this request: " + requestArgs);
 	
@@ -11,6 +21,12 @@ function main(args) {
 
 function errorResponse(msg) {
 	return { 'errors': [ msg ] };
+}
+
+function ensureParentFolderExists(path) {
+	parentDir = pathGetParent(path);
+	if (FileIO.directoryExists(parentDir)) return;
+	FileIO.directoryCreate(parentDir, true);
 }
 
 function handleRequest(args) {
@@ -32,11 +48,11 @@ function handleRequest(args) {
 	apkResult = AndroidUtil.buildApk(outputDir);
 
 	if (apkResult.get('error') != null) {
-		return errorResponse(("An error occurred while generating the APK: " + apkResult['error']));
+		return errorResponse("An error occurred while generating the APK: " + apkResult['error']);
 	}
 
 	ensureParentFolderExists(exportPath);
-	copyFile(apkResult['apkPath'], exportPath);
+	FileIO.fileCopy(apkResult['apkPath'], exportPath, true);
 
 	return { "errors": [] };
 }

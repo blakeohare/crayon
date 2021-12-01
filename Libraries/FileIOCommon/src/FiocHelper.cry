@@ -58,6 +58,45 @@ namespace FileIOCommon {
             return parts.join(this.sep);
         }
 
+        function pathIsAbsolute(path) {
+            if (this.isWindowsDisk) {
+                return path.length >= 2 && path[1] == ':';
+            }
+            return path.length > 0 && (path[0] == '/' || path[0] == '~');
+        }
+
+        function pathGetParent(path) {
+            parts = path.split(this.sep);
+            while (parts.length > 1 && parts[-1] == '') parts.pop();
+
+            if (this.pathIsAbsolute(path.join(this.sep))) {
+                if (this.isWindowsDisk) {
+                    if (parts.length < 2) throw new InvalidArgumentException("Invalid path");
+                    parts.pop();
+                    return parts.join(this.sep);
+                } else {
+                    if (parts.length > 1) {
+                        parts.pop();
+                        return parts.join(this.sep);
+                    } else if (parts[0] == '~') {
+                        return '~/..';
+                    } else {
+                        throw new InvalidArgumentException("Invalid path");
+                    }
+                }
+            } else {
+                if (parts.length > 0) {
+                    parts.pop();
+                    if (parts.length == 0) {
+                        return '.';
+                    }
+                    return parts.join(this.sep);
+                } else {
+                    return '..';
+                }
+            }
+        }
+
         /*
             cache recent paths since there's a chance they'll be used frequently and redundantly.
             e.g.

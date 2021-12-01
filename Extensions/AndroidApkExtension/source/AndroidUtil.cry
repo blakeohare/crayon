@@ -1,9 +1,47 @@
+import Environment;
+import FileIO;
+import ProcessUtil;
+
 static class AndroidUtil {
+
+    static field _hasSdk = -1;
     static function hasAndroidSdk() {
-        throw new NotImplementedException();
+        if (AndroidUtil._hasSdk == -1) {
+            sdkLocation = Environment.getEnvironmentVariable('ANDROID_HOME');
+            if (sdkLocation == null || sdkLocation == '') {
+                AndroidUtil._hasSdk = 0;
+            } else {
+                env = Environment.getEnvironment();
+                adbPath = FileIO.pathJoin([sdkLocation, 'platform-tools', 'adb']);
+                if (env['platform'] == 'windows') {
+                    adbPath += '.exe';
+                }
+
+                AndroidUtil._hasSdk = FileIO.fileExists(adbPath) ? 1 : 0;
+            }
+        }
+        return AndroidUtil._hasSdk == 1;
     }
 
     static function buildApk(androidProjectDir) {
-        throw new NotImplementedException();
+        output = ProcessUtil.awaitSimpleProcess(
+            FileIO.pathJoin([androidProjectDir, 'gradlew.bat']),
+            ['assembleDebug'],
+            androidProjectDir);
+        
+        lines = output.trim().split('\n');
+        secondToLast = (lines.length > 2) ? lines[-2] : '';
+        if (secondToLast.startsWith("BUILD SUCCESSFUL")) {
+            return {
+                'hasError': false,
+                'apkPath': FileIO.pathJoin([androidProjectDir, 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk']),
+                'errors': [],
+            };
+        }
+
+        return {
+            'hasError': true,
+            'errors': [output],
+        };
     }
 }
