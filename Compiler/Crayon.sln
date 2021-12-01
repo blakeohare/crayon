@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crayon", "Crayon\Crayon.csproj", "{F57E0C97-059A-423C-B345-E910C6124287}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{937B2E4F-0CA3-40A1-BC77-1B6EB50556AE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonUtil", "CommonUtil\CommonUtil.csproj", "{31D50C2B-7FE4-4E1B-B7E7-63DF4D85EF64}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler", "Compiler\Compiler.csproj", "{778DF8F6-82DD-47B0-8316-21941A73AE57}"
@@ -35,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wax", "Wax\Wax.csproj", "{C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runtime", "Runtime\Runtime.csproj", "{77E4B6FD-9D45-459D-9997-C1BCFA63E8EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Router", "Router\Router.csproj", "{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Router", "Router\Router.csproj", "{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +45,6 @@ Global
 		{F57E0C97-059A-423C-B345-E910C6124287}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F57E0C97-059A-423C-B345-E910C6124287}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F57E0C97-059A-423C-B345-E910C6124287}.Release|Any CPU.Build.0 = Release|Any CPU
-		{937B2E4F-0CA3-40A1-BC77-1B6EB50556AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{937B2E4F-0CA3-40A1-BC77-1B6EB50556AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{937B2E4F-0CA3-40A1-BC77-1B6EB50556AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{937B2E4F-0CA3-40A1-BC77-1B6EB50556AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31D50C2B-7FE4-4E1B-B7E7-63DF4D85EF64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31D50C2B-7FE4-4E1B-B7E7-63DF4D85EF64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31D50C2B-7FE4-4E1B-B7E7-63DF4D85EF64}.Release|Any CPU.ActiveCfg = Release|Any CPU
