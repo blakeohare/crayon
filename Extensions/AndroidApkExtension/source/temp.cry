@@ -18,7 +18,7 @@ function pathGetParent(path) {
     parts = path.split(sep);
     while (parts.length > 1 && parts[-1] == '') parts.pop();
 
-    if (pathIsAbsolute(path.join(sep))) {
+    if (pathIsAbsolute(parts.join(sep))) {
         if (sep == '\\') {
             if (parts.length < 2) throw new InvalidArgumentException("Invalid path");
             parts.pop();
