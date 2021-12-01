@@ -19,17 +19,18 @@ namespace Wax
             foreach (string extensionDirectory in hub.ExtensionDirectories)
             {
                 string cbxPath = System.IO.Path.Combine(extensionDirectory, name + ".cbx");
-                if (System.IO.File.Exists(cbxPath))
-                {
-                    this.verifiedCbxPath = cbxPath;
-                    break;
-                }
-
                 string buildPath = System.IO.Path.Combine(extensionDirectory, name, name + ".build");
+
                 if (System.IO.File.Exists(buildPath))
                 {
                     this.expectedCbxPath = cbxPath;
                     this.buildFile = buildPath;
+                    break;
+                }
+
+                if (System.IO.File.Exists(cbxPath))
+                {
+                    this.verifiedCbxPath = cbxPath;
                     break;
                 }
             }
@@ -53,7 +54,7 @@ namespace Wax
 
             Dictionary<string, object> result = this.Hub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
                 { "cbxPath", this.verifiedCbxPath },
-                { "args", new string[0] }, // TODO: send all of the original request as a JSON string.
+                { "args", new string[] { Util.JsonUtil.SerializeJson(request) } },
                 { "showLibStack", true },
                 { "realTimePrint", true },
                 { "useOutputPrefixes", false },
