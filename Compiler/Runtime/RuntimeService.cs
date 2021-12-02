@@ -35,7 +35,17 @@ namespace Runtime
                         ImageResourceManifestFile = new FileOutput() { Type = FileOutputType.Text, TextContent = imageManifest },
                     },
                 };
+                List<string> resourceNames = new List<string>();
+                List<FileOutput> resourceBytes = new List<FileOutput>();
+                foreach (string resourceName in cbxDecoder.ResourceNames)
+                {
+                    resourceNames.Add("res/" + resourceName);
+                    byte[] content = cbxDecoder.GetResourceBytes(resourceName);
+                    resourceBytes.Add(new FileOutput() { Type = FileOutputType.Binary, BinaryContent = content });
+                }
                 cbxBundle.ResourceDB.ConvertToFlattenedFileData();
+                cbxBundle.ResourceDB.FlatFileNames = resourceNames.ToArray();
+                cbxBundle.ResourceDB.FlatFiles = resourceBytes.ToArray();
                 resourceReader = new Interpreter.InMemoryResourceReader(cbxBundle.ResourceDB.FlatFileNames, cbxBundle.ResourceDB.FlatFiles);
             }
             else if (request.ContainsKey("cbxBundle"))

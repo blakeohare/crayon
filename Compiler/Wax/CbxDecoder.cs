@@ -25,5 +25,19 @@ namespace Wax
         public string ByteCode { get { return this.GetTextFile("bytecode.txt"); } }
         public string ResourceManifest { get { return this.GetTextFile("manifest.txt"); } }
         public string ImageManifest { get { return this.GetTextFile("images.txt"); } }
+
+        public string[] ResourceNames
+        {
+            get
+            {
+                if (!this.decoder.DirectoryExists("res")) return new string[0];
+                return this.decoder.ListDirectory("res", true, false);
+            }
+        }
+
+        public byte[] GetResourceBytes(string name)
+        {
+            return this.decoder.ReadFileBytes("res/" + name);
+        }
     }
 }
