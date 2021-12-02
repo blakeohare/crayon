@@ -1,6 +1,4 @@
-﻿using CommonUtil;
-
-namespace Build.BuildParseNodes
+﻿namespace Build.BuildParseNodes
 {
     public abstract class BuildItem
     {

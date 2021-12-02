@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\..\Platform\Platform.csproj" />
   </ItemGroup>
 

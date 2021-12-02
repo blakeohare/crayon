@@ -1,5 +1,4 @@
-﻿using CommonUtil;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Parser.Localization
 {
