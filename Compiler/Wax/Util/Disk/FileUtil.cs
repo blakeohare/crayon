@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CommonUtil.Disk
+namespace Wax.Util.Disk
 {
     public static class FileUtil
     {
@@ -296,7 +296,7 @@ namespace CommonUtil.Disk
 
         public static string GetPlatformPath(string path)
         {
-            if (Environment.Platform.IsWindows)
+            if (Wax.Util.PlatformUtil.IsWindows)
             {
                 path = path.Replace('/', '\\');
             }
@@ -309,7 +309,7 @@ namespace CommonUtil.Disk
 
         public static string FinalizeTilde(string path)
         {
-            if (Environment.Platform.IsWindows || !path.StartsWith("~"))
+            if (Wax.Util.PlatformUtil.IsWindows || !path.StartsWith("~"))
             {
                 return path;
             }

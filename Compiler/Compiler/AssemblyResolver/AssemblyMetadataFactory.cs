@@ -1,8 +1,7 @@
-﻿using CommonUtil.Disk;
-using CommonUtil.Json;
-using Parser.Localization;
+﻿using Parser.Localization;
 using System.Collections.Generic;
 using System.Linq;
+using Wax.Util.Disk;
 
 namespace AssemblyResolver
 {
@@ -10,16 +9,16 @@ namespace AssemblyResolver
     {
         public static InternalAssemblyMetadata CreateLibrary(string directory, string id)
         {
-            JsonLookup manifest;
+            Wax.Util.JsonLookup manifest;
             string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
             try
             {
-                manifest = new JsonLookup(new JsonParser(manifestText)
-                    .AddOption(JsonOption.ALLOW_TRAILING_COMMA)
-                    .AddOption(JsonOption.ALLOW_COMMENTS)
+                manifest = new Wax.Util.JsonLookup(new Wax.Util.JsonParser(manifestText)
+                    .AddOption(Wax.Util.JsonOption.ALLOW_TRAILING_COMMA)
+                    .AddOption(Wax.Util.JsonOption.ALLOW_COMMENTS)
                     .ParseAsDictionary());
             }
-            catch (JsonParser.JsonParserException jpe)
+            catch (Wax.Util.JsonParser.JsonParserException jpe)
             {
                 throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + id + "'.", jpe);
             }

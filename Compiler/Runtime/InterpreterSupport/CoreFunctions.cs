@@ -405,7 +405,7 @@ namespace Interpreter.Vm
             Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
             try
             {
-                Dictionary<string, object> result = waxHub.AwaitSendRequest(serviceId, new Dictionary<string, object>(new CommonUtil.Json.JsonParser(payloadJson).ParseAsDictionary()));
+                Dictionary<string, object> result = waxHub.AwaitSendRequest(serviceId, new Dictionary<string, object>(new Wax.Util.JsonParser(payloadJson).ParseAsDictionary()));
                 return new Wax.JsonBasedObject(result).ToJson();
             }
             catch (InvalidOperationException ioe)

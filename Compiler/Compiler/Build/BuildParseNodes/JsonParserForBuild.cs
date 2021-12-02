@@ -1,5 +1,4 @@
-﻿using CommonUtil.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Build.BuildParseNodes
@@ -9,9 +8,9 @@ namespace Build.BuildParseNodes
     {
         internal static BuildRoot Parse(string file)
         {
-            JsonParser parser = new JsonParser(file);
+            Wax.Util.JsonParser parser = new Wax.Util.JsonParser(file);
             IDictionary<string, object> rootDict = parser.ParseAsDictionary();
-            JsonLookup root = new JsonLookup(rootDict);
+            Wax.Util.JsonLookup root = new Wax.Util.JsonLookup(rootDict);
 
             BuildRoot rootOut = new BuildRoot();
             rootOut.ProjectId = root.GetAsString("id");
@@ -19,9 +18,9 @@ namespace Build.BuildParseNodes
             rootOut.ProgrammingLanguage = root.GetAsString("programmingLanguage") ?? root.GetAsString("programming-language");
             ParseBuildItem(rootOut, root);
             List<Target> targets = new List<Target>();
-            foreach (JsonLookup targetRoot in root.GetAsList("targets")
+            foreach (Wax.Util.JsonLookup targetRoot in root.GetAsList("targets")
                 .OfType<IDictionary<string, object>>()
-                .Select(t => new JsonLookup(t)))
+                .Select(t => new Wax.Util.JsonLookup(t)))
             {
                 Target target = new Target();
                 target.Name = targetRoot.GetAsString("name");
@@ -33,7 +32,7 @@ namespace Build.BuildParseNodes
             return rootOut;
         }
 
-        private static void ParseBuildItem(BuildItem item, JsonLookup json)
+        private static void ParseBuildItem(BuildItem item, Wax.Util.JsonLookup json)
         {
             item.CompilerLocale = json.GetAsString("compilerLocale") ?? json.GetAsString("compiler-locale");
             item.ProjectTitle = json.GetAsString("title");
@@ -95,15 +94,15 @@ namespace Build.BuildParseNodes
             item.Sources = sourceDirectories.ToArray();
 
             List<BuildVar> buildVars = new List<BuildVar>();
-            foreach (JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
+            foreach (Wax.Util.JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
                 .OfType<IDictionary<string, object>>()
-                .Select(t => new JsonLookup(t)))
+                .Select(t => new Wax.Util.JsonLookup(t)))
             {
                 BuildVar bv = new BuildVar() { Id = varJson.GetAsString("name") };
                 object value = varJson.Get("value");
                 if (value == null && varJson.GetAsString("env") != null)
                 {
-                    bv.Value = CommonUtil.Environment.EnvironmentVariables.Get(varJson.GetAsString("env")) ?? "";
+                    bv.Value = Wax.Util.EnvironmentVariables.Get(varJson.GetAsString("env")) ?? "";
                 }
                 else if (value == null && varJson.GetAsString("envFile") != null)
                 {

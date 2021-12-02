@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommonUtil.Images
+namespace Wax.Util.Images
 {
     public class IconGenerator
     {

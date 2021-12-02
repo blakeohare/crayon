@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommonUtil.Images;
+using Wax.Util.Images;
 
 namespace Build.ImageSheets
 {

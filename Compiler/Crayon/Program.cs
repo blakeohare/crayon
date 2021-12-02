@@ -1,4 +1,4 @@
-﻿using CommonUtil.Disk;
+﻿using Wax.Util.Disk;
 using System.Collections.Generic;
 
 namespace Crayon
@@ -54,7 +54,7 @@ namespace Crayon
 
         private static IList<string> GetExtensionDirectories()
         {
-            string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
+            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
             List<string> directories = new List<string>();
             if (crayonHome != null)
             {
@@ -74,7 +74,7 @@ namespace Crayon
 #if DEBUG
             if (actualArgs.Length == 0)
             {
-                string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
+                string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
                 if (crayonHome != null)
                 {
                     string debugArgsFile = FileUtil.JoinPath(crayonHome, "DEBUG_ARGS.txt");

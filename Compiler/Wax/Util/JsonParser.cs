@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 // This code is taken from SimpleJson: https://github.com/blakeohare/SimpleJson
-namespace CommonUtil.Json
+namespace Wax.Util
 {
     // Various flags to reduce the strictness of the JSON standard.
     public enum JsonOption

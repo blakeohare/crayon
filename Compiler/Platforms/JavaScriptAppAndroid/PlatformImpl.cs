@@ -1,10 +1,10 @@
-﻿using CommonUtil.Disk;
-using CommonUtil.Images;
-using Platform;
+﻿using Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wax;
+using Wax.Util.Disk;
+using Wax.Util.Images;
 
 namespace JavaScriptAppAndroid
 {
@@ -267,7 +267,7 @@ namespace JavaScriptAppAndroid
                 }
             }
 
-            return CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_ANDROID_SDK")
+            return Wax.Util.EnvironmentVariables.Get("CRAYON_ANDROID_SDK")
                 ?? @"C:\Program Files (x86)\Android\android-studio\sdk";
         }
     }

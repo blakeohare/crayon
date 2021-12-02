@@ -1,11 +1,11 @@
 ﻿using Build.BuildParseNodes;
 using CommonUtil;
-using CommonUtil.Disk;
-using CommonUtil.Json;
 using Parser.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax.Util.Disk;
+
 
 namespace Build
 {
@@ -59,7 +59,7 @@ namespace Build
             {
                 return JsonParserForBuild.Parse(buildFile);
             }
-            catch (JsonParser.JsonParserException jpe)
+            catch (Wax.Util.JsonParser.JsonParserException jpe)
             {
                 throw new InvalidOperationException("Build file JSON syntax error: " + jpe.Message);
             }
@@ -163,7 +163,7 @@ namespace Build
             javaPackage = pr.Replace(javaPackage);
             programmingLanguage = pr.Replace(programmingLanguage);
             localDeps = localDeps
-                .Select(t => CommonUtil.Environment.EnvironmentVariables.DoReplacementsInString(t))
+                .Select(t => Wax.Util.EnvironmentVariables.DoReplacementsInString(t))
                 .Select(t => pr.Replace(t))
                 .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
                 .ToArray();
@@ -328,7 +328,7 @@ namespace Build
 
             foreach (SourceItem sourceDir in sourceDirs)
             {
-                string sourceDirValue = CommonUtil.Environment.EnvironmentVariables.DoReplacementsInString(sourceDir.Value);
+                string sourceDirValue = Wax.Util.EnvironmentVariables.DoReplacementsInString(sourceDir.Value);
                 string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDirValue);
                 ProjectFilePath filePath = new ProjectFilePath(relative, projectDir);
                 paths[filePath.AbsolutePath] = filePath;

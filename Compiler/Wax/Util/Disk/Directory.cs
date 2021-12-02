@@ -1,4 +1,4 @@
-﻿namespace CommonUtil.Disk
+﻿namespace Wax.Util.Disk
 {
     public static class Directory
     {

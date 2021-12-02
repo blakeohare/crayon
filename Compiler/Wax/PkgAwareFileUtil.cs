@@ -1,8 +1,8 @@
-﻿using CommonUtil.Disk;
-using CommonUtil.Text;
+﻿using CommonUtil.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax.Util.Disk;
 
 namespace Wax
 {
