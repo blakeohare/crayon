@@ -1,8 +1,4 @@
-﻿using System;
-using Interpreter;
-using Interpreter.Vm;
-
-namespace Interpreter
+﻿namespace Interpreter
 {
     public static class PlatformTranslationHelper
     {
