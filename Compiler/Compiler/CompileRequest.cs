@@ -13,7 +13,7 @@ namespace Parser
             this.CompilerLocale = Parser.Localization.Locale.Get((string)rawRequest["locale"]);
             this.LocalDeps = (string[])rawRequest["localDeps"];
             this.ProjectDirectory = (string)rawRequest["projectDirectory"];
-            this.codeFiles = CommonUtil.Collections.DictionaryUtil.FlattenedDictionaryToDictionary((string[])rawRequest["codeFiles"]);
+            this.codeFiles = Build.DictionaryUtil.FlattenedDictionaryToDictionary((string[])rawRequest["codeFiles"]);
             this.RootProgrammingLanguage = ((string)rawRequest["lang"]).ToUpper() == "CRAYON" ? Build.ProgrammingLanguage.CRAYON : Build.ProgrammingLanguage.ACRYLIC;
             this.RemoveSymbols = (bool)rawRequest["removeSymbols"];
             this.ErrorsAsExceptions = rawRequest.ContainsKey("errorsAsExceptions") ? (bool)rawRequest["errorsAsExceptions"] : false;

@@ -51,7 +51,7 @@ namespace CSharpApp
 
             string guidSeed = IdGenerator.GetRandomSeed();
 
-            return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
+            return MiscUtil.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData),
                 new Dictionary<string, string>() {
                     { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(exportProperties.GuidSeed ?? guidSeed, "project") },
