@@ -12,6 +12,11 @@ namespace Extensions {
                 service.handleRequest(Json.parseJson(payload), res => {
                     if (invoked) return;
                     invoked = true;
+                    res = res ?? {};
+                    if (Core.typeof(res) != Type.DICTIONARY) {
+                        err = "ExtensionService response must be a dictionary.";
+                        throw new InvalidArgumentException(err);
+                    }
                     json = Json.serializeJson(res);
                     $$$('waxServiceSendResponse', json);
                 });
