@@ -62,7 +62,7 @@ namespace Wax
                     }
                     else
                     {
-                        this.binaryContentCache = CommonUtil.Base64.FromBase64ToBytes(this.BinaryContentB64);
+                        this.binaryContentCache = System.Convert.FromBase64String(this.BinaryContentB64);
                     }
                 }
                 return this.binaryContentCache;
@@ -70,7 +70,7 @@ namespace Wax
             set
             {
                 this.binaryContentCache = value;
-                this.BinaryContentB64 = CommonUtil.Base64.ToBase64(value);
+                this.BinaryContentB64 = System.Convert.ToBase64String(value);
             }
         }
 

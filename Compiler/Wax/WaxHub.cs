@@ -68,7 +68,7 @@ namespace Wax
         {
             List<string> buffer = new List<string>();
             SerializeWireDataImpl(data, buffer);
-            return string.Join(',', buffer.Select(item => CommonUtil.Base64.ToBase64(item)));
+            return string.Join(',', buffer.Select(item => Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(item))));
         }
 
         private static void SerializeWireDataImpl(object item, List<string> buffer)
@@ -139,7 +139,7 @@ namespace Wax
 
         internal static Dictionary<string, object> ParseWireData(string encodedData)
         {
-            Queue<string> buffer = new Queue<string>(encodedData.Split(',').Select(item => CommonUtil.Base64.FromBase64(item)));
+            Queue<string> buffer = new Queue<string>(encodedData.Split(',').Select(item => System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(item))));
             object output = ParseWireDataImpl(buffer);
             if (output is Dictionary<string, object>)
             {
