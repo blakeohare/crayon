@@ -9,7 +9,7 @@ namespace Parser.Localization
         private Dictionary<string, string> lookup = new Dictionary<string, string>();
         public StringTable(string locale)
         {
-            string stringTable = new ResourceStore(typeof(StringTable)).ReadAssemblyFileText("Localization/Languages/" + locale + "/strings.txt");
+            string stringTable = ResourceReader.GetFile(locale + "/strings.txt");
 
             foreach (string line in stringTable.Split('\n'))
             {
