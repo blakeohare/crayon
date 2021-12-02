@@ -6,10 +6,10 @@ namespace Platform
     public class TemplateReader
     {
         private List<string> platformNamesMostGeneralFirst = new List<string>();
-        private Common.PkgAwareFileUtil fileUtil;
+        private Wax.PkgAwareFileUtil fileUtil;
         private string activeCrayonSourceRoot;
 
-        public TemplateReader(Common.PkgAwareFileUtil fileUtil, AbstractPlatform platform, string activeCrayonSourceRoot)
+        public TemplateReader(Wax.PkgAwareFileUtil fileUtil, AbstractPlatform platform, string activeCrayonSourceRoot)
         {
             this.activeCrayonSourceRoot = activeCrayonSourceRoot;
             this.fileUtil = fileUtil;

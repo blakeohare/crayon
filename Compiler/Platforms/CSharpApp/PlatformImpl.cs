@@ -1,8 +1,6 @@
-﻿using Common;
-using CommonUtil.Random;
+﻿using CommonUtil.Random;
 using Platform;
 using System.Collections.Generic;
-using System.Linq;
 using Wax;
 
 namespace CSharpApp

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace Wax
 {
     /*
         An assortment of file util functions that take into consideration that part of the path

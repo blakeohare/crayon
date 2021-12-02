@@ -1,5 +1,4 @@
-﻿using Common;
-using CommonUtil.Disk;
+﻿using CommonUtil.Disk;
 using Parser.Localization;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +53,7 @@ namespace AssemblyResolver
             return output;
         }
 
-        private PkgAwareFileUtil fileUtil = new PkgAwareFileUtil();
+        private Wax.PkgAwareFileUtil fileUtil = new Wax.PkgAwareFileUtil();
 
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {

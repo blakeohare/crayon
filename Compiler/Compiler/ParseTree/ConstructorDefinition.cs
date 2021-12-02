@@ -1,5 +1,4 @@
-﻿using Common;
-using Parser.Localization;
+﻿using Parser.Localization;
 using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;

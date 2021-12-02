@@ -1,8 +1,4 @@
-﻿using Interpreter.Structs;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Interpreter.Structs
+﻿namespace Interpreter.Structs
 {
     public class SystemMethod
     {
