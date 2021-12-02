@@ -160,7 +160,7 @@ namespace Wax
 
         private string ReadString(int index, int length)
         {
-            return CommonUtil.StringUtil.FromUtf8Bytes(this.data, index, length);
+            return System.Text.Encoding.UTF8.GetString(this.data, index, length);
         }
     }
 }

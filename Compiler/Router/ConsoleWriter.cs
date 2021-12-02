@@ -29,7 +29,7 @@ namespace Router
             string prefix = prefixesEnabled ? (messageType.ToString() + ":") : "";
             foreach (string line in message.Split('\n').Select(s => s.TrimEnd()))
             {
-                CommonUtil.Print.Line(prefix + line);
+                System.Console.WriteLine(prefix + line);
             }
 
             return;

@@ -95,7 +95,7 @@ namespace Wax
             if (trimBom ||
                 (fileExtension != null && BOMLESS_TEXT_TYPES.Contains(fileExtension)))
             {
-                byte[] bytes = StringUtil.ToUtf8Bytes(content);
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(content);
                 this.ExportBinaryFile(path, bytes);
             }
             else

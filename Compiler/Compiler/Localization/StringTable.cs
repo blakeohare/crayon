@@ -15,7 +15,7 @@ namespace Parser.Localization
                 string trimmedLine = line.Trim();
                 if (trimmedLine.Length > 0)
                 {
-                    string[] parts = StringUtil.SplitOnce(line, ":");
+                    string[] parts = line.Split(":", 2, System.StringSplitOptions.None);
                     string key = parts[0].Trim();
                     string value = parts[1].Trim();
                     lookup[key] = value;

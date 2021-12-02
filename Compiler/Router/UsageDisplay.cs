@@ -4,7 +4,7 @@ namespace Router
 {
     internal static class UsageDisplay
     {
-        internal static readonly string USAGE = StringUtil.JoinLines(
+        internal static readonly string USAGE = string.Join("\n", new string[] {
             "Crayon version " + VersionInfo.VersionString,
             "",
             "To export:",
@@ -35,6 +35,6 @@ namespace Router
             "  -showLibStack      Stack traces will include libraries. By",
             "                     default, stack traces are truncated to only",
             "                     show user code.",
-            "");
+            "" });
     }
 }

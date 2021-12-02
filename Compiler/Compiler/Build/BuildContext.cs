@@ -116,7 +116,7 @@ namespace Build
             bool jsFullPage = desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw ?? false;
             // TODO: maybe set this default value to true, although this does nothing as of now.
             bool minified = desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw ?? false;
-            bool exportDebugByteCode = BoolUtil.Parse(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
+            bool exportDebugByteCode = BoolParser.FlexibleParse(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
             string guidSeed = desiredTarget.GuidSeed ?? buildInput.GuidSeed ?? "";
             // TODO: make this a string array.
             string[] iconFilePaths = CombineAndFlattenStringArrays(desiredTarget.IconFilePaths, buildInput.IconFilePaths);
@@ -432,7 +432,7 @@ namespace Build
             }
             else
             {
-                foreach (string orientation in StringUtil.SplitRemoveEmpty(rawValue, ","))
+                foreach (string orientation in rawValue.Split(",", StringSplitOptions.RemoveEmptyEntries))
                 {
                     switch (orientation.Trim())
                     {

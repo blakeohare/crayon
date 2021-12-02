@@ -39,7 +39,7 @@ namespace Build.BuildParseNodes
 
         public bool ExportDebugByteCode
         {
-            get { return BoolUtil.Parse(this.ExportDebugByteCodeRaw); }
+            get { return BoolParser.FlexibleParse(this.ExportDebugByteCodeRaw); }
         }
     }
 }
