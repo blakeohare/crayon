@@ -74,7 +74,7 @@ namespace AssemblyResolver
                 }
             }
 
-            string[] paths = StringUtil.SplitRemoveEmpty(placesWhereLibraryDirectoriesCanExist, ";");
+            string[] paths = placesWhereLibraryDirectoriesCanExist.Split(";", System.StringSplitOptions.RemoveEmptyEntries);
             foreach (string path in paths)
             {
                 // TODO: figure out why this says nullable yet is being used directly.
