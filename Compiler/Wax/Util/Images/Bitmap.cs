@@ -1,5 +1,4 @@
-﻿using CommonUtil.Random;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Wax.Util.Disk;
 
@@ -105,13 +104,24 @@ namespace Wax.Util.Images
             }
         }
 
+        private static readonly System.Random random = new System.Random();
+        private static string GenerateGibberish(int length)
+        {
+            string chars = "0123456789abcdefghijklmnopqrstuvwxyz";
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i < length; i++)
+            {
+                sb.Append(chars[random.Next(chars.Length)]);
+            }
+            return sb.ToString();
+        }
+
         public byte[] SaveBytes(ImageFormat format)
         {
             // TODO: for Windows you can save a stream. Need to look into Cairo, but this may be the only way for OSX.
-            string seed = IdGenerator.GetRandomSeed();
             string file = FileUtil.JoinPath(
                 FileUtil.GetTempDirectory(),
-                "crayon-" + IdGenerator.Generate32HexDigits(seed, "image") + FormatToExtension(format));
+                "crayon-" + GenerateGibberish(32) + FormatToExtension(format));
             this.Save(file);
             byte[] bytes = FileUtil.ReadFileBytes(file);
             FileUtil.DeleteFile(file);
