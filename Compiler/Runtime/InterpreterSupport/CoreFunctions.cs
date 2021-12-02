@@ -141,7 +141,8 @@ namespace Interpreter.Vm
             clientOut[0] = socket;
 
             System.ComponentModel.BackgroundWorker bgworker = new System.ComponentModel.BackgroundWorker();
-            bgworker.DoWork += (sender, e) => {
+            bgworker.DoWork += (sender, e) =>
+            {
                 try
                 {
                     socket.Connect(new System.Net.Sockets.UnixDomainSocketEndPoint(path));
@@ -183,7 +184,8 @@ namespace Interpreter.Vm
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             bool intPhase = true;
             int targetLength = 0;
-            bgworker.DoWork += (e, sender) => {
+            bgworker.DoWork += (e, sender) =>
+            {
                 System.Net.Sockets.Socket s = socket.Accept();
                 byte[] buffer = new byte[2048];
                 int bytesRead = 0;
@@ -246,7 +248,8 @@ namespace Interpreter.Vm
             socket.Listen(1); // TODO: customizable value
             System.ComponentModel.BackgroundWorker bgworker = new System.ComponentModel.BackgroundWorker();
 
-            bgworker.DoWork += (e, sender) => {
+            bgworker.DoWork += (e, sender) =>
+            {
                 System.Net.Sockets.Socket s = socket.Accept();
                 byte[] buffer = new byte[2048];
                 int bytesRead = 0;
@@ -395,6 +398,27 @@ namespace Interpreter.Vm
 
             };
             bgWorker.RunWorkerAsync();
+        }
+
+        public static string WaxAwaitSend(object waxHubObj, string serviceId, string payloadJson, string[] errOut)
+        {
+            Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
+            try
+            {
+                Dictionary<string, object> result = waxHub.AwaitSendRequest(serviceId, new Dictionary<string, object>(new CommonUtil.Json.JsonParser(payloadJson).ParseAsDictionary()));
+                return new Wax.JsonBasedObject(result).ToJson();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                errOut[0] = ioe.Message;
+                return null;
+            }
+        }
+
+        public static string WaxSend(object waxHubObj, string serviceId, string payloadJson, Value callback)
+        {
+            Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,0 +1,15 @@
+﻿@import("inline/3_arg.pst");
+
+stringList = new Array<string>(1);
+string1 = Extension.CoreFunc_WaxAwaitSend(
+    vm.environment.waxHub,
+    (string) arg1.internalValue, // service ID
+    (string) arg2.internalValue, // JSON payload (serialized)
+    stringList); // error out
+
+if (stringList[0] != null) {
+    setItemInList((ListImpl)arg3.internalValue, 0, buildString(globals, stringList[0]));
+    output = vm.globalNull;
+} else {
+    output = buildString(globals, string1);
+}

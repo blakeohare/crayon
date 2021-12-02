@@ -115,9 +115,11 @@ namespace Parser
         TYPE_OF = 4,
         TYPE_IS = 5,
         VALUE_TO_FLOAT_OR_NULL = 111,
+        WAX_AWAIT_SEND = 121,
+        WAX_SEND = 122,
         XML_PARSE = 84,
 
-        // Next ID: 121
+        // Next ID: 123
     }
 
     internal static class CoreFunctionIDHelper
@@ -236,6 +238,8 @@ namespace Parser
                 case "ipcUnixSocketClientSend": return (int)CoreFunctionID.IPC_UNIX_SOCKET_CLIENT_SEND;
                 case "ipcUnixSocketServerDisconnect": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_DISCONNECT;
                 case "reflectNamespaceFunctions": return (int)CoreFunctionID.REFLECT_NAMESPACE_FUNCTIONS;
+                case "waxAwaitSend": return (int)CoreFunctionID.WAX_AWAIT_SEND;
+                case "waxSend": return (int)CoreFunctionID.WAX_SEND;
                 default: return -1;
             }
         }

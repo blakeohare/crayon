@@ -1,0 +1,44 @@
+﻿import Json;
+
+namespace Wax {
+
+    class WaxHub {
+        @private
+        constructor() { }
+
+        static field _instance = null;
+
+        static function getActiveHub() {
+            if (WaxHub._instance == null) {
+                WaxHub._instance = new WaxHub();
+            }
+            return WaxHub._instance;
+        }
+
+        function awaitSendRequest(serviceId, payload) {
+            serializedData = Json.serializeJson(payload);
+            errOut = [null];
+            result = $$$('waxAwaitSend', serviceId, serializedData, errOut);
+            WaxHub._errHandle(errOut[0]);
+            return Json.parseJson(result);
+        }
+
+        function sendRequest(serviceId, payload, cb = null) {
+            if (Core.typeof(payload) != Type.DICTIONARY) throw new InvalidArgumentException("Payload must be a JSON-serializable dictionary.");
+            serializedData = Json.serializeJson(payload); // TODO: catch error here if there's a bad nested type
+            err = $$$('waxSend', serviceId + '', serializedData, (err, rawData) => {
+                WaxHub._errHandle([err]);
+                res = Json.parseJson(rawData);
+                if (cb != null) {
+                    cb(res);
+                }
+            });
+            WaxHub._errHandle(err);
+        }
+
+        static function _errHandle(err) {
+            if (err == null) return;
+            throw new Exception(err);
+        }
+    }
+}

@@ -12,8 +12,9 @@ namespace Interpreter.Structs
         public string stacktracePrefix;
         public object platformEventLoop;
         public object resourceReader;
+        public object waxHub;
 
-        public VmEnvironment(string[] commandLineArgs, bool showLibStack, string stdoutPrefix, string stacktracePrefix, object platformEventLoop, object resourceReader)
+        public VmEnvironment(string[] commandLineArgs, bool showLibStack, string stdoutPrefix, string stacktracePrefix, object platformEventLoop, object resourceReader, object waxHub)
         {
             this.commandLineArgs = commandLineArgs;
             this.showLibStack = showLibStack;
@@ -21,6 +22,7 @@ namespace Interpreter.Structs
             this.stacktracePrefix = stacktracePrefix;
             this.platformEventLoop = platformEventLoop;
             this.resourceReader = resourceReader;
+            this.waxHub = waxHub;
         }
     }
 
