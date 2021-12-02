@@ -1,4 +1,4 @@
-﻿namespace CommonUtil.Disk
+﻿namespace Wax.Util.Disk
 {
     public static class File
     {
@@ -19,7 +19,7 @@
 
         public static void Move(string source, string dest, bool overwriteOkay)
         {
-            if (!Environment.Platform.IsWindows)
+            if (!Wax.Util.PlatformUtil.IsWindows)
             {
                 source = source.Replace('\\', '/');
                 dest = dest.Replace('\\', '/');
@@ -33,7 +33,7 @@
 
         public static void Copy(string source, string dest)
         {
-            if (!Environment.Platform.IsWindows)
+            if (!Wax.Util.PlatformUtil.IsWindows)
             {
                 source = source.Replace('\\', '/');
             }

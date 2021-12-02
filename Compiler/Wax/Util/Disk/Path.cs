@@ -1,4 +1,4 @@
-﻿namespace CommonUtil.Disk
+﻿namespace Wax.Util.Disk
 {
     public static class Path
     {
@@ -12,7 +12,7 @@
 
         public static bool IsAbsolute(string path)
         {
-            if (Environment.Platform.IsWindows)
+            if (Wax.Util.PlatformUtil.IsWindows)
             {
                 if (path.Length > 1 && path[1] == ':') return true;
             }

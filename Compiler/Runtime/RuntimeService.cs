@@ -1,6 +1,6 @@
-﻿using CommonUtil.Disk;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Wax;
+using Wax.Util.Disk;
 
 namespace Runtime
 {
@@ -81,7 +81,7 @@ namespace Runtime
 
             string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm);
             if (response == null) return new Dictionary<string, object>();
-            return new Dictionary<string, object>(new CommonUtil.Json.JsonParser(response).ParseAsDictionary());
+            return new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary());
         }
     }
 }

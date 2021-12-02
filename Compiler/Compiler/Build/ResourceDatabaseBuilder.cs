@@ -1,9 +1,9 @@
 ﻿using Build.ImageSheets;
-using CommonUtil.Disk;
-using CommonUtil.Images;
 using System;
 using System.Collections.Generic;
 using Wax;
+using Wax.Util.Disk;
+using Wax.Util.Images;
 
 namespace Build
 {

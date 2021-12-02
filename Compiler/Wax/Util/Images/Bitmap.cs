@@ -1,9 +1,9 @@
-﻿using CommonUtil.Disk;
-using CommonUtil.Random;
+﻿using CommonUtil.Random;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Wax.Util.Disk;
 
-namespace CommonUtil.Images
+namespace Wax.Util.Images
 {
     public enum ImageFormat
     {

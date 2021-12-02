@@ -1,4 +1,4 @@
-﻿using CommonUtil.Disk;
+﻿using Wax.Util.Disk;
 
 namespace Crayon
 {

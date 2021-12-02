@@ -20,7 +20,7 @@ namespace Build
                 string envPath = System.IO.Path.Combine(projectDirectory, envFile);
                 if (!System.IO.File.Exists(envPath)) throw new InvalidOperationException("envFile does not exist: '" + envFile + "'");
                 string text = System.IO.File.ReadAllText(envPath);
-                CommonUtil.Json.JsonParser envParser = new CommonUtil.Json.JsonParser(text);
+                Wax.Util.JsonParser envParser = new Wax.Util.JsonParser(text);
                 envValues = envParser.ParseAsDictionary();
             }
 

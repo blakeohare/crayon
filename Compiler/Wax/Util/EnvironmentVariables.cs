@@ -1,4 +1,4 @@
-﻿namespace CommonUtil.Environment
+﻿namespace Wax.Util
 {
     public static class EnvironmentVariables
     {

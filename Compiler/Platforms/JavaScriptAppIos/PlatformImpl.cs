@@ -1,9 +1,9 @@
-﻿using CommonUtil.Disk;
-using CommonUtil.Images;
-using CommonUtil.Resources;
+﻿using CommonUtil.Resources;
 using Platform;
 using System.Collections.Generic;
 using Wax;
+using Wax.Util.Disk;
+using Wax.Util.Images;
 
 namespace JavaScriptAppIos
 {

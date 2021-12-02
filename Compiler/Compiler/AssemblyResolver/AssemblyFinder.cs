@@ -1,9 +1,9 @@
 ﻿using CommonUtil;
-using CommonUtil.Disk;
 using Parser.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Wax.Util.Disk;
 
 namespace AssemblyResolver
 {
@@ -42,7 +42,7 @@ namespace AssemblyResolver
             string nullableProjectDirectory,
             string nullableCrayonSourceRoot)
         {
-            string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
+            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
 
 #if RELEASE
             if (crayonHome == null)
@@ -57,7 +57,7 @@ namespace AssemblyResolver
             {
                 placesWhereLibraryDirectoriesCanExist += ";" + FileUtil.JoinPath(crayonHome, "libs");
             }
-            placesWhereLibraryDirectoriesCanExist += ";" + (CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_PATH") ?? "");
+            placesWhereLibraryDirectoriesCanExist += ";" + (Wax.Util.EnvironmentVariables.Get("CRAYON_PATH") ?? "");
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');

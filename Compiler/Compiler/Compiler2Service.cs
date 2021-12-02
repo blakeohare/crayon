@@ -53,8 +53,8 @@ namespace Compiler
 
             buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile, hub);
 
-            string projectDirectory = CommonUtil.Disk.FileUtil.GetParentDirectory(buildFile);
-            string buildFileContent = CommonUtil.Disk.FileUtil.ReadFileText(buildFile);
+            string projectDirectory = Wax.Util.Disk.FileUtil.GetParentDirectory(buildFile);
+            string buildFileContent = Wax.Util.Disk.FileUtil.ReadFileText(buildFile);
 
             BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, command.ResourceErrorsShowRelativeDir);
 
@@ -69,16 +69,16 @@ namespace Compiler
             if (buildContext.OutputFolder == null)
                 throw new InvalidOperationException("No output folder specified in build file.");
 
-            buildContext.OutputFolder = CommonUtil.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
+            buildContext.OutputFolder = Wax.Util.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
 
             if (buildContext.LaunchScreenPath != null)
             {
-                buildContext.LaunchScreenPath = CommonUtil.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);
+                buildContext.LaunchScreenPath = Wax.Util.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);
             }
 
             foreach (ProjectFilePath sourceFolder in buildContext.SourceFolders)
             {
-                if (!CommonUtil.Disk.FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
+                if (!Wax.Util.Disk.FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
                 {
                     throw new InvalidOperationException("Source folder does not exist.");
                 }

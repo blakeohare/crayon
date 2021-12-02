@@ -1,5 +1,5 @@
-﻿using CommonUtil.Disk;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Wax.Util.Disk;
 
 namespace Platform
 {
@@ -26,7 +26,7 @@ namespace Platform
         {
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
 
-            string crayonHome = CommonUtil.Environment.EnvironmentVariables.Get("CRAYON_HOME");
+            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
             if (crayonHome != null)
             {
                 // Search %CRAYON_HOME%/vmsrc directory for the VM files for the given platforms.

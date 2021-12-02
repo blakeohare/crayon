@@ -1,6 +1,6 @@
-﻿using CommonUtil.Disk;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Wax.Util.Disk;
 
 namespace Wax
 {
@@ -58,7 +58,7 @@ namespace Wax
                 {
                     if (this.Type == FileOutputType.Image && this.Bitmap != null)
                     {
-                        this.binaryContentCache = this.Bitmap.SaveBytes(CommonUtil.Images.ImageFormat.PNG);
+                        this.binaryContentCache = this.Bitmap.SaveBytes(Wax.Util.Images.ImageFormat.PNG);
                     }
                     else
                     {
@@ -74,8 +74,8 @@ namespace Wax
             }
         }
 
-        private CommonUtil.Images.Bitmap bitmap = null;
-        public CommonUtil.Images.Bitmap Bitmap
+        private Wax.Util.Images.Bitmap bitmap = null;
+        public Wax.Util.Images.Bitmap Bitmap
         {
             get { return this.bitmap; }
             set

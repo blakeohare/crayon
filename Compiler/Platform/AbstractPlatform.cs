@@ -175,10 +175,10 @@ namespace Platform
         public void GenerateIconFile(Dictionary<string, FileOutput> files, string iconOutputPath, ExportProperties exportProperties)
         {
             string[] iconPaths = exportProperties.IconPaths;
-            CommonUtil.Images.IconGenerator iconGen = new CommonUtil.Images.IconGenerator();
+            Wax.Util.Images.IconGenerator iconGen = new Wax.Util.Images.IconGenerator();
             foreach (string path in iconPaths)
             {
-                iconGen.AddImage(new CommonUtil.Images.Bitmap(path.Trim()));
+                iconGen.AddImage(new Wax.Util.Images.Bitmap(path.Trim()));
             }
 
             files[iconOutputPath] = new FileOutput()
