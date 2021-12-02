@@ -655,7 +655,7 @@ var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	var executionContext = [0, stack, 0, 100, PST$createNewArray(100), localsStack, localsStackSet, 1, 0, false, null, false, 0, null];
 	var executionContexts = {};
 	executionContexts[0] = executionContext;
-	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
+	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null, null, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
 	return vm;
 };
 
@@ -5430,6 +5430,15 @@ var interpretImpl = function(vm, executionContextId) {
 							output = vm[14];
 						}
 						break;
+					case 123:
+						// waxServiceGetPayload;
+						output = buildString(globals, vm[11][7]);
+						break;
+					case 124:
+						// waxServiceSendResponse;
+						arg1 = valueStack[--valueStackSize];
+						vm[11][8] = arg1[1];
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -8582,6 +8591,10 @@ var vmGetResourceReaderObj = function(vm) {
 	return vm[11][5];
 };
 
+var vmGetWaxResponse = function(vm) {
+	return vm[11][8];
+};
+
 var vmSetEventLoopObj = function(vm, evLoop) {
 	vm[11][4] = evLoop;
 };
@@ -8592,6 +8605,10 @@ var vmSetResourceReaderObj = function(vm, rr) {
 
 var vmSetWaxHub = function(vm, wh) {
 	vm[11][6] = wh;
+};
+
+var vmSetWaxPayload = function(vm, v) {
+	vm[11][7] = v;
 };
 
 var xml_ampUnescape = function(value, entityLookup) {

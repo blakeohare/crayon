@@ -1,0 +1,6 @@
+{
+    "name": "Extensions",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/extensions",
+    "description": "Library for creating Crayon toolchain extensions."
+}

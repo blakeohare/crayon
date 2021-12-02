@@ -1,0 +1,31 @@
+﻿import Json;
+
+namespace Extensions {
+
+    function main(args) {
+        expectedName = Core.getProjectId() + "Service";
+        invoked = false;
+        for (cls : Core.Reflection.getClasses(ExtensionService.class)) {
+            if (cls.getName().split('.')[-1] == expectedName) {
+                service = cls.createInstance();
+                payload = $$$('waxServiceGetPayload');
+                service.handleRequest(Json.parseJson(payload), res => {
+                    if (invoked) return;
+                    invoked = true;
+                    json = Json.serializeJson(res);
+                    $$$('waxServiceSendResponse', json);
+                });
+                return;
+            }
+        }
+        err = "A class with the name '" + expectedName + "' that extends from Extensions.ExtensionService is required.";
+        throw new Exception(err);
+    }
+
+    class ExtensionService {
+        function handleRequest(payload, cb) {
+            err = "ExtensionService.handleRequest(payload, cb) must be overridden";
+            throw new NotImplementedException(err);
+        }
+    }
+}

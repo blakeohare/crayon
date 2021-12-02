@@ -10,7 +10,8 @@
     "version": "1.0",
     "iosBundlePrefix": "org.crayonlang.extensions.AndroidApkExtension,%VERSION%",
     "guidSeed": "org.crayonlang.extensions.AndroidApkExtension,v1,%TARGET_NAME%",
-
+	"delegateMainTo": "Extensions",
+	
     "targets": [
         {
             "name": "javascript",

@@ -1,0 +1,2 @@
+﻿@import("inline/1_arg.pst");
+vm.environment.waxResponse = (string)arg1.internalValue;

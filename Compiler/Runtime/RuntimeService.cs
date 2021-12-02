@@ -48,12 +48,16 @@ namespace Runtime
                 throw new System.ArgumentException(); // no valid CBX to run
             }
 
-            this.RunInlineVm(args, cbxBundle, showLibStack, useOutputPrefixes, resourceReader);
+            string extensionArgsJson = "{}";
+            if (request.ContainsKey("extArgsJson"))
+            {
+                extensionArgsJson = (string)request["extArgsJson"];
+            }
 
-            cb(new Dictionary<string, object>());
+            cb(this.RunInlineVm(args, extensionArgsJson, cbxBundle, showLibStack, useOutputPrefixes, resourceReader));
         }
 
-        private Dictionary<string, object> RunInlineVm(string[] runtimeArgs, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
+        private Dictionary<string, object> RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
         {
             string byteCode = cbxBundle.ByteCode;
             string resourceManifest = cbxBundle.ResourceDB.ResourceManifestFile.TextContent;
@@ -63,6 +67,7 @@ namespace Runtime
             Interpreter.Vm.CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
             Interpreter.Vm.CrayonWrapper.vmSetResourceReaderObj(vm, resourceReader);
             Interpreter.Vm.CrayonWrapper.vmSetWaxHub(vm, this.Hub);
+            Interpreter.Vm.CrayonWrapper.vmSetWaxPayload(vm, extensionArgsJson);
 
             vm.environment.stdoutPrefix = showOutputPrefixes ? "STDOUT" : null;
             vm.environment.stacktracePrefix = showOutputPrefixes ? "STACKTRACE" : null;
@@ -74,7 +79,9 @@ namespace Runtime
 
             new Interpreter.Vm.EventLoop(vm).StartInterpreter();
 
-            return new Dictionary<string, object>();
+            string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm);
+            if (response == null) return new Dictionary<string, object>();
+            return new Dictionary<string, object>(new CommonUtil.Json.JsonParser(response).ParseAsDictionary());
         }
     }
 }
