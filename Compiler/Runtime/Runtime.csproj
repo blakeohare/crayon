@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 

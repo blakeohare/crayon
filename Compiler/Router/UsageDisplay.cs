@@ -1,6 +1,4 @@
-﻿using CommonUtil;
-
-namespace Router
+﻿namespace Router
 {
     internal static class UsageDisplay
     {
