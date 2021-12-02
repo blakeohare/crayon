@@ -112,6 +112,8 @@
     case 120: Core.EmitComment("reflectNamespaceFunctions"); @import("corefuncs/reflectNamespaceFunctions.pst"); break;
     case 121: Core.EmitComment("waxAwaitSend"); @import("corefuncs/waxAwaitSend.pst"); break;
     case 122: Core.EmitComment("waxSend"); @import("corefuncs/waxSend.pst"); break;
+    case 123: Core.EmitComment("waxServiceGetPayload"); @import("corefuncs/waxServiceGetPayload.pst"); break;
+    case 124: Core.EmitComment("waxServiceSendResponse"); @import("corefuncs/waxServiceSendResponse.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

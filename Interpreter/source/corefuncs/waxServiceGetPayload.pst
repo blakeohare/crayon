@@ -1,0 +1,1 @@
+﻿output = buildString(globals, vm.environment.waxPayload);

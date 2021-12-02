@@ -30,3 +30,11 @@ object vmGetResourceReaderObj(VmContext vm) {
 void vmSetWaxHub(VmContext vm, object wh) {
     vm.environment.waxHub = wh;
 }
+
+void vmSetWaxPayload(VmContext vm, string v) {
+    vm.environment.waxPayload = v;
+}
+
+string vmGetWaxResponse(VmContext vm) {
+    return vm.environment.waxResponse;
+}

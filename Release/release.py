@@ -14,6 +14,7 @@ LIBRARIES = [
 	'DateTime',
 	'Easing',
 	'Environment',
+	'Extensions',
 	'FileIO',
 	'FileIOCommon',
 	'Game',
@@ -42,6 +43,7 @@ LIBRARIES = [
 	'U3Direct',
 	'UrlUtil',
 	'UserData',
+	'Wax',
 	'Xml',
 ]
 

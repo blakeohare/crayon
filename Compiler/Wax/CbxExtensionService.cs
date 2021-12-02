@@ -54,7 +54,8 @@ namespace Wax
 
             Dictionary<string, object> result = this.Hub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
                 { "cbxPath", this.verifiedCbxPath },
-                { "args", new string[] { Util.JsonUtil.SerializeJson(request) } },
+                { "args", new string[0] },
+                { "extArgsJson", Util.JsonUtil.SerializeJson(request) },
                 { "showLibStack", true },
                 { "realTimePrint", true },
                 { "useOutputPrefixes", false },

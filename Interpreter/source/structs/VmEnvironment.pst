@@ -6,4 +6,6 @@
     object platformEventLoop;
     object resourceReader;
     object waxHub;
+    string waxPayload;
+    string waxResponse;
 }
