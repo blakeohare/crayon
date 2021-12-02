@@ -24,16 +24,15 @@ namespace Parser
 
         private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
 
-        private static int numIdAlloc = 1;
-
         public CompilationScope(
+            ParserContext context,
             ExternalAssemblyMetadata metadata,
             Locale locale,
             ProgrammingLanguage programmingLanguage)
         {
             this.Locale = locale;
             this.ProgrammingLanguage = programmingLanguage;
-            this.ScopeNumId = numIdAlloc++;
+            this.ScopeNumId = context.ScopeIdAlloc++;
             this.Metadata = metadata;
             this.ScopeKey = this.Metadata.CanonicalKey;
         }

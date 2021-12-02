@@ -266,7 +266,8 @@ namespace Parser
                 owner,
                 fileScope,
                 modifiers,
-                classAnnotations);
+                classAnnotations,
+                this.parser);
 
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();
