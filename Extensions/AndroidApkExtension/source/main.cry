@@ -5,7 +5,7 @@ class AndroidApkExtensionService : ExtensionService {
 
 	function handleRequest(args, cb) {
 		response = this.handleRequestImpl(args);
-		cb(args);
+		cb(response);
 	}
 	
 	function handleRequestImpl(args) {
@@ -30,9 +30,10 @@ class AndroidApkExtensionService : ExtensionService {
 			return this.errorResponse("An error occurred while generating the APK: " + apkResult['error']);
 		}
 		
-		parentDir = pathGetParent(exportPath);
-		if (FileIO.directoryExists(parentDir)) return;
-		FileIO.directoryCreate(parentDir, true);
+		parentDir = FileIO.pathGetParent(exportPath);
+		if (!FileIO.directoryExists(parentDir)) {
+			FileIO.directoryCreate(parentDir, true);
+		}
 		
 		FileIO.fileCopy(apkResult['apkPath'], exportPath, true);
 
