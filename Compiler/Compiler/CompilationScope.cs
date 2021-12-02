@@ -14,9 +14,9 @@ namespace Parser
         public Locale Locale { get; private set; }
         public ProgrammingLanguage ProgrammingLanguage { get; private set; }
 
-        public bool IsCrayon {  get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
-        public bool IsAcrylic {  get { return this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC; } }
-        public bool IsStaticallyTyped {  get { return this.IsAcrylic; } }
+        public bool IsCrayon { get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
+        public bool IsAcrylic { get { return this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC; } }
+        public bool IsStaticallyTyped { get { return this.IsAcrylic; } }
 
         private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 

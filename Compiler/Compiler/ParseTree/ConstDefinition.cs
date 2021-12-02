@@ -113,7 +113,8 @@ namespace Parser.ParseTree
                 throw new ParserException(this.Expression, "This expression does not resolve to a constant.");
             }
 
-            if (!hasExplicitlySetType) {
+            if (!hasExplicitlySetType)
+            {
                 this.ResolvedType = this.Expression.ResolvedType;
             }
         }

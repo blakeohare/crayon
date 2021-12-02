@@ -1,6 +1,4 @@
 ﻿namespace Parser.Crayon
 {
-    internal class CrayonTypeParser : AbstractTypeParser
-    {
-    }
+    internal class CrayonTypeParser : AbstractTypeParser { }
 }

@@ -269,11 +269,6 @@ namespace Parser
             return -1;
         }
 
-        private Dictionary<string, Dictionary<string, int>> stringSwitchLookups = new Dictionary<string, Dictionary<string, int>>();
-        private Dictionary<string, Dictionary<int, int>> intListLookups = new Dictionary<string, Dictionary<int, int>>();
-        private Dictionary<string, int> explicitMaxes = new Dictionary<string, int>();
-        private Dictionary<string, int> defaultCaseIds = new Dictionary<string, int>();
-
         // These are the lookup tables for switch statements. The ID of the switch statement is its index in this list.
         private List<Dictionary<string, int>> byteCodeSwitchStringToOffsets = new List<Dictionary<string, int>>();
         private List<Dictionary<int, int>> byteCodeSwitchIntegerToOffsets = new List<Dictionary<int, int>>();
@@ -408,8 +403,6 @@ namespace Parser
                 throw new ParserException(token, "Identifier expected. Found '" + token.Value + "' instead.");
             }
         }
-
-        private readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>();
 
         public Executable[] Resolve(IList<Executable> rawParsedLines)
         {

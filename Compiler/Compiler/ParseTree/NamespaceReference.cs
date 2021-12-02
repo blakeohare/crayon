@@ -76,7 +76,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

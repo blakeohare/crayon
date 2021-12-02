@@ -81,7 +81,7 @@ namespace Parser.ParseTree
                 Expression expr = this.Expressions[i];
                 expr = expr.ResolveTypes(parser, typeResolver);
                 ResolvedType rType = expr.ResolvedType;
-                if (rType != ResolvedType.BOOLEAN && rType !=   ResolvedType.ANY)
+                if (rType != ResolvedType.BOOLEAN && rType != ResolvedType.ANY)
                 {
                     throw new ParserException(expr, "Only a boolean expression can be used here.");
                 }

@@ -18,6 +18,7 @@ namespace Parser.ParseTree
 
         public abstract string GetFullyQualifiedLocalizedName(Locale locale);
 
+        // This cache is technically harmless to be static but feels a little memory leak-y.
         private static Dictionary<string, string[]> namespacePartCache = new Dictionary<string, string[]>();
 
         /*
