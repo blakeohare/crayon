@@ -60,9 +60,17 @@ namespace Wax
                     {
                         this.binaryContentCache = this.Bitmap.SaveBytes(Wax.Util.Images.ImageFormat.PNG);
                     }
-                    else
+                    else if (this.BinaryContentB64 != null)
                     {
                         this.binaryContentCache = System.Convert.FromBase64String(this.BinaryContentB64);
+                    }
+                    else if (this.Type == FileOutputType.Text && this.TextContent != null)
+                    {
+                        this.binaryContentCache = System.Text.Encoding.UTF8.GetBytes(this.TextContent);
+                    }
+                    else
+                    {
+                        throw new System.Exception();
                     }
                 }
                 return this.binaryContentCache;

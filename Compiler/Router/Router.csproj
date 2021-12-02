@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="DefaultProjects\*.png" />
-    <EmbeddedResource Include="DefaultProjects\*.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CommonUtil\CommonUtil.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>

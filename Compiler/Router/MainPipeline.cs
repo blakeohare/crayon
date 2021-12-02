@@ -93,10 +93,21 @@ namespace Router
                     { "projOutputDir", buildData.ExportProperties.OutputDirectory },
                 });
 
-                return result.ContainsKey("errors") ? Error.GetErrorList(result["errors"]) : new Error[0];
+                return Error.GetErrorsFromResult(result);
             }
 
             return exportResponse.Errors;
+        }
+
+        private static Error[] GenerateDefaultProject(WaxHub waxHub, string projectId, string locale, string projectType, string targetDir)
+        {
+            Dictionary<string, object> result = waxHub.AwaitSendRequest("DefaultProjectExtension", new Dictionary<string, object>() {
+                { "type", projectType },
+                { "locale", locale },
+                { "projectId", projectId },
+                { "targetDir", targetDir + '/' + projectId },
+            });
+            return Error.GetErrorsFromResult(result);
         }
 
         private static Error[] RunImpl(Command command, WaxHub waxHub)
@@ -117,8 +128,12 @@ namespace Router
                     return null;
 
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
-                    new DefaultProjectGenerator().DoWorkImpl(command.DefaultProjectId, command.DefaultProjectLocale, command.DefaultProjectType);
-                    return null;
+                    return GenerateDefaultProject(
+                        waxHub,
+                        command.DefaultProjectId,
+                        command.DefaultProjectLocale,
+                        command.DefaultProjectType,
+                        System.IO.Directory.GetCurrentDirectory());
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     return ExportVmBundle(command, waxHub);
