@@ -47,7 +47,7 @@ namespace Parser.ParseTree
 
                         if (parser.CompileRequest.HasCompileTimeValue(varName))
                         {
-                            switch ((Types) parser.CompileRequest.GetCompileTimeValueType(varName))
+                            switch ((Types)parser.CompileRequest.GetCompileTimeValueType(varName))
                             {
                                 case Types.BOOLEAN: return new BooleanConstant(this.FirstToken, parser.CompileRequest.GetCompileTimeBool(varName), this.Owner);
                                 case Types.INTEGER: return new IntegerConstant(this.FirstToken, parser.CompileRequest.GetCompileTimeInt(varName), this.Owner);

@@ -4,7 +4,5 @@
     {
         CRAYON,
         ACRYLIC,
-
-        //PYTHON, // TODO: remove this
     }
 }

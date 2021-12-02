@@ -241,8 +241,6 @@ namespace Parser.ParseTree
             return this;
         }
 
-        private static readonly ResolvedType[] EMPTY_TYPE_LIST = new ResolvedType[0];
-
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.Root.ResolveTypes(parser, typeResolver);

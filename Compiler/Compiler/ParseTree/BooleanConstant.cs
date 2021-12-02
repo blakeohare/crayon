@@ -5,7 +5,7 @@ namespace Parser.ParseTree
 {
     internal class BooleanConstant : Expression, IConstantValue
     {
-        public override bool IsInlineCandidate {  get { return true; } }
+        public override bool IsInlineCandidate { get { return true; } }
 
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 

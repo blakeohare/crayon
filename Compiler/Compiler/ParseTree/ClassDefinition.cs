@@ -86,7 +86,7 @@ namespace Parser.ParseTree
 
         public TopLevelEntity GetMember(string name, bool walkUpBaseClasses)
         {
-            return this.GetField(name, walkUpBaseClasses) ?? (TopLevelEntity) this.GetMethod(name, walkUpBaseClasses);
+            return this.GetField(name, walkUpBaseClasses) ?? (TopLevelEntity)this.GetMethod(name, walkUpBaseClasses);
         }
 
         public FunctionDefinition GetMethod(string name, bool walkUpBaseClasses)

@@ -4,7 +4,8 @@ using System.Linq;
 
 namespace Parser
 {
-    public class ExternalAssemblyMetadata {
+    public class ExternalAssemblyMetadata
+    {
         private Dictionary<string, ExternalAssemblyMetadata> directDependencies = new Dictionary<string, ExternalAssemblyMetadata>();
 
         public string ID { get; set; }
@@ -54,6 +55,5 @@ namespace Parser
             }
             return true;
         }
-
     }
 }
