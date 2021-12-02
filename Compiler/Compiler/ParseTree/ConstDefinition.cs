@@ -108,7 +108,7 @@ namespace Parser.ParseTree
 
             this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
 
-            if (this.Expression.ResolvedType == ResolvedType.ANY)
+            if (this.Expression.ResolvedType == parser.TypeContext.ANY)
             {
                 throw new ParserException(this.Expression, "This expression does not resolve to a constant.");
             }
@@ -127,7 +127,7 @@ namespace Parser.ParseTree
         }
 
         // Consts are exempt from this check.
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             throw new System.NotImplementedException();
         }

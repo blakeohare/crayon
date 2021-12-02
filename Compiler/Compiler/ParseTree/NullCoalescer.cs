@@ -50,7 +50,7 @@ namespace Parser.ParseTree
         {
             this.PrimaryExpression = this.PrimaryExpression.ResolveTypes(parser, typeResolver);
             this.SecondaryExpression = this.SecondaryExpression.ResolveTypes(parser, typeResolver);
-            if (this.PrimaryExpression.ResolvedType == ResolvedType.NULL)
+            if (this.PrimaryExpression.ResolvedType == parser.TypeContext.NULL)
             {
                 return this.SecondaryExpression;
             }

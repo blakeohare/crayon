@@ -196,7 +196,7 @@ namespace Parser.ParseTree
                 VariableId varId = this.TargetAsVariable.VarId;
                 if (varId.ResolvedType == null)
                 {
-                    varId.ResolvedType = ResolvedType.ANY;
+                    varId.ResolvedType = parser.TypeContext.ANY;
                 }
             }
 

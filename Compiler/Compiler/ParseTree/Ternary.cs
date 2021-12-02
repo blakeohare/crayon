@@ -47,7 +47,7 @@ namespace Parser.ParseTree
             this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
             this.TrueValue = this.TrueValue.ResolveTypes(parser, typeResolver);
             this.FalseValue = this.FalseValue.ResolveTypes(parser, typeResolver);
-            if (!this.Condition.ResolvedType.CanAssignToA(ResolvedType.BOOLEAN))
+            if (!this.Condition.ResolvedType.CanAssignToA(parser.TypeContext.BOOLEAN))
             {
                 throw new ParserException(this.Condition, "Ternary expression must use a boolean condition.");
             }

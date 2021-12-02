@@ -44,7 +44,7 @@ namespace Parser.ParseTree
         {
             // TODO: it'd be nice to just inline the result here, if possible.
             this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
-            this.ResolvedType = ResolvedType.BOOLEAN;
+            this.ResolvedType = parser.TypeContext.BOOLEAN;
             return this;
         }
 

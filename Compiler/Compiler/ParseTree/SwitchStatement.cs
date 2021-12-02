@@ -267,7 +267,8 @@ namespace Parser.ParseTree
         {
             this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
             ResolvedType switchType = this.Condition.ResolvedType;
-            if (switchType != ResolvedType.ANY && switchType != ResolvedType.INTEGER && switchType != ResolvedType.STRING)
+            TypeContext tc = parser.TypeContext;
+            if (switchType != tc.ANY && switchType != tc.INTEGER && switchType != tc.STRING)
             {
                 throw new ParserException(this.Condition, "This is not a valid expression to switch on.");
             }

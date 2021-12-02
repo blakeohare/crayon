@@ -79,6 +79,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            TypeContext tc = parser.TypeContext;
             this.Root = this.Root.ResolveTypes(parser, typeResolver);
             this.Index = this.Index.ResolveTypes(parser, typeResolver);
             ResolvedTypeCategory indexType = this.Index.ResolvedType.Category;
@@ -86,7 +87,7 @@ namespace Parser.ParseTree
             switch (this.Root.ResolvedType.Category)
             {
                 case ResolvedTypeCategory.ANY:
-                    this.ResolvedType = ResolvedType.ANY;
+                    this.ResolvedType = tc.ANY;
                     switch (indexType)
                     {
                         case ResolvedTypeCategory.ANY:
@@ -102,7 +103,7 @@ namespace Parser.ParseTree
 
                 case ResolvedTypeCategory.LIST:
                     this.ResolvedType = this.Root.ResolvedType.ListItemType;
-                    if (!this.Index.ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+                    if (!this.Index.ResolvedType.CanAssignToA(tc.INTEGER))
                     {
                         throw new ParserException(this.Index, "Can only index into a list with an integer.");
                     }
@@ -117,8 +118,8 @@ namespace Parser.ParseTree
                     break;
 
                 case ResolvedTypeCategory.STRING:
-                    this.ResolvedType = ResolvedType.STRING;
-                    if (!this.Index.ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+                    this.ResolvedType = tc.STRING;
+                    if (!this.Index.ResolvedType.CanAssignToA(tc.INTEGER))
                     {
                         throw new ParserException(this.Index, "Can only index into a string with an integer.");
                     }

@@ -24,7 +24,7 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             throw new NotImplementedException();
         }

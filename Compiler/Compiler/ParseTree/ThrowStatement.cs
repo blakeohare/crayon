@@ -37,7 +37,7 @@ namespace Parser.ParseTree
         {
             this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
             ResolvedType exceptionType = this.Expression.ResolvedType;
-            if (exceptionType == ResolvedType.ANY)
+            if (exceptionType == parser.TypeContext.ANY)
                 return;
             if (exceptionType.Category != ResolvedTypeCategory.INSTANCE)
                 throw new ParserException(this.Expression, "Only objects that extend from Core.Exception can be thrown.");

@@ -169,7 +169,7 @@ namespace Parser.ParseTree
             this.ResolvedArgTypes = typeResolver.ResolveTypes(this.ArgTypes);
         }
 
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             bool isStatic = this.Modifiers.HasStatic;
             ClassDefinition classDef = (ClassDefinition)this.Owner;
@@ -250,7 +250,7 @@ namespace Parser.ParseTree
                     {
                         throw new ParserException(this.BaseArgs[i], "Argument is incorrect type.");
                     }
-                    if (actualType == ResolvedType.ANY && expectedType != ResolvedType.OBJECT && expectedType != ResolvedType.ANY)
+                    if (actualType == parser.TypeContext.ANY && expectedType != parser.TypeContext.OBJECT && expectedType != parser.TypeContext.ANY)
                     {
                         this.BaseArgs[i] = new Cast(this.BaseArgs[i].FirstToken, expectedType, this.BaseArgs[i], this, false);
                     }

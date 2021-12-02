@@ -36,9 +36,10 @@ namespace Parser.ParseTree
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.Root = this.Root.ResolveTypes(parser, typeResolver);
-            if (this.Root.ResolvedType == ResolvedType.ANY || this.Root.ResolvedType == ResolvedType.BOOLEAN)
+            TypeContext tc = parser.TypeContext;
+            if (this.Root.ResolvedType == tc.ANY || this.Root.ResolvedType == tc.BOOLEAN)
             {
-                this.ResolvedType = ResolvedType.BOOLEAN;
+                this.ResolvedType = tc.BOOLEAN;
                 return this;
             }
             throw new ParserException(this.FirstToken, "Cannot apply ! to an expression of this type.");

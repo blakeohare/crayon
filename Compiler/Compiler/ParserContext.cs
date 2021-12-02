@@ -28,6 +28,8 @@ namespace Parser
         // TODO: make this configurable.
         public bool IncludeDebugSymbols { get { return true; } }
 
+        public TypeContext TypeContext { get; private set; }
+
         public ParserContext(CompileRequest compileRequest, Wax.WaxHub waxHub)
         {
             this.ClassIdAlloc = 1;
@@ -35,6 +37,7 @@ namespace Parser
             this.CompileRequest = compileRequest;
             this.ProjectId = compileRequest.ProjectId;
             this.DelegateMainTo = compileRequest.DelegateMainTo;
+            this.TypeContext = new TypeContext();
             Locale rootLocale = compileRequest.CompilerLocale;
 
             ExternalAssemblyMetadata userDefinedAssembly = CreateRootAssembly(compileRequest.CompilerLocale);

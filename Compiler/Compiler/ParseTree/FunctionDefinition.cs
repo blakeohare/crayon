@@ -103,19 +103,19 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             if (!(this.Owner is ClassDefinition))
             {
-                this.EnsureModifierAndTypeSignatureConsistencyForNonMethods();
+                this.EnsureModifierAndTypeSignatureConsistencyForNonMethods(tc);
             }
             else
             {
-                this.EnsureModifiersAndTypeSignatureConsistencyForClassMethods();
+                this.EnsureModifiersAndTypeSignatureConsistencyForClassMethods(tc);
             }
         }
 
-        private void EnsureModifierAndTypeSignatureConsistencyForNonMethods()
+        private void EnsureModifierAndTypeSignatureConsistencyForNonMethods(TypeContext tc)
         {
             Token badToken = null;
             if (this.Modifiers.HasAbstract) badToken = this.Modifiers.AbstractToken;
@@ -130,7 +130,7 @@ namespace Parser.ParseTree
             }
         }
 
-        private void EnsureModifiersAndTypeSignatureConsistencyForClassMethods()
+        private void EnsureModifiersAndTypeSignatureConsistencyForClassMethods(TypeContext tc)
         {
             ClassDefinition classDef = (ClassDefinition)this.Owner;
             ClassDefinition baseClass = classDef.BaseClass;
@@ -189,8 +189,8 @@ namespace Parser.ParseTree
 
                     if (overriddenFunction.ResolvedReturnType != this.ResolvedReturnType)
                     {
-                        if (overriddenFunction.ResolvedReturnType == ResolvedType.ANY &&
-                            this.ResolvedReturnType == ResolvedType.OBJECT)
+                        if (overriddenFunction.ResolvedReturnType == tc.ANY &&
+                            this.ResolvedReturnType == tc.OBJECT)
                         {
                             // This is fine.
                         }
@@ -218,7 +218,7 @@ namespace Parser.ParseTree
                         ResolvedType expected = overriddenFunction.ResolvedArgTypes[i];
                         ResolvedType actual = this.ResolvedArgTypes[i];
                         if (actual != expected &&
-                            !(actual == ResolvedType.OBJECT && expected == ResolvedType.ANY))
+                            !(actual == tc.OBJECT && expected == tc.ANY))
                         {
                             throw new ParserException(this, "This function has arguments that are different types than its overridden parent.");
                         }

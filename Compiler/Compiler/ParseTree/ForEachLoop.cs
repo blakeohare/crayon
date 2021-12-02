@@ -100,7 +100,7 @@ namespace Parser.ParseTree
             }
             else if (exprType.Category == ResolvedTypeCategory.STRING)
             {
-                if (!ResolvedType.STRING.CanAssignToA(this.IterationResolvedType))
+                if (!parser.TypeContext.STRING.CanAssignToA(this.IterationResolvedType))
                 {
                     throw new ParserException(this.IterationExpression, "String characters must be assigned to string types in for loops.");
                 }

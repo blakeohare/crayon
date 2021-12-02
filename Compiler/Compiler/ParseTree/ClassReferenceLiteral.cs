@@ -28,7 +28,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = ResolvedType.GetClassRefType(this.ClassDefinition);
+            this.ResolvedType = ResolvedType.GetClassRefType(parser.TypeContext, this.ClassDefinition);
             return this;
         }
     }

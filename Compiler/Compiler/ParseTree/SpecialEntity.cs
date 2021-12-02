@@ -51,7 +51,7 @@ namespace Parser.ParseTree
 
             internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
             {
-                this.ResolvedType = ResolvedType.INTEGER;
+                this.ResolvedType = parser.TypeContext.INTEGER;
                 return this;
             }
 
@@ -84,7 +84,7 @@ namespace Parser.ParseTree
 
             internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
             {
-                this.ResolvedType = ResolvedType.ListOrArrayOf(ResolvedType.ANY);
+                this.ResolvedType = ResolvedType.ListOrArrayOf(parser.TypeContext.ANY);
                 return this;
             }
 

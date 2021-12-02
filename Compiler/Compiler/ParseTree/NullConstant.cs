@@ -12,7 +12,7 @@ namespace Parser.ParseTree
         public NullConstant(Token token, Node owner)
             : base(token, owner)
         {
-            this.ResolvedType = ResolvedType.NULL;
+            this.ResolvedType = TypeContext.HACK_REF.NULL;
         }
 
         public override bool IsLiteral { get { return true; } }

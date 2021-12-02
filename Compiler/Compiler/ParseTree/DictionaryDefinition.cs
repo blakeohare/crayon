@@ -119,9 +119,9 @@ namespace Parser.ParseTree
                     throw new ParserException(this.Values[i], "This value is the incorrect type.");
             }
 
-            if (this.ResolvedKeyType == ResolvedType.ANY || this.ResolvedValueType == ResolvedType.ANY)
+            if (this.ResolvedKeyType == parser.TypeContext.ANY || this.ResolvedValueType == parser.TypeContext.ANY)
             {
-                this.ResolvedType = ResolvedType.ANY;
+                this.ResolvedType = parser.TypeContext.ANY;
             }
             else
             {

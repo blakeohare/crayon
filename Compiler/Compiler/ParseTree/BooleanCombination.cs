@@ -76,18 +76,19 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            TypeContext tc = parser.TypeContext;
             for (int i = 0; i < this.Expressions.Length; ++i)
             {
                 Expression expr = this.Expressions[i];
                 expr = expr.ResolveTypes(parser, typeResolver);
                 ResolvedType rType = expr.ResolvedType;
-                if (rType != ResolvedType.BOOLEAN && rType != ResolvedType.ANY)
+                if (rType != tc.BOOLEAN && rType != tc.ANY)
                 {
                     throw new ParserException(expr, "Only a boolean expression can be used here.");
                 }
                 this.Expressions[i] = expr;
             }
-            this.ResolvedType = ResolvedType.BOOLEAN;
+            this.ResolvedType = tc.BOOLEAN;
             return this;
         }
 

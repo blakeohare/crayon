@@ -13,8 +13,8 @@ namespace Parser.ByteCode.Nodes
             ResolvedType targetAssignmentType = target.ResolvedType;
             if (targetAssignmentType == null) throw new Exception(); // should be ANY if no type is set.
 
-            if (value.ResolvedType == ResolvedType.ANY &&
-                 targetAssignmentType != ResolvedType.ANY)
+            if (value.ResolvedType == parser.TypeContext.ANY &&
+                 targetAssignmentType != parser.TypeContext.ANY)
             {
                 value = new Cast(value.FirstToken, targetAssignmentType, value, value.Owner, false);
             }
