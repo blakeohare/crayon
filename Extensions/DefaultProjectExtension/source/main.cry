@@ -44,8 +44,6 @@ class DefaultProjectExtensionService : ExtensionService {
 	
 	function handleRequestImpl(args) {
 	
-		print("I'm the default project exporter and I received: " + args);
-		
 		// TODO: args should be verified before arriving here.
 		projType = (args.get('type') ?? '') + '';
 		if (projType == '') projType = 'basic';
@@ -56,8 +54,6 @@ class DefaultProjectExtensionService : ExtensionService {
 		if (!this.isAlphanumeric(projectId)) return { 'errors': [ "BAD_PROJECT_ID" ] };
 		err = this.verifyLocale(locale);
 		
-		print("A");
-		
 		targetDir = args.get('targetDir') + '';
 		try {
 			if (!FileIO.directoryExists(targetDir)) {
@@ -67,14 +63,10 @@ class DefaultProjectExtensionService : ExtensionService {
 			return { 'errors': [ "UNABLE_TO_CREATE_DIRECTORY" ] };
 		}
 		
-		print("B");
-		
 		if (err != null) return err;
 		
-		icon32 = Bitmap.fromResource('templates/icon32.png');
-		icon256 = Bitmap.fromResource('templates/icon256.png');
-		
-		print("C");
+		icon32 = Bitmap.fromResource('templates/logo32.png');
+		icon256 = Bitmap.fromResource('templates/logo256.png');
 		
 		replacements = {
 			'PROJECT_ID': projectId,
@@ -86,6 +78,7 @@ class DefaultProjectExtensionService : ExtensionService {
 				return this.loadTemplates(targetDir, {
 					'%%%PROJECT_ID%%%.build': 'BuildFile.txt',
 					'source/main.cry': 'main*.txt',
+					'.gitignore': 'dotGitIgnore.txt',
 					'assets/icon32.png': icon32,
 					'assets/icon256.png': icon256,
 				}, locale, replacements);
@@ -94,6 +87,7 @@ class DefaultProjectExtensionService : ExtensionService {
 				return this.loadTemplates(targetDir, {
 					'%%%PROJECT_ID%%%.build': 'BuildFile.txt',
 					'source/main.cry': 'ui.txt',
+					'.gitignore': 'dotGitIgnore.txt',
 					'assets/icon32.png': icon32,
 					'assets/icon256.png': icon256,
 				}, locale, replacements);
@@ -102,6 +96,7 @@ class DefaultProjectExtensionService : ExtensionService {
 				return this.loadTemplates(targetDir, {
 					'%%%PROJECT_ID%%%.build': 'BuildFile.txt',
 					'source/main.cry': 'game.txt',
+					'.gitignore': 'dotGitIgnore.txt',
 					'assets/icon32.png': icon32,
 					'assets/icon256.png': icon256,
 				}, locale, replacements);
@@ -112,15 +107,15 @@ class DefaultProjectExtensionService : ExtensionService {
 	}
 	
 	function loadTemplates(targetDir, filesByTargetName, locale, replacements) {
-		print("D");
 		
 		for (targetFile : filesByTargetName.keys()) {
 			
 			sourceFile = filesByTargetName[targetFile];
-			print(["E", targetFile, sourceFile]);
+			
 			targetFile = this.doReplacements(targetFile, replacements);
-			finalPath = targetDir + '/' + targetFile;
+			finalPath = (targetDir + '/' + targetFile).replace('/', '\\');
 			parentDir = FileIO.pathGetParent(finalPath);
+			
 			if (!FileIO.directoryExists(parentDir)) {
 				FileIO.directoryCreate(parentDir, true);
 			}
@@ -129,7 +124,7 @@ class DefaultProjectExtensionService : ExtensionService {
 				imgBytes = sourceFile.toBytes(ImageFormat.PNG);
 				FileIO.fileWriteBytes(finalPath, imgBytes);
 			} else if (typeof(sourceFile) == Type.STRING && sourceFile.endsWith('.txt')) {
-				content = Resources.readText(sourceFile.replace('*', locale));
+				content = Resources.readText('templates/' + sourceFile.replace('*', locale));
 				content = this.doReplacements(content, replacements);
 				FileIO.fileWriteText(finalPath, content);
 			} else {
