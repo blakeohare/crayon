@@ -47,7 +47,7 @@ namespace Parser.Localization
                     }
                 }
             }
-            string keywordsRaw = new ResourceStore(typeof(Locale)).ReadAssemblyFileText("Localization/Languages/" + name.ToLowerInvariant() + "/keywords.txt", true);
+            string keywordsRaw = ResourceReader.GetFile(name.ToLowerInvariant() + "/keywords.txt");
             if (keywordsRaw == null)
             {
                 invalid = true;
