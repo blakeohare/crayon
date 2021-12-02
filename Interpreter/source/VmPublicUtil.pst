@@ -26,3 +26,7 @@ void vmSetResourceReaderObj(VmContext vm, object rr) {
 object vmGetResourceReaderObj(VmContext vm) {
     return vm.environment.resourceReader ;
 }
+
+void vmSetWaxHub(VmContext vm, object wh) {
+    vm.environment.waxHub = wh;
+}

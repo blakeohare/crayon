@@ -655,7 +655,7 @@ var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	var executionContext = [0, stack, 0, 100, PST$createNewArray(100), localsStack, localsStackSet, 1, 0, false, null, false, 0, null];
 	var executionContexts = {};
 	executionContexts[0] = executionContext;
-	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
+	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
 	return vm;
 };
 
@@ -5402,6 +5402,34 @@ var interpretImpl = function(vm, executionContextId) {
 						bool1 = Reflect_getNamespaceFunctions(vm, arg1[1], arg2[1]);
 						output = buildBoolean(globals, bool1);
 						break;
+					case 121:
+						// waxAwaitSend;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						stringList = PST$createNewArray(1);
+						string1 = C$wax$awaitSend(vm[11][6], arg1[1], arg2[1], stringList);
+						if ((stringList[0] != null)) {
+							setItemInList(arg3[1], 0, buildString(globals, stringList[0]));
+							output = vm[14];
+						} else {
+							output = buildString(globals, string1);
+						}
+						break;
+					case 122:
+						// waxSend;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						string1 = C$wax$send(vm[11][6], arg1[1], arg2[1], arg4);
+						if ((string1 != null)) {
+							output = buildString(globals, string1);
+						} else {
+							output = vm[14];
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -8560,6 +8588,10 @@ var vmSetEventLoopObj = function(vm, evLoop) {
 
 var vmSetResourceReaderObj = function(vm, rr) {
 	vm[11][5] = rr;
+};
+
+var vmSetWaxHub = function(vm, wh) {
+	vm[11][6] = wh;
 };
 
 var xml_ampUnescape = function(value, entityLookup) {

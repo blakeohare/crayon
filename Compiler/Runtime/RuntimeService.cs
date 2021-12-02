@@ -62,6 +62,7 @@ namespace Runtime
             Interpreter.Structs.VmContext vm = Interpreter.Vm.CrayonWrapper.createVm(byteCode, resourceManifest, imageManifest);
             Interpreter.Vm.CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
             Interpreter.Vm.CrayonWrapper.vmSetResourceReaderObj(vm, resourceReader);
+            Interpreter.Vm.CrayonWrapper.vmSetWaxHub(vm, this.Hub);
 
             vm.environment.stdoutPrefix = showOutputPrefixes ? "STDOUT" : null;
             vm.environment.stacktracePrefix = showOutputPrefixes ? "STACKTRACE" : null;

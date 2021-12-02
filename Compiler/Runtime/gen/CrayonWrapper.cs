@@ -894,7 +894,7 @@ namespace Interpreter.Vm
             ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
             Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
             executionContexts[0] = executionContext;
-            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
             return vm;
         }
 
@@ -6894,6 +6894,40 @@ namespace Interpreter.Vm
                                 bool1 = Reflect_getNamespaceFunctions(vm, (string)arg1.internalValue, (ListImpl)arg2.internalValue);
                                 output = buildBoolean(globals, bool1);
                                 break;
+                            case 121:
+                                // waxAwaitSend;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                stringList = new string[1];
+                                string1 = CoreFunctions.WaxAwaitSend(vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, stringList);
+                                if ((stringList[0] != null))
+                                {
+                                    setItemInList((ListImpl)arg3.internalValue, 0, buildString(globals, stringList[0]));
+                                    output = vm.globalNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                break;
+                            case 122:
+                                // waxSend;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                string1 = CoreFunctions.WaxSend(vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, arg4);
+                                if ((string1 != null))
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                else
+                                {
+                                    output = vm.globalNull;
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -10904,6 +10938,11 @@ namespace Interpreter.Vm
         public static void vmSetResourceReaderObj(VmContext vm, object rr)
         {
             vm.environment.resourceReader = rr;
+        }
+
+        public static void vmSetWaxHub(VmContext vm, object wh)
+        {
+            vm.environment.waxHub = wh;
         }
 
         public static string xml_ampUnescape(string value, Dictionary<string, string> entityLookup)

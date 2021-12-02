@@ -110,6 +110,8 @@
     case 118: Core.EmitComment("ipcUnixSocketClientSend"); @import("corefuncs/ipcUnixSocketClientSend.pst"); break;
     case 119: Core.EmitComment("ipcUnixSocketServerDisconnect"); @import("corefuncs/ipcUnixSocketServerDisconnect.pst"); break;
     case 120: Core.EmitComment("reflectNamespaceFunctions"); @import("corefuncs/reflectNamespaceFunctions.pst"); break;
+    case 121: Core.EmitComment("waxAwaitSend"); @import("corefuncs/waxAwaitSend.pst"); break;
+    case 122: Core.EmitComment("waxSend"); @import("corefuncs/waxSend.pst"); break;
 }
 
 if (row[1] == 1) { // output used?
