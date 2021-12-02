@@ -15,6 +15,12 @@ namespace Wax
 
         public bool HasLineInfo { get { return this.Line != 0; } }
 
+        public static Error[] GetErrorsFromResult(IDictionary<string, object> result)
+        {
+            if (!result.ContainsKey("errors")) return new Error[0];
+            return GetErrorList(result["errors"]);
+        }
+
         public static Error[] GetErrorList(object jsonData)
         {
             if (jsonData is object[])

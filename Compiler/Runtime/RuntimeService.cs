@@ -48,7 +48,7 @@ namespace Runtime
                 throw new System.ArgumentException(); // no valid CBX to run
             }
 
-            string extensionArgsJson = "{}";
+            string extensionArgsJson = "";
             if (request.ContainsKey("extArgsJson"))
             {
                 extensionArgsJson = (string)request["extArgsJson"];

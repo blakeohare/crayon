@@ -8,7 +8,12 @@ namespace Extensions {
         for (cls : Core.Reflection.getClasses(ExtensionService.class)) {
             if (cls.getName().split('.')[-1] == expectedName) {
                 service = cls.createInstance();
+                // TODO: add a way to use magic debug args to override this for testing.
                 payload = $$$('waxServiceGetPayload');
+                if (payload == '') {
+                    print("ERROR: Extensions cannot be run directly and must be invoked from the Crayon Toolchain.");
+                    return;
+                }
                 service.handleRequest(Json.parseJson(payload), res => {
                     if (invoked) return;
                     invoked = true;
