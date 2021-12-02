@@ -176,7 +176,7 @@ namespace Parser
             // If the assembly exists but hasn't been imported before, instantiate it and
             // add it to all the lookups. This needs to happen before parsing the embedded
             // code to prevent infinite recursion.
-            CompilationScope compilationScope = new CompilationScope(assemblyMetadata, assemblyMetadata.InternalLocale, programmingLanguage);
+            CompilationScope compilationScope = new CompilationScope(parser, assemblyMetadata, assemblyMetadata.InternalLocale, programmingLanguage);
             this.assembliesAlreadyImportedIndexByKey[assemblyMetadata.CanonicalKey] = this.ImportedAssemblyScopes.Count;
             this.ImportedAssemblyScopes.Add(compilationScope);
             this.importedAssembliesById[assemblyMetadata.ID] = compilationScope;

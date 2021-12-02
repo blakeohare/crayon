@@ -23,18 +23,23 @@ namespace Parser
         public FunctionDefinition MainFunction { get; set; }
         public FunctionDefinition CoreLibInvokeFunction { get; set; }
 
+        public int ClassIdAlloc { get; set; }
+        public int ScopeIdAlloc { get; set; }
+
         // TODO: make this configurable.
         public bool IncludeDebugSymbols { get { return true; } }
 
         public ParserContext(CompileRequest compileRequest, Wax.WaxHub waxHub)
         {
+            this.ClassIdAlloc = 1;
+            this.ScopeIdAlloc = 1;
             this.CompileRequest = compileRequest;
             this.ProjectId = compileRequest.ProjectId;
             this.DelegateMainTo = compileRequest.DelegateMainTo;
             Locale rootLocale = compileRequest.CompilerLocale;
 
             ExternalAssemblyMetadata userDefinedAssembly = CreateRootAssembly(compileRequest.CompilerLocale);
-            CompilationScope userDefinedScope = new CompilationScope(userDefinedAssembly, rootLocale, compileRequest.RootProgrammingLanguage);
+            CompilationScope userDefinedScope = new CompilationScope(this, userDefinedAssembly, rootLocale, compileRequest.RootProgrammingLanguage);
 
             this.PushScope(userDefinedScope);
             this.ScopeManager = new ScopeManager(compileRequest, waxHub);

@@ -117,6 +117,8 @@ namespace Parser
         VALUE_TO_FLOAT_OR_NULL = 111,
         WAX_AWAIT_SEND = 121,
         WAX_SEND = 122,
+        WAX_SERVICE_GET_PAYLOAD = 123,
+        WAX_SERVICE_SEND_RESPONSE = 124,
         XML_PARSE = 84,
 
         // Next ID: 123
@@ -240,6 +242,8 @@ namespace Parser
                 case "reflectNamespaceFunctions": return (int)CoreFunctionID.REFLECT_NAMESPACE_FUNCTIONS;
                 case "waxAwaitSend": return (int)CoreFunctionID.WAX_AWAIT_SEND;
                 case "waxSend": return (int)CoreFunctionID.WAX_SEND;
+                case "waxServiceGetPayload": return (int)CoreFunctionID.WAX_SERVICE_GET_PAYLOAD;
+                case "waxServiceSendResponse": return (int)CoreFunctionID.WAX_SERVICE_SEND_RESPONSE;
                 default: return -1;
             }
         }

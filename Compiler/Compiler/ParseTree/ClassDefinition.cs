@@ -7,8 +7,6 @@ namespace Parser.ParseTree
 {
     internal class ClassDefinition : TopLevelEntity
     {
-        private static int classIdAlloc = 1;
-
         public int ClassID { get; private set; }
         public ClassDefinition BaseClass { get; private set; }
         public Token NameToken { get; private set; }
@@ -36,10 +34,11 @@ namespace Parser.ParseTree
             Node owner,
             FileScope fileScope,
             ModifierCollection modifiers,
-            AnnotationCollection annotations)
+            AnnotationCollection annotations,
+            ParserContext context)
             : base(classToken, owner, fileScope, modifiers)
         {
-            this.ClassID = ClassDefinition.classIdAlloc++;
+            this.ClassID = context.ClassIdAlloc++;
 
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();
