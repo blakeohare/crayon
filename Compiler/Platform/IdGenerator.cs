@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommonUtil.Random
+namespace Platform
 {
     public static class IdGenerator
     {
