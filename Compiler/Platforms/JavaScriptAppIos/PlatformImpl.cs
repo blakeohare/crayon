@@ -1,5 +1,4 @@
-﻿using CommonUtil.Resources;
-using Platform;
+﻿using Platform;
 using System.Collections.Generic;
 using Wax;
 using Wax.Util.Disk;

@@ -1,5 +1,4 @@
 ﻿using CommonUtil;
-using CommonUtil.Resources;
 using System;
 using System.Collections.Generic;
 using Wax;

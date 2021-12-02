@@ -1,5 +1,4 @@
 ﻿using CommonUtil;
-using CommonUtil.Resources;
 using System.Collections.Generic;
 
 namespace Parser.Localization

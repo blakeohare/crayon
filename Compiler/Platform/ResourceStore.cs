@@ -1,7 +1,6 @@
-﻿using CommonUtil.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace CommonUtil.Resources
+namespace Platform
 {
     public class ResourceStore
     {
@@ -31,7 +30,7 @@ namespace CommonUtil.Resources
             {
                 return null;
             }
-            return UniversalTextDecoder.Decode(bytes);
+            return Wax.Util.UniversalTextDecoder.Decode(bytes);
         }
 
         public byte[] ReadAssemblyFileBytes(string path)

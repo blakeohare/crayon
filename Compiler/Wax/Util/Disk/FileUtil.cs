@@ -1,5 +1,4 @@
-﻿using CommonUtil.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Wax.Util.Disk

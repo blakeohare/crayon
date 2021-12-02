@@ -1,5 +1,4 @@
-﻿using CommonUtil.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wax.Util.Disk;
@@ -60,7 +59,7 @@ namespace Wax
 
         public string ReadFileText(string path)
         {
-            return UniversalTextDecoder.Decode(ReadFileBytes(path));
+            return Wax.Util.UniversalTextDecoder.Decode(ReadFileBytes(path));
         }
 
         public string[] ListFiles(string path)
