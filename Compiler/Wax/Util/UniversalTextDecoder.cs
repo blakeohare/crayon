@@ -1,4 +1,4 @@
-﻿namespace CommonUtil.Text
+﻿namespace Wax.Util
 {
     // Semi-efficiently auto-detect the text encoding from some bytes and convert to a string.
     public static class UniversalTextDecoder
