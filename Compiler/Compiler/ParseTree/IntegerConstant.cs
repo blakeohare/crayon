@@ -73,7 +73,6 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
-            // doesn't get simpler than this.
             return this;
         }
 

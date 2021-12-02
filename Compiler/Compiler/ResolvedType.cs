@@ -26,7 +26,10 @@ namespace Parser
     internal class TypeContext
     {
         // A static reference to the most recently active TypeContext
-        public static TypeContext HACK_REF { get; set; } // TODO: Remove this once it's verified safe to set the resolved types of constant expressions in the type resolution phase.
+        // TODO: figure out how to remove this. Currently resolved types are set on all constant values in their constructors
+        // but shouldn't be set until the ResolveType resolution phase. However, OpChain consolidation occurs in the Resolve
+        // phase which comes before Type Resolution.
+        public static TypeContext HACK_REF { get; set; }
 
         private int idAlloc = 1;
         public int GetNextId() { return this.idAlloc++; }
