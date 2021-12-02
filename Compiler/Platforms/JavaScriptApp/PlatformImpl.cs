@@ -118,7 +118,7 @@ namespace JavaScriptApp
                     resourcesJs.Append("C$common$addBinaryRes(");
                     resourcesJs.Append(ConvertStringValueToCode(name));
                     resourcesJs.Append(", '");
-                    resourcesJs.Append(Base64.ToBase64(file.GetFinalBinaryContent()));
+                    resourcesJs.Append(System.Convert.ToBase64String(file.GetFinalBinaryContent()));
                     resourcesJs.Append("');\n");
                 }
             }
