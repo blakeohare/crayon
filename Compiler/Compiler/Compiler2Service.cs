@@ -98,7 +98,7 @@ namespace Compiler
             request["locale"] = buildContext.CompilerLocale.ID;
             request["localDeps"] = buildContext.LocalDeps;
             request["projectDirectory"] = buildContext.ProjectDirectory; // TODO: create a disk service that uses scoped instances where you can register an ID for a folder or remote virtual disk of some sort and then pass that ID instead of the hardcoded folder name here.
-            request["codeFiles"] = CommonUtil.Collections.DictionaryUtil.DictionaryToFlattenedDictionary(buildContext.GetCodeFiles());
+            request["codeFiles"] = DictionaryUtil.DictionaryToFlattenedDictionary(buildContext.GetCodeFiles());
             request["lang"] = buildContext.RootProgrammingLanguage + "";
             request["removeSymbols"] = buildContext.RemoveSymbols;
 

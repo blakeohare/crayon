@@ -163,7 +163,7 @@ namespace JavaScriptApp
             ExportProperties exportProperties,
             BuildData buildData)
         {
-            return CommonUtil.Collections.DictionaryUtil.MergeDictionaries(
+            return MiscUtil.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(exportProperties, buildData),
                 new Dictionary<string, string>()
                 {

@@ -1,5 +1,4 @@
 ﻿using Parser.Localization;
-using CommonUtil.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -69,8 +68,8 @@ namespace Parser
                 }
                 else
                 {
-                    Dictionary<string, string> nameByLocale = DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["nameByLocale"]);
-                    Dictionary<string, string> sourceCode = DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["sourceCode"]);
+                    Dictionary<string, string> nameByLocale = Build.DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["nameByLocale"]);
+                    Dictionary<string, string> sourceCode = Build.DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["sourceCode"]);
 
                     ExternalAssemblyMetadata md = new ExternalAssemblyMetadata()
                     {
