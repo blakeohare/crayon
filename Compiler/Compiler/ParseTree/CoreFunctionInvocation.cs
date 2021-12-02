@@ -51,8 +51,8 @@ namespace Parser.ParseTree
 
             this.ResolvedType =
                 this.FileScope.CompilationScope.ProgrammingLanguage == Build.ProgrammingLanguage.ACRYLIC
-                    ? ResolvedType.OBJECT
-                    : ResolvedType.ANY;
+                    ? parser.TypeContext.OBJECT
+                    : parser.TypeContext.ANY;
 
             return this;
         }

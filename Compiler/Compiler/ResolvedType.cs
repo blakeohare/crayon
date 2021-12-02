@@ -23,6 +23,46 @@ namespace Parser
         FUNCTION_POINTER,
     }
 
+    internal class TypeContext
+    {
+        // A static reference to the most recently active TypeContext
+        public static TypeContext HACK_REF { get; set; } // TODO: Remove this once it's verified safe to set the resolved types of constant expressions in the type resolution phase.
+
+        private int idAlloc = 1;
+        public int GetNextId() { return this.idAlloc++; }
+
+        public TypeContext()
+        {
+            HACK_REF = this;
+
+            this.VOID = new ResolvedType(this, ResolvedTypeCategory.VOID);
+            this.ANY = new ResolvedType(this, ResolvedTypeCategory.ANY);
+            this.BOOLEAN = new ResolvedType(this, ResolvedTypeCategory.BOOLEAN);
+            this.INTEGER = new ResolvedType(this, ResolvedTypeCategory.INTEGER);
+            this.FLOAT = new ResolvedType(this, ResolvedTypeCategory.FLOAT);
+            this.STRING = new ResolvedType(this, ResolvedTypeCategory.STRING);
+            this.NULL = new ResolvedType(this, ResolvedTypeCategory.NULL);
+            this.OBJECT = new ResolvedType(this, ResolvedTypeCategory.OBJECT);
+        }
+
+        public readonly ResolvedType VOID;
+        public readonly ResolvedType ANY;
+        public readonly ResolvedType BOOLEAN;
+        public readonly ResolvedType INTEGER;
+        public readonly ResolvedType FLOAT;
+        public readonly ResolvedType STRING;
+        public readonly ResolvedType NULL;
+        public readonly ResolvedType OBJECT;
+
+        public readonly Dictionary<int, ResolvedType> ArrayTypes = new Dictionary<int, ResolvedType>();
+        public readonly Dictionary<ClassDefinition, ResolvedType> InstanceTypes = new Dictionary<ClassDefinition, ResolvedType>();
+        public readonly Dictionary<ClassDefinition, ResolvedType> ClassRefTypes = new Dictionary<ClassDefinition, ResolvedType>();
+        public readonly Dictionary<int, ResolvedType> NullableTypes = new Dictionary<int, ResolvedType>();
+        public readonly Dictionary<int, Dictionary<int, ResolvedType>> DictionaryTypes = new Dictionary<int, Dictionary<int, ResolvedType>>();
+        public readonly Dictionary<FunctionDefinition, ResolvedType> FuncTypesByRef = new Dictionary<FunctionDefinition, ResolvedType>();
+        public readonly Dictionary<string, ResolvedType> FuncTypes = new Dictionary<string, ResolvedType>();
+    }
+
     internal class ResolvedType
     {
         public override string ToString()
@@ -37,7 +77,8 @@ namespace Parser
             return sb.ToString();
         }
 
-        private void ToUserStringImpl(System.Text.StringBuilder sb, Parser.Localization.Locale locale) {
+        private void ToUserStringImpl(System.Text.StringBuilder sb, Parser.Localization.Locale locale)
+        {
             switch (this.Category)
             {
                 case ResolvedTypeCategory.BOOLEAN: sb.Append("boolean"); return;
@@ -76,7 +117,7 @@ namespace Parser
                     return;
                 case ResolvedTypeCategory.FUNCTION_POINTER:
                     sb.Append("Func<");
-                    for (int i  = 0; i < this.FunctionArgs.Length; ++i)
+                    for (int i = 0; i < this.FunctionArgs.Length; ++i)
                     {
                         this.FunctionArgs[i].ToUserStringImpl(sb, locale);
                         sb.Append(", ");
@@ -106,85 +147,74 @@ namespace Parser
         public int FunctionOptionalArgCount { get; private set; }
 
         private int id;
-        private static int idAlloc = 0;
+        private TypeContext ctx;
+        public TypeContext TypeContext { get { return this.ctx; } }
 
-        private ResolvedType(ResolvedTypeCategory category)
+        internal ResolvedType(TypeContext ctx, ResolvedTypeCategory category)
         {
+            this.ctx = ctx;
             this.Category = category;
-            this.id = idAlloc++;
+            this.id = ctx.GetNextId();
         }
 
-        public static readonly ResolvedType VOID = new ResolvedType(ResolvedTypeCategory.VOID);
-        public static readonly ResolvedType ANY = new ResolvedType(ResolvedTypeCategory.ANY);
-        public static readonly ResolvedType BOOLEAN = new ResolvedType(ResolvedTypeCategory.BOOLEAN);
-        public static readonly ResolvedType INTEGER = new ResolvedType(ResolvedTypeCategory.INTEGER);
-        public static readonly ResolvedType FLOAT = new ResolvedType(ResolvedTypeCategory.FLOAT);
-        public static readonly ResolvedType STRING = new ResolvedType(ResolvedTypeCategory.STRING);
-        public static readonly ResolvedType NULL = new ResolvedType(ResolvedTypeCategory.NULL);
-        public static readonly ResolvedType OBJECT = new ResolvedType(ResolvedTypeCategory.OBJECT);
-
-        private static readonly Dictionary<int, ResolvedType> arrayTypes = new Dictionary<int, ResolvedType>();
         public static ResolvedType ListOrArrayOf(ResolvedType otherType)
         {
+            TypeContext ctx = otherType.ctx;
             ResolvedType output;
-            if (!arrayTypes.TryGetValue(otherType.id, out output))
+            if (!ctx.ArrayTypes.TryGetValue(otherType.id, out output))
             {
-                output = new ResolvedType(ResolvedTypeCategory.LIST);
+                output = new ResolvedType(ctx, ResolvedTypeCategory.LIST);
                 output.Generics = new ResolvedType[] { otherType };
-                arrayTypes[otherType.id] = output;
+                ctx.ArrayTypes[otherType.id] = output;
             }
             return output;
         }
 
-        private static readonly Dictionary<ClassDefinition, ResolvedType> instanceTypes = new Dictionary<ClassDefinition, ResolvedType>();
-        private static readonly Dictionary<ClassDefinition, ResolvedType> classRefTypes = new Dictionary<ClassDefinition, ResolvedType>();
-        private static ResolvedType GetClassTypeImpl(ResolvedTypeCategory cat, ClassDefinition cd)
+        private static ResolvedType GetClassTypeImpl(TypeContext ctx, ResolvedTypeCategory cat, ClassDefinition cd)
         {
             ResolvedType output;
             Dictionary<ClassDefinition, ResolvedType> lookup = cat == ResolvedTypeCategory.CLASS_DEFINITION
-                ? classRefTypes
-                : instanceTypes;
+                ? ctx.ClassRefTypes
+                : ctx.InstanceTypes;
             if (!lookup.TryGetValue(cd, out output))
             {
-                output = new ResolvedType(cat) { ClassTypeOrReference = cd };
+                output = new ResolvedType(ctx, cat) { ClassTypeOrReference = cd };
                 lookup[cd] = output;
             }
             return output;
         }
-        public static ResolvedType GetInstanceType(ClassDefinition cd)
+        public static ResolvedType GetInstanceType(TypeContext ctx, ClassDefinition cd)
         {
-            return GetClassTypeImpl(ResolvedTypeCategory.INSTANCE, cd);
+            return GetClassTypeImpl(ctx, ResolvedTypeCategory.INSTANCE, cd);
         }
-        public static ResolvedType GetClassRefType(ClassDefinition cd)
+        public static ResolvedType GetClassRefType(TypeContext ctx, ClassDefinition cd)
         {
-            return GetClassTypeImpl(ResolvedTypeCategory.CLASS_DEFINITION, cd);
+            return GetClassTypeImpl(ctx, ResolvedTypeCategory.CLASS_DEFINITION, cd);
         }
 
-        private static readonly Dictionary<int, ResolvedType> nullableTypes = new Dictionary<int, ResolvedType>();
         public static ResolvedType GetNullableType(ResolvedType type)
         {
             ResolvedType output;
-            if (!nullableTypes.TryGetValue(type.id, out output))
+            if (!type.ctx.NullableTypes.TryGetValue(type.id, out output))
             {
-                output = new ResolvedType(ResolvedTypeCategory.NULLABLE) { Generics = new ResolvedType[] { type } };
-                nullableTypes[type.id] = output;
+                output = new ResolvedType(type.ctx, ResolvedTypeCategory.NULLABLE) { Generics = new ResolvedType[] { type } };
+                type.ctx.NullableTypes[type.id] = output;
             }
             return output;
         }
 
-        private static readonly Dictionary<int, Dictionary<int, ResolvedType>> dictionaryTypes = new Dictionary<int, Dictionary<int, ResolvedType>>();
         public static ResolvedType GetDictionaryType(ResolvedType key, ResolvedType value)
         {
             Dictionary<int, ResolvedType> lookup;
-            if (!dictionaryTypes.TryGetValue(key.id, out lookup))
+            if (!key.ctx.DictionaryTypes.TryGetValue(key.id, out lookup))
             {
                 lookup = new Dictionary<int, ResolvedType>();
-                dictionaryTypes[key.id] = lookup;
+                key.ctx.DictionaryTypes[key.id] = lookup;
             }
             ResolvedType output;
             if (!lookup.TryGetValue(value.id, out output))
             {
-                output = new ResolvedType(ResolvedTypeCategory.DICTIONARY)
+                output = new ResolvedType(key.ctx, ResolvedTypeCategory.DICTIONARY)
                 {
                     Generics = new ResolvedType[] { key, value },
                 };
@@ -193,20 +223,20 @@ namespace Parser
             return output;
         }
 
-        private static readonly Dictionary<FunctionDefinition, ResolvedType> funcTypesByRef = new Dictionary<FunctionDefinition, ResolvedType>();
         public static ResolvedType GetFunctionType(FunctionDefinition func)
         {
-            if (!funcTypesByRef.ContainsKey(func))
+            TypeContext ctx = func.ResolvedReturnType.TypeContext;
+            if (!ctx.FuncTypesByRef.ContainsKey(func))
             {
                 ResolvedType type = GetFunctionType(func.ResolvedReturnType, func.ResolvedArgTypes, FunctionCall.CountOptionalArgs(func.DefaultValues));
-                funcTypesByRef[func] = type;
+                ctx.FuncTypesByRef[func] = type;
             }
-            return funcTypesByRef[func];
+            return ctx.FuncTypesByRef[func];
         }
 
-        private static readonly Dictionary<string, ResolvedType> funcTypes = new Dictionary<string, ResolvedType>();
         public static ResolvedType GetFunctionType(ResolvedType returnType, IList<ResolvedType> args, int optionalCount)
         {
+            TypeContext ctx = returnType.TypeContext;
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append('f');
             sb.Append(optionalCount);
@@ -219,13 +249,13 @@ namespace Parser
             }
             string key = sb.ToString();
             ResolvedType output;
-            if (!funcTypes.TryGetValue(key, out output))
+            if (!ctx.FuncTypes.TryGetValue(key, out output))
             {
-                output = new ResolvedType(ResolvedTypeCategory.FUNCTION_POINTER);
+                output = new ResolvedType(returnType.ctx, ResolvedTypeCategory.FUNCTION_POINTER);
                 output.FunctionReturnType = returnType;
                 output.Generics = args.ToArray();
                 output.FunctionOptionalArgCount = optionalCount;
-                funcTypes[key] = output;
+                ctx.FuncTypes[key] = output;
             }
             return output;
         }
@@ -293,10 +323,11 @@ namespace Parser
 
             if (this.Category == ResolvedTypeCategory.LIST || this.Category == ResolvedTypeCategory.DICTIONARY)
             {
+                TypeContext ctx = targetType.ctx;
                 for (int i = 0; i < this.Generics.Length; ++i)
                 {
                     if (this.Generics[i] == targetType.Generics[i]) { }
-                    else if (this.Generics[i] == ANY && targetType.Generics[i] == OBJECT) { }
+                    else if (this.Generics[i] == ctx.ANY && targetType.Generics[i] == ctx.OBJECT) { }
                     else { return false; }
                 }
                 return true;

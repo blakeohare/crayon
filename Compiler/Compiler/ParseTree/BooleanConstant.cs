@@ -16,7 +16,7 @@ namespace Parser.ParseTree
         public BooleanConstant(Token token, bool value, Node owner)
             : base(token, owner)
         {
-            this.ResolvedType = ResolvedType.BOOLEAN;
+            this.ResolvedType = TypeContext.HACK_REF.BOOLEAN;
             this.Value = value;
         }
 

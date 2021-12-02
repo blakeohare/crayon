@@ -13,7 +13,7 @@ namespace Parser.ParseTree
         public StringConstant(Token token, string value, Node owner)
             : base(token, owner)
         {
-            this.ResolvedType = ResolvedType.STRING;
+            this.ResolvedType = TypeContext.HACK_REF.STRING;
             this.Value = value;
         }
 

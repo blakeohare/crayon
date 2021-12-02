@@ -253,6 +253,7 @@ namespace Parser.ParseTree
             }
 
             ResolvedType rootType = this.Root.ResolvedType;
+            TypeContext tc = parser.TypeContext;
 
             // TODO: all of this needs to be localized.
             switch (rootType.Category)
@@ -262,7 +263,7 @@ namespace Parser.ParseTree
 
                 case ResolvedTypeCategory.ANY:
                     // ¯\_(ツ)_/¯
-                    this.ResolvedType = ResolvedType.ANY;
+                    this.ResolvedType = parser.TypeContext.ANY;
                     return this;
 
                 case ResolvedTypeCategory.INTEGER:
@@ -278,25 +279,25 @@ namespace Parser.ParseTree
                     switch (field)
                     {
                         case "length":
-                            this.ResolvedType = ResolvedType.INTEGER;
+                            this.ResolvedType = tc.INTEGER;
                             if (this.Root is StringConstant)
                             {
                                 return new IntegerConstant(this.FirstToken, ((StringConstant)this.Root).Value.Length, this.Owner);
                             }
                             return this;
 
-                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
-                        case "endsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
-                        case "indexOf": return BuildPrimitiveMethod(ResolvedType.INTEGER, ResolvedType.STRING);
-                        case "lower": return BuildPrimitiveMethod(ResolvedType.STRING);
-                        case "ltrim": return BuildPrimitiveMethod(ResolvedType.STRING);
-                        case "replace": return BuildPrimitiveMethod(ResolvedType.STRING, ResolvedType.STRING, ResolvedType.STRING);
-                        case "reverse": return BuildPrimitiveMethod(ResolvedType.STRING);
-                        case "rtrim": return BuildPrimitiveMethod(ResolvedType.STRING);
-                        case "split": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(ResolvedType.STRING), ResolvedType.STRING);
-                        case "startsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
-                        case "trim": return BuildPrimitiveMethod(ResolvedType.STRING);
-                        case "upper": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "contains": return BuildPrimitiveMethod(tc.BOOLEAN, tc.STRING);
+                        case "endsWith": return BuildPrimitiveMethod(tc.BOOLEAN, tc.STRING);
+                        case "indexOf": return BuildPrimitiveMethod(tc.INTEGER, tc.STRING);
+                        case "lower": return BuildPrimitiveMethod(tc.STRING);
+                        case "ltrim": return BuildPrimitiveMethod(tc.STRING);
+                        case "replace": return BuildPrimitiveMethod(tc.STRING, tc.STRING, tc.STRING);
+                        case "reverse": return BuildPrimitiveMethod(tc.STRING);
+                        case "rtrim": return BuildPrimitiveMethod(tc.STRING);
+                        case "split": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(tc.STRING), tc.STRING);
+                        case "startsWith": return BuildPrimitiveMethod(tc.BOOLEAN, tc.STRING);
+                        case "trim": return BuildPrimitiveMethod(tc.STRING);
+                        case "upper": return BuildPrimitiveMethod(tc.STRING);
 
                         // common mistakes
                         case "join":
@@ -313,7 +314,7 @@ namespace Parser.ParseTree
                     switch (field)
                     {
                         case "length":
-                            this.ResolvedType = ResolvedType.INTEGER;
+                            this.ResolvedType = tc.INTEGER;
                             return this;
 
                         case "filter":
@@ -324,22 +325,22 @@ namespace Parser.ParseTree
                                 // again once the function return type is known.
                                 throw new System.NotImplementedException();
                             }
-                            this.ResolvedType = ResolvedType.ANY;
+                            this.ResolvedType = tc.ANY;
                             return this;
 
-                        case "add": return BuildPrimitiveMethod(ResolvedType.VOID, itemType);
-                        case "choice": return BuildPrimitiveMethod(ResolvedType.VOID);
-                        case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "add": return BuildPrimitiveMethod(tc.VOID, itemType);
+                        case "choice": return BuildPrimitiveMethod(tc.VOID);
+                        case "clear": return BuildPrimitiveMethod(tc.VOID);
                         case "clone": return BuildPrimitiveMethod(rootType);
                         case "concat": return BuildPrimitiveMethod(rootType, rootType);
-                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, itemType);
-                        case "insert": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER, itemType);
-                        case "join": return BuildPrimitiveMethodWithOptionalArgs(ResolvedType.STRING, 1, ResolvedType.STRING);
+                        case "contains": return BuildPrimitiveMethod(tc.BOOLEAN, itemType);
+                        case "insert": return BuildPrimitiveMethod(tc.VOID, tc.INTEGER, itemType);
+                        case "join": return BuildPrimitiveMethodWithOptionalArgs(tc.STRING, 1, tc.STRING);
                         case "pop": return BuildPrimitiveMethod(itemType);
-                        case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER);
-                        case "reverse": return BuildPrimitiveMethod(ResolvedType.VOID);
-                        case "shuffle": return BuildPrimitiveMethod(ResolvedType.VOID);
-                        case "sort": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "remove": return BuildPrimitiveMethod(tc.VOID, tc.INTEGER);
+                        case "reverse": return BuildPrimitiveMethod(tc.VOID);
+                        case "shuffle": return BuildPrimitiveMethod(tc.VOID);
+                        case "sort": return BuildPrimitiveMethod(tc.VOID);
 
                         // common mistakes
                         case "count":
@@ -356,16 +357,16 @@ namespace Parser.ParseTree
                     switch (field)
                     {
                         case "length":
-                            this.ResolvedType = ResolvedType.INTEGER;
+                            this.ResolvedType = tc.INTEGER;
                             return this;
 
-                        case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clear": return BuildPrimitiveMethod(tc.VOID);
                         case "clone": return BuildPrimitiveMethod(rootType);
-                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, keyType);
+                        case "contains": return BuildPrimitiveMethod(tc.BOOLEAN, keyType);
                         case "get": return BuildPrimitiveMethodWithOptionalArgs(valueType, 1, keyType, valueType);
                         case "keys": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(keyType));
-                        case "merge": return BuildPrimitiveMethod(ResolvedType.VOID, rootType);
-                        case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, keyType);
+                        case "merge": return BuildPrimitiveMethod(tc.VOID, rootType);
+                        case "remove": return BuildPrimitiveMethod(tc.VOID, keyType);
                         case "values": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(valueType));
 
                         default:
@@ -379,7 +380,7 @@ namespace Parser.ParseTree
                     switch (field)
                     {
                         case "invoke":
-                            return BuildPrimitiveMethod(ResolvedType.ANY, ResolvedType.ListOrArrayOf(ResolvedType.ANY));
+                            return BuildPrimitiveMethod(tc.ANY, ResolvedType.ListOrArrayOf(tc.ANY));
 
                         default:
                             throw new ParserException(this.DotToken, "Fucntions do not have that field.");

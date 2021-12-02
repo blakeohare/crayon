@@ -399,7 +399,7 @@ namespace Parser.ByteCode
             buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
             foreach (FieldDefinition fd in classDefinition.Fields)
             {
-                if (fd.ResolvedFieldType != ResolvedType.ANY && !fd.Modifiers.HasStatic)
+                if (fd.ResolvedFieldType != parser.TypeContext.ANY && !fd.Modifiers.HasStatic)
                 {
                     List<int> typeArgs = new List<int>();
                     typeArgs.Add(classDefinition.ClassID);

@@ -16,7 +16,7 @@ namespace Parser.ParseTree
             this.EnumDefinition = enumDef;
             this.FieldToken = fieldToken;
             this.Field = fieldToken.Value;
-            this.ResolvedType = ResolvedType.INTEGER;
+            this.ResolvedType = TypeContext.HACK_REF.INTEGER;
         }
 
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }

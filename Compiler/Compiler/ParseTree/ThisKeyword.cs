@@ -70,7 +70,7 @@ namespace Parser.ParseTree
                 if (walker == null) throw new System.Exception(); // already verified exists in a ClassDefinition in ResolveEntityNames, so this should never happen.
             }
 
-            this.ResolvedType = ResolvedType.GetInstanceType((ClassDefinition)walker);
+            this.ResolvedType = ResolvedType.GetInstanceType(parser.TypeContext, (ClassDefinition)walker);
             return this;
         }
 

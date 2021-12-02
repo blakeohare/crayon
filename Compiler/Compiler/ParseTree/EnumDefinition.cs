@@ -135,7 +135,7 @@ namespace Parser.ParseTree
         }
 
         // enums are exempt from this check
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             throw new System.NotImplementedException();
         }
@@ -147,7 +147,7 @@ namespace Parser.ParseTree
                 if (value != null)
                 {
                     value.ResolveTypes(parser, typeResolver);
-                    if (value.ResolvedType != ResolvedType.INTEGER)
+                    if (value.ResolvedType != parser.TypeContext.INTEGER)
                     {
                         throw new ParserException(value, "Enum value must resolve to an integer.");
                     }

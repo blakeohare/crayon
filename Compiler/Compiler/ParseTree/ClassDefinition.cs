@@ -277,12 +277,12 @@ namespace Parser.ParseTree
         {
             foreach (TopLevelEntity tle in this.GetAllMembersAsEnumerable())
             {
-                TypeResolver memberTypeResolver = new TypeResolver(tle);
+                TypeResolver memberTypeResolver = new TypeResolver(parser.TypeContext, tle);
                 tle.ResolveSignatureTypes(parser, memberTypeResolver);
             }
         }
 
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             bool isStatic = this.Modifiers.HasStatic;
             if (this.BaseClass != null)
@@ -301,18 +301,18 @@ namespace Parser.ParseTree
 
             foreach (FieldDefinition field in this.Fields)
             {
-                field.EnsureModifierAndTypeSignatureConsistency();
+                field.EnsureModifierAndTypeSignatureConsistency(tc);
             }
 
             foreach (FunctionDefinition func in this.Methods)
             {
-                func.EnsureModifierAndTypeSignatureConsistency();
+                func.EnsureModifierAndTypeSignatureConsistency(tc);
             }
 
-            this.Constructor.EnsureModifierAndTypeSignatureConsistency();
+            this.Constructor.EnsureModifierAndTypeSignatureConsistency(tc);
             if (this.StaticConstructor != null)
             {
-                this.StaticConstructor.EnsureModifierAndTypeSignatureConsistency();
+                this.StaticConstructor.EnsureModifierAndTypeSignatureConsistency(tc);
             }
         }
 
@@ -320,7 +320,7 @@ namespace Parser.ParseTree
         {
             foreach (TopLevelEntity tle in this.GetAllMembersAsEnumerable())
             {
-                TypeResolver memberTypeResolver = new TypeResolver(tle);
+                TypeResolver memberTypeResolver = new TypeResolver(parser.TypeContext, tle);
                 tle.ResolveTypes(parser, memberTypeResolver);
             }
         }

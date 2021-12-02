@@ -53,12 +53,12 @@ namespace Parser.ParseTree
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.Root = this.Root.ResolveTypes(parser, typeResolver);
-            if (!this.Root.ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+            if (!this.Root.ResolvedType.CanAssignToA(parser.TypeContext.INTEGER))
             {
                 throw new ParserException(this.Root, "++ and -- can only be applied to integer values.");
             }
 
-            this.ResolvedType = ResolvedType.INTEGER;
+            this.ResolvedType = parser.TypeContext.INTEGER;
             return this;
         }
     }

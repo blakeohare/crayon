@@ -123,6 +123,7 @@ namespace Parser.ParseTree
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             ClassDefinition cd = this.Class;
+            TypeContext tc = parser.TypeContext;
 
             if (this.ConstructorReference != null)
             {
@@ -132,7 +133,7 @@ namespace Parser.ParseTree
                     this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
                     ResolvedType expectedType = expectedArgTypes[i];
                     ResolvedType actualType = this.Args[i].ResolvedType;
-                    if (actualType == ResolvedType.ANY && expectedType != ResolvedType.ANY && expectedType != ResolvedType.OBJECT)
+                    if (actualType == tc.ANY && expectedType != tc.ANY && expectedType != tc.OBJECT)
                     {
                         this.Args[i] = new Cast(this.Args[i].FirstToken, expectedType, this.Args[i], this.Owner, false);
                     }
@@ -143,7 +144,7 @@ namespace Parser.ParseTree
                 }
             }
 
-            this.ResolvedType = ResolvedType.GetInstanceType(cd);
+            this.ResolvedType = ResolvedType.GetInstanceType(tc, cd);
 
             return this;
         }

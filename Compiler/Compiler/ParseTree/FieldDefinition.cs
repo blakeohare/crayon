@@ -86,7 +86,7 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void EnsureModifierAndTypeSignatureConsistency()
+        internal override void EnsureModifierAndTypeSignatureConsistency(TypeContext tc)
         {
             bool isStatic = this.Modifiers.HasStatic;
             ClassDefinition classDef = (ClassDefinition)this.Owner;

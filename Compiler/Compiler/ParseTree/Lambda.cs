@@ -124,7 +124,7 @@ namespace Parser.ParseTree
             }
 
             // TODO: how do you define the lambda return type in Acrylic? Snoop the nested returns, maybe?
-            ResolvedType returnType = ResolvedType.ANY;
+            ResolvedType returnType = parser.TypeContext.ANY;
 
             this.ResolvedType = ResolvedType.GetFunctionType(returnType, this.ResolvedArgTypes, 0);
 

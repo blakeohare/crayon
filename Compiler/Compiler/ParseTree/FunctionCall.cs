@@ -336,10 +336,11 @@ namespace Parser.ParseTree
             }
 
             ResolvedType rootType = this.Root.ResolvedType;
+            TypeContext tc = parser.TypeContext;
 
-            if (rootType == ResolvedType.ANY)
+            if (rootType == tc.ANY)
             {
-                this.ResolvedType = ResolvedType.ANY;
+                this.ResolvedType = tc.ANY;
                 return this;
             }
 
@@ -370,7 +371,7 @@ namespace Parser.ParseTree
                         {
                             ResolvedType actualType = this.Args[i].ResolvedType;
                             ResolvedType expectedType = fn.ResolvedArgTypes[i];
-                            if (expectedType != ResolvedType.OBJECT && actualType == ResolvedType.ANY)
+                            if (expectedType != tc.OBJECT && actualType == tc.ANY)
                             {
                                 this.Args[i] = new Cast(this.Args[i].FirstToken, expectedType, this.Args[i], this.Owner, false);
                             }
@@ -379,7 +380,7 @@ namespace Parser.ParseTree
                 }
 
                 // TODO: this is temporary until the Math library is converted to Acrylic
-                if (this.ResolvedType == ResolvedType.ANY &&
+                if (this.ResolvedType == tc.ANY &&
                     this.Root is FunctionReference &&
                     ((FunctionReference)this.Root).FunctionDefinition.CompilationScope.Metadata.ID == "Math")
                 {
@@ -390,33 +391,33 @@ namespace Parser.ParseTree
                         case "min":
                         case "max":
                         case "ensureRange":
-                            if (this.Args.Count(ex => ex.ResolvedType == ResolvedType.FLOAT) > 0)
+                            if (this.Args.Count(ex => ex.ResolvedType == tc.FLOAT) > 0)
                             {
-                                this.ResolvedType = ResolvedType.FLOAT;
+                                this.ResolvedType = tc.FLOAT;
                             }
                             else
                             {
-                                this.ResolvedType = ResolvedType.INTEGER;
+                                this.ResolvedType = tc.INTEGER;
                             }
                             break;
 
                         case "floor":
                         case "sign":
-                            this.ResolvedType = ResolvedType.INTEGER;
+                            this.ResolvedType = tc.INTEGER;
                             break;
 
                         default:
-                            this.ResolvedType = ResolvedType.FLOAT;
+                            this.ResolvedType = tc.FLOAT;
                             break;
                     }
                 }
 
-                if (this.ResolvedType == ResolvedType.ANY &&
+                if (this.ResolvedType == tc.ANY &&
                     this.CompilationScope.IsStaticallyTyped)
                 {
                     // ANY types are not allowed in statically typed compilation scopes.
                     // Convert this into an object and require the user to perform any specific casts.
-                    this.ResolvedType = ResolvedType.OBJECT;
+                    this.ResolvedType = tc.OBJECT;
                 }
 
                 return this;

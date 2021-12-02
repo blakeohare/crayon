@@ -67,7 +67,7 @@ namespace Parser.ParseTree
         public IntegerConstant(Token token, int value, Node owner)
             : base(token, owner)
         {
-            this.ResolvedType = ResolvedType.INTEGER;
+            this.ResolvedType = TypeContext.HACK_REF.INTEGER;
             this.Value = value;
         }
 

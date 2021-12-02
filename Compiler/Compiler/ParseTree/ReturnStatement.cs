@@ -35,6 +35,7 @@ namespace Parser.ParseTree
         {
             ResolvedType returnType;
             FunctionDefinition fd = this.Owner as FunctionDefinition;
+            TypeContext tc = parser.TypeContext;
 
             if (fd != null)
             {
@@ -42,13 +43,13 @@ namespace Parser.ParseTree
             }
             else if (this.Owner is ConstructorDefinition)
             {
-                returnType = ResolvedType.VOID;
+                returnType = tc.VOID;
             }
             else if (this.Owner is Lambda)
             {
                 Lambda lambda = (Lambda)this.Owner;
                 // TODO: this won't fly in Acrylic.
-                returnType = ResolvedType.ANY;
+                returnType = tc.ANY;
             }
             else
             {
@@ -57,7 +58,7 @@ namespace Parser.ParseTree
 
             if (this.Expression == null)
             {
-                if (returnType == ResolvedType.VOID || returnType == ResolvedType.ANY)
+                if (returnType == tc.VOID || returnType == tc.ANY)
                 {
                     // This is fine
                 }

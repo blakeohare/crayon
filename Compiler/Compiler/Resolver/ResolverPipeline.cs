@@ -62,7 +62,7 @@ namespace Parser.Resolver
                 ConstDefinition[] dependencySortedConstants = new ConstantDependencySorter(consts).SortConstants();
                 foreach (ConstDefinition cnst in dependencySortedConstants)
                 {
-                    TypeResolver typeResolver = new TypeResolver(cnst);
+                    TypeResolver typeResolver = new TypeResolver(parser.TypeContext, cnst);
 
                     // This shouldn't pick anything up, but it'll fire any errors when undeclared variable-like expressions are used.
                     cnst.Expression.ResolveVariableOrigins(parser, VariableScope.NewEmptyScope(false), VariableIdAllocPhase.REGISTER_AND_ALLOC);
@@ -73,18 +73,18 @@ namespace Parser.Resolver
 
                 foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
                 {
-                    TypeResolver typeResolver = new TypeResolver(tle);
+                    TypeResolver typeResolver = new TypeResolver(parser.TypeContext, tle);
                     tle.ResolveSignatureTypes(parser, typeResolver);
                 }
 
                 foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants.Where(t => !(t is EnumDefinition)))
                 {
-                    tle.EnsureModifierAndTypeSignatureConsistency();
+                    tle.EnsureModifierAndTypeSignatureConsistency(parser.TypeContext);
                 }
 
                 foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
                 {
-                    TypeResolver typeResolver = new TypeResolver(tle);
+                    TypeResolver typeResolver = new TypeResolver(parser.TypeContext, tle);
                     tle.ResolveTypes(parser, typeResolver);
                 }
 

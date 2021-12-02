@@ -72,26 +72,27 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            TypeContext tc = parser.TypeContext;
             this.Root = this.Root.ResolveTypes(parser, typeResolver);
             for (int i = 0; i < this.Items.Length; ++i)
             {
                 if (this.Items[i] != null)
                 {
                     this.Items[i] = this.Items[i].ResolveTypes(parser, typeResolver);
-                    if (!this.Items[i].ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+                    if (!this.Items[i].ResolvedType.CanAssignToA(tc.INTEGER))
                     {
                         throw new ParserException(this.Items[i], "List/string slice arguments must be integers.");
                     }
                 }
             }
 
-            if (this.Root.ResolvedType == ResolvedType.ANY)
+            if (this.Root.ResolvedType == tc.ANY)
             {
-                this.ResolvedType = ResolvedType.ANY;
+                this.ResolvedType = tc.ANY;
             }
-            else if (this.Root.ResolvedType == ResolvedType.STRING)
+            else if (this.Root.ResolvedType == tc.STRING)
             {
-                this.ResolvedType = ResolvedType.STRING;
+                this.ResolvedType = tc.STRING;
             }
             else if (this.Root.ResolvedType.Category == ResolvedTypeCategory.LIST)
             {

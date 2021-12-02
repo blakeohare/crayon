@@ -16,7 +16,7 @@ namespace Parser.ParseTree
         public FloatConstant(Token startValue, double value, Node owner)
             : base(startValue, owner)
         {
-            this.ResolvedType = ResolvedType.FLOAT;
+            this.ResolvedType = TypeContext.HACK_REF.FLOAT;
             this.Value = value;
         }
 
