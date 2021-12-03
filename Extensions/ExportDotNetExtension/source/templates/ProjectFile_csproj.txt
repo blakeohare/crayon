@@ -6,7 +6,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    %%%EMBEDDED_RESOURCES%%%
+    <EmbeddedResource Include="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\*.png" />
+    <EmbeddedResource Include="Resources\*.jpg" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+	<Reference Include="Wax">
+	  <HintPath>Wax.dll</HintPath>
+	</Reference>
+	<Reference Include="Runtime">
+	  <HintPath>Runtime.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+	<None Update="Runtime.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="Wax.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  
 </Project>

@@ -61,9 +61,12 @@ namespace Interpreter
 
         public InMemoryResourceReader(string[] fileNames, FileOutput[] files)
         {
-            for (int i = 0; i < files.Length; i++)
+            if (fileNames != null)
             {
-                rawFileMetadata[fileNames[i]] = files[i];
+                for (int i = 0; i < files.Length; i++)
+                {
+                    rawFileMetadata[fileNames[i]] = files[i];
+                }
             }
         }
 

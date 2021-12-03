@@ -1,0 +1,93 @@
+using System.Collections.Generic;
+using System.Linq;
+
+namespace CrayonBoilerplate
+{
+    internal class CbxUnpacker
+    {
+        internal void Run(string[] args)
+        {
+            Wax.WaxHub waxHub = new Wax.WaxHub();
+
+            waxHub.RegisterService(new Runtime.RuntimeService());
+
+            Wax.CbxBundle cbxBundle = new Wax.CbxBundle();
+            cbxBundle.ByteCode = ReadResourceText("bytecode.txt");
+            cbxBundle.ResourceDB = new Wax.ResourceDatabase();
+            cbxBundle.ResourceDB.ResourceManifestFile = new Wax.FileOutput() { Type = Wax.FileOutputType.Text, TextContent = ReadResourceText("manifest.txt") ?? "" };
+            cbxBundle.ResourceDB.ImageResourceManifestFile = new Wax.FileOutput() { Type = Wax.FileOutputType.Text, TextContent = ReadResourceText("imageManifest.txt") ?? "" };
+
+            cbxBundle.ResourceDB.FlatFileNames = GetAllResourceNames();
+            List<Wax.FileOutput> flatFiles = new List<Wax.FileOutput>();
+            foreach (string resPath in cbxBundle.ResourceDB.FlatFileNames)
+            {
+                flatFiles.Add(new Wax.FileOutput() { Type = Wax.FileOutputType.Binary, BinaryContent = ReadResource(resPath) });
+            }
+            cbxBundle.ResourceDB.FlatFiles = flatFiles.ToArray();
+
+            waxHub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
+                { "realTimePrint", true },
+                { "showLibStack", true },
+                { "useOutputPrefixes", false },
+                { "args", args },
+                { "cbxBundle", cbxBundle }
+            });
+        }
+
+        private static string ReadResourceText(string path)
+        {
+            byte[] bytes = ReadResource(path);
+            if (bytes == null) return null;
+            return System.Text.Encoding.UTF8.GetString(bytes);
+        }
+
+        private static string[] GetAllResourceNames()
+        {
+            return assembly.GetManifestResourceNames()
+                .Where(path => path.StartsWith(GetResourcePath()))
+                .Select(path => path.Substring(GetResourcePath().Length))
+                .Where(path => path != "bytecode.txt" && path != "imageManifest.txt" && path != "manifest.txt")
+                .ToArray();
+        }
+
+        private static string resourcePath = null;
+        private static System.Reflection.Assembly assembly = typeof(CbxUnpacker).Assembly;
+
+        private static string GetResourcePath()
+        {
+            if (resourcePath == null)
+            {
+                resourcePath = string.Join('.', assembly.GetManifestResourceNames()
+                    .Where(n => n.EndsWith("Resources.bytecode.txt"))
+                    .FirstOrDefault()
+                    .Split('.')
+                    .SkipLast(2)) + ".";
+            }
+            return resourcePath;
+        }
+
+        private static byte[] ReadResource(string path)
+        {
+            System.IO.Stream resStream = assembly.GetManifestResourceStream(GetResourcePath() + path.Replace('/', '.'));
+            List<byte> output = new List<byte>();
+            byte[] buffer = new byte[500];
+            int bytesRead;
+            do
+            {
+                bytesRead = resStream.Read(buffer, 0, buffer.Length);
+                if (bytesRead == buffer.Length)
+                {
+                    output.AddRange(buffer);
+                }
+                else
+                {
+                    for (int i = 0; i < bytesRead; i++)
+                    {
+                        output.Add(buffer[i]);
+                    }
+                }
+            } while (bytesRead > 0);
+            return output.ToArray();
+        }
+    }
+}
