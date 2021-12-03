@@ -1,0 +1,120 @@
+namespace CrayonExporter {
+
+    class JsonBasedObject {
+
+        field _data;
+        
+        constructor(data = null) {
+            this._data = data.clone() ?? {};
+        }
+
+        function clearItem(key) {
+            if (this._data.contains(key)) {
+                this._data.remove(key);
+            }
+        }
+
+        function getBoolean(key) { return this._data.get(key) == true; }
+        function setBoolean(key, value) {
+            this._data[key] = value == true;
+        }
+
+        function getInteger(key) { 
+            value = this._data.get(key, 0);
+            if (typeof(value) == Type.INTEGER) return value;
+            return 0;
+        }
+        function setInteger(key, value) { 
+            if (typeof(value) == Type.INTEGER) this._data[key] = value;
+            else this.clearItem(key);
+        }
+
+        function getString(key) {
+            value = this._data.get(key);
+            if (value == null) return null;
+            if (typeof(value) == Type.STRING) return value;
+            return value + '';
+        }
+        function setString(key, value) {
+            if (typeof(value) == Type.STRING) this._data[key] = value;
+            else this.clearItem(key);
+        }
+
+        function getStrings(key) {
+            output = [];
+            value = this._data.get(key);
+            if (typeof(value) == Type.LIST)  {
+                for (str : value) {
+                    if (typeof(str) == Type.STRING) {
+                        output.add(str);
+                    }
+                }
+            }
+            return output;
+        }
+
+        function hasItems(key) {
+            value = this._data.get(key);
+            if (typeof(value) == Type.LIST) return value.length > 0;
+            return false;
+        }
+
+        function getObject(key, expectedType = null) {
+            rawValue = this._data.get(key);
+            return this.ensureObject(rawValue, expectedType ?? JsonBasedObject.class);
+        }
+        
+        function setObject(key, value) {
+            switch (typeof(value)) {
+                case Type.DICTIONARY:
+                    this._data[key] = new JsonBasedObject(value);
+                    break;
+                case Type.OBJECT:
+                    if (value is JsonBasedObject) {
+                        this._data[key] = value;
+                    } else {
+                        this.clearItem(key);
+                    }
+                    break;
+                default:
+                    this.clearItem(key);
+                    break;
+            }
+        }
+
+        function getObjects(key, expectedType = null) {
+            items = this._data.get(key);
+            if (typeof(items) != Type.LIST) return [];
+            newItems = [];
+            for (item : items) {
+                obj = this.ensureObject(item, expectedType ?? JsonBasedObject.class);
+                if (obj != null) {
+                    newItems.add(obj);
+                }
+            }
+            this._data[key] = newItems;
+            return newItems;
+        }
+
+        function setList(key, items) {
+            if (typeof(items) == Type.LIST && items.length > 0) this._data[key] = items.clone();
+            else this.clearItem(key);
+        }
+
+        function ensureObject(rawValue, desiredClassType) {
+            switch (typeof(rawValue)) {
+                case Type.OBJECT:
+                    actualClass = Core.Reflection.getClassFromInstance(rawValue);
+                    if (actualClass == desiredClassType) return rawValue;
+                    if (desiredClassType.isA(JsonBasedObject.class)) {
+                        return desiredClassType.createInstance(rawValue._data);
+                    }
+                    return null;
+                case Type.DICTIONARY: 
+                    return desiredClassType.createInstance(rawValue);
+                default:
+                    return null;
+            }
+        }
+    }
+}

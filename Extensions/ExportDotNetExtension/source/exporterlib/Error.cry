@@ -1,0 +1,11 @@
+namespace CrayonExporter {
+    class Error : JsonBasedObject {
+        constructor(data = null) : base(data) { }
+
+        function getLine() { return this.getInteger('line'); }
+        function getCol() { return this.getInteger('col'); }
+        function getFile() { return this.getString('file'); }
+        function getMessage() { return this.getString('msg'); }
+        function hasLineInfo() { return this.getInteger('line') > 0; }
+    }
+}

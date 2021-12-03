@@ -1,0 +1,8 @@
+namespace CrayonExporter {
+    class FileOutput : JsonBasedObject {
+        constructor(data = null) : base(data) { }
+
+        function getType() { return this.getString('type'); }
+        function getBytesB64() { return this.getString('contentB64'); }
+    }
+}

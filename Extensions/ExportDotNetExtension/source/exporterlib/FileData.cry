@@ -1,0 +1,74 @@
+import Base64;
+import FileIO;
+import Images;
+
+namespace CrayonExporter {
+    class FileData {
+
+        field type;
+        field content;
+
+        @private
+        constructor() {}
+
+        static function createTextFile(content) {
+            f = new FileData();
+            f.type = 'text';
+            f.content = content;
+            return f;
+        }
+
+        static function createBinaryFileFromB64(bytesB64) {
+            f = new FileData();
+            f.type = 'binary';
+            f.content = base64ToBytes(bytesB64);
+            return f;
+        }
+
+        static function createImageFileFromB64(bytesB64) {
+            f = FileData.createBinaryFileFromB64(bytesB64);
+            f.type = 'img';
+            return f;
+        }
+
+        static function createBinaryFileFromBytes(byteList) {
+            f = new FileData();
+            f.type = 'binary';
+            f.content = byteList;
+            return f;
+        }
+
+        static function createImageFileFromBytes(byteList) {
+            f = FileData.createBinaryFileFromBytes(byteList);
+            f.type = 'img';
+            return f;
+        }
+
+        static function createImageFileFromBitmap(bmp) {
+            f = new FileData();
+            f.type = 'img';
+            f.content = bmp.toBytes(ImageFormat.PNG);
+            return f;
+        }
+
+        static function writeToDisk(outputDir, fileDataByPath) {
+            for (path : fileDataByPath.keys()) {
+                fullPath = FileIO.pathJoin([outputDir] + path.split('/'));
+                file = fileDataByPath[path];
+                parent = FileIO.pathGetParent(fullPath);
+                FileHelper.ensureDirectoryExists(parent);
+                switch (file.type) {
+                    case 'text':
+                        FileIO.fileWriteText(fullPath, file.content);
+                        break;
+                    case 'img':
+                    case 'binary':
+                        FileIO.fileWriteBytes(fullPath, file.content);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+    }
+}

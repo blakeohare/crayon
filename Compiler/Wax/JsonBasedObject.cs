@@ -207,20 +207,36 @@ namespace Wax
                 sb.Append(((string)value).Replace("\\", "\\\\").Replace("\"", "\\\""));
                 sb.Append('"');
             }
-            else if (value is string[])
+            else if (value is IList<string> || value is IList<object>)
             {
-                string[] strings = (string[])value;
+                IList<object> items = (value is IList<string>) ? ((IList<string>)value).Cast<object>().ToArray() : (IList<object>)value;
                 sb.Append('[');
-                for (int i = 0; i < strings.Length; i++)
+                for (int i = 0; i < items.Count; i++)
                 {
                     if (i > 0) sb.Append(',');
-                    this.ItemToJson(sb, strings[i]);
+                    this.ItemToJson(sb, items[i]);
                 }
                 sb.Append(']');
             }
             else if (value is JsonBasedObject)
             {
                 ((JsonBasedObject)value).ToJsonImpl(sb);
+            }
+            else if (value is Dictionary<string, object>)
+            {
+                Dictionary<string, object> dict = (Dictionary<string, object>)value;
+                sb.Append('{');
+                string[] keys = dict.Keys.ToArray();
+                bool isFirst = true;
+                foreach (string key in keys)
+                {
+                    if (isFirst) isFirst = false;
+                    else sb.Append(',');
+                    this.ItemToJson(sb, key);
+                    sb.Append(':');
+                    this.ItemToJson(sb, dict[key]);
+                }
+                sb.Append('}');
             }
             else
             {

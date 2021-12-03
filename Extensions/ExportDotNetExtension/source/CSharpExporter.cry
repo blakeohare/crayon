@@ -1,0 +1,43 @@
+import CrayonExporter;
+
+class CSharpExporter {
+
+    field buildData;
+    field resDb;
+    field properties;
+    field cbxBundle;
+    field templates;
+
+    constructor(buildData) {
+        this.buildData = buildData;
+        this.cbxBundle = this.buildData.getCbxBundle();
+        this.resDb = this.cbxBundle.getResourceDatabase();
+        this.properties = this.buildData.getExportProperties();
+        this.templates = new TemplateLoader();
+    }
+
+    function export() {
+        files = {};
+        this.doExport(files);
+        FileData.writeToDisk(this.properties.getOutputDirectory(), files);
+    }
+
+    function doExport(files) {
+
+        projectId = this.properties.getProjectId();
+        guidSeed = this.properties.getGuidSeed() ?? projectId;
+        projectGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'project:' + guidSeed);
+        solutionGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'solution:' + guidSeed);
+
+        this.templates.addReplacement('PROJECT_ID', projectId);
+        this.templates.addReplacement('TITLE', projectId);
+        this.templates.addReplacement('PROJECT_GUID', projectGuid);
+        this.templates.addReplacement('SOLUTION_GUID', solutionGuid);
+
+        files[projectId + '.sln'] = FileData.createTextFile(this.templates.getText('Solution_sln.txt'));
+        files[projectId + '/' + projectId + '.csproj'] = FileData.createTextFile(this.templates.getText('ProjectFile_csproj.txt'));
+        files[projectId + '/Wax.dll'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('Wax_dll.txt'));
+        files[projectId + '/CrayonRuntime.dll'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('CrayonRuntime_dll.txt'));
+        files[projectId + '/Program.cs'] = FileData.createTextFile(this.templates.getText('Program_cs.txt'));
+    }
+}

@@ -79,9 +79,18 @@ namespace Router
                 ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.CbxBundle.DependencyTreeJson);
             }
 
-            Dictionary<string, object> exportResponseRaw = waxHub.AwaitSendRequest(
-                "export-" + buildData.ExportProperties.ExportPlatform.ToLowerInvariant(),
-                buildData.GetRawData());
+            string platformId = buildData.ExportProperties.ExportPlatform.ToLowerInvariant();
+            Dictionary<string, object> exportResponseRaw;
+            if (platformId == "csharp-app")
+            {
+                exportResponseRaw = waxHub.AwaitSendRequest("ExportDotNetExtension", buildData.GetRawData());
+            }
+            else
+            {
+                exportResponseRaw = waxHub.AwaitSendRequest(
+                    "export-" + platformId,
+                    buildData.GetRawData());
+            }
 
             ExportResponse exportResponse = new ExportResponse(exportResponseRaw);
 

@@ -1,0 +1,13 @@
+namespace CrayonExporter {
+    class ResourceDatabase : JsonBasedObject {
+        constructor(data = null) : base(data) { }
+
+        function getManifest() { return this.getObject('manifest', FileOutput.class); }
+        function getImageManiest() { return this.getObject('imageManifest', FileOutput.class); }
+
+        function isFlatMode() { return this.getBoolean('isFlatMode'); }
+
+        function getFileNames() { return this.getStrings('flatFileNames'); }
+        function getFiles() { return this.getObjects('flatFiles', FileOutput.class); }
+    }
+}

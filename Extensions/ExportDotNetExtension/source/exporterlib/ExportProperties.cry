@@ -1,0 +1,15 @@
+namespace CrayonExporter {
+    class ExportProperties : JsonBasedObject {
+        constructor(data = null) : base(data) { }
+
+        function getProjectId() { return this.getString('projectId'); }
+        function getGuidSeed() { return this.getString('guidSeed'); }
+        function getIconPaths() { return this.getStrings('iconPaths'); }
+        function hasIcons() { return this.hasItems('iconPaths'); }
+        function getVersion() { return this.getString('version'); }
+        function getDescription() { return this.getString('description'); }
+
+        function getProjectDirectory() { return this.getString('projectDirectory'); }
+        function getOutputDirectory() { return this.getString('outputDirectory'); }
+    }
+}

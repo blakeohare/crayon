@@ -1,0 +1,31 @@
+import Resources;
+import Base64;
+
+namespace CrayonExporter {
+    class TemplateLoader {
+
+        field _replacements = {};
+        constructor() { }
+
+        function addReplacement(key, value) {
+            this._replacements[key] = value;
+            return this;
+        }
+
+        function getText(name, useReplacements = true) {
+            text = Resources.readText('templates/' + name);
+            if (useReplacements && text.contains('%%%')) {
+                parts = text.split('%%%');
+                for (i = 1; i < parts.length; i += 2) {
+                    parts[i] = this._replacements.get(parts[i], '%%%' + parts[i] + '%%%');
+                }
+                return parts.join('');
+            }
+        }
+
+        function getBinary(name) {
+            b64 = Resources.readText('templates/' + name);
+            return Base64.base64ToBytes(b64);
+        }
+    }
+}
