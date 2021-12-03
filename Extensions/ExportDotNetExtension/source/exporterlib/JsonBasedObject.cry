@@ -1,9 +1,9 @@
-namespace CrayonExporter {
+﻿namespace CrayonExporter {
 
     class JsonBasedObject {
 
         field _data;
-        
+
         constructor(data = null) {
             this._data = data.clone() ?? {};
         }
@@ -19,12 +19,12 @@ namespace CrayonExporter {
             this._data[key] = value == true;
         }
 
-        function getInteger(key) { 
+        function getInteger(key) {
             value = this._data.get(key, 0);
             if (typeof(value) == Type.INTEGER) return value;
             return 0;
         }
-        function setInteger(key, value) { 
+        function setInteger(key, value) {
             if (typeof(value) == Type.INTEGER) this._data[key] = value;
             else this.clearItem(key);
         }
@@ -63,7 +63,7 @@ namespace CrayonExporter {
             rawValue = this._data.get(key);
             return this.ensureObject(rawValue, expectedType ?? JsonBasedObject.class);
         }
-        
+
         function setObject(key, value) {
             switch (typeof(value)) {
                 case Type.DICTIONARY:
@@ -110,7 +110,7 @@ namespace CrayonExporter {
                         return desiredClassType.createInstance(rawValue._data);
                     }
                     return null;
-                case Type.DICTIONARY: 
+                case Type.DICTIONARY:
                     return desiredClassType.createInstance(rawValue);
                 default:
                     return null;

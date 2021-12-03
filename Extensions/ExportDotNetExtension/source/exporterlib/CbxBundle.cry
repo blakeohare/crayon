@@ -1,4 +1,4 @@
-import Json;
+﻿import Json;
 
 namespace CrayonExporter {
     class CbxBundle : JsonBasedObject {
@@ -7,8 +7,8 @@ namespace CrayonExporter {
         function getByteCode() { return this.getString('byteCode'); }
         function getResourceDatabase() { return this.getObject('resources', ResourceDatabase.class); }
 
-        function getDependencyTree() { 
-            value = this.getString('depTreeJson'); 
+        function getDependencyTree() {
+            value = this.getString('depTreeJson');
             if (value == null) return null;
             return Json.parseJson(value);
         }

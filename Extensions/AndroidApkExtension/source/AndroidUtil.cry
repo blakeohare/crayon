@@ -1,4 +1,4 @@
-import Environment;
+﻿import Environment;
 import FileIO;
 import ProcessUtil;
 
@@ -28,7 +28,7 @@ static class AndroidUtil {
             FileIO.pathJoin([androidProjectDir, 'gradlew.bat']),
             ['assembleDebug'],
             androidProjectDir);
-        
+
         lines = output.trim().split('\n');
         secondToLast = (lines.length > 2) ? lines[-2] : '';
         if (secondToLast.startsWith("BUILD SUCCESSFUL")) {

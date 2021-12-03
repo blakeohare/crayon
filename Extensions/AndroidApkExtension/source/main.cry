@@ -3,44 +3,44 @@ import Extensions;
 
 class AndroidApkExtensionService : ExtensionService {
 
-	function handleRequest(args, cb) {
-		response = this.handleRequestImpl(args);
-		cb(response);
-	}
-	
-	function handleRequestImpl(args) {
-	
-		if (args.get('isAndroid') != true) {
-			return this.errorResponse("Cannot have an APK Export Path for non-Android projects.");
-		}
+    function handleRequest(args, cb) {
+        response = this.handleRequestImpl(args);
+        cb(response);
+    }
 
-		if (!AndroidUtil.hasAndroidSdk()) {
-			return this.errorResponse("Cannot export APK because the Android SDK is not present.");
-		}
+    function handleRequestImpl(args) {
 
-		exportPath = args.get('apkExportPath') + '';
-		if (!exportPath.lower().endsWith('.apk')) {
-			return this.errorResponse("Cannot export APK to a file path that doesn't end with .apk");
-		}
+        if (args.get('isAndroid') != true) {
+            return this.errorResponse("Cannot have an APK Export Path for non-Android projects.");
+        }
 
-		outputDir = args.get('projOutputDir') + '';
-		apkResult = AndroidUtil.buildApk(outputDir);
+        if (!AndroidUtil.hasAndroidSdk()) {
+            return this.errorResponse("Cannot export APK because the Android SDK is not present.");
+        }
 
-		if (apkResult.get('error') != null) {
-			return this.errorResponse("An error occurred while generating the APK: " + apkResult['error']);
-		}
-		
-		parentDir = FileIO.pathGetParent(exportPath);
-		if (!FileIO.directoryExists(parentDir)) {
-			FileIO.directoryCreate(parentDir, true);
-		}
-		
-		FileIO.fileCopy(apkResult['apkPath'], exportPath, true);
+        exportPath = args.get('apkExportPath') + '';
+        if (!exportPath.lower().endsWith('.apk')) {
+            return this.errorResponse("Cannot export APK to a file path that doesn't end with .apk");
+        }
 
-		return { "errors": [] };
-	}
-	
-	function errorResponse(msg) {
-		return { 'errors': [ msg ] };
-	}
+        outputDir = args.get('projOutputDir') + '';
+        apkResult = AndroidUtil.buildApk(outputDir);
+
+        if (apkResult.get('error') != null) {
+            return this.errorResponse("An error occurred while generating the APK: " + apkResult['error']);
+        }
+
+        parentDir = FileIO.pathGetParent(exportPath);
+        if (!FileIO.directoryExists(parentDir)) {
+            FileIO.directoryCreate(parentDir, true);
+        }
+
+        FileIO.fileCopy(apkResult['apkPath'], exportPath, true);
+
+        return { "errors": [] };
+    }
+
+    function errorResponse(msg) {
+        return { 'errors': [ msg ] };
+    }
 }

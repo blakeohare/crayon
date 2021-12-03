@@ -1,4 +1,4 @@
-namespace CrayonExporter {
+﻿namespace CrayonExporter {
     class FileOutput : JsonBasedObject {
         constructor(data = null) : base(data) { }
 
