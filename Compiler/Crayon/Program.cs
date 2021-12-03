@@ -11,6 +11,7 @@ namespace Crayon
         private const bool IS_RELEASE = true;
 #endif
 
+        [System.STAThread]
         static void Main(string[] args)
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
