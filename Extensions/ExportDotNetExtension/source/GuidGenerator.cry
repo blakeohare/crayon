@@ -1,0 +1,22 @@
+import SRandom;
+
+function createGuid(pattern, seed) {
+    rnd = new SRandom.Randomizer('C#Guid:' + seed);
+    sb = [];
+    hex = '0123456789abcdef';
+    for (i = 0; i < pattern.length; i++) {
+        c = pattern[i];
+        switch (c) {
+            case 'H':
+                sb.add(hex[rnd.getInteger(16)].upper());
+                break;
+            case 'h':
+                sb.add(hex[rnd.getInteger(16)].lower());
+                break;
+            default:
+                sb.add(c);
+                break;
+        }
+    }
+    return sb.join('');
+}

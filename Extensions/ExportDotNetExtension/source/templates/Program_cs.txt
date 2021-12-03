@@ -1,0 +1,20 @@
+﻿using Wax;
+using CrayonRuntime;
+
+namespace %%%PROJECT_ID%%%
+{
+    internal class Program
+    {
+        public static void Main(string[] args)
+        {
+            string byteCode = ResourceReader.ReadTextResource("ByteCode.txt");
+            string resourceManifest = ResourceReader.ReadTextResource("ResourceManifest.txt");
+            string imageManifest = ResourceReader.ReadTextResource("ImageManifest.txt") ?? "";
+            VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest, imageManifest);
+            CrayonWrapper.vmEnableLibStackTrace(vm);
+            CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
+            // Debugger.INSTANCE.StartListening();
+            new EventLoop(vm).StartInterpreter();
+        }
+    }
+}
