@@ -1,18 +1,11 @@
-﻿import FileIO;
-import Extensions;
-import Images;
-import Resources;
+﻿import Extensions;
+import CrayonExporter;
 
 class ExportDotNetExtensionService : ExtensionService {
 
     function handleRequest(args, cb) {
         exporter = new CSharpExporter(new CrayonExporter.BuildData(args));
-        //try {
-            exporter.export();
-        //} catch (Exception e) {
-        //	cb({ 'errors': [ e.message ]});
-        //	return;
-        //}
+        exporter.export();
 
         cb({ 'errors': [] });
     }

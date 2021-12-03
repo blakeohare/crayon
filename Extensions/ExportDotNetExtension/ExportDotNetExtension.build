@@ -12,6 +12,10 @@
     "guidSeed": "org.crayonlang.extensions.ExportDotNetExtension,v1,%TARGET_NAME%",
 	"delegateMainTo": "Extensions",
 	
+	"deps": [
+		"../libs/CrayonExporter"
+	],
+	
     "targets": [
         {
             "name": "javascript",
