@@ -1,0 +1,3 @@
+﻿(() => {
+	window.alert("Hello, World!");
+})();

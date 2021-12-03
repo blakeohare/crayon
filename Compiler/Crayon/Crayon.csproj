@@ -12,6 +12,7 @@
     <ProjectReference Include="..\Platform\Platform.csproj" />
     <ProjectReference Include="..\Router\Router.csproj" />
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
+    <ProjectReference Include="..\U3Windows\U3Windows.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
