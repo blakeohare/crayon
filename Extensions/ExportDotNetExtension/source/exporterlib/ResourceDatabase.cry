@@ -3,7 +3,17 @@ namespace CrayonExporter {
         constructor(data = null) : base(data) { }
 
         function getManifest() { return this.getObject('manifest', FileOutput.class); }
-        function getImageManiest() { return this.getObject('imageManifest', FileOutput.class); }
+        function getImageManifest() { return this.getObject('imageManifest', FileOutput.class); }
+        function getManifestText() { 
+            t = this.getManifest();
+            if (t == null) return '';
+            return t.getTextContent() ?? '';
+        }
+        function getImageManifestText() {
+            t = this.getImageManifest();
+            if (t == null) return '';
+            return t.getTextContent() ?? '';
+        }
 
         function isFlatMode() { return this.getBoolean('isFlatMode'); }
 

@@ -20,6 +20,8 @@ namespace CrayonExporter {
                     parts[i] = this._replacements.get(parts[i], '%%%' + parts[i] + '%%%');
                 }
                 return parts.join('');
+            } else {
+                return text;
             }
         }
 

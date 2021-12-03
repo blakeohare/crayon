@@ -4,5 +4,6 @@ namespace CrayonExporter {
 
         function getType() { return this.getString('type'); }
         function getBytesB64() { return this.getString('contentB64'); }
+        function getTextContent() { return this.getString('textContent'); }
     }
 }

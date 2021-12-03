@@ -11,8 +11,8 @@ namespace Wax
 
         public bool IsPresent { get; set; }
 
-        internal CbxExtensionService(WaxHub hub, string name) : base(name) {
-
+        internal CbxExtensionService(WaxHub hub, string name) : base(name)
+        {
             this.Hub = hub;
 
             foreach (string extensionDirectory in hub.ExtensionDirectories)
