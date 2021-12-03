@@ -130,6 +130,9 @@ MATCHERS = [
   ('Libraries/*.acr', ACRYLIC_STYLE),
   ('Libraries/*/manifest.json', JSON_STYLE),
 
+  # Extensions
+  ('Extensions/*.cry', CRAYON_STYLE),
+
   # MessageHub client libraries
   ('Libraries/MessageHub/client/nodejs/messagehubclient/*.js', JAVASCRIPT_NODE_STYLE),
   ('Libraries/MessageHub/client/js/*.js', JAVASCRIPT_STYLE),

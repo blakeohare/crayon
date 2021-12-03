@@ -1,4 +1,4 @@
-import Resources;
+﻿import Resources;
 import Base64;
 
 namespace CrayonExporter {

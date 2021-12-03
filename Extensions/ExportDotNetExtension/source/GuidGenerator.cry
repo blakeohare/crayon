@@ -1,4 +1,4 @@
-import SRandom;
+﻿import SRandom;
 
 function createGuid(pattern, seed) {
     rnd = new SRandom.Randomizer('C#Guid:' + seed);

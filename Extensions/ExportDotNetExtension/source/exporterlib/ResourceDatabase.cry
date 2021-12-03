@@ -1,10 +1,10 @@
-namespace CrayonExporter {
+﻿namespace CrayonExporter {
     class ResourceDatabase : JsonBasedObject {
         constructor(data = null) : base(data) { }
 
         function getManifest() { return this.getObject('manifest', FileOutput.class); }
         function getImageManifest() { return this.getObject('imageManifest', FileOutput.class); }
-        function getManifestText() { 
+        function getManifestText() {
             t = this.getManifest();
             if (t == null) return '';
             return t.getTextContent() ?? '';

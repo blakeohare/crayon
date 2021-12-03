@@ -5,141 +5,141 @@ import Resources;
 
 class DefaultProjectExtensionService : ExtensionService {
 
-	function handleRequest(args, cb) {
-		response = this.handleRequestImpl(args);
-		cb(response);
-	}
+    function handleRequest(args, cb) {
+        response = this.handleRequestImpl(args);
+        cb(response);
+    }
 
-	function verifyLocale(locale) {
-		switch (locale) {
-			case 'EN':
-			case 'ES':
-			case 'JP':
-				return null;
-			default:
-				return { 'errors': [ "UNKNOWN_LOCALE" ] };
-		}
-	}
-	
-	function isAlphanumeric(str) {
-		str = str.lower();
-		a = ord('a');
-		A = ord('A');
-		z = ord('z');
-		Z = ord('Z');
-		n0 = ord('0');
-		n9 = ord('9');
-		
-		for (c : str) {
-			code = ord(c);
-			if ((code < a || code > z) &&
-				(code < A || code > Z) &&
-				(code < n0 || code > n9)) {
-				
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	function handleRequestImpl(args) {
-	
-		// TODO: args should be verified before arriving here.
-		projType = (args.get('type') ?? '') + '';
-		if (projType == '') projType = 'basic';
-		
-		locale = ((args.get('locale') ?? '') + '').upper();
-		projectId = ((args.get('projectId') ?? '') + '');
-		if (projectId == '') return { 'errors': [ "BAD_PROJECT_ID" ] };
-		if (!this.isAlphanumeric(projectId)) return { 'errors': [ "BAD_PROJECT_ID" ] };
-		err = this.verifyLocale(locale);
-		
-		targetDir = args.get('targetDir') + '';
-		try {
-			if (!FileIO.directoryExists(targetDir)) {
-				FileIO.directoryCreate(targetDir, true);
-			}
-		} catch (Exception) {
-			return { 'errors': [ "UNABLE_TO_CREATE_DIRECTORY" ] };
-		}
-		
-		if (err != null) return err;
-		
-		icon32 = Bitmap.fromResource('templates/logo32.png');
-		icon256 = Bitmap.fromResource('templates/logo256.png');
-		
-		replacements = {
-			'PROJECT_ID': projectId,
-			'TITLE': projectId,
-		};
-		
-		switch (projType) {
-			case 'basic':
-				return this.loadTemplates(targetDir, {
-					'%%%PROJECT_ID%%%.build': 'BuildFile.txt',
-					'source/main.cry': 'main*.txt',
-					'.gitignore': 'dotGitIgnore.txt',
-					'assets/icon32.png': icon32,
-					'assets/icon256.png': icon256,
-				}, locale, replacements);
-				
-			case 'ui':
-				return this.loadTemplates(targetDir, {
-					'%%%PROJECT_ID%%%.build': 'BuildFile.txt',
-					'source/main.cry': 'ui.txt',
-					'.gitignore': 'dotGitIgnore.txt',
-					'assets/icon32.png': icon32,
-					'assets/icon256.png': icon256,
-				}, locale, replacements);
-				
-			case 'game':
-				return this.loadTemplates(targetDir, {
-					'%%%PROJECT_ID%%%.build': 'BuildFile.txt',
-					'source/main.cry': 'game.txt',
-					'.gitignore': 'dotGitIgnore.txt',
-					'assets/icon32.png': icon32,
-					'assets/icon256.png': icon256,
-				}, locale, replacements);
-				
-			default:
-				return { 'errors': [ "UNKNOWN_PROJECT_TYPE" ] };
-		}
-	}
-	
-	function loadTemplates(targetDir, filesByTargetName, locale, replacements) {
-		
-		for (targetFile : filesByTargetName.keys()) {
-			
-			sourceFile = filesByTargetName[targetFile];
-			
-			targetFile = this.doReplacements(targetFile, replacements);
-			finalPath = (targetDir + '/' + targetFile).replace('/', '\\');
-			parentDir = FileIO.pathGetParent(finalPath);
-			
-			if (!FileIO.directoryExists(parentDir)) {
-				FileIO.directoryCreate(parentDir, true);
-			}
-			
-			if (sourceFile is Bitmap) {
-				imgBytes = sourceFile.toBytes(ImageFormat.PNG);
-				FileIO.fileWriteBytes(finalPath, imgBytes);
-			} else if (typeof(sourceFile) == Type.STRING && sourceFile.endsWith('.txt')) {
-				content = Resources.readText('templates/' + sourceFile.replace('*', locale));
-				content = this.doReplacements(content, replacements);
-				FileIO.fileWriteText(finalPath, content);
-			} else {
-				throw new NotImplementedException();
-			}
-		}
-		
-		return { 'errors': [] };
-	}
-	
-	function doReplacements(text, lookup) {
-		parts = text.split('%%%');
-		for (i = 1; i < parts.length; i += 2) {
-			parts[i] = lookup[parts[i]];
-		}
-		return parts.join('');
-	}
+    function verifyLocale(locale) {
+        switch (locale) {
+            case 'EN':
+            case 'ES':
+            case 'JP':
+                return null;
+            default:
+                return { 'errors': [ "UNKNOWN_LOCALE" ] };
+        }
+    }
+
+    function isAlphanumeric(str) {
+        str = str.lower();
+        a = ord('a');
+        A = ord('A');
+        z = ord('z');
+        Z = ord('Z');
+        n0 = ord('0');
+        n9 = ord('9');
+
+        for (c : str) {
+            code = ord(c);
+            if ((code < a || code > z) &&
+                (code < A || code > Z) &&
+                (code < n0 || code > n9)) {
+
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function handleRequestImpl(args) {
+
+        // TODO: args should be verified before arriving here.
+        projType = (args.get('type') ?? '') + '';
+        if (projType == '') projType = 'basic';
+
+        locale = ((args.get('locale') ?? '') + '').upper();
+        projectId = ((args.get('projectId') ?? '') + '');
+        if (projectId == '') return { 'errors': [ "BAD_PROJECT_ID" ] };
+        if (!this.isAlphanumeric(projectId)) return { 'errors': [ "BAD_PROJECT_ID" ] };
+        err = this.verifyLocale(locale);
+
+        targetDir = args.get('targetDir') + '';
+        try {
+            if (!FileIO.directoryExists(targetDir)) {
+                FileIO.directoryCreate(targetDir, true);
+            }
+        } catch (Exception) {
+            return { 'errors': [ "UNABLE_TO_CREATE_DIRECTORY" ] };
+        }
+
+        if (err != null) return err;
+
+        icon32 = Bitmap.fromResource('templates/logo32.png');
+        icon256 = Bitmap.fromResource('templates/logo256.png');
+
+        replacements = {
+            'PROJECT_ID': projectId,
+            'TITLE': projectId,
+        };
+
+        switch (projType) {
+            case 'basic':
+                return this.loadTemplates(targetDir, {
+                    '%%%PROJECT_ID%%%.build': 'BuildFile.txt',
+                    'source/main.cry': 'main*.txt',
+                    '.gitignore': 'dotGitIgnore.txt',
+                    'assets/icon32.png': icon32,
+                    'assets/icon256.png': icon256,
+                }, locale, replacements);
+
+            case 'ui':
+                return this.loadTemplates(targetDir, {
+                    '%%%PROJECT_ID%%%.build': 'BuildFile.txt',
+                    'source/main.cry': 'ui.txt',
+                    '.gitignore': 'dotGitIgnore.txt',
+                    'assets/icon32.png': icon32,
+                    'assets/icon256.png': icon256,
+                }, locale, replacements);
+
+            case 'game':
+                return this.loadTemplates(targetDir, {
+                    '%%%PROJECT_ID%%%.build': 'BuildFile.txt',
+                    'source/main.cry': 'game.txt',
+                    '.gitignore': 'dotGitIgnore.txt',
+                    'assets/icon32.png': icon32,
+                    'assets/icon256.png': icon256,
+                }, locale, replacements);
+
+            default:
+                return { 'errors': [ "UNKNOWN_PROJECT_TYPE" ] };
+        }
+    }
+
+    function loadTemplates(targetDir, filesByTargetName, locale, replacements) {
+
+        for (targetFile : filesByTargetName.keys()) {
+
+            sourceFile = filesByTargetName[targetFile];
+
+            targetFile = this.doReplacements(targetFile, replacements);
+            finalPath = (targetDir + '/' + targetFile).replace('/', '\\');
+            parentDir = FileIO.pathGetParent(finalPath);
+
+            if (!FileIO.directoryExists(parentDir)) {
+                FileIO.directoryCreate(parentDir, true);
+            }
+
+            if (sourceFile is Bitmap) {
+                imgBytes = sourceFile.toBytes(ImageFormat.PNG);
+                FileIO.fileWriteBytes(finalPath, imgBytes);
+            } else if (typeof(sourceFile) == Type.STRING && sourceFile.endsWith('.txt')) {
+                content = Resources.readText('templates/' + sourceFile.replace('*', locale));
+                content = this.doReplacements(content, replacements);
+                FileIO.fileWriteText(finalPath, content);
+            } else {
+                throw new NotImplementedException();
+            }
+        }
+
+        return { 'errors': [] };
+    }
+
+    function doReplacements(text, lookup) {
+        parts = text.split('%%%');
+        for (i = 1; i < parts.length; i += 2) {
+            parts[i] = lookup[parts[i]];
+        }
+        return parts.join('');
+    }
 }

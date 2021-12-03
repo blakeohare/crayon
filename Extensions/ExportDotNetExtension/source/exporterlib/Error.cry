@@ -1,4 +1,4 @@
-namespace CrayonExporter {
+﻿namespace CrayonExporter {
     class Error : JsonBasedObject {
         constructor(data = null) : base(data) { }
 

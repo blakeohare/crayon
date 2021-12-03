@@ -1,4 +1,4 @@
-namespace CrayonExporter {
+﻿namespace CrayonExporter {
     class ExportProperties : JsonBasedObject {
         constructor(data = null) : base(data) { }
 

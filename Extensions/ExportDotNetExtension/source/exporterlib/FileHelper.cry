@@ -1,4 +1,4 @@
-import FileIO;
+﻿import FileIO;
 
 namespace CrayonExporter {
     static class FileHelper {
