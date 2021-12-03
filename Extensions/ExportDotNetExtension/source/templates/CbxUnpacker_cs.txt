@@ -17,12 +17,14 @@ namespace CrayonBoilerplate
             cbxBundle.ResourceDB.ResourceManifestFile = new Wax.FileOutput() { Type = Wax.FileOutputType.Text, TextContent = ReadResourceText("manifest.txt") ?? "" };
             cbxBundle.ResourceDB.ImageResourceManifestFile = new Wax.FileOutput() { Type = Wax.FileOutputType.Text, TextContent = ReadResourceText("imageManifest.txt") ?? "" };
 
-            cbxBundle.ResourceDB.FlatFileNames = GetAllResourceNames();
+            List<string> flatFileNames = new List<string>();
             List<Wax.FileOutput> flatFiles = new List<Wax.FileOutput>();
-            foreach (string resPath in cbxBundle.ResourceDB.FlatFileNames)
+            foreach (string resPath in GetAllResourceNames())
             {
+                flatFileNames.Add("res/" + resPath);
                 flatFiles.Add(new Wax.FileOutput() { Type = Wax.FileOutputType.Binary, BinaryContent = ReadResource(resPath) });
             }
+            cbxBundle.ResourceDB.FlatFileNames = flatFileNames.ToArray();
             cbxBundle.ResourceDB.FlatFiles = flatFiles.ToArray();
 
             waxHub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
