@@ -16,17 +16,17 @@ namespace Wax {
         }
 
         function awaitSendRequest(serviceId, payload) {
-            serializedData = Json.serializeJson(payload);
+            serializedData = WaxHub._encodePayload(payload);
             errOut = [null];
             result = $$$('waxAwaitSend', serviceId, serializedData, errOut);
             WaxHub._errHandle(errOut[0]);
             return Json.parseJson(result);
         }
 
-        function sendRequest(serviceId, payload, cb = null) {
+        function sendRequest(serviceId, payload, cb = null, isRecurring = false) {
             if (Core.typeof(payload) != Type.DICTIONARY) throw new InvalidArgumentException("Payload must be a JSON-serializable dictionary.");
             serializedData = Json.serializeJson(payload); // TODO: catch error here if there's a bad nested type
-            err = $$$('waxSend', serviceId + '', serializedData, (err, rawData) => {
+            err = $$$('waxSend', serviceId + '', serializedData, isRecurring == true, (err, rawData) => {
                 WaxHub._errHandle([err]);
                 res = Json.parseJson(rawData);
                 if (cb != null) {
@@ -34,6 +34,10 @@ namespace Wax {
                 }
             });
             WaxHub._errHandle(err);
+        }
+
+        function createSubscription(serviceId, payload, recurringCb) {
+            WaxHub.sendRequest(serviceId, payload, recurringCb, true);
         }
 
         static function _errHandle(err) {

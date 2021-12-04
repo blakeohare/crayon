@@ -1,9 +1,10 @@
-﻿@import("inline/3_arg.pst");
+﻿@import("inline/4_arg.pst");
 
 string1 = Extension.CoreFunc_WaxSend(
     vm.environment.waxHub,
     (string) arg1.internalValue, // service ID
     (string) arg2.internalValue, // JSON payload (serialized)
+    (bool) arg3.internalValue, // response is recurring (callback can be invoked multiple times, like a listener)
     arg4); // callback (err, payload) => ...
 
 if (string1 != null) {

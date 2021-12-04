@@ -56,7 +56,7 @@ EXT: CoreFunc_TextEncoding_ConvertTextToBytes: C$textEncoding.textToBytes([ARG:1
 EXT: CoreFunc_TimedCallback: C$common$timedCallback([ARG:2], [ARG:3])
 
 EXT: CoreFunc_WaxAwaitSend: C$wax$awaitSend([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-EXT: CoreFunc_WaxSend: C$wax$send([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: CoreFunc_WaxSend: C$wax$send([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 
 EXT: UnixSocket_ClientCreate: (() => {})()
 EXT: UnixSocket_ClientSend: (() => {})()

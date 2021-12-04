@@ -415,7 +415,7 @@ namespace Interpreter.Vm
             }
         }
 
-        public static string WaxSend(object waxHubObj, string serviceId, string payloadJson, Value callback)
+        public static string WaxSend(object waxHubObj, string serviceId, string payloadJson, bool isRecurring, Value callback)
         {
             Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
             throw new NotImplementedException();

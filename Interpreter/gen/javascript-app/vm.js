@@ -5419,11 +5419,12 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 122:
 						// waxSend;
-						valueStackSize -= 3;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = C$wax$send(vm[11][6], arg1[1], arg2[1], arg4);
+						string1 = C$wax$send(vm[11][6], arg1[1], arg2[1], arg3[1], arg4);
 						if ((string1 != null)) {
 							output = buildString(globals, string1);
 						} else {
