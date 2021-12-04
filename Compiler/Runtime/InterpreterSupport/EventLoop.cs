@@ -212,21 +212,27 @@ namespace Interpreter.Vm
 
         private bool eventLoopAlive = true;
 
-        public void RunEventLoop()
+        public bool RunNonBlockingEventLoopIteration()
         {
-            while (this.eventLoopAlive)
+            if (this.eventLoopAlive)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
                 if (invocation != null)
                 {
                     RunEventLoopIteration(invocation);
+                    return true;
                 }
-                else
-                {
-                    // TODO: Check if root execution context has ended.
-                }
+                // TODO: Check if root execution context has ended.
+            }
+            return false;
+        }
 
-                if (invocation == null)
+        public void RunEventLoop()
+        {
+            while (this.eventLoopAlive)
+            {
+                bool workDone = this.RunNonBlockingEventLoopIteration();
+                if (!workDone)
                 {
                     // This is about half a millisecond I have determined on this particular computer I'm
                     // sitting at right now. I may want to derive this at runtime, though.

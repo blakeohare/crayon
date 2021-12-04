@@ -4,13 +4,56 @@ namespace U3Windows
 {
     internal class U3Window
     {
+        private static int idAlloc = 1;
+
         public int ID { get; private set; }
-        public U3Window(int id)
+        public U3Window()
         {
-            this.ID = id;
+            this.ID = idAlloc++;
         }
 
         public void Show(string message)
+        {
+        }
+
+        private Dictionary<string, List<System.Func<Dictionary<string, object>, bool>>> listeners = new Dictionary<string, List<System.Func<Dictionary<string, object>, bool>>>();
+
+        internal void HandleU3Data(Dictionary<string, object> request, string type, string jsonPayload, System.Func<Dictionary<string, object>, bool> cb)
+        {
+            if (type[0] == 'l' && type.StartsWith("listen-"))
+            {
+                string key = type.Substring("listen-".Length);
+                List<System.Func<Dictionary<string, object>, bool>> listenersForEvent;
+                if (!listeners.TryGetValue(key, out listenersForEvent))
+                {
+                    listenersForEvent = new List<System.Func<Dictionary<string, object>, bool>>();
+                    listeners[key] = listenersForEvent;
+                }
+                listenersForEvent.Add(cb);
+            }
+            else
+            {
+                switch (type)
+                {
+                    case "init":
+                        this.HandleInit(
+                            (string)request["title"],
+                            (string)request["icon"],
+                            (int)request["width"],
+                            (int)request["height"],
+                            (bool)request["keepAspectRatio"],
+                            (object[])request["initialData"]
+                            );
+                        cb(new Dictionary<string, object>());
+                        break;
+
+                    default:
+                        throw new System.NotImplementedException();
+                }
+            }
+        }
+
+        private void HandleInit(string title, string iconB64, int width, int height, bool keepAspectRatio, object[] initialDataw)
         {
             System.Windows.Window window = new System.Windows.Window();
             Microsoft.Web.WebView2.Wpf.WebView2 webview = new Microsoft.Web.WebView2.Wpf.WebView2();
@@ -20,12 +63,10 @@ namespace U3Windows
                 await webview.EnsureCoreWebView2Async();
                 webview.NavigateToString(GetPageSource());
             };
-            window.ShowDialog();
-        }
-
-        internal void HandleU3Data(string data)
-        {
-            throw new System.NotImplementedException();
+            window.Title = title;
+            window.Width = width;
+            window.Height = height;
+            window.Show();
         }
 
         private string GetPageSource()

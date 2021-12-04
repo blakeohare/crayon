@@ -11,16 +11,24 @@ namespace U3Windows
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {
-            int windowId = request.ContainsKey("windowId") ? (int)request["windowId"] : 1;
-            string payload = (string)request["payload"];
+            int windowId = request.ContainsKey("windowId") ? (int)request["windowId"] : 0;
+            string type = (string)request["type"];
+            string jsonPayload = request.ContainsKey("jsonPayload") ? (string)request["jsonPayload"] : "{}";
             U3Window window = null;
             if (!windows.ContainsKey(windowId))
             {
-                window = new U3Window(windowId);
-                windows[windowId] = window;
+                if (type == "create")
+                {
+                    window = new U3Window(); // doesn't actually show a window, just allocates an object capable of receiving further U3 service messages.
+                    windows[window.ID] = window;
+                    cb(new Dictionary<string, object>() { { "windowId", window.ID } });
+                    return;
+                }
+
+                throw new NotImplementedException(); // message sent to non-existent window
             }
-            window.HandleU3Data(payload);
-            cb(new Dictionary<string, object>());
+
+            windows[windowId].HandleU3Data(request, type, jsonPayload, cb);
         }
     }
 }

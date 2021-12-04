@@ -1,10 +1,8 @@
 ﻿import Base64;
 import Environment;
-import IconEncoder;
-import MessageHub;
-import ProcessUtil;
 import Images;
 import TextEncoding;
+import Wax;
 
 namespace U3Direct {
 
@@ -19,47 +17,18 @@ namespace U3Direct {
         field _overrideClose = null;
         field _gamepads = [];
         field _hubSendQueue = [];
+        field _isClosed = false;
+        field _windowId = 0;
 
         constructor(eventListener, onClose = null) {
-            this._hub = new Hub();
-            isDebug = $var['CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE'] == true;
-            if (isDebug) {
-                this._hub.setDebugOverrideToken('u3debug');
-            } else {
-                this._hub.setDesktopInitializer(token => {
-                    cryHome = Environment.getEnvironmentVariable('CRAYON_HOME');
-                    if (cryHome == null) throw new Exception("CRAYON_HOME not set.");
+            this._hub = Wax.WaxHub.getActiveHub();
 
-                    args = [
-                        '--u3:token', token,
-                        '--u3:pid', Process.getCurrentProcessId() + ''
-                    ];
+            response = this._hub.awaitSendRequest('u3', { 'type': 'create' });
+            print("u3:create received this response: " + response);
+            this._windowId = response.get('windowId');
 
-                    env = Environment.getEnvironment()['platform'];
-                    useShell = false;
-                    if (env == 'windows') {
-                        execFile = cryHome + '\\u3\\u3window.exe';
-                    } else if (env == 'mac') {
-                        args = [cryHome + '/u3/u3window.app', '--args'] + args;
-                        execFile = 'open';
-                        useShell = true;
-                    } else {
-                        throw new NotImplementedException();
-                    }
-
-                    p = new Process()
-                        .setExecutable(execFile)
-                        .setShellMode(useShell)
-                        .onFinish(status => {
-                            print("Finished with status: " + status);
-                        })
-                        .setArgs(args);
-                    p.run();
-                });
-            }
-
-            this._hub.listen('u3events', (msgs, cb) => {
-                for (msg : msgs) {
+            this._hub.createSubscription('u3', { 'windowId': this._windowId, 'type': 'listen-events' }, (response) => {
+                for (msg : response['msgs']) {
                     eventType = msg['eventName'];
                     id = msg['id'];
                     arg = msg['arg'];
@@ -84,7 +53,9 @@ namespace U3Direct {
                 }
             });
 
-            this._hub.listen('u3batch', (data, cb) => {
+
+            this._hub.createSubscription('u3', { 'windowId': this._windowId, 'type': 'listen-batch' }, (response) => {
+                data = response['data'];
                 i = 0;
                 while (i < data.length) {
                     len = data[i++];
@@ -95,19 +66,18 @@ namespace U3Direct {
                     i += len;
                     this._inputBuffer.add(item);
                 }
-                cb(null);
             });
 
-            this._hub.listen('u3close', (data, cb) => {
+            this._hub.createSubscription('u3', { 'windowId': this._windowId, 'type': 'listen-close' }, (response) => {
+                this._isClosed = true;
+                data = response['data'];
                 if (this._overrideClose != null) {
                     this._overrideClose(data + '');
                 } else {
                     this.close();
                 }
-                cb(null);
-            });
 
-            this._hub.setOnClose(() => {
+                // TODO: Need to double-check this. The previous MessageHub implementation has this separate from the above.
                 if (onClose != null) onClose();
             });
         }
@@ -123,51 +93,33 @@ namespace U3Direct {
 
         function show(title, width, height, initialData, isBlocking, keepAspectRatio) {
 
-            setupComplete = false;
-            this._hub.setOnReady(() => {
+            icon = '';
+            if (!Environment.isJavaScript()) {
+                icon = 'AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAMMOAADDDgAAAAAAAAAAAAAAAAAAAAAAAAAAAABgQwAAVDoAHIZgCOOfcQf/mWsA/5tsAP94VAD/LiAA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYUMAAFE4AByTZwLjsXwC/6d1AP+odQD/kGUA/zwqAOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFQ7AAA/LAAcmGoA48KIAP+yfAD/wYcA/8mNAP9eQQDjAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUDgAADwsADSEXAHoxIgDmRTAA/2NFAP+2fwD/XkIA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdFEAAJdqAAIsHwAVDwoAcT4rAPZKNAD/Vz0A/1E4AOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE81AABLMwAZWT0AynFOAOV3UwD7XkEA/2VGAP9ROADjAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABNS0cAMjEvTn95bfSOdTz/mG4M/4mAaf+Fbz3/UDcA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXl5fADg5OXelp6v/hXxn/25UF/+mqKz/gHlo/0MtAOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEE0GAAuJhQncVgd56d5Dv+4gQL/h2Ya/5twDv9cQADjAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgQgAASzMAHKVzAOPNjwD/vYQA/7+FAP+2fgD/UTkA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYEMAAFM5AByLYwfjpXUG/55uAP+fbwD/gVoA/zUlAOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGBDAABKMwALe1cFsbiEDv+2gAL/tX4A/4hfAP8gFwCxAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAi2QIAHZUBU7TmxX08qwK/+KdAP+qdwD0MiMATlQ6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFo+AAApGQALpHcOse6tFP/PkQH/jGIAsTspAAtcQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiWIIAHRSBU3SmRX0wIkK9GpKAE17VgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFo+AAA3JAANnnIMu59yDLs6JwANXEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA+B8AAPgfAAD8PwAA/D8AAA==';
+            }
 
-                icon = '';
-                if (!Environment.isJavaScript()) {
-                    /*
-                    easyIcon = new Bitmap(64, 64);
-                    blue = new Bitmap(32, 32);
-                    blue.edit().fill(0, 0, 255).finish();
-                    easyIcon.edit().drawImage(blue, 16, 16).finish();
-                    icon = bytesToBase64(new IconBuilder().addImage(easyIcon).toBytes());
-                    //*/
-                    icon = 'AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAMMOAADDDgAAAAAAAAAAAAAAAAAAAAAAAAAAAABgQwAAVDoAHIZgCOOfcQf/mWsA/5tsAP94VAD/LiAA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYUMAAFE4AByTZwLjsXwC/6d1AP+odQD/kGUA/zwqAOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFQ7AAA/LAAcmGoA48KIAP+yfAD/wYcA/8mNAP9eQQDjAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUDgAADwsADSEXAHoxIgDmRTAA/2NFAP+2fwD/XkIA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdFEAAJdqAAIsHwAVDwoAcT4rAPZKNAD/Vz0A/1E4AOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE81AABLMwAZWT0AynFOAOV3UwD7XkEA/2VGAP9ROADjAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABNS0cAMjEvTn95bfSOdTz/mG4M/4mAaf+Fbz3/UDcA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXl5fADg5OXelp6v/hXxn/25UF/+mqKz/gHlo/0MtAOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEE0GAAuJhQncVgd56d5Dv+4gQL/h2Ya/5twDv9cQADjAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgQgAASzMAHKVzAOPNjwD/vYQA/7+FAP+2fgD/UTkA4wAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYEMAAFM5AByLYwfjpXUG/55uAP+fbwD/gVoA/zUlAOMAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGBDAABKMwALe1cFsbiEDv+2gAL/tX4A/4hfAP8gFwCxAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAi2QIAHZUBU7TmxX08qwK/+KdAP+qdwD0MiMATlQ6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFo+AAApGQALpHcOse6tFP/PkQH/jGIAsTspAAtcQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiWIIAHRSBU3SmRX0wIkK9GpKAE17VgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFo+AAA3JAANnnIMu59yDLs6JwANXEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA+B8AAPgfAAD8PwAA/D8AAA==';
-                }
-
-                initMsg = {
-                    "title": title,
-                    "width": width,
-                    "height": height,
-                    "initialData": initialData,
-                    "keepAspectRatio": keepAspectRatio,
-
-                    // This is a duplicate with command line args, but debug mode doesn't send
-                    // command line args, so they're being sent again later here.
-                    "pid": Process.isSupported() ? Process.getCurrentProcessId() : 0,
-                    "icon": icon,
-                };
-
-                this._hub.send('u3init', initMsg, (_) => {
-                    setupComplete = true;
-                });
-
-                // The message hub will put these in the queue, if present.
-                // The important thing is that u3init is first in the queue.
-                for (item : this._hubSendQueue) {
-                    this.sendData(item);
-                }
-                this._hubSendQueue = null;
+            this._hub.awaitSendRequest('u3', {
+                'windowId': this._windowId,
+                'type': 'init',
+                "title": title,
+                "width": width,
+                "height": height,
+                "initialData": initialData,
+                "keepAspectRatio": keepAspectRatio,
+                "icon": icon,
             });
 
+            // The message hub will put these in the queue, if present.
+            // The important thing is that u3init is first in the queue.
+            queuedData = this._hubSendQueue;
+            this._hubSendQueue = null;
+            for (item : queuedData) {
+                this.sendData(item);
+            }
+
+            print("isBlocking? " + isBlocking);
             if (isBlocking) {
-                this._hub.startBlocking();
-            } else {
-                this._hub.start();
-                while (!setupComplete && this._hub._isRunning) {
+                while (!this._isClosed) {
                     Core.sleep(0.005);
                 }
             }
@@ -178,7 +130,7 @@ namespace U3Direct {
             if (this._hubSendQueue != null) {
                 this._hubSendQueue.add(items);
             } else {
-                this._hub.send('u3data', { "buffer": items });
+                this._hub.awaitSendRequest('u3', { 'windowId': this._windowId, 'buffer': items });
             }
             return this;
         }
@@ -199,8 +151,8 @@ namespace U3Direct {
         }
 
         function close() {
-            this._hub.send('u3close', {});
-            this._hub.disconnect();
+            this._hub.awaitSend('u3', { 'windowId': this._windowId, 'type': 'close' });
+            this._isClosed = true;
             return this;
         }
 

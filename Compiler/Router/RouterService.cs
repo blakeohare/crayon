@@ -11,7 +11,7 @@ namespace Router
             Dictionary<string, object> request,
             Func<Dictionary<string, object>, bool> cb)
         {
-            bool errorsAsExceptions = request.ContainsKey("exceptionsAsErrors") && (request["errorsAsExceptions"] as bool?) == true;
+            bool errorsAsExceptions = request.ContainsKey("errorsAsExceptions") && (request["errorsAsExceptions"] as bool?) == true;
             string crayonSourceRoot = request.ContainsKey("crayonSourceRoot") ? request["crayonSourceRoot"].ToString() : null;
 
             if (errorsAsExceptions)
