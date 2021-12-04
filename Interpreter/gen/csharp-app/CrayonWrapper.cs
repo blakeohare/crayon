@@ -6919,7 +6919,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = CoreFunctions.WaxSend(vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, (bool)arg3.internalValue, arg4);
+                                string1 = CoreFunctions.WaxSend(vm.environment.waxHub, vm.environment.platformEventLoop, (string)arg1.internalValue, (string)arg2.internalValue, (bool)arg3.internalValue, arg4);
                                 if ((string1 != null))
                                 {
                                     output = buildString(globals, string1);

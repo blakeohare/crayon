@@ -415,10 +415,20 @@ namespace Interpreter.Vm
             }
         }
 
-        public static string WaxSend(object waxHubObj, string serviceId, string payloadJson, bool isRecurring, Value callback)
+        public static string WaxSend(object waxHubObj, object eventLoop, string serviceId, string payloadJson, bool isRecurring, Value callback)
         {
             Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
-            throw new NotImplementedException();
+            waxHub.SendRequest(
+                serviceId,
+                new Dictionary<string, object>(new Wax.Util.JsonParser(payloadJson).ParseAsDictionary()),
+                isRecurring,
+                (result) =>
+                {
+                    string resultJson = new Wax.JsonBasedObject(result).ToJson();
+                    ((EventLoop)eventLoop).ExecuteFunctionPointerNativeArgs(callback, new object[] { resultJson });
+                    return true;
+                });
+            return null; // TODO: return error code if serviceId is not found.
         }
     }
 }

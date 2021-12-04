@@ -31,11 +31,20 @@ namespace Wax
             if (!this.services.ContainsKey(serviceName))
             {
                 CbxExtensionService service = new CbxExtensionService(this, serviceName);
-                if (!service.IsPresent) return null;
+                if (!service.IsPresent)
+                {
+                    throw new InvalidOperationException("The extension '" + serviceName + "' could not be found or downloaded.");
+                }
 
                 this.services[serviceName] = service;
             }
             return this.services[serviceName];
+        }
+
+        public void SendRequest(string serviceName, Dictionary<string, object> request, bool recurringCallback, Func<Dictionary<string, object>, bool> callback)
+        {
+            WaxService service = this.GetService(serviceName);
+            service.HandleRequest(request, callback);
         }
 
         public Dictionary<string, object> AwaitSendRequest(
@@ -46,11 +55,6 @@ namespace Wax
 
             Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
             WaxService service = this.GetService(serviceName);
-
-            if (service == null)
-            {
-                throw new InvalidOperationException("The extension '" + serviceName + "' could not be found or downloaded.");
-            }
 
             service.HandleRequest(
                 immutableEnsuredCopy,
