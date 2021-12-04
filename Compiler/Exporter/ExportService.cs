@@ -17,11 +17,9 @@ namespace Exporter
             {
                 platforms = new Dictionary<string, Platform.AbstractPlatform>();
                 foreach (Platform.AbstractPlatform platform in new Platform.AbstractPlatform[] {
-                    new CSharpApp.PlatformImpl(),
                     new JavaScriptApp.PlatformImpl(),
                     new JavaScriptAppAndroid.PlatformImpl(),
                     new JavaScriptAppIos.PlatformImpl(),
-                    new LangCSharp.PlatformImpl(),
                     new LangJavaScript.PlatformImpl(),
                 })
                 {
