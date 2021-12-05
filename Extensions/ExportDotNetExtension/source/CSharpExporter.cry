@@ -56,8 +56,8 @@ class CSharpExporter {
 
         files[projectId + '.sln'] = FileData.createTextFile(this.templates.getText('Solution_sln.txt'));
         files[projectId + '/' + projectId + '.csproj'] = FileData.createTextFile(this.templates.getText('ProjectFile_csproj.txt'));
-        files[projectId + '/Wax.dll'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('Wax_dll.txt'));
-        files[projectId + '/Runtime.dll'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('Runtime_dll.txt'));
+        files[projectId + '/Wax.dll'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('Wax.dll'));
+        files[projectId + '/Runtime.dll'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('Runtime.dll'));
         files[projectId + '/Program.cs'] = FileData.createTextFile(this.templates.getText('Program_cs.txt'));
         files[projectId + '/CbxUnpacker.cs'] = FileData.createTextFile(this.templates.getText('CbxUnpacker_cs.txt'));
     }
