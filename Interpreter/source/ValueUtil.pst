@@ -859,3 +859,7 @@ Array<string> listImplToStringArray(ListImpl list) {
     }
     return output;
 }
+
+bool isNull(Value value) {
+    return value.type == Types.NULL;
+}

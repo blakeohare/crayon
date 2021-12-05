@@ -6919,15 +6919,11 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = CoreFunctions.WaxSend(vm.environment.waxHub, vm.environment.platformEventLoop, (string)arg1.internalValue, (string)arg2.internalValue, (bool)arg3.internalValue, arg4);
-                                if ((string1 != null))
-                                {
-                                    output = buildString(globals, string1);
-                                }
-                                else
-                                {
-                                    output = vm.globalNull;
-                                }
+                                CoreFunctions.WaxSend(vm.environment.waxHub, vm.environment.platformEventLoop, (string)arg1.internalValue, (string)arg2.internalValue, (bool)arg3.internalValue, arg4);
+                                output = vm.globalNull;
+                                prepareToSuspend(ec, stack, valueStackSize, pc);
+                                ec.activeInterrupt = new Interrupt(3, 0, "", 0.0, null);
+                                hasInterrupt = true;
                                 break;
                             case 123:
                                 // waxServiceGetPayload;
@@ -8411,6 +8407,11 @@ namespace Interpreter.Vm
                 classIdWalker = classInfo.baseClassId;
             }
             return false;
+        }
+
+        public static bool isNull(Value value)
+        {
+            return (value.type == 1);
         }
 
         public static bool isPcFromCore(VmContext vm, int pc)

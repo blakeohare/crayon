@@ -5424,12 +5424,11 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = C$wax$send(vm[11][6], vm[11][4], arg1[1], arg2[1], arg3[1], arg4);
-						if ((string1 != null)) {
-							output = buildString(globals, string1);
-						} else {
-							output = vm[14];
-						}
+						C$wax$send(vm[11][6], vm[11][4], arg1[1], arg2[1], arg3[1], arg4);
+						output = vm[14];
+						prepareToSuspend(ec, stack, valueStackSize, pc);
+						ec[13] = [3, 0, "", 0.0, null];
+						hasInterrupt = true;
 						break;
 					case 123:
 						// waxServiceGetPayload;
@@ -6591,6 +6590,10 @@ var isClassASubclassOf = function(vm, subClassId, parentClassId) {
 		classIdWalker = classInfo[2];
 	}
 	return false;
+};
+
+var isNull = function(value) {
+	return (value[0] == 1);
 };
 
 var isPcFromCore = function(vm, pc) {

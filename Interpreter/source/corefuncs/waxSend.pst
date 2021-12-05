@@ -1,6 +1,6 @@
 ﻿@import("inline/4_arg.pst");
 
-string1 = Extension.CoreFunc_WaxSend(
+Extension.CoreFunc_WaxSend(
     vm.environment.waxHub,
     vm.environment.platformEventLoop,
     (string) arg1.internalValue, // service ID
@@ -8,8 +8,8 @@ string1 = Extension.CoreFunc_WaxSend(
     (bool) arg3.internalValue, // response is recurring (callback can be invoked multiple times, like a listener)
     arg4); // callback (err, payload) => ...
 
-if (string1 != null) {
-    output = buildString(globals, string1);
-} else {
-    output = vm.globalNull;
-}
+output = vm.globalNull;
+
+prepareToSuspend(ec, stack, valueStackSize, pc);
+ec.activeInterrupt = new Interrupt(InterruptType.SLEEP, 0, "", 0.0, null);
+hasInterrupt = true;

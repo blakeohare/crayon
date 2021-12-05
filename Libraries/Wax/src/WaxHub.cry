@@ -25,14 +25,14 @@ namespace Wax {
 
         function sendRequest(serviceId, payload, cb = null, isRecurring = false) {
             serializedData = WaxHub._encodePayload(payload);
-            err = $$$('waxSend', serviceId + '', serializedData, isRecurring == true, (err, rawData) => {
+            $$$('waxSend', serviceId + '', serializedData, isRecurring == true, (err, rawData) => {
                 WaxHub._errHandle([err]);
                 res = Json.parseJson(rawData);
                 if (cb != null) {
                     cb(res);
                 }
             });
-            WaxHub._errHandle(err);
+            return null;
         }
 
         static function _encodePayload(payload) {
