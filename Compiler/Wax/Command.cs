@@ -20,7 +20,6 @@ namespace Wax
         public bool IsErrorCheckOnly { get { return this.GetBoolean("isErrorCheckOnly"); } set { this.SetBoolean("isErrorCheckOnly", value); } }
         public bool IsJsonOutput { get { return this.GetBoolean("isJsonOutput"); } set { this.SetBoolean("isJsonOutput", value); } }
         public bool UseOutputPrefixes { get { return this.GetBoolean("useOutputPrefixes"); } set { this.SetBoolean("useOutputPrefixes", value); } }
-        public bool ResourceErrorsShowRelativeDir { get { return this.GetBoolean("resourceErrorsShowRelativeDir"); } set { this.SetBoolean("resourceErrorsShowRelativeDir", value); } }
         public string OutputDirectoryOverride { get { return this.GetString("outputDirectoryOverride"); } set { this.SetString("outputDirectoryOverride", value); } }
         public string[] DirectRunArgs { get { return this.GetStrings("directRunArgs"); } set { this.SetStrings("directRunArgs", value); } }
         public bool DirectRunShowLibStack { get { return this.GetBoolean("directRunShowLibStack"); } set { this.SetBoolean("directRunShowLibStack", value); } }

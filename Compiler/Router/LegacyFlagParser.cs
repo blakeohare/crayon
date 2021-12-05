@@ -20,8 +20,6 @@ namespace Router
         private static readonly string VERSION = "version";
         private static readonly string APK_EXPORT_PATH = "apkExport";
 
-        private static readonly string RESOURCE_ERRORS_SHOW_RELATIVE_DIR = "resourceErrorsShowRelativeDir";
-
         // don't use the output directory specified by the build file. Use this arg instead.
         private static readonly string OVERRIDE_OUTPUT_DIR = "overrideOutputDir";
 
@@ -52,7 +50,6 @@ namespace Router
             READABLE_BYTE_CODE,
             SHOW_LIB_STACK,
             USE_OUTPUT_PREFIXES,
-            RESOURCE_ERRORS_SHOW_RELATIVE_DIR,
             VERSION,
         };
 
@@ -177,7 +174,6 @@ namespace Router
                 IsJsonOutput = output.ContainsKey(JSON_OUTPUT),
                 UseOutputPrefixes = output.ContainsKey(USE_OUTPUT_PREFIXES),
                 OutputDirectoryOverride = output.ContainsKey(OVERRIDE_OUTPUT_DIR) ? output[OVERRIDE_OUTPUT_DIR] : null,
-                ResourceErrorsShowRelativeDir = output.ContainsKey(RESOURCE_ERRORS_SHOW_RELATIVE_DIR),
             };
 
             if (output.ContainsKey(BUILD_FILE) && !output.ContainsKey(BUILD_TARGET))

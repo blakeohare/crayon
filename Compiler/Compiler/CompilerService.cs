@@ -12,25 +12,24 @@ namespace Compiler
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {
-            BuildData result = this.HandleRequestImpl(new Command(request));
+            BuildData result = this.HandleRequestImpl(new BuildRequest(request));
             cb(result.GetRawData());
         }
 
-        private BuildData HandleRequestImpl(Command command)
+        private BuildData HandleRequestImpl(BuildRequest request)
         {
-            BuildContext buildContext = GetBuildContext(command, this.Hub);
+
+            BuildContext buildContext = GetBuildContext(request.BuildFile, request.BuildTarget, this.Hub);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
-            BuildData buildData = Compile(buildContext, command.ErrorsAsExceptions, resourceDatabase, this.Hub);
+            BuildData buildData = Compile(buildContext, request.ErrorsAsExceptions, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
             buildData.ExportProperties.ProjectDirectory = buildContext.ProjectDirectory;
 
-            buildData.ExportProperties.OutputDirectory = command.HasOutputDirectoryOverride
-                ? command.OutputDirectoryOverride
-                : buildContext.OutputFolder;
+            buildData.ExportProperties.OutputDirectory = request.OutputDirectoryOverride ?? buildContext.OutputFolder;
 
             if (!buildData.HasErrors)
             {
@@ -40,23 +39,23 @@ namespace Compiler
             return buildData;
         }
 
-        private static BuildContext GetBuildContext(Command command, WaxHub hub)
+        private static BuildContext GetBuildContext(string buildFilePath, string buildTarget, WaxHub hub)
         {
-            string buildFile = command.BuildFilePath;
+            string buildFile = buildFilePath;
 
             if (buildFile == null)
             {
                 throw new InvalidOperationException("No build path was provided.");
             }
 
-            string target = command.BuildTarget;
+            string target = buildTarget;
 
             buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile, hub);
 
             string projectDirectory = Wax.Util.Disk.FileUtil.GetParentDirectory(buildFile);
             string buildFileContent = Wax.Util.Disk.FileUtil.ReadFileText(buildFile);
 
-            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, command.ResourceErrorsShowRelativeDir);
+            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target);
 
             // command line arguments override build file values if present.
 
@@ -159,6 +158,7 @@ namespace Compiler
                     ByteCode = (string)resultRaw["byteCode"],
                     ResourceDB = resDb,
                 },
+                ProjectID = buildContext.ProjectID,
             };
 
             return buildData;
