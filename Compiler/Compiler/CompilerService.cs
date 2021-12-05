@@ -22,8 +22,7 @@ namespace Compiler
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
-            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions);
-            BuildData buildData = Compile(compileRequest, buildContext.ProjectID, resourceDatabase, this.Hub);
+            BuildData buildData = Compile(buildContext, command.ErrorsAsExceptions, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
@@ -90,43 +89,6 @@ namespace Compiler
             return buildContext;
         }
 
-        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions)
-        {
-            Dictionary<string, object> request = new Dictionary<string, object>();
-
-            request["projectId"] = buildContext.ProjectID;
-            request["delegateMainTo"] = buildContext.DelegateMainTo;
-            request["locale"] = buildContext.CompilerLocale.ID;
-            request["localDeps"] = buildContext.LocalDeps;
-            request["projectDirectory"] = buildContext.ProjectDirectory; // TODO: create a disk service that uses scoped instances where you can register an ID for a folder or remote virtual disk of some sort and then pass that ID instead of the hardcoded folder name here.
-            request["codeFiles"] = DictionaryUtil.DictionaryToFlattenedDictionary(buildContext.GetCodeFiles());
-            request["lang"] = buildContext.RootProgrammingLanguage + "";
-            request["removeSymbols"] = buildContext.RemoveSymbols;
-
-            request["errorsAsExceptions"] = errorsAsExceptions;
-
-            List<string> vars = new List<string>();
-
-            foreach (string key in buildContext.BuildVariableLookup.Keys)
-            {
-                BuildVarCanonicalized buildVar = buildContext.BuildVariableLookup[key];
-                vars.Add(key);
-
-                switch (buildVar.Type)
-                {
-                    case VarType.BOOLEAN: vars.Add("B"); vars.Add(buildVar.BoolValue ? "1" : "0"); break;
-                    case VarType.FLOAT: vars.Add("F"); vars.Add(buildVar.FloatValue + ""); break;
-                    case VarType.INT: vars.Add("I"); vars.Add(buildVar.IntValue + ""); break;
-                    case VarType.STRING: vars.Add("S"); vars.Add(buildVar.StringValue); break;
-                    case VarType.NULL: throw new InvalidOperationException("The build variable '" + key + "' does not have a value assigned to it.");
-                    default: throw new Exception(); // this should not happen.
-                }
-            }
-            request["buildVars"] = vars.ToArray();
-
-            return request;
-        }
-
         private static Dictionary<string, object> ActualCompilation(Parser.InternalCompilationBundle icb)
         {
             Dictionary<string, object> output = new Dictionary<string, object>();
@@ -160,12 +122,12 @@ namespace Compiler
         }
 
         private static BuildData Compile(
-            Dictionary<string, object> request,
-            string projectId,
+            BuildContext buildContext,
+            bool errorsAsExceptions,
             ResourceDatabase resDb,
             WaxHub waxHub)
         {
-            Parser.CompileRequest cr = new Parser.CompileRequest(request, waxHub.SourceRoot);
+            Parser.CompileRequest cr = new Parser.CompileRequest(buildContext, errorsAsExceptions, waxHub.SourceRoot);
 
             Parser.InternalCompilationBundle icb = Parser.Compiler.Compile(cr, waxHub);
 

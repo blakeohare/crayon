@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Build
 {
@@ -13,17 +12,6 @@ namespace Build
                 output[items[i]] = items[i + 1];
             }
             return output;
-        }
-
-        public static string[] DictionaryToFlattenedDictionary(IDictionary<string, string> dict)
-        {
-            List<string> output = new List<string>();
-            foreach (string key in dict.Keys.OrderBy(k => k))
-            {
-                output.Add(key);
-                output.Add(dict[key]);
-            }
-            return output.ToArray();
         }
     }
 }
