@@ -67,12 +67,8 @@ namespace Wax
         {
             if (this.verifiedCbxPath == null)
             {
-                Dictionary<string, object> compileRequest = new Command()
-                {
-                    BuildFilePath = this.buildFile,
-                    DefaultProjectId = this.Name,
-                }.GetRawData();
-                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("compiler", compileRequest));
+                BuildRequest buildRequest = new BuildRequest() { BuildFile = this.buildFile };
+                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("compiler", buildRequest));
 
                 if (buildData.HasErrors) return buildData.Errors;
 
@@ -82,6 +78,5 @@ namespace Wax
             }
             return null;
         }
-
     }
 }

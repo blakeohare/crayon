@@ -45,14 +45,14 @@ namespace Router
             return ExecutionType.RUN_CBX;
         }
 
-        private static BuildData WrappedCompile(Command command, WaxHub waxHub)
+        private static BuildData WrappedCompile(BuildRequest buildRequest, WaxHub waxHub)
         {
-            return new BuildData(waxHub.AwaitSendRequest("compiler", command.GetRawData()));
+            return new BuildData(waxHub.AwaitSendRequest("compiler", buildRequest.GetRawData()));
         }
 
-        private static Error[] ExportVmBundle(Command command, WaxHub waxHub)
+        private static Error[] ExportVmBundle(Command command, BuildRequest buildRequest, WaxHub waxHub)
         {
-            BuildData buildData = WrappedCompile(command, waxHub);
+            BuildData buildData = WrappedCompile(buildRequest, waxHub);
 
             if (buildData.HasErrors)
             {
@@ -112,6 +112,12 @@ namespace Router
                 ConsoleWriter.EnablePrefixes();
             }
 
+            BuildRequest buildRequest = new BuildRequest();
+            buildRequest.BuildFile = command.BuildFilePath;
+            buildRequest.BuildTarget = command.BuildTarget;
+            buildRequest.ErrorsAsExceptions = command.ErrorsAsExceptions;
+            buildRequest.OutputDirectoryOverride = command.OutputDirectoryOverride;
+
             switch (IdentifyUseCase(command))
             {
                 case ExecutionType.GENERATE_DEFAULT_PROJECT:
@@ -123,24 +129,24 @@ namespace Router
                         System.IO.Directory.GetCurrentDirectory());
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    return ExportVmBundle(command, waxHub);
+                    return ExportVmBundle(command, buildRequest, waxHub);
 
                 case ExecutionType.ERROR_CHECK_ONLY:
                     NotifyStatusChange("COMPILE-START");
-                    BuildData errorCheckOnlyResponse = ExportInMemoryCbxData(command, true, waxHub);
+                    BuildData errorCheckOnlyResponse = ExportInMemoryCbxData(buildRequest, true, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     return errorCheckOnlyResponse.Errors;
 
                 case ExecutionType.EXPORT_CBX:
                     NotifyStatusChange("COMPILE-START");
                     List<Error> errors = new List<Error>();
-                    DoExportStandaloneCbxFileAndGetPath(command, false, waxHub, errors);
+                    DoExportStandaloneCbxFileAndGetPath(command, buildRequest, false, waxHub, errors);
                     NotifyStatusChange("COMPILE-END");
                     return errors.ToArray();
 
                 case ExecutionType.RUN_CBX:
                     NotifyStatusChange("COMPILE-START");
-                    BuildData buildData = ExportInMemoryCbxData(command, false, waxHub);
+                    BuildData buildData = ExportInMemoryCbxData(buildRequest, false, waxHub);
                     NotifyStatusChange("COMPILE-END");
                     if (buildData.HasErrors)
                     {
@@ -170,11 +176,11 @@ namespace Router
         }
 
         private static BuildData ExportInMemoryCbxData(
-            Command command,
+            BuildRequest buildRequest,
             bool isDryRunErrorCheck,
             WaxHub waxHub)
         {
-            BuildData buildData = WrappedCompile(command, waxHub);
+            BuildData buildData = WrappedCompile(buildRequest, waxHub);
 
             if (isDryRunErrorCheck || buildData.HasErrors)
             {
@@ -188,11 +194,12 @@ namespace Router
         // This used to be ExportResponse but that's for a different purpose.
         private static string DoExportStandaloneCbxFileAndGetPath(
             Command command,
+            BuildRequest buildRequest,
             bool isDryRunErrorCheck,
             WaxHub waxHub,
             List<Error> errorsOut)
         {
-            BuildData buildData = WrappedCompile(command, waxHub);
+            BuildData buildData = WrappedCompile(buildRequest, waxHub);
 
             if (isDryRunErrorCheck || buildData.HasErrors)
             {
