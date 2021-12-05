@@ -27,7 +27,6 @@ namespace Wax
         public bool IsCSharpToAcrylicTranspiler { get { return this.GetBoolean("isCSharpToAcrylicTranspiler"); } set { this.SetBoolean("isCSharpToAcrylicTranspiler", value); } }
         public string ApkExportPath { get { return this.GetString("apkExportPath"); } set { this.SetString("apkExportPath", value); } }
         public bool ErrorsAsExceptions { get { return this.GetBoolean("errorsAsExceptions"); } set { this.SetBoolean("errorsAsExceptions", value); } }
-        public string ActiveCrayonSourceRoot { get { return this.GetString("activeCrayonSourceRoot"); } set { this.SetString("activeCrayonSourceRoot", value); } }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }

@@ -32,8 +32,7 @@ namespace AssemblyResolver
                     string[] localDeps = (string[])request["localDeps"];
                     string projectDir = (string)request["projectDir"];
                     bool includeSource = (bool)request["includeSource"];
-                    string crayonSourceRoot = request.ContainsKey("crayonSourceRoot") && request["crayonSourceRoot"] != null ? request["crayonSourceRoot"].ToString() : null;
-                    AssemblyFinder af = this.GetAssemblyFinder(localDeps, projectDir, crayonSourceRoot);
+                    AssemblyFinder af = this.GetAssemblyFinder(localDeps, projectDir, this.Hub.SourceRoot);
                     InternalAssemblyMetadata md = af.GetAssemblyMetadataFromAnyPossibleKey(locale == null ? name : (locale + ":" + name));
                     Dictionary<string, object> output = new Dictionary<string, object>();
                     if (md == null)

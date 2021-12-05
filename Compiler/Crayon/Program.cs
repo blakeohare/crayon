@@ -16,6 +16,7 @@ namespace Crayon
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
 
             Wax.WaxHub waxHub = new Wax.WaxHub();
+            waxHub.SourceRoot = SourceDirectoryFinder.CrayonSourceDirectory;
             waxHub.RegisterService(new Router.RouterService());
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Runtime.RuntimeService());
@@ -37,11 +38,6 @@ namespace Crayon
             if (!IS_RELEASE)
             {
                 request["errorsAsExceptions"] = true;
-                string crayonSourcePath = SourceDirectoryFinder.CrayonSourceDirectory;
-                if (crayonSourcePath != null)
-                {
-                    request["crayonSourceRoot"] = crayonSourcePath;
-                }
             }
 
             waxHub.AwaitSendRequest("router", request);

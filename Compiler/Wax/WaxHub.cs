@@ -10,6 +10,8 @@ namespace Wax
 
         internal List<string> ExtensionDirectories { get; private set; }
 
+        public string SourceRoot { get; set; }
+
         public WaxHub()
         {
             this.ExtensionDirectories = new List<string>();
