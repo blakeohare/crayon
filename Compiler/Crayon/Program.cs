@@ -22,11 +22,6 @@ namespace Crayon
             waxHub.RegisterService(new Runtime.RuntimeService());
             waxHub.RegisterService(new Compiler.CompilerService());
 
-            // TODO: these need to be turned into extensions
-            waxHub.RegisterService(new Exporter.ExportService("javascript-app"));
-            waxHub.RegisterService(new Exporter.ExportService("javascript-app-android"));
-            waxHub.RegisterService(new Exporter.ExportService("javascript-app-ios"));
-
             Dictionary<string, object> request = new Dictionary<string, object>();
             request["args"] = commandLineArgs;
 
