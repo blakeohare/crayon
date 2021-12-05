@@ -11,6 +11,7 @@ namespace Router
         private static readonly string BUILD_TARGET = "target";
         private static readonly string BUILD_FILE = "buildfile";
         private static readonly string CBX = "cbx";
+        private static readonly string CBX_EXPORT_PATH = "cbxPath";
         private static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
         private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
@@ -61,6 +62,7 @@ namespace Router
             BUILD_FILE, // this will be implicitly applied to the first argument that ends in .build and has no flag associated with it.
             APK_EXPORT_PATH,
             OVERRIDE_OUTPUT_DIR,
+            CBX_EXPORT_PATH,
 
             GEN_DEFAULT_PROJ,
             GEN_DEFAULT_PROJ_ES,
@@ -181,7 +183,12 @@ namespace Router
             if (output.ContainsKey(BUILD_FILE) && !output.ContainsKey(BUILD_TARGET))
             {
                 command.BuildFilePath = output[BUILD_FILE];
-                if (output.ContainsKey(CBX))
+                if (output.ContainsKey(CBX_EXPORT_PATH))
+                {
+                    command.IsDirectCbxRun = false;
+                    command.CbxExportPath = output[CBX_EXPORT_PATH];
+                }
+                else if (output.ContainsKey(CBX))
                 {
                     command.IsDirectCbxRun = false;
                     command.CbxExportPath = "";

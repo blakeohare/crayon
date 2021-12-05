@@ -226,7 +226,9 @@ namespace Router
                 outputFiles[fileNames[i]] = files[i];
             }
 
-            string outputFolder = buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
+            string outputFolder = (command.CbxExportPath ?? "").Length > 0
+                ? command.CbxExportPath
+                : buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
             if (!Path.IsAbsolute(outputFolder))
             {
                 outputFolder = FileUtil.JoinPath(
