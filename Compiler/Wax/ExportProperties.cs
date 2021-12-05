@@ -30,6 +30,6 @@ namespace Wax
         public string ProjectDirectory { get { return this.GetString("projectDirectory"); } set { this.SetString("projectDirectory", value); } }
         public string OutputDirectory { get { return this.GetString("outputDirectory"); } set { this.SetString("outputDirectory", value); } }
 
-        public bool IsAndroid { get { return this.ExportPlatform.ToLowerInvariant() == "javascript-app-android"; } }
+        public bool IsAndroid { get { return false; } } // TODO: fix this once the Android exporter is back
     }
 }
