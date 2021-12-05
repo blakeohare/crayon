@@ -124,12 +124,18 @@ namespace Interpreter
 
         public string ReadTextResource(string path)
         {
-            IList<byte> bytes = ReadBytes("res/" + path);
-            if (bytes == null) return null;
-            bool hasBom = bytes.Count >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191;
-            StringBuilder output = new StringBuilder(bytes.Count);
-            output.Append(bytes.Skip<byte>(hasBom ? 3 : 0).Select<byte, char>(b => (char)b).ToArray<char>());
-            return output.ToString();
+            List<byte> byteList = ReadBytes("res/" + path);
+            if (byteList == null) return null;
+            bool hasBom = byteList.Count >= 3 && byteList[0] == 239 && byteList[1] == 187 && byteList[2] == 191;
+            byte[] byteArray = (hasBom ? byteList.Skip(3) : byteList).ToArray();
+            try
+            {
+                return System.Text.Encoding.UTF8.GetString(byteArray);
+            }
+            catch (System.Text.DecoderFallbackException)
+            {
+                return null;
+            }
         }
 
         public UniversalBitmap ReadImageResource(string path)

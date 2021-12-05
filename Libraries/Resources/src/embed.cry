@@ -2,9 +2,12 @@
 
     function readText(filepath) {
         node = _getNode(filepath, false);
-        // TODO: allow reading of binary resources as text (and throw an error when UTF8 decoding fails)
-        if (node.type != ResourceNodeType.TEXT) throw new Core.Exception("'" + filepath + "' is not a text file.");
-        return $$$('resourceGetText', node.realPath);
+        str = null;
+        if (node.type == ResourceNodeType.TEXT || node.type == ResourceNodeType.BINARY) {
+            str = $$$('resourceGetText', node.realPath, node.type == ResourceNodeType.TEXT);
+        }
+        if (str == null) throw new Core.Exception("'" + filepath + "' is not a text file.");
+        return str;
     }
 
     function readBytes(filepath) { return _readBytes(filepath, false); }

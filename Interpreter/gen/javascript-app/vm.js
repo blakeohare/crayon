@@ -4767,8 +4767,15 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 51:
 						// resourceGetText;
-						arg1 = valueStack[--valueStackSize];
-						output = buildString(globals, C$common$readResourceText(arg1[1]));
+						valueStackSize -= 2;
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						string1 = C$common$readResourceText(arg1[1], arg2[1]);
+						if ((string1 == null)) {
+							output = vm[14];
+						} else {
+							output = buildString(globals, string1);
+						}
 						break;
 					case 52:
 						// environmentGetVariable;

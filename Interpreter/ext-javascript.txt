@@ -49,7 +49,7 @@ EXT: CoreFunc_ProcessList: ""
 EXT: CoreFunc_ProcessKill: false
 
 EXT: CoreFunc_ResourceGetBytes: C$common$readResourceBytes([ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
-EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:2])
+EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:2], [ARG:3])
 
 EXT: CoreFunc_TextEncoding_ConvertBytesToText: C$textEncoding.bytesToText([ARG:1], [ARG:2], [ARG:3])
 EXT: CoreFunc_TextEncoding_ConvertTextToBytes: C$textEncoding.textToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])

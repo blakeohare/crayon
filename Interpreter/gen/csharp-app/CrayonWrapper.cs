@@ -6239,8 +6239,18 @@ namespace Interpreter.Vm
                                 break;
                             case 51:
                                 // resourceGetText;
-                                arg1 = valueStack[--valueStackSize];
-                                output = buildString(globals, ((ResourceReader)vm.environment.resourceReader).ReadTextResource((string)arg1.internalValue));
+                                valueStackSize -= 2;
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                string1 = ((ResourceReader)vm.environment.resourceReader).ReadTextResource((string)arg1.internalValue);
+                                if ((string1 == null))
+                                {
+                                    output = vm.globalNull;
+                                }
+                                else
+                                {
+                                    output = buildString(globals, string1);
+                                }
                                 break;
                             case 52:
                                 // environmentGetVariable;
