@@ -20,7 +20,7 @@ namespace Crayon
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Disk.DiskService());
             waxHub.RegisterService(new Runtime.RuntimeService());
-            waxHub.RegisterService(new Compiler.Compiler2Service());
+            waxHub.RegisterService(new Compiler.CompilerService());
 
             // TODO: these need to be turned into extensions
             waxHub.RegisterService(new Exporter.ExportService("javascript-app"));

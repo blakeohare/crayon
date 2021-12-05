@@ -6,9 +6,9 @@ using Wax;
 
 namespace Compiler
 {
-    public class Compiler2Service : WaxService
+    public class CompilerService : WaxService
     {
-        public Compiler2Service() : base("compiler2") { }
+        public CompilerService() : base("compiler") { }
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {

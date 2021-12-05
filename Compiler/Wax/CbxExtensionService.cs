@@ -72,7 +72,7 @@ namespace Wax
                     BuildFilePath = this.buildFile,
                     DefaultProjectId = this.Name,
                 }.GetRawData();
-                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("compiler2", compileRequest));
+                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("compiler", compileRequest));
 
                 if (buildData.HasErrors) return buildData.Errors;
 
