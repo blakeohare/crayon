@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wax;
 
 namespace Router
 {
     internal class FlagParser
     {
-        public ParsedFlags Parse(string[] args)
+        public ToolchainCommand Parse(string[] args)
         {
-            if (args.Length == 0) return new ParsedFlags(ArgsIntent.SHOW_USAGE);
-            if (args.Length == 1 && args[0] == "-version") return new ParsedFlags(ArgsIntent.SHOW_VERSION);
-
             Dictionary<string, Dictionary<string, string>> extensionArgsByExtensionName = new Dictionary<string, Dictionary<string, string>>();
             Dictionary<string, string> crayonArgsByName = new Dictionary<string, string>();
             List<string> runtimeArgs = new List<string>();
@@ -65,93 +63,38 @@ namespace Router
                 }
             }
 
+            ToolchainCommand output = new ToolchainCommand();
             if (targetFile != null)
             {
-                return new ParsedFlags(targetFile, crayonArgsByName, extensionArgsByExtensionName, runtimeArgs);
+                if (targetFile.EndsWith(".cbx")) output.CbxFile = targetFile;
+                else output.BuildFile = targetFile;
             }
-            else if (extensionArgsByExtensionName.Count > 0)
+
+            output.RuntimeArgs = runtimeArgs.ToArray();
+
+            List<ExtensionArg> extensionArgList = new List<ExtensionArg>();
+            foreach (string extension in extensionArgsByExtensionName.Keys.OrderBy(k => k))
             {
-                return new ParsedFlags(extensionArgsByExtensionName, crayonArgsByName);
+                Dictionary<string, string> extensionArgs = extensionArgsByExtensionName[extension];
+                if (extensionArgs.Count == 0)
+                {
+                    extensionArgList.Add(new ExtensionArg() { Extension = extension });
+                }
+                foreach (string argName in extensionArgs.Keys.OrderBy(k => k))
+                {
+                    extensionArgList.Add(new ExtensionArg() { Extension = extension, Name = argName, Value = extensionArgs[argName] });
+                }
             }
-            else
+            output.ExtensionArgs = extensionArgList.ToArray();
+
+            List<ToolchainArg> toolchainArgList = new List<ToolchainArg>();
+            foreach (string toolchainArg in crayonArgsByName.Keys.OrderBy(k => k))
             {
-                return new ParsedFlags(ArgsIntent.SHOW_USAGE);
+                toolchainArgList.Add(new ToolchainArg() { Name = toolchainArg, Value = crayonArgsByName[toolchainArg] });
             }
-        }
-    }
+            output.ToolchainArgs = toolchainArgList.ToArray();
 
-    internal enum ArgsIntent
-    {
-        SHOW_USAGE,
-        SHOW_VERSION,
-        CBX_WITH_ARGS,
-        BUILD_WITH_ARGS,
-        EXTENSIONS,
-    }
-
-    internal class ParsedFlags
-    {
-        public ArgsIntent Intent { get; private set; }
-        private Dictionary<string, Dictionary<string, string>> extensionInfo = new Dictionary<string, Dictionary<string, string>>();
-        private Dictionary<string, string> toolchainArgs = new Dictionary<string, string>();
-        public string[] RuntimeArgs { get; set; }
-        public string TargetFile { get; private set; }
-
-        public ParsedFlags(
-            string targetFile,
-            Dictionary<string, string> crayonArgs,
-            Dictionary<string, Dictionary<string, string>> extensionsAndArgs,
-            IList<string> runtimeArgs)
-        {
-            this.TargetFile = targetFile;
-            this.toolchainArgs = crayonArgs;
-            this.extensionInfo = extensionsAndArgs;
-            this.RuntimeArgs = runtimeArgs.ToArray();
-            this.Intent = this.TargetFileIsCbx ? ArgsIntent.CBX_WITH_ARGS : ArgsIntent.BUILD_WITH_ARGS;
-        }
-
-        public ParsedFlags(Dictionary<string, Dictionary<string, string>> extensionsAndArgs, Dictionary<string, string> toolchainArgs)
-        {
-            this.Intent = ArgsIntent.EXTENSIONS;
-            this.extensionInfo = extensionsAndArgs;
-            this.RuntimeArgs = new string[0];
-            this.toolchainArgs = toolchainArgs;
-        }
-
-        public ParsedFlags(ArgsIntent intent)
-        {
-            this.Intent = intent;
-        }
-
-        public bool TargetFileIsCbx { get { return this.TargetFile.ToLowerInvariant().EndsWith(".cbx"); } }
-
-        public bool IncludeRun
-        {
-            get
-            {
-                return (this.Intent == ArgsIntent.CBX_WITH_ARGS || this.Intent == ArgsIntent.BUILD_WITH_ARGS) && !this.toolchainArgs.ContainsKey("skipRun");
-            }
-        }
-
-        public string[] ToolchainArgs { get { return this.toolchainArgs.Keys.OrderBy(k => k).ToArray(); } }
-
-        public bool HasToolchainArg(string name)
-        {
-            return this.toolchainArgs.ContainsKey(name);
-        }
-
-        public string GetToolchainArg(string name)
-        {
-            if (this.toolchainArgs.ContainsKey(name)) return this.toolchainArgs[name];
-            return null;
-        }
-
-        public string[] ExtensionNames { get { return this.extensionInfo.Keys.OrderBy(k => k).ToArray(); } }
-
-        public Dictionary<string, string> GetExtensionArgs(string extensionName)
-        {
-            // Let it throw a key error if not found.
-            return new Dictionary<string, string>(this.extensionInfo[extensionName]);
+            return output;
         }
     }
 }
