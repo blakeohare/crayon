@@ -23,7 +23,7 @@ namespace Compiler
 
             // TODO: this should no longer be a wax request and can be called directly.
             Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions);
-            BuildData buildData = Compile(compileRequest, resourceDatabase, this.Hub);
+            BuildData buildData = Compile(compileRequest, buildContext.ProjectID, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
@@ -161,10 +161,10 @@ namespace Compiler
 
         private static BuildData Compile(
             Dictionary<string, object> request,
+            string projectId,
             ResourceDatabase resDb,
             WaxHub waxHub)
         {
-
             Parser.CompileRequest cr = new Parser.CompileRequest(request, waxHub.SourceRoot);
 
             Parser.InternalCompilationBundle icb = Parser.Compiler.Compile(cr, waxHub);
@@ -191,11 +191,11 @@ namespace Compiler
             BuildData buildData = new BuildData()
             {
                 UsesU3 = (bool)resultRaw["usesU3"],
+                DependencyTreeJson = resultRaw.ContainsKey("depTree") ? (string)resultRaw["depTree"] : null,
                 CbxBundle = new CbxBundle()
                 {
                     ByteCode = (string)resultRaw["byteCode"],
                     ResourceDB = resDb,
-                    DependencyTreeJson = resultRaw.ContainsKey("depTree") ? (string)resultRaw["depTree"] : null,
                 },
             };
 
@@ -206,7 +206,6 @@ namespace Compiler
         {
             return new ExportProperties()
             {
-                ProjectID = buildContext.ProjectID,
                 Version = buildContext.Version,
                 Description = buildContext.Description,
                 GuidSeed = buildContext.GuidSeed,
