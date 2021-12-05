@@ -20,9 +20,6 @@ namespace Crayon
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Disk.DiskService());
             waxHub.RegisterService(new Runtime.RuntimeService());
-
-            // TODO: these two need to be merged.
-            waxHub.RegisterService(new Parser.CompilerService());
             waxHub.RegisterService(new Compiler.Compiler2Service());
 
             // TODO: these need to be turned into extensions
