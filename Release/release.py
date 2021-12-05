@@ -317,6 +317,8 @@ def build_release(args):
 
 
 	# Create a dummy project with ALL libraries
+	# TODO: uncomment this when all the default project and extension stuff is resolved.
+	'''
 	log("Ensuring libraries compile")
 	print("Ensure libraries compile\n")
 	old_cwd = os.getcwd()
@@ -342,6 +344,7 @@ def build_release(args):
 		print("The build output was this:")
 		print(result)
 		return
+	'''
 
 	copy_extensions(new_crayon_executable, copy_to_dir)
 
