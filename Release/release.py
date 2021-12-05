@@ -148,12 +148,14 @@ _logRef = [None]
 
 def copy_extensions(crayon_exe, copy_to_dir):
 	ext_src_dir = '../Extensions'
+	out_extensions_dir = copy_to_dir + '/extensions'
+	ensure_directory_exists(out_extensions_dir)
 	for ext_name in list_directories(ext_src_dir):
 		build_file = ext_src_dir + '/' + ext_name + '/' + ext_name + '.build'
 		if path_exists(build_file):
 			print("Exporting extension: " + ext_name)
-			print("TODO: standalone cbx export support via command line args")
-			#run_command(crayon_exe + ' ' + ext_src_dir)
+			run_command(crayon_exe + ' ' + build_file + ' -CR:cbxPath ..')
+			copy_file(ext_src_dir + '/' + ext_name + '.cbx', out_extensions_dir + '/' + ext_name + '.cbx')
 	
 def main(args):
 	_logRef[0] = []
