@@ -35,7 +35,7 @@ namespace Router
         private void HandleRequestImpl(Dictionary<string, object> request, bool errorsAsExceptions)
         {
             string[] commandLineArgs = (string[])request["args"];
-            Wax.Command command = FlagParser.Parse(commandLineArgs);
+            Wax.Command command = LegacyFlagParser.Parse(commandLineArgs);
             command.ErrorsAsExceptions = errorsAsExceptions;
             MainPipeline.Run(command, this.Hub);
         }
