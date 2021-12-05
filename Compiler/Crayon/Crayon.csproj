@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Compiler\Compiler.csproj" />
-    <ProjectReference Include="..\Disk\Disk.csproj" />
     <ProjectReference Include="..\Exporter\Exporter.csproj" />
     <ProjectReference Include="..\Platform\Platform.csproj" />
     <ProjectReference Include="..\Router\Router.csproj" />
