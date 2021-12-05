@@ -69,17 +69,18 @@ namespace Router
             }
 
             string platformId = buildData.ExportProperties.ExportPlatform.ToLowerInvariant();
-            Dictionary<string, object> exportResponseRaw;
-            if (platformId == "csharp-app")
+            string exporterExtensionName;
+            switch (platformId)
             {
-                exportResponseRaw = waxHub.AwaitSendRequest("ExportDotNetExtension", buildData.GetRawData());
+                case "csharp-app": exporterExtensionName = "ExportDotNetExtension"; break;
+                case "javascript-app": exporterExtensionName = "ExportWebExtension"; break;
+                case "javascript-app-android": exporterExtensionName = "ExportAndroidAppExtension"; break;
+                case "javascript-app-ios": exporterExtensionName = "ExportIosAppExtension"; break;
+
+                // This will cause an error with a reasonable message.
+                default: exporterExtensionName = "Export" + platformId + "Extension"; break;
             }
-            else
-            {
-                exportResponseRaw = waxHub.AwaitSendRequest(
-                    "export-" + platformId,
-                    buildData.GetRawData());
-            }
+            Dictionary<string, object> exportResponseRaw = waxHub.AwaitSendRequest(exporterExtensionName, buildData.GetRawData());
 
             ExportResponse exportResponse = new ExportResponse(exportResponseRaw);
 
