@@ -64,7 +64,7 @@ namespace Build
             }
         }
 
-        public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName, bool useRelativePathsInErrors)
+        public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
             BuildRoot buildInput = GetBuildRoot(buildFile);
             string platform = null;
@@ -202,7 +202,7 @@ namespace Build
                 SourceFolders = ToFilePaths(projectDir, sources),
             };
 
-            buildContext.ValidateValues(useRelativePathsInErrors);
+            buildContext.ValidateValues();
 
             return buildContext;
         }
@@ -261,7 +261,7 @@ namespace Build
             return string.Join("/", output);
         }
 
-        public void ValidateValues(bool useRelativePathsInErrors)
+        public void ValidateValues()
         {
             if (this.ProjectID == null) throw new InvalidOperationException("There is no project-id for this build target.");
             if (this.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
@@ -279,7 +279,6 @@ namespace Build
 
             string[] invalidIconPaths = this.IconFilePaths
                 .Where(t => !FileUtil.FileExists(t))
-                .Select(absPath => useRelativePathsInErrors ? AbsoluteToRelativePath(absPath, this.ProjectDirectory) : absPath)
                 .ToArray();
             if (invalidIconPaths.Length > 0)
             {

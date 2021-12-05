@@ -40,6 +40,11 @@ namespace Wax
             return this.services[serviceName];
         }
 
+        public Dictionary<string, object> AwaitSendRequest(string serviceName, JsonBasedObject request)
+        {
+            return AwaitSendRequest(serviceName, request.GetRawData());
+        }
+
         public Dictionary<string, object> AwaitSendRequest(
             string serviceName,
             Dictionary<string, object> request)
