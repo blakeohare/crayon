@@ -6,30 +6,30 @@ namespace Parser
     {
         private Dictionary<string, string> codeFiles;
 
-        public CompileRequest(Dictionary<string, object> rawRequest, string sourceRoot)
+        public CompileRequest(Build.BuildContext buildContext, bool errorsAsExceptions, string sourceRoot)
         {
-            this.ProjectId = (string)rawRequest["projectId"];
-            this.DelegateMainTo = (string)rawRequest["delegateMainTo"];
-            this.CompilerLocale = Parser.Localization.Locale.Get((string)rawRequest["locale"]);
-            this.LocalDeps = (string[])rawRequest["localDeps"];
-            this.ProjectDirectory = (string)rawRequest["projectDirectory"];
-            this.codeFiles = Build.DictionaryUtil.FlattenedDictionaryToDictionary((string[])rawRequest["codeFiles"]);
-            this.RootProgrammingLanguage = ((string)rawRequest["lang"]).ToUpper() == "CRAYON" ? Build.ProgrammingLanguage.CRAYON : Build.ProgrammingLanguage.ACRYLIC;
-            this.RemoveSymbols = (bool)rawRequest["removeSymbols"];
-            this.ErrorsAsExceptions = rawRequest.ContainsKey("errorsAsExceptions") ? (bool)rawRequest["errorsAsExceptions"] : false;
+            this.ProjectId = buildContext.ProjectID;
+            this.DelegateMainTo = buildContext.DelegateMainTo;
+            this.CompilerLocale = Parser.Localization.Locale.Get(buildContext.CompilerLocale.ID);
+            this.LocalDeps = buildContext.LocalDeps;
+            this.ProjectDirectory = buildContext.ProjectDirectory;
+            this.codeFiles = buildContext.GetCodeFiles();
+            this.RootProgrammingLanguage = buildContext.RootProgrammingLanguage;
+            this.RemoveSymbols = buildContext.RemoveSymbols;
+            this.ErrorsAsExceptions = errorsAsExceptions;
             this.ActiveCrayonSourceRoot = sourceRoot;
-            string[] buildVarData = (string[])rawRequest["buildVars"];
-            for (int i = 0; i < buildVarData.Length; i += 3)
+
+            foreach (string key in buildContext.BuildVariableLookup.Keys)
             {
-                string name = buildVarData[i];
-                string value = buildVarData[i + 2];
-                switch (buildVarData[i + 1])
+                Build.BuildVarCanonicalized buildVar = buildContext.BuildVariableLookup[key];
+                switch (buildVar.Type)
                 {
-                    case "B": this.AddCompileTimeBoolean(name, value == "1"); break;
-                    case "F": this.AddCompileTimeFloat(name, double.Parse(value)); break;
-                    case "I": this.AddCompileTimeInteger(name, int.Parse(value)); break;
-                    case "S": this.AddCompileTimeString(name, value + ""); break;
-                    default: throw new System.NotImplementedException();
+                    case Build.VarType.BOOLEAN: this.AddCompileTimeBoolean(key, buildVar.BoolValue); break;
+                    case Build.VarType.FLOAT: this.AddCompileTimeFloat(key, buildVar.FloatValue); break;
+                    case Build.VarType.INT: this.AddCompileTimeInteger(key, buildVar.IntValue); break;
+                    case Build.VarType.STRING: this.AddCompileTimeString(key, buildVar.StringValue); break;
+                    case Build.VarType.NULL: throw new System.InvalidOperationException("The build variable '" + key + "' does not have a value assigned to it.");
+                    default: throw new System.Exception(); // this should not happen.
                 }
             }
         }
