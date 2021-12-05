@@ -393,16 +393,6 @@ namespace Build
         {
             string buildFilePath = originalBuildFilePath;
 
-            if (buildFilePath.Contains("{DISK:"))
-            {
-                Dictionary<string, object> diskResult = waxHub.AwaitSendRequest("disk", new Dictionary<string, object>() {
-                    { "command", "resolvePath" },
-                    { "path", buildFilePath },
-                });
-
-                return (string)diskResult["path"];
-            }
-
             buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
             if (!buildFilePath.StartsWith("/") &&
                 !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
