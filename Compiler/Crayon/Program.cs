@@ -15,6 +15,18 @@ namespace Crayon
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
 
+            if (commandLineArgs.Length == 0)
+            {
+                System.Console.WriteLine(UsageDisplay.USAGE);
+                return;
+            }
+
+            if (commandLineArgs.Length == 1 && commandLineArgs[0] == "-version")
+            {
+                System.Console.WriteLine(VersionInfo.VersionString);
+                return;
+            }
+
             Wax.WaxHub waxHub = new Wax.WaxHub();
             waxHub.SourceRoot = SourceDirectoryFinder.CrayonSourceDirectory;
             waxHub.RegisterService(new Router.RouterService());
