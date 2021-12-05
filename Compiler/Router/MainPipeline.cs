@@ -51,7 +51,7 @@ namespace Router
 
         private static BuildData WrappedCompile(Command command, WaxHub waxHub)
         {
-            Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler2", command.GetRawData());
+            Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler", command.GetRawData());
             BuildData buildData = new BuildData(result);
             if (!buildData.HasErrors)
             {
