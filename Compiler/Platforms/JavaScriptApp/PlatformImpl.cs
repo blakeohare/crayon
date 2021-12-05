@@ -72,7 +72,7 @@ namespace JavaScriptApp
             ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(exportProperties, buildData);
 
-            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this, exportProperties.ActiveCrayonSourceRoot);
+            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this, null);
             TemplateSet vmTemplates = templateReader.GetVmTemplates();
 
             output["vm.js"] = new FileOutput()

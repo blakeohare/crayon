@@ -6,7 +6,7 @@ namespace Parser
     {
         private Dictionary<string, string> codeFiles;
 
-        public CompileRequest(Dictionary<string, object> rawRequest)
+        public CompileRequest(Dictionary<string, object> rawRequest, string sourceRoot)
         {
             this.ProjectId = (string)rawRequest["projectId"];
             this.DelegateMainTo = (string)rawRequest["delegateMainTo"];
@@ -17,7 +17,7 @@ namespace Parser
             this.RootProgrammingLanguage = ((string)rawRequest["lang"]).ToUpper() == "CRAYON" ? Build.ProgrammingLanguage.CRAYON : Build.ProgrammingLanguage.ACRYLIC;
             this.RemoveSymbols = (bool)rawRequest["removeSymbols"];
             this.ErrorsAsExceptions = rawRequest.ContainsKey("errorsAsExceptions") ? (bool)rawRequest["errorsAsExceptions"] : false;
-            this.ActiveCrayonSourceRoot = rawRequest.ContainsKey("crayonSourceRoot") && rawRequest["crayonSourceRoot"] != null ? rawRequest["crayonSourceRoot"].ToString() : null;
+            this.ActiveCrayonSourceRoot = sourceRoot;
             string[] buildVarData = (string[])rawRequest["buildVars"];
             for (int i = 0; i < buildVarData.Length; i += 3)
             {

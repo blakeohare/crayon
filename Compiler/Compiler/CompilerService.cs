@@ -22,7 +22,7 @@ namespace Compiler
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
-            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions, command.ActiveCrayonSourceRoot);
+            Dictionary<string, object> compileRequest = CreateCompileRequest(buildContext, command.ErrorsAsExceptions);
             BuildData buildData = Compile(compileRequest, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
@@ -90,7 +90,7 @@ namespace Compiler
             return buildContext;
         }
 
-        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions, string crayonSourceRoot)
+        private static Dictionary<string, object> CreateCompileRequest(BuildContext buildContext, bool errorsAsExceptions)
         {
             Dictionary<string, object> request = new Dictionary<string, object>();
 
@@ -104,7 +104,6 @@ namespace Compiler
             request["removeSymbols"] = buildContext.RemoveSymbols;
 
             request["errorsAsExceptions"] = errorsAsExceptions;
-            request["crayonSourceRoot"] = crayonSourceRoot;
 
             List<string> vars = new List<string>();
 
@@ -166,7 +165,7 @@ namespace Compiler
             WaxHub waxHub)
         {
 
-            Parser.CompileRequest cr = new Parser.CompileRequest(request);
+            Parser.CompileRequest cr = new Parser.CompileRequest(request, waxHub.SourceRoot);
 
             Parser.InternalCompilationBundle icb = Parser.Compiler.Compile(cr, waxHub);
 

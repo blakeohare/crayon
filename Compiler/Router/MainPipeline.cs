@@ -51,13 +51,7 @@ namespace Router
 
         private static BuildData WrappedCompile(Command command, WaxHub waxHub)
         {
-            Dictionary<string, object> result = waxHub.AwaitSendRequest("compiler", command.GetRawData());
-            BuildData buildData = new BuildData(result);
-            if (!buildData.HasErrors)
-            {
-                buildData.ExportProperties.ActiveCrayonSourceRoot = command.ActiveCrayonSourceRoot;
-            }
-            return buildData;
+            return new BuildData(waxHub.AwaitSendRequest("compiler", command.GetRawData()));
         }
 
         private static Error[] ExportVmBundle(Command command, WaxHub waxHub)

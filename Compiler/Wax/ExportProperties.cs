@@ -25,7 +25,6 @@ namespace Wax
         public string Description { get { return this.GetString("description"); } set { this.SetString("description", value); } }
         public string AndroidSdkLocation { get { return this.GetString("androidSdk"); } set { this.SetString("androidSdk", value); } }
         public bool SkipAndroidWorkspaceXml { get { return this.GetBoolean("androidSkipWorkspaceXml"); } set { this.SetBoolean("androidSkipWorkspaceXml", value); } }
-        public string ActiveCrayonSourceRoot { get { return this.GetString("activeCrayonSourceRoot"); } set { this.SetString("activeCrayonSourceRoot", value); } }
 
         public string ExportPlatform { get { return this.GetString("exportPlatform"); } set { this.SetString("exportPlatform", value); } }
         public string ProjectDirectory { get { return this.GetString("projectDirectory"); } set { this.SetString("projectDirectory", value); } }
