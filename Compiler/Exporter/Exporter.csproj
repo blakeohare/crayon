@@ -5,11 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj" />
     <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj" />
     <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj" />
     <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj" />
-    <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj" />
     <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj" />
     <ProjectReference Include="..\Platform\Platform.csproj" />
   </ItemGroup>

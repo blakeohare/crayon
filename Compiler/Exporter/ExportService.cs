@@ -17,11 +17,9 @@ namespace Exporter
             {
                 platforms = new Dictionary<string, Platform.AbstractPlatform>();
                 foreach (Platform.AbstractPlatform platform in new Platform.AbstractPlatform[] {
-                    new CSharpApp.PlatformImpl(),
                     new JavaScriptApp.PlatformImpl(),
                     new JavaScriptAppAndroid.PlatformImpl(),
                     new JavaScriptAppIos.PlatformImpl(),
-                    new LangCSharp.PlatformImpl(),
                     new LangJavaScript.PlatformImpl(),
                 })
                 {
@@ -29,7 +27,6 @@ namespace Exporter
                 }
 
                 // HACK! This will be sorted out after these are turned into extensions, but for now, define the hierarchy of platforms here.
-                platforms["csharp-app"].ParentPlatform = platforms["lang-csharp"];
                 platforms["javascript-app"].ParentPlatform = platforms["lang-javascript"];
                 platforms["javascript-app-android"].ParentPlatform = platforms["javascript-app"];
                 platforms["javascript-app-ios"].ParentPlatform = platforms["javascript-app"];
