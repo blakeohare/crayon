@@ -2,6 +2,7 @@
     class BuildData : JsonBasedObject {
         constructor(data = null) : base(data) { }
 
+        function getProjectId() { return this.getString('projectId'); }
         function getCbxBundle() { return this.getObject('cbxBundle', CbxBundle.class); }
         function getExportProperties() { return this.getObject('exportProperties', ExportProperties.class); }
 

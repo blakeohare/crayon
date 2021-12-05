@@ -65,7 +65,7 @@ namespace Router
 
             if (command.ShowDependencyTree)
             {
-                ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.CbxBundle.DependencyTreeJson);
+                ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.DependencyTreeJson);
             }
 
             string platformId = buildData.ExportProperties.ExportPlatform.ToLowerInvariant();
@@ -233,7 +233,7 @@ namespace Router
             byte[] cbxFileBytes = CbxFileEncoder.Encode(buildData.CbxBundle);
 
             FileUtil.EnsureFolderExists(outputFolder);
-            string cbxFilePath = FileUtil.JoinPath(outputFolder, buildData.ExportProperties.ProjectID + ".cbx");
+            string cbxFilePath = FileUtil.JoinPath(outputFolder, buildData.ProjectID + ".cbx");
             System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
 
             return cbxFilePath;

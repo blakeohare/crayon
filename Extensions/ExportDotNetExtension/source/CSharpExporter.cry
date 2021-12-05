@@ -24,7 +24,7 @@ class CSharpExporter {
 
     function doExport(files) {
 
-        projectId = this.properties.getProjectId();
+        projectId = this.buildData.getProjectId();
         guidSeed = this.properties.getGuidSeed() ?? projectId;
         projectGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'project:' + guidSeed);
         solutionGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'solution:' + guidSeed);

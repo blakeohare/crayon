@@ -7,7 +7,6 @@ namespace Wax
         public ExportProperties() : base() { }
         public ExportProperties(IDictionary<string, object> data) : base(data) { }
 
-        public string ProjectID { get { return this.GetString("projectId"); } set { this.SetString("projectId", value); } }
         public string GuidSeed { get { return this.GetString("guidSeed"); } set { this.SetString("guidSeed", value); } }
         public string[] IconPaths { get { return this.GetStrings("iconPaths"); } set { this.SetStrings("iconPaths", value); } }
         public bool HasIcon { get { return this.IconPaths != null && this.IconPaths.Length > 0; } }
