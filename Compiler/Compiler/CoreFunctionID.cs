@@ -101,6 +101,7 @@ namespace Parser
         REFLECT_GET_CLASS = 39,
         REFLECT_GET_METHODS = 38,
         REFLECT_NAMESPACE_FUNCTIONS = 120,
+        RESOURCE_GET_BYTES = 125,
         RESOURCE_GET_MANIFEST = 50,
         RESOURCE_GET_TEXT = 51,
         SET_NATIVE_DATA = 35,
@@ -121,7 +122,7 @@ namespace Parser
         WAX_SERVICE_SEND_RESPONSE = 124,
         XML_PARSE = 84,
 
-        // Next ID: 123
+        // Next ID: 126
     }
 
     internal static class CoreFunctionIDHelper
@@ -170,6 +171,7 @@ namespace Parser
                 case "ipcNamedPipeFlush": return (int)CoreFunctionID.IPC_NAMED_PIPE_FLUSH;
                 case "randomFloat": return (int)CoreFunctionID.RANDOM_FLOAT;
                 case "randomInt": return (int)CoreFunctionID.RANDOM_INT;
+                case "resourceGetBytes": return (int)CoreFunctionID.RESOURCE_GET_BYTES;
                 case "resourceGetManifest": return (int)CoreFunctionID.RESOURCE_GET_MANIFEST;
                 case "resourceGetText": return (int)CoreFunctionID.RESOURCE_GET_TEXT;
                 case "environmentGetVariable": return (int)CoreFunctionID.ENVIRONMENT_GET_VARIABLE;

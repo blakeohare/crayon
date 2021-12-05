@@ -104,7 +104,16 @@ namespace Wax
                 case FileOutputType.Copy:
                     return FileUtil.ReadFileBytes(this.AbsoluteInputPath);
 
-                case FileOutputType.Text:  // TODO: return UTF-8 bytes
+                case FileOutputType.Text:
+                    if (this.BinaryContent != null) return this.BinaryContent;
+                    if (this.BinaryContentB64 != null) return System.Convert.FromBase64String(this.BinaryContentB64);
+                    if (this.TextContent != null)
+                    {
+                        this.BinaryContent = System.Text.Encoding.UTF8.GetBytes(this.TextContent);
+                        return this.binaryContentCache;
+                    }
+                    throw new System.NotImplementedException();
+
                 default:
                     throw new System.NotImplementedException();
             }

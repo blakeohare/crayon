@@ -6937,6 +6937,25 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[--valueStackSize];
                                 vm.environment.waxResponse = (string)arg1.internalValue;
                                 break;
+                            case 125:
+                                // resourceGetBytes;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
+                                arg3 = valueStack[(valueStackSize + 2)];
+                                arg2 = valueStack[(valueStackSize + 1)];
+                                arg1 = valueStack[valueStackSize];
+                                bool1 = (bool)arg3.internalValue;
+                                valueList1 = new List<Value>();
+                                string1 = ((ResourceReader)vm.environment.resourceReader).ReadBinaryResource((string)arg1.internalValue, (bool)arg2.internalValue, bool1, valueList1, globals.positiveIntegers);
+                                if (bool1)
+                                {
+                                    output = buildString(globals, string1);
+                                }
+                                else
+                                {
+                                    output = buildList(valueList1);
+                                }
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -9992,9 +10011,13 @@ namespace Interpreter.Vm
                     {
                         intType = 4;
                     }
-                    else
+                    else if ("BIN" == type)
                     {
                         intType = 5;
+                    }
+                    else
+                    {
+                        intType = 6;
                     }
                     userPath = stringDecode(itemData[1]);
                     internalPath = itemData[2];

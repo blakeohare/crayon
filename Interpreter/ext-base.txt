@@ -48,6 +48,7 @@ EXT-TYPE: object CoreFunc_ProcessRun(VmContext vm, string execPath, Array<string
 EXT-TYPE: string CoreFunc_ProcessList();
 EXT-TYPE: bool CoreFunc_ProcessKill(int pid);
 
+EXT-TYPE: string CoreFunc_ResourceGetBytes(object resourceReader, string path, bool isText, bool useB64, List<Value> bytesOut, Array<Value> positiveIntegers);
 EXT-TYPE: string CoreFunc_ResourceGetText(object resourceReader, string path);
 
 EXT-TYPE: int CoreFunc_TextEncoding_ConvertBytesToText(Array<int> byteValues, int format, Array<string> strOut);

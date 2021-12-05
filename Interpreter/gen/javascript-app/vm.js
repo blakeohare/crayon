@@ -5439,6 +5439,22 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[--valueStackSize];
 						vm[11][8] = arg1[1];
 						break;
+					case 125:
+						// resourceGetBytes;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
+						arg3 = valueStack[(valueStackSize + 2)];
+						arg2 = valueStack[(valueStackSize + 1)];
+						arg1 = valueStack[valueStackSize];
+						bool1 = arg3[1];
+						valueList1 = [];
+						string1 = C$common$readResourceBytes(arg1[1], arg2[1], bool1, valueList1, globals[9]);
+						if (bool1) {
+							output = buildString(globals, string1);
+						} else {
+							output = buildList(valueList1);
+						}
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -7818,8 +7834,10 @@ var resourceManagerInitialize = function(globals, manifest, imageAtlasManifest) 
 				intType = 3;
 			} else if ("TTF" == type) {
 				intType = 4;
-			} else {
+			} else if ("BIN" == type) {
 				intType = 5;
+			} else {
+				intType = 6;
 			}
 			userPath = stringDecode(itemData[1]);
 			internalPath = itemData[2];

@@ -100,6 +100,28 @@ namespace Interpreter
             return value;
         }
 
+        public string ReadBinaryResource(string path, bool isText, bool useBase64, List<Interpreter.Structs.Value> bytesOut, Interpreter.Structs.Value[] integers)
+        {
+            byte[] bytes;
+            if (isText)
+            {
+                string text = this.ReadTextResource(path);
+                bytes = System.Text.Encoding.UTF8.GetBytes(text);
+            } else
+            {
+                bytes = this.ReadBytes("res/" + path).ToArray();
+            }
+
+            if (useBase64) return System.Convert.ToBase64String(bytes);
+
+            int len = bytes.Length;
+            for (int i = 0; i < len; i++)
+            {
+                bytesOut.Add(integers[bytes[i]]);
+            }
+            return null;
+        }
+
         public string ReadTextResource(string path)
         {
             IList<byte> bytes = ReadBytes("res/" + path);

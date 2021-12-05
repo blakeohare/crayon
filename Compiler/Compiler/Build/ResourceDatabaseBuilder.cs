@@ -20,17 +20,13 @@ namespace Build
             BINARY, // Not used yet.
             AUDIO,
             IMAGE,
-            FONT,
 
-            IGNORE_SILENT,
-            IGNORE_AUDIO,
-            IGNORE_IMAGE,
-            IGNORE_IMAGE_ASSET,
+            IGNORE,
         }
 
         private static Dictionary<string, FileCategory> KNOWN_FILE_EXTENSIONS = new Dictionary<string, FileCategory>() {
 
-            { "cry", FileCategory.IGNORE_SILENT }, // Not interested in source code.
+            { "cry", FileCategory.IGNORE },
 
             { "ogg", FileCategory.AUDIO },
 
@@ -38,31 +34,9 @@ namespace Build
             { "jpeg", FileCategory.IMAGE },
             { "png", FileCategory.IMAGE },
 
-            { "ttf", FileCategory.FONT },
-
-            { "aac", FileCategory.IGNORE_AUDIO },
-            { "aiff", FileCategory.IGNORE_AUDIO },
-            { "au", FileCategory.IGNORE_AUDIO },
-            { "mid", FileCategory.IGNORE_AUDIO },
-            { "mp3", FileCategory.IGNORE_AUDIO },
-            { "mpg", FileCategory.IGNORE_AUDIO },
-            { "wav", FileCategory.IGNORE_AUDIO },
-            { "wma", FileCategory.IGNORE_AUDIO },
-
-            { "bmp", FileCategory.IGNORE_IMAGE },
-            { "gif", FileCategory.IGNORE_IMAGE },
-            { "ico", FileCategory.IGNORE_IMAGE },
-            { "pcx", FileCategory.IGNORE_IMAGE },
-            { "ppm", FileCategory.IGNORE_IMAGE },
-            { "tga", FileCategory.IGNORE_IMAGE },
-            { "tiff", FileCategory.IGNORE_IMAGE },
-
-            { "ai", FileCategory.IGNORE_IMAGE_ASSET },
-            { "cpt", FileCategory.IGNORE_IMAGE_ASSET },
-            { "psd", FileCategory.IGNORE_IMAGE_ASSET },
-            { "psp", FileCategory.IGNORE_IMAGE_ASSET },
-            { "svg", FileCategory.IGNORE_IMAGE_ASSET },
-            { "xcf", FileCategory.IGNORE_IMAGE_ASSET },
+            { "txt", FileCategory.TEXT },
+            { "xml", FileCategory.TEXT },
+            { "json", FileCategory.TEXT },
         };
 
         internal static ResourceDatabase PrepareResources(BuildContext buildContext)
@@ -79,6 +53,8 @@ namespace Build
 
         public static void GenerateResourceMapping(ResourceDatabase resDb)
         {
+            // TODO: swap the order of the original path and the canonical name so that commas won't interfere with parsing
+
             List<string> manifest = new List<string>();
             int resourceId = 1;
             foreach (FileOutput textFile in resDb.TextResources)
@@ -89,20 +65,19 @@ namespace Build
 
             foreach (FileOutput imageFile in resDb.ImageResources)
             {
-                manifest.Add("IMG," + imageFile.OriginalPath + ",");
+                manifest.Add("IMG," + imageFile.OriginalPath + ","); // images are atlas'd
             }
 
             foreach (FileOutput audioFile in resDb.AudioResources)
             {
                 audioFile.CanonicalFileName = "snd" + (resourceId++) + ".ogg";
-                // TODO: swap the order of the original path and the canonical name
                 manifest.Add("SND," + audioFile.OriginalPath + "," + audioFile.CanonicalFileName);
             }
 
-            foreach (FileOutput fontFile in resDb.FontResources)
+            foreach (FileOutput binaryFile in resDb.BinaryResources)
             {
-                fontFile.CanonicalFileName = "ttf" + (resourceId++) + ".ttf";
-                manifest.Add("TTF," + fontFile.OriginalPath + "," + fontFile.CanonicalFileName);
+                binaryFile.CanonicalFileName = "bin" + (resourceId++);
+                manifest.Add("BIN," + binaryFile.OriginalPath + "," + binaryFile.CanonicalFileName);
             }
 
             resDb.ResourceManifestFile = new FileOutput()
@@ -120,8 +95,6 @@ namespace Build
             List<FileOutput> imageResources = new List<FileOutput>();
             List<FileOutput> textResources = new List<FileOutput>();
             List<FileOutput> binaryResources = new List<FileOutput>();
-            List<FileOutput> fontResources = new List<FileOutput>();
-            List<string> ignoredFileWarnings = new List<string>();
             foreach (ProjectFilePath sourceRoot in buildContext.SourceFolders)
             {
                 string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
@@ -137,8 +110,8 @@ namespace Build
                     FileCategory category;
                     if (IGNORABLE_FILES.Contains(fileName.ToLowerInvariant()))
                     {
-                        // Common system generated files that no one would ever want.
-                        category = FileCategory.IGNORE_SILENT;
+                        // Common system generated files that no one would ever want. (thumbs.db, .DS_Store)
+                        category = FileCategory.IGNORE;
                     }
                     else if (KNOWN_FILE_EXTENSIONS.ContainsKey(extension))
                     {
@@ -146,26 +119,12 @@ namespace Build
                     }
                     else
                     {
-                        // TODO: way to distinguish binary and text resources in the build file
-                        // https://github.com/blakeohare/crayon/issues/301
-                        category = FileCategory.TEXT;
+                        category = FileCategory.BINARY;
                     }
 
                     switch (category)
                     {
-                        case FileCategory.IGNORE_SILENT:
-                            break;
-
-                        case FileCategory.IGNORE_IMAGE:
-                            ignoredFileWarnings.Add(relativePath + " is not a usable image type and is being ignored. Consider converting to PNG or JPEG.");
-                            break;
-
-                        case FileCategory.IGNORE_AUDIO:
-                            ignoredFileWarnings.Add(relativePath + " is not a usable audio format and is being ignored. Consider converting to OGG.");
-                            break;
-
-                        case FileCategory.IGNORE_IMAGE_ASSET:
-                            ignoredFileWarnings.Add(relativePath + " is an image asset container file type and is being ignored. Consider moving original assets outside of the source folder.");
+                        case FileCategory.IGNORE:
                             break;
 
                         case FileCategory.AUDIO:
@@ -238,16 +197,6 @@ namespace Build
                             }
                             break;
 
-                        case FileCategory.FONT:
-                            fontResources.Add(new FileOutput()
-                            {
-                                Type = FileOutputType.Copy,
-                                RelativeInputPath = relativePath,
-                                OriginalPath = relativePath,
-                                AbsoluteInputPath = absolutePath,
-                            });
-                            break;
-
                         default:
                             throw new InvalidOperationException();
                     }
@@ -256,11 +205,8 @@ namespace Build
 
             resDb.ImageResources = imageResources.ToArray();
             resDb.AudioResources = audioResources.ToArray();
-            resDb.FontResources = fontResources.ToArray();
             resDb.TextResources = textResources.ToArray();
             resDb.BinaryResources = binaryResources.ToArray();
-
-            resDb.IgnoredFileWarnings = ignoredFileWarnings.Count > 0 ? ignoredFileWarnings.ToArray() : null;
 
             return resDb;
         }

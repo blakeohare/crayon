@@ -27,9 +27,10 @@
                 intType = 3;
             } else if (Core.StringEquals("TTF", type)) {
                 intType = 4;
-            } else {
-                // binary resource
+            } else if (Core.StringEquals("BIN", type)) {
                 intType = 5;
+            } else {
+                intType = 6; // Unknown
             }
 
             // TODO: binary resources

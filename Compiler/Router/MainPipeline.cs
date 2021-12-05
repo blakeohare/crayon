@@ -56,11 +56,6 @@ namespace Router
             if (!buildData.HasErrors)
             {
                 buildData.ExportProperties.ActiveCrayonSourceRoot = command.ActiveCrayonSourceRoot;
-
-                foreach (string buildWarning in buildData.CbxBundle.ResourceDB.IgnoredFileWarnings ?? new string[0])
-                {
-                    ConsoleWriter.Print(ConsoleMessageType.BUILD_WARNING, buildWarning);
-                }
             }
             return buildData;
         }
