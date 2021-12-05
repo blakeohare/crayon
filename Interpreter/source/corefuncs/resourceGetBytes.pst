@@ -1,0 +1,17 @@
+﻿@import("inline/4_arg.pst");
+
+bool1 = (bool) arg3.internalValue; // use base64 string instead of byte list
+valueList1 = new List<Value>(); // byte output list
+string1 = Extension.CoreFunc_ResourceGetBytes(
+    vm.environment.resourceReader,
+    (string) arg1.internalValue,
+    (bool) arg2.internalValue, // is actually a text resource? (encode into UTF-8)
+    bool1,
+    valueList1,
+    globals.positiveIntegers);
+
+if (bool1) {
+    output = buildString(globals, string1);
+} else {
+    output = buildList(valueList1);
+}

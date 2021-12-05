@@ -1,11 +1,18 @@
 ﻿namespace Resources {
 
-    // TODO: designate encoding. For now, UTF-8 is assumed.
     function readText(filepath) {
-        node = _getNode(filepath);
-        if (node == null) throw new Core.Exception("Resource not found: '" + filepath + "'");
+        node = _getNode(filepath, false);
+        // TODO: allow reading of binary resources as text (and throw an error when UTF8 decoding fails)
         if (node.type != ResourceNodeType.TEXT) throw new Core.Exception("'" + filepath + "' is not a text file.");
         return $$$('resourceGetText', node.realPath);
+    }
+
+    function readBytes(filepath) { return _readBytes(filepath, false); }
+    function readBase64(filepath) { return _readBytes(filepath, true); }
+
+    function _readBytes(filepath, useB64 = false) {
+        node = _getNode(filepath, false);
+        return $$$('resourceGetBytes', node.realPath, node.type == ResourceNodeType.TEXT, useB64 == true, []);
     }
 
     function fileExists(filepath) {
@@ -29,9 +36,11 @@
         return node != null && node.type == ResourceNodeType.DIRECTORY;
     }
 
-    function _getNode(path) {
+    function _getNode(path, failSilent = true) {
         if (LibResourcesNode.rootNode == null) _initializeLibResNode();
-        return LibResourcesNode.allNodesByPath.get(path);
+        node = LibResourcesNode.allNodesByPath.get(path);
+        if (node == null && !failSilent) throw new Core.Exception("Resource not found: '" + path + "'");
+        return node;
     }
 
     function _nodeSortKey(node) {
