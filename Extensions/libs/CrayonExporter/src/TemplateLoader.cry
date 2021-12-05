@@ -1,5 +1,4 @@
 ﻿import Resources;
-import Base64;
 
 namespace CrayonExporter {
     class TemplateLoader {
@@ -26,8 +25,7 @@ namespace CrayonExporter {
         }
 
         function getBinary(name) {
-            b64 = Resources.readText('templates/' + name);
-            return Base64.base64ToBytes(b64);
+            return Resources.readBytes('templates/' + name);
         }
     }
 }

@@ -68,6 +68,10 @@ namespace Wax
                     {
                         this.binaryContentCache = System.Text.Encoding.UTF8.GetBytes(this.TextContent);
                     }
+                    else if (this.Type == FileOutputType.Copy)
+                    {
+                        this.binaryContentCache = System.IO.File.ReadAllBytes(this.AbsoluteInputPath);
+                    }
                     else
                     {
                         throw new System.Exception();
