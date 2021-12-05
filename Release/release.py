@@ -317,10 +317,10 @@ def build_release(args):
 	else:
 		raise Exception("Invalid platform")
 
+	# Compile all the extensions available and include them in the output directory.
+	copy_extensions(new_crayon_executable, copy_to_dir)
 
 	# Create a dummy project with ALL libraries
-	# TODO: uncomment this when all the default project and extension stuff is resolved.
-	'''
 	log("Ensuring libraries compile")
 	print("Ensure libraries compile\n")
 	old_cwd = os.getcwd()
@@ -346,9 +346,6 @@ def build_release(args):
 		print("The build output was this:")
 		print(result)
 		return
-	'''
-
-	copy_extensions(new_crayon_executable, copy_to_dir)
 
 	# Hooray, you're done!
 	log("Completed")
