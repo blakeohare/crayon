@@ -415,7 +415,7 @@ namespace Interpreter.Vm
             }
         }
 
-        public static string WaxSend(object waxHubObj, object eventLoop, string serviceId, string payloadJson, bool isRecurring, Value callback)
+        public static void WaxSend(object waxHubObj, object eventLoopObj, string serviceId, string payloadJson, bool isRecurring, Value callback)
         {
             Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
             waxHub.SendRequest(
@@ -424,11 +424,31 @@ namespace Interpreter.Vm
                 isRecurring,
                 (result) =>
                 {
+                    EventLoop eventLoop = (EventLoop)eventLoopObj;
+
+                    // TODO: this is extremely hacky! Event loop directives should be baked into the WaxHub API.
+                    if (result.ContainsKey("u3EventLoopDirective"))
+                    {
+                        switch ((string)result["u3EventLoopDirective"])
+                        {
+                            case "U3WINDOW_ADDED":
+                                eventLoop.RegisterLoopTickler();
+                                break;
+
+                            case "U3WINDOW_REMOVED":
+                                eventLoop.ReleaseLoopTickler(); // Yields control back to the blocking while loop based event loop.
+                                break;
+
+                            case "U3WINDOW_EVENTLOOP_TICK":
+                                for (int i = 0; i < 5 && eventLoop.RunNonBlockingEventLoopIteration(); i++) { } // TODO: 5 is hacky. Perhaps look at the timestamp instead.
+                                return true; // the callback does nothing important. Save lots of CPU by skipping it.
+                        }
+                    }
+
                     string resultJson = new Wax.JsonBasedObject(result).ToJson();
-                    ((EventLoop)eventLoop).ExecuteFunctionPointerNativeArgs(callback, new object[] { resultJson });
+                    eventLoop.ExecuteFunctionPointerNativeArgs(callback, new object[] { resultJson });
                     return true;
                 });
-            return null; // TODO: return error code if serviceId is not found.
         }
     }
 }

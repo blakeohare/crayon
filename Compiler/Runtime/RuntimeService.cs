@@ -64,10 +64,18 @@ namespace Runtime
                 extensionArgsJson = (string)request["extArgsJson"];
             }
 
-            cb(this.RunInlineVm(args, extensionArgsJson, cbxBundle, showLibStack, useOutputPrefixes, resourceReader));
+            Interpreter.Structs.VmContext vm = this.RunInlineVm(args, extensionArgsJson, cbxBundle, showLibStack, useOutputPrefixes, resourceReader);
+
+            Interpreter.Vm.EventLoop eventLoop = new Interpreter.Vm.EventLoop(vm);
+            eventLoop.StartInterpreter();
+
+            if (eventLoop.LoopTerminated)
+            {
+                cb(new Dictionary<string, object>(new Wax.Util.JsonParser(Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm) ?? "{}").ParseAsDictionary()));
+            }
         }
 
-        private Dictionary<string, object> RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
+        private Interpreter.Structs.VmContext RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
         {
             string byteCode = cbxBundle.ByteCode;
             string resourceManifest = cbxBundle.ResourceDB.ResourceManifestFile.TextContent;
@@ -87,11 +95,7 @@ namespace Runtime
                 Interpreter.Vm.CrayonWrapper.vmEnableLibStackTrace(vm);
             }
 
-            new Interpreter.Vm.EventLoop(vm).StartInterpreter();
-
-            string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm);
-            if (response == null) return new Dictionary<string, object>();
-            return new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary());
+            return vm;
         }
     }
 }

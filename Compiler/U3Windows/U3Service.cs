@@ -28,7 +28,7 @@ namespace U3Windows
                 throw new NotImplementedException(); // message sent to non-existent window
             }
 
-            windows[windowId].HandleU3Data(request, type, jsonPayload, cb);
+            windows[windowId].HandleU3Message(request, type, jsonPayload, cb);
         }
     }
 }

@@ -27,7 +27,6 @@ namespace Exporter
                 }
 
                 // HACK! This will be sorted out after these are turned into extensions, but for now, define the hierarchy of platforms here.
-                platforms["csharp-app"].ParentPlatform = platforms["lang-csharp"];
                 platforms["javascript-app"].ParentPlatform = platforms["lang-javascript"];
                 platforms["javascript-app-android"].ParentPlatform = platforms["javascript-app"];
                 platforms["javascript-app-ios"].ParentPlatform = platforms["javascript-app"];

@@ -9,10 +9,26 @@ namespace Interpreter.Vm
     {
         private VmContext vm;
 
+        private int activeLoopTicklers = 0;
+
         public EventLoop(VmContext vm)
         {
             this.vm = vm;
             CrayonWrapper.vmSetEventLoopObj(vm, this);
+        }
+
+        public void RegisterLoopTickler()
+        {
+            this.activeLoopTicklers++;
+        }
+
+        public void ReleaseLoopTickler()
+        {
+            this.activeLoopTicklers--;
+            if (this.activeLoopTicklers == 0)
+            {
+                this.RunEventLoop();
+            }
         }
 
         private class EventLoopInvocation
@@ -24,6 +40,19 @@ namespace Interpreter.Vm
             public object[] FunctionPointerNativeArgs { get; set; }
             public int ExecutionContextId { get; set; }
         }
+
+        public bool IsQueueEmpty
+        {
+            get
+            {
+                lock (queue)
+                {
+                    return queue.Count > 0;
+                }
+            }
+        }
+
+        public bool LoopTerminated { get; private set; }
 
         private List<EventLoopInvocation> queue = new List<EventLoopInvocation>();
 
@@ -127,6 +156,7 @@ namespace Interpreter.Vm
 
         public void StartInterpreter()
         {
+            this.LoopTerminated = false;
             if (startingThreadId != 0) throw new Exception();
             startingThreadId = GetThreadId();
             AddItemToQueue(new EventLoopInvocation()
@@ -189,7 +219,7 @@ namespace Interpreter.Vm
             switch (result.status)
             {
                 case 1: // execution context is FINISHED
-                    if (result.isRootContext) this.eventLoopAlive = false;
+                    if (result.isRootContext) this.LoopTerminated = true;
                     break;
 
                 case 2: // SUSPEND
@@ -197,7 +227,7 @@ namespace Interpreter.Vm
                     break;
 
                 case 3: // FATAL ERROR
-                    if (result.isRootContext) this.eventLoopAlive = false;
+                    if (result.isRootContext) this.LoopTerminated = true;
                     break;
 
                 case 5: // RE-INVOKE, possibly with a delay
@@ -210,11 +240,9 @@ namespace Interpreter.Vm
             }
         }
 
-        private bool eventLoopAlive = true;
-
         public bool RunNonBlockingEventLoopIteration()
         {
-            if (this.eventLoopAlive)
+            if (!this.LoopTerminated)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
                 if (invocation != null)
@@ -229,7 +257,7 @@ namespace Interpreter.Vm
 
         public void RunEventLoop()
         {
-            while (this.eventLoopAlive)
+            while (this.activeLoopTicklers == 0 && !this.LoopTerminated)
             {
                 bool workDone = this.RunNonBlockingEventLoopIteration();
                 if (!workDone)
