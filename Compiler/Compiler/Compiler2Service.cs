@@ -1,6 +1,7 @@
 ﻿using Build;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Wax;
 
 namespace Compiler
@@ -127,13 +128,51 @@ namespace Compiler
             return request;
         }
 
+        private static Dictionary<string, object> ActualCompilation(Parser.InternalCompilationBundle icb)
+        {
+            Dictionary<string, object> output = new Dictionary<string, object>();
+            List<string> errors = new List<string>();
+            if (icb.HasErrors)
+            {
+                foreach (Error err in icb.Errors)
+                {
+                    errors.AddRange(new string[] { err.FileName, err.Line + "", err.Column + "", err.Message });
+                }
+            }
+            else
+            {
+                output["byteCode"] = icb.ByteCode;
+                output["depTree"] = Parser.AssemblyDependencyUtil.GetDependencyTreeJson(icb.RootScopeDependencyMetadata).Trim();
+                output["usesU3"] = icb.AllScopesMetadata.Any(a => a.ID == "U3Direct");
+                if (icb.HasErrors)
+                {
+                    foreach (Error err in icb.Errors)
+                    {
+                        errors.Add(err.FileName);
+                        errors.Add(err.Line + "");
+                        errors.Add(err.Column + "");
+                        errors.Add(err.Message + "");
+                    }
+                }
+            }
+            output["errors"] = errors.ToArray();
+
+            return output;
+        }
+
         private static BuildData Compile(
             Dictionary<string, object> request,
             ResourceDatabase resDb,
             WaxHub waxHub)
         {
+
+            Parser.CompileRequest cr = new Parser.CompileRequest(request);
+
+            Parser.InternalCompilationBundle icb = Parser.Compiler.Compile(cr, waxHub);
+
             // TODO: the CBX Bundle should be constructed directly from a Dictionary in this result.
-            Dictionary<string, object> resultRaw = waxHub.AwaitSendRequest("compiler", request);
+            Dictionary<string, object> resultRaw = ActualCompilation(icb);
+
             List<Error> errors = new List<Error>();
             string[] errorsRaw = (string[])resultRaw["errors"];
             for (int i = 0; i < errorsRaw.Length; i += 4)
