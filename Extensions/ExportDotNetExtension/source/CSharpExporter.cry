@@ -7,8 +7,10 @@ class CSharpExporter {
     field properties;
     field cbxBundle;
     field templates;
+    field guidSeed;
 
-    constructor(buildData) {
+    constructor(buildData, args) {
+        this.guidSeed = args.get('guidSeed') ?? buildData.getProjectId();
         this.buildData = buildData;
         this.cbxBundle = this.buildData.getCbxBundle();
         this.resDb = this.cbxBundle.getResourceDatabase();
@@ -25,9 +27,8 @@ class CSharpExporter {
     function doExport(files) {
 
         projectId = this.buildData.getProjectId();
-        guidSeed = this.properties.getGuidSeed() ?? projectId;
-        projectGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'project:' + guidSeed);
-        solutionGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'solution:' + guidSeed);
+        projectGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'project:' + this.guidSeed);
+        solutionGuid = createGuid('HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH', 'solution:' + this.guidSeed);
 
         this.templates.addReplacement('PROJECT_ID', projectId);
         this.templates.addReplacement('TITLE', projectId);
