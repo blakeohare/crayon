@@ -1,25 +1,7 @@
 ﻿{
     "id": "DefaultProjectExtension",
     "source": "source/",
-    "output": "output/%TARGET_NAME%",
     "title": "DefaultProjectExtension",
-    "icons": [
-        "assets/icon32.png",
-        "assets/icon256.png"
-    ],
-    "version": "1.0",
-    "iosBundlePrefix": "org.crayonlang.extensions.DefaultProjectExtension,%VERSION%",
-    "guidSeed": "org.crayonlang.extensions.DefaultProjectExtension,v1,%TARGET_NAME%",
-	"delegateMainTo": "Extensions",
-	
-    "targets": [
-        {
-            "name": "javascript",
-            "platform": "javascript-app"
-        },
-        {
-            "name": "csharp",
-            "platform": "csharp-app"
-        }
-    ]
+    "version": "2.9.0",
+	"delegateMainTo": "Extensions"
 }

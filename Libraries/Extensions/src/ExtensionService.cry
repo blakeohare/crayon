@@ -14,7 +14,10 @@ namespace Extensions {
                     print("ERROR: Extensions cannot be run directly and must be invoked from the Crayon Toolchain.");
                     return;
                 }
-                service.handleRequest(Json.parseJson(payload), res => {
+                extArgs = Json.parseJson(payload);
+                service._extensionArgBuildData = extArgs.get('buildData');
+                service._extensionArgCbxPath = extArgs.get('cbxPath');
+                service.handleRequest(extArgs.get('extArgs'), res => {
                     if (invoked) return;
                     invoked = true;
                     res = res ?? {};
@@ -33,6 +36,13 @@ namespace Extensions {
     }
 
     class ExtensionService {
+
+        field _extensionArgBuildData;
+        function getBuildData() { return this._extensionArgBuildData; }
+
+        field _extensionArgCbxPath;
+        function getCbxPath() { return this._extensionArgCbxPath; }
+
         function handleRequest(payload, cb) {
             err = "ExtensionService.handleRequest(payload, cb) must be overridden";
             throw new NotImplementedException(err);

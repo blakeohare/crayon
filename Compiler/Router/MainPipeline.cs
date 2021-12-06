@@ -99,9 +99,11 @@ namespace Router
                 Dictionary<string, object> extensionRequest = new Dictionary<string, object>();
                 if (cbxFilePath != null) extensionRequest["cbxFile"] = cbxFilePath;
                 if (buildResult != null) extensionRequest["buildData"] = buildResult;
+                Dictionary<string, object> extensionDirectArgs = new Dictionary<string, object>();
+                extensionRequest["extArgs"] = extensionDirectArgs;
                 foreach (ExtensionArg extensionArg in command.ExtensionArgs.Where(extArg => extArg.Extension == extensionName && extArg.Name != null && extArg.Name.Length > 0))
                 {
-                    extensionRequest[extensionArg.Name] = extensionArg.Value;
+                    extensionDirectArgs[extensionArg.Name] = extensionArg.Value;
                 }
                 Dictionary<string, object> extensionResult = waxHub.AwaitSendRequest(extensionName, extensionRequest);
                 Error[] extensionErrors = Error.GetErrorList(extensionResult);
