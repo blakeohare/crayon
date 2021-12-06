@@ -18,7 +18,7 @@ namespace Router
         public static Error[] RunImpl(ToolchainCommand command, WaxHub waxHub)
         {
             List<ExtensionArg> extensionArgs = new List<ExtensionArg>(command.ExtensionArgs);
-            bool skipRun = false;
+            bool skipRun = command.SkipRun;
 
             // BUILD PHASE
             NotifyStatusChange("BUILD-START");
@@ -38,7 +38,7 @@ namespace Router
                 }
 
                 extensionArgs = new List<ExtensionArg>(buildResult.ExportProperties.ExtensionArgs); // These include the flattened data from the command's ExtensionArgs.
-                skipRun = buildResult.ExportProperties.SkipRun;
+                skipRun = skipRun || buildResult.ExportProperties.SkipRun;
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Router
             NotifyStatusChange("CBX-FETCH-START");
             if (command.CbxFile != null)
             {
-                if (!System.IO.File.Exists(cbxFilePath))
+                if (!System.IO.File.Exists(command.CbxFile))
                 {
                     return new Error[] { new Error() { Message = "The provided CBX file does not exist: " + command.CbxFile } };
                 }
