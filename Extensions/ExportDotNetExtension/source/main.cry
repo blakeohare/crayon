@@ -4,7 +4,8 @@ import CrayonExporter;
 class ExportDotNetExtensionService : ExtensionService {
 
     function handleRequest(args, cb) {
-        exporter = new CSharpExporter(new CrayonExporter.BuildData(this.getBuildData()));
+        buildData = new CrayonExporter.BuildData(this.getBuildData());
+        exporter = new CSharpExporter(buildData, args);
         exporter.export();
 
         cb({ 'errors': [] });

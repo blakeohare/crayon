@@ -1,16 +1,8 @@
-﻿import Json;
-
-namespace CrayonExporter {
+﻿namespace CrayonExporter {
     class CbxBundle : JsonBasedObject {
         constructor(data = null) : base(data) { }
 
         function getByteCode() { return this.getString('byteCode'); }
         function getResourceDatabase() { return this.getObject('resources', ResourceDatabase.class); }
-
-        function getDependencyTree() {
-            value = this.getString('depTreeJson');
-            if (value == null) return null;
-            return Json.parseJson(value);
-        }
     }
 }
