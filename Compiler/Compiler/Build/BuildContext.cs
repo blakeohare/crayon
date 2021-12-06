@@ -34,6 +34,7 @@ namespace Build
         public string Description { get; set; }
         public ProgrammingLanguage RootProgrammingLanguage { get; set; }
 
+        public bool SkipRun { get; set; }
         public Wax.ExtensionArg[] ExtensionArgs { get; set; }
 
         private static BuildRoot GetBuildRoot(string buildFile, string projectDir)
@@ -207,6 +208,7 @@ namespace Build
                     case "output": buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDir, value); break;
                     case "delegateMainTo": buildContext.DelegateMainTo = value; break;
                     case "removeSymbols": buildContext.RemoveSymbols = GetBoolValue(value); break;
+                    case "skipRun": buildContext.SkipRun = GetBoolValue(value); break;
 
                     // TODO: Convert to extension args
                     case "guidSeed": buildContext.GuidSeed = value; break;
