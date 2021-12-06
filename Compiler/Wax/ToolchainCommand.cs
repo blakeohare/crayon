@@ -61,6 +61,7 @@ namespace Wax
         public string BuildTarget { get { return this.GetBuildArg("target"); } }
         public string OutputDirectoryOverride { get { return this.GetBuildArg("outputDirOverride"); } }
         public string CbxExportPath { get { return this.GetBuildArg("cbxExportPath"); } }
+        public bool SkipRun { get { return this.GetBuildArg("skipRun") != null; } }
     }
 
     public class ToolchainArg : JsonBasedObject
