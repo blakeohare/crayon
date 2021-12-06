@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Wax;
 
-namespace Router
+namespace Crayon
 {
     public class FlagParser
     {

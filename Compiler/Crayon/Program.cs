@@ -38,7 +38,7 @@ namespace Crayon
             waxHub.RegisterService(new Runtime.RuntimeService());
             waxHub.RegisterService(new Compiler.CompilerService());
 
-            Wax.ToolchainCommand command = Router.FlagParser.Parse(args);
+            Wax.ToolchainCommand command = FlagParser.Parse(args);
 
             if (command.UseOutputPrefixes)
             {
@@ -62,7 +62,7 @@ namespace Crayon
             }
             else if (errors.Length > 0)
             {
-                Router.ErrorPrinter.ShowErrors(errors, waxHub.ErrorsAsExceptions);
+                ErrorPrinter.ShowErrors(errors, waxHub.ErrorsAsExceptions);
             }
         }
 
