@@ -173,6 +173,7 @@ namespace Build
 
             BuildContext buildContext = new BuildContext()
             {
+                ProjectID = projectId,
                 ProjectDirectory = projectDir,
                 SourceFolders = ToFilePaths(projectDir, sources),
                 Version = version,
@@ -194,7 +195,7 @@ namespace Build
                     .Select(t => pr.Replace(t))
                     .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
                     .ToArray(),
-                ExtensionArgs = extensionArgs.ToArray(),
+                ExtensionArgs = extensionArgs.Select(arg => { arg.Value = pr.Replace(arg.Value); return arg; }).ToArray(),
             };
 
             foreach (Wax.BuildArg buildArg in remainingBuildArgs)
@@ -202,22 +203,13 @@ namespace Build
                 string value = pr.Replace(buildArg.Value);
                 switch (buildArg.Name)
                 {
-                    case "title": buildContext.ProjectTitle = value; break;
-                    case "description": buildContext.Description = value; break;
+                    case "title": buildContext.ProjectTitle = pr.Replace(value); break;
+                    case "description": buildContext.Description = pr.Replace(value); break;
                     case "orientation": buildContext.Orientation = ParseOrientations(value); break;
-                    case "output": buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDir, value); break;
+                    case "output": buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDir, pr.Replace(value)); break;
                     case "delegateMainTo": buildContext.DelegateMainTo = value; break;
                     case "removeSymbols": buildContext.RemoveSymbols = GetBoolValue(value); break;
                     case "skipRun": buildContext.SkipRun = GetBoolValue(value); break;
-
-                    // TODO: Convert to extension args
-                    case "guidSeed": buildContext.GuidSeed = value; break;
-                    case "iosBundlePrefix": buildContext.IosBundlePrefix = value; break;
-                    case "javaPackage": buildContext.JavaPackage = value; break;
-                    case "jsFilePrefix": buildContext.JsFilePrefix = value; break;
-                    case "jsFullPage": buildContext.JsFullPage = GetBoolValue(value); break;
-                    case "launchScreen": buildContext.LaunchScreenPath = FileUtil.JoinAndCanonicalizePath(projectDir, value); break;
-                    case "jsMin": buildContext.Minified = GetBoolValue(value); break;
                 }
             }
 
