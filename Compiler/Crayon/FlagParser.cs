@@ -13,6 +13,7 @@ namespace Crayon
             Dictionary<string, string> crayonArgsByName = new Dictionary<string, string>();
             Dictionary<string, string> buildArgsByName = new Dictionary<string, string>();
             List<string> runtimeArgs = new List<string>();
+            List<BuildArg> buildArgList = new List<BuildArg>();
             string targetFile = null;
 
             string[] parts;
@@ -33,7 +34,7 @@ namespace Crayon
                         parts = arg.Substring("-build:".Length).Split('=', 2, StringSplitOptions.None);
                         string argName = parts[0];
                         string argValue = parts.Length == 1 ? "" : parts[1];
-                        buildArgsByName[argName] = argValue;
+                        buildArgList.Add(new BuildArg() { Name = argName, Value = argValue });
                     }
                     else if (arg.StartsWith("-ext:"))
                     {
@@ -71,7 +72,7 @@ namespace Crayon
                 }
             }
 
-            ToolchainCommand output = new ToolchainCommand();
+            ToolchainCommand output = new ToolchainCommand() { BuildArgs = buildArgList.ToArray() };
             if (targetFile != null)
             {
                 if (targetFile.EndsWith(".cbx")) output.CbxFile = targetFile;
@@ -101,13 +102,6 @@ namespace Crayon
                 toolchainArgList.Add(new ToolchainArg() { Name = toolchainArg, Value = crayonArgsByName[toolchainArg] });
             }
             output.ToolchainArgs = toolchainArgList.ToArray();
-
-            List<BuildArg> buildArgList = new List<BuildArg>();
-            foreach (string buildArg in buildArgsByName.Keys.OrderBy(k => k))
-            {
-                buildArgList.Add(new BuildArg() { Name = buildArg, Value = buildArgsByName[buildArg] });
-            }
-            output.BuildArgs = buildArgList.ToArray();
 
             return output;
         }

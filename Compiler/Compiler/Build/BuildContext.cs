@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Wax.Util.Disk;
 
-
 namespace Build
 {
     internal class BuildContext
@@ -35,28 +34,13 @@ namespace Build
         public string Description { get; set; }
         public ProgrammingLanguage RootProgrammingLanguage { get; set; }
 
-        private static Target FindTarget(string targetName, IList<Target> targets)
-        {
-            foreach (Target target in targets)
-            {
-                if (target.Name == null) throw new InvalidOperationException("A target in the build file is missing a name.");
+        public Wax.ExtensionArg[] ExtensionArgs { get; set; }
 
-                // CBX targets don't have a platform specified.
-                if (target.Name != "cbx" && target.Platform == null) throw new InvalidOperationException("A target in the build file is missing a platform.");
-
-                if (target.Name == targetName)
-                {
-                    return target;
-                }
-            }
-            return null;
-        }
-
-        private static BuildRoot GetBuildRoot(string buildFile)
+        private static BuildRoot GetBuildRoot(string buildFile, string projectDir)
         {
             try
             {
-                return JsonParserForBuild.Parse(buildFile);
+                return JsonParserForBuild.Parse(buildFile, projectDir);
             }
             catch (Wax.Util.JsonParser.JsonParserException jpe)
             {
@@ -64,147 +48,196 @@ namespace Build
             }
         }
 
-        public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
+        public static BuildContext Parse(
+            string projectDir,
+            string buildFile,
+            string nullableTargetName,
+            IList<Wax.BuildArg> buildArgOverrides,
+            IList<Wax.ExtensionArg> extensionArgOverrides)
         {
-            BuildRoot buildInput = GetBuildRoot(buildFile);
-            string platform = null;
-            Dictionary<string, BuildVarCanonicalized> varLookup;
-            string targetName = nullableTargetName;
-            Target desiredTarget = null;
-            if (nullableTargetName != null)
+            BuildRoot buildInput = GetBuildRoot(buildFile, projectDir);
+
+            Dictionary<string, Target> targetsByName = new Dictionary<string, Target>();
+            foreach (Target target in buildInput.Targets)
             {
-                desiredTarget = FindTarget(targetName, buildInput.Targets);
+                string name = target.Name;
+                if (name == null) throw new InvalidOperationException("A target in the build file is missing a name.");
+                if (targetsByName.ContainsKey(name)) throw new InvalidOperationException("There are multiple build targets with the name '" + name + "'.");
+                targetsByName[name] = target;
+            }
 
-                if (desiredTarget == null)
-                {
-                    throw new InvalidOperationException("Build target does not exist in build file: '" + targetName + "'.");
-                }
+            List<Wax.BuildArg> buildArgs = new List<Wax.BuildArg>();
+            List<Wax.ExtensionArg> extensionArgs = new List<Wax.ExtensionArg>();
+            List<BuildVarCanonicalized> buildVars = new List<BuildVarCanonicalized>();
 
-                platform = desiredTarget.Platform;
+            List<BuildItem> buildItems = new List<BuildItem>();
+            if (nullableTargetName == null)
+            {
+                buildItems.Add(buildInput);
             }
             else
             {
-                targetName = "cbx";
-                desiredTarget = FindTarget(targetName, buildInput.Targets) ?? new Target();
+                HashSet<string> targetsVisited = new HashSet<string>();
+                string nextItem = nullableTargetName;
+                Target walker;
+                while (nextItem != null)
+                {
+                    if (targetsVisited.Contains(nextItem)) throw new InvalidOperationException("Build target inheritance loop for '" + nextItem + "' contains a cycle.");
+                    targetsVisited.Add(nextItem);
+                    if (!targetsByName.ContainsKey(nextItem)) throw new InvalidOperationException("There is no build target named: '" + nextItem + "'.");
+                    walker = targetsByName[nextItem];
+                    buildItems.Add(walker);
+                    nextItem = walker.InheritFrom;
+                }
+                buildItems.Add(buildInput);
             }
 
-            Dictionary<string, string> replacements = new Dictionary<string, string>() {
-                { "TARGET_NAME", targetName }
-            };
-            varLookup = BuildVarParser.GenerateBuildVars(projectDir, buildInput, desiredTarget, replacements);
+            buildItems.Reverse(); // The attributes in the leaf node have precedence.
 
-            if (desiredTarget.HasLegacyIcon || buildInput.HasLegacyIcon)
+            foreach (BuildItem currentItem in buildItems)
             {
-                // TODO: remove this in 2.2.0 or something
-                throw new InvalidOperationException(
-                    "This build file has a string property for an icon path. " +
-                    "This has been changed to a JSON array of strings for icon paths with a key called \"icons\" instead of \"icon\". " +
-                    "Please update your build file accordingly.");
+                buildArgs.AddRange(currentItem.BuildArgs);
+                extensionArgs.AddRange(currentItem.ExtensionArgs);
+                buildVars.AddRange(currentItem.BuildVars);
             }
 
-            if (desiredTarget.HasLegacyTitle || buildInput.HasLegacyTitle)
-            {
-                throw new InvalidOperationException("This build file has a \"default-title\" property, which was changed to just \"title\" in 2.1.0. Please update your build file accordingly.");
-            }
-
-            SourceItem[] sources = desiredTarget.SourcesNonNull.Union(buildInput.SourcesNonNull).ToArray();
-            string output = desiredTarget.Output ?? buildInput.Output;
-            string projectId = desiredTarget.ProjectId ?? buildInput.ProjectId;
-            string version = desiredTarget.Version ?? buildInput.Version ?? "1.0";
-            string jsFilePrefix = desiredTarget.JsFilePrefix ?? buildInput.JsFilePrefix;
-            bool jsFullPage = desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw ?? false;
-            // TODO: maybe set this default value to true, although this does nothing as of now.
-            bool minified = desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw ?? false;
-            bool exportDebugByteCode = BoolParser.FlexibleParse(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
-            string guidSeed = desiredTarget.GuidSeed ?? buildInput.GuidSeed ?? "";
-            // TODO: make this a string array.
-            string[] iconFilePaths = CombineAndFlattenStringArrays(desiredTarget.IconFilePaths, buildInput.IconFilePaths);
-            string launchScreen = desiredTarget.LaunchScreen ?? buildInput.LaunchScreen;
-            string projectTitle = desiredTarget.ProjectTitle ?? buildInput.ProjectTitle;
-            string orientation = desiredTarget.Orientation ?? buildInput.Orientation;
-            string iosBundlePrefix = desiredTarget.IosBundlePrefix ?? buildInput.IosBundlePrefix;
-            string javaPackage = desiredTarget.JavaPackage ?? buildInput.JavaPackage;
-            string[] localDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, buildInput.LocalDeps);
-            string description = desiredTarget.Description ?? buildInput.Description ?? "";
-            string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
-            string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
-            string delegateMainTo = desiredTarget.DelegateMainTo ?? buildInput.DelegateMainTo;
-            bool removeSymbols = desiredTarget.RemoveSymbols ?? buildInput.RemoveSymbols ?? false;
-
-            if (output == null)
-            {
-                throw new InvalidOperationException("No output directory defined.");
-            }
+            if (buildArgOverrides != null) buildArgs.AddRange(buildArgOverrides);
+            if (extensionArgOverrides != null) extensionArgs.AddRange(extensionArgOverrides);
 
             PercentReplacer pr = new PercentReplacer()
-                .AddReplacement("COMPILER_LANGUAGE", programmingLanguage)
-                .AddReplacement("TARGET_NAME", targetName);
+                .AddReplacement("TARGET_NAME", nullableTargetName ?? "");
 
-            version = pr.Replace(version);
-            pr.AddReplacement("VERSION", version);
+            // Do a first pass over all the build args to fetch anything that is used by %PERCENT_REPLACEMENT% and anything
+            // that can be defined with multiple values in a list.
+            List<string> sources = new List<string>();
+            List<string> icons = new List<string>();
+            string version = "1.0";
+            Locale compilerLocale = Locale.Get("en");
+            string projectId = null;
+            ProgrammingLanguage programmingLanguage = ProgrammingLanguage.CRAYON;
+            List<Wax.BuildArg> remainingBuildArgs = new List<Wax.BuildArg>();
+            List<string> envFilesBuilder = new List<string>();
+            List<string> deps = new List<string>();
 
-            compilerLocale = pr.Replace(compilerLocale);
-            pr.AddReplacement("COMPILER_LOCALE", compilerLocale);
-
-            output = FileUtil.GetCanonicalizeUniversalPath(pr.Replace(output));
-            projectId = pr.Replace(projectId);
-            jsFilePrefix = pr.Replace(jsFilePrefix);
-            guidSeed = pr.Replace(guidSeed);
-            iconFilePaths = iconFilePaths
-                .Select(t => pr.Replace(t))
-                .Select(t => FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(projectDir, t))
-                .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
-                .ToArray();
-            launchScreen = pr.Replace(launchScreen);
-            projectTitle = pr.Replace(projectTitle);
-            orientation = pr.Replace(orientation);
-            iosBundlePrefix = pr.Replace(iosBundlePrefix);
-            javaPackage = pr.Replace(javaPackage);
-            programmingLanguage = pr.Replace(programmingLanguage);
-            localDeps = localDeps
-                .Select(t => Wax.Util.EnvironmentVariables.DoReplacementsInString(t))
-                .Select(t => pr.Replace(t))
-                .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
-                .ToArray();
-            description = pr.Replace(description);
-
-            ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(programmingLanguage);
-            if (nullableLanguage == null)
+            foreach (Wax.BuildArg buildArg in buildArgs)
             {
-                throw new InvalidOperationException("Invalid programming language specified: '" + programmingLanguage + "'");
+                switch (buildArg.Name)
+                {
+                    case "programmingLanguage":
+                        ProgrammingLanguage? pl = ProgrammingLanguageParser.Parse(buildArg.Value);
+                        if (pl == null) throw new InvalidOperationException("Invalid programming language in build file: '" + buildArg.Value + "'.");
+                        programmingLanguage = pl.Value;
+                        break;
+                    case "version":
+                        version = buildArg.Value;
+                        break;
+                    case "source":
+                        sources.Add(buildArg.Value);
+                        break;
+                    case "icon":
+                        icons.Add(buildArg.Value);
+                        break;
+                    case "compilerLocale":
+                        compilerLocale = Locale.Get(buildArg.Value);
+                        break;
+                    case "id":
+                        projectId = buildArg.Value;
+                        break;
+                    case "dependencies":
+                        deps.Add(buildArg.Value);
+                        break;
+                    case "envFile":
+                        throw new Exception(); // These are eliminated in the parsing phase.
+                    default:
+                        remainingBuildArgs.Add(buildArg);
+                        break;
+                }
             }
+
+            if (projectId == null) throw new InvalidOperationException("The projectId is not defined in the build file.");
+            if (projectId.Length == 0) throw new InvalidOperationException("projectId cannot be blank.");
+            if (projectId.ToCharArray().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9')))
+            {
+                throw new InvalidOperationException("projectId can only contain alphanumeric characters.");
+            }
+            if (projectId[0] >= '0' && projectId[0] <= '9') throw new InvalidOperationException("projectId cannot being with a number.");
+
+            pr
+                .AddReplacement("PROJECT_ID", projectId)
+                .AddReplacement("COMPILER_LANGUAGE", programmingLanguage.ToString().ToUpperInvariant())
+                .AddReplacement("VERSION", version)
+                .AddReplacement("COMPILER_LOCALE", compilerLocale.ID.ToLowerInvariant());
+
+            ProjectFilePath[] envFiles = ToFilePaths(projectDir, envFilesBuilder);
 
             BuildContext buildContext = new BuildContext()
             {
                 ProjectDirectory = projectDir,
-                JsFilePrefix = jsFilePrefix,
-                OutputFolder = output,
-                Platform = platform,
-                ProjectID = projectId,
-                Minified = minified,
-                ReadableByteCode = exportDebugByteCode,
-                GuidSeed = guidSeed,
-                IconFilePaths = iconFilePaths,
-                LaunchScreenPath = launchScreen,
-                ProjectTitle = projectTitle,
-                Orientation = ParseOrientations(orientation),
-                LocalDeps = localDeps,
-                IosBundlePrefix = iosBundlePrefix,
-                JavaPackage = javaPackage,
-                JsFullPage = jsFullPage,
-                CompilerLocale = Locale.Get(compilerLocale),
-                DelegateMainTo = delegateMainTo,
-                RemoveSymbols = removeSymbols,
-                RootProgrammingLanguage = nullableLanguage.Value,
-                BuildVariableLookup = varLookup,
-                Description = description,
-                Version = version,
                 SourceFolders = ToFilePaths(projectDir, sources),
+                Version = version,
+                RootProgrammingLanguage = programmingLanguage,
+                IconFilePaths = icons
+                    // TODO: icon values should be concatenated within a build target, but override previous targets
+                    .Select(t => pr.Replace(t))
+                    .Select(t => FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(projectDir, t))
+                    .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
+                    .Where(t =>
+                    {
+                        if (!System.IO.File.Exists(t)) throw new System.InvalidOperationException("The following icon path does not exist: '" + t + "'.");
+                        return true;
+                    })
+                    .ToArray(),
+                CompilerLocale = compilerLocale,
+                LocalDeps = deps
+                    .Select(t => Wax.Util.EnvironmentVariables.DoReplacementsInString(t))
+                    .Select(t => pr.Replace(t))
+                    .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
+                    .ToArray(),
+                ExtensionArgs = extensionArgs.ToArray(),
             };
 
-            buildContext.ValidateValues();
+            foreach (Wax.BuildArg buildArg in remainingBuildArgs)
+            {
+                string value = pr.Replace(buildArg.Value);
+                switch (buildArg.Name)
+                {
+                    case "title": buildContext.ProjectTitle = value; break;
+                    case "description": buildContext.Description = value; break;
+                    case "orientation": buildContext.Orientation = ParseOrientations(value); break;
+                    case "output": buildContext.OutputFolder = value; break;
+                    case "delegateMainTo": buildContext.DelegateMainTo = value; break;
+                    case "removeSymbols": buildContext.RemoveSymbols = GetBoolValue(value); break;
+
+                    // TODO: Convert to extension args
+                    case "guidSeed": buildContext.GuidSeed = value; break;
+                    case "iosBundlePrefix": buildContext.IosBundlePrefix = value; break;
+                    case "javaPackage": buildContext.JavaPackage = value; break;
+                    case "jsFilePrefix": buildContext.JsFilePrefix = value; break;
+                    case "jsFullPage": buildContext.JsFullPage = GetBoolValue(value); break;
+                    case "launchScreen": buildContext.LaunchScreenPath = value; break;
+                    case "jsMin": buildContext.Minified = GetBoolValue(value); break;
+                }
+            }
+
+            buildContext.BuildVariableLookup = buildVars.ToDictionary(bv => bv.ID);
 
             return buildContext;
+        }
+
+        private static bool GetBoolValue(string argValue)
+        {
+            if (argValue == null) return false;
+            switch (argValue.ToUpperInvariant())
+            {
+                case "": // The presence of the argument indicates that it's intended to be set. e.g. -build:argName on the command line instead of -build:argName=1
+                case "1":
+                case "TRUE":
+                case "YES":
+                case "ON":
+                case "AYE":
+                    return true;
+                default: return false;
+            }
         }
 
         public Dictionary<string, string> GetCodeFiles()
@@ -228,13 +261,6 @@ namespace Build
             return output;
         }
 
-        private static string[] CombineAndFlattenStringArrays(string[] a, string[] b)
-        {
-            List<string> output = new List<string>();
-            if (a != null) output.AddRange(a);
-            if (b != null) output.AddRange(b);
-            return output.ToArray();
-        }
 
         private static string AbsoluteToRelativePath(string absolutePath, string relativeTo)
         {
@@ -261,72 +287,13 @@ namespace Build
             return string.Join("/", output);
         }
 
-        public void ValidateValues()
-        {
-            if (this.ProjectID == null) throw new InvalidOperationException("There is no project-id for this build target.");
-            if (this.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
-            if (this.OutputFolder == null) throw new InvalidOperationException("There is no output path for this build target.");
-
-            foreach (char c in this.ProjectID)
-            {
-                if (!((c >= 'a' && c <= 'z') ||
-                    (c >= 'A' && c <= 'Z') ||
-                    (c >= '0' && c <= '9')))
-                {
-                    throw new InvalidOperationException("Project ID must be alphanumeric characters only (a-z, A-Z, 0-9)");
-                }
-            }
-
-            string[] invalidIconPaths = this.IconFilePaths
-                .Where(t => !FileUtil.FileExists(t))
-                .ToArray();
-            if (invalidIconPaths.Length > 0)
-            {
-                throw new InvalidOperationException("The following icon file paths do not exist: " + string.Join(",", invalidIconPaths));
-            }
-
-            string launchScreenPath = this.LaunchScreenPath;
-            if (launchScreenPath != null)
-            {
-                if (!Path.IsAbsolute(launchScreenPath))
-                {
-                    launchScreenPath = FileUtil.JoinPath(this.ProjectDirectory, launchScreenPath);
-                }
-                if (!FileUtil.FileExists(launchScreenPath))
-                {
-                    throw new InvalidOperationException("Launch screen file path does not exist: " + this.LaunchScreenPath);
-                }
-            }
-
-            List<string> newLocalDeps = new List<string>();
-            foreach (string localDep in this.LocalDeps)
-            {
-                string manifestPath = localDep.EndsWith("/manifest.json")
-                    ? localDep
-                    : FileUtil.JoinAndCanonicalizePath(localDep, "manifest.json");
-
-                string fullManifestPath = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(this.ProjectDirectory, manifestPath);
-
-                if (FileUtil.FileExists(fullManifestPath))
-                {
-                    newLocalDeps.Add(fullManifestPath.Substring(0, fullManifestPath.Length - "/manifest.json".Length));
-                }
-                else
-                {
-                    throw new InvalidOperationException("The path '" + localDep + "' does not point to a valid library with a manifest.json file. '" + fullManifestPath + "' does not exist.");
-                }
-            }
-
-            this.LocalDeps = newLocalDeps.ToArray();
-        }
-
-        private static ProjectFilePath[] ToFilePaths(string projectDir, SourceItem[] sourceDirs)
+        internal static ProjectFilePath[] ToFilePaths(string projectDir, IList<string> directories)
         {
             Dictionary<string, ProjectFilePath> paths = new Dictionary<string, ProjectFilePath>();
 
-            foreach (SourceItem sourceDir in sourceDirs)
+            foreach (string dir in directories)
             {
-                string sourceDirValue = Wax.Util.EnvironmentVariables.DoReplacementsInString(sourceDir.Value);
+                string sourceDirValue = Wax.Util.EnvironmentVariables.DoReplacementsInString(dir);
                 string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDirValue);
                 ProjectFilePath filePath = new ProjectFilePath(relative, projectDir);
                 paths[filePath.AbsolutePath] = filePath;
@@ -340,7 +307,7 @@ namespace Build
             return output.ToArray();
         }
 
-        private class PercentReplacer
+        internal class PercentReplacer
         {
             private Dictionary<string, string> replacements = new Dictionary<string, string>();
             public PercentReplacer() { }

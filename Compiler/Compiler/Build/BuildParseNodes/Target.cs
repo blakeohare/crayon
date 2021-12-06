@@ -3,7 +3,6 @@
     public class Target : BuildItem
     {
         public string Name { get; set; }
-
-        public string Platform { get; set; }
+        public string InheritFrom { get; set; }
     }
 }
