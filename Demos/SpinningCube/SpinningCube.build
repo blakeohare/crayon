@@ -8,26 +8,51 @@
         "assets/icon256.png"
     ],
     "version": "1.0",
-    "iosBundlePrefix": "com.yourname.SpinningCube,%VERSION%",
-    "guidSeed": "com.yourname.SpinningCube,v1,%TARGET_NAME%",
 
     "targets": [
         {
+            "name": "mobile",
+            "orientation": "portrait"
+        },
+        {
             "name": "android",
-            "platform": "javascript-app-android"
+            "inheritFrom": "mobile",
+            "extensions": [
+                {
+                    "extension": "ExportAndroidSource"
+                }
+            ]
         },
         {
             "name": "ios",
-            "platform": "javascript-app-ios"
+            "inheritFrom": "mobile",
+            "extensions": [
+                {
+                    "extension": "ExportIosSource",
+                    "name": "iosBundlePrefix",
+                    "value": "org.crayonlang.demos.SpinningCube,%VERSION%"
+                }
+            ]
         },
         {
-            "name": "javascript",
-            "platform": "javascript-app",
-            "jsFilePrefix": "/website/relative/path/from/domain/root"
+            "name": "web",
+            "extensions": [
+                {
+                    "extension": "ExportWeb",
+                    "name": "jsFilePrefix",
+                    "value": "/website/relative/path/from/domain/root"
+                }
+            ]
         },
         {
-            "name": "csharp",
-            "platform": "csharp-app"
+            "name": "dotnet",
+            "extensions": [
+                {
+                    "extension": "ExportDotNet",
+                    "name": "guidSeed",
+                    "value": "org.crayonlang.demos.SpinningCube,v1,%TARGET_NAME%"
+                }
+            ]
         }
     ]
 }
