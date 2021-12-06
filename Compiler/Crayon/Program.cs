@@ -68,18 +68,20 @@ namespace Crayon
 
         private static IList<string> GetExtensionDirectories()
         {
-            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
             List<string> directories = new List<string>();
-            if (crayonHome != null)
-            {
-                directories.Add(System.IO.Path.Combine(crayonHome, "extensions"));
-            }
 
             string crayonSource = SourceDirectoryFinder.CrayonSourceDirectory;
             if (crayonSource != null)
             {
                 directories.Add(System.IO.Path.Combine(crayonSource, "Extensions"));
             }
+
+            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
+            if (crayonHome != null)
+            {
+                directories.Add(System.IO.Path.Combine(crayonHome, "extensions"));
+            }
+
             return directories;
         }
 
