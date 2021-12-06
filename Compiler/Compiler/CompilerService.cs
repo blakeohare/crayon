@@ -66,33 +66,18 @@ namespace Compiler
 
             BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, buildArgOverrides, extensionArgOverrides);
 
-            // command line arguments override build file values if present.
-
-            if (target != null && buildContext.Platform == null)
-                throw new InvalidOperationException("No platform specified in build file.");
-
             if (buildContext.SourceFolders.Length == 0)
-                throw new InvalidOperationException("No source folder specified in build file.");
-
-            if (buildContext.OutputFolder == null)
-                throw new InvalidOperationException("No output folder specified in build file.");
-
-            buildContext.OutputFolder = Wax.Util.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
-
-            if (buildContext.LaunchScreenPath != null)
             {
-                buildContext.LaunchScreenPath = Wax.Util.Disk.FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);
+                throw new InvalidOperationException("No source folder specified in build file.");
             }
 
             foreach (ProjectFilePath sourceFolder in buildContext.SourceFolders)
             {
                 if (!Wax.Util.Disk.FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
                 {
-                    throw new InvalidOperationException("Source folder does not exist.");
+                    throw new InvalidOperationException("Source folder does not exist: '" + sourceFolder.AbsolutePath + "'.");
                 }
             }
-
-            buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
 
             return buildContext;
         }
