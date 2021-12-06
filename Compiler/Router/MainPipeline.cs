@@ -25,7 +25,7 @@ namespace Router
             BuildData buildResult = null;
             if (command.BuildFile != null)
             {
-                buildResult = new BuildData(waxHub.AwaitSendRequest("compiler", new BuildRequest()
+                buildResult = new BuildData(waxHub.AwaitSendRequest("builder", new BuildRequest()
                 {
                     BuildFile = command.BuildFile,
                     BuildTarget = command.BuildTarget,
