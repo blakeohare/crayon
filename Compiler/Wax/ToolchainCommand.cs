@@ -42,13 +42,12 @@ namespace Wax
             return this.argCache.ContainsKey(name) ? this.argCache[name] : null;
         }
 
-        public bool IsErrorCheckOnly { get { return this.GetToolchainArg("buildErrorCheck") != null; } }
         public bool UseJsonOutput { get { return this.GetToolchainArg("useJsonOutput") != null; } }
-        public bool ShowDependencyTree {  get { return this.GetToolchainArg("showDepTree") != null; } }
         public bool UseOutputPrefixes {  get { return this.GetToolchainArg("useOutputPrefixes") != null; } }
         public bool ShowLibraryStackTraces { get { return this.GetToolchainArg("showLibStack") != null; } }
 
         // These need to be converted into build args
+        public bool IsErrorCheckOnly { get { return this.GetToolchainArg("buildErrorCheck") != null; } }
         public string BuildTarget { get { return this.GetToolchainArg("target"); } }
         public string OutputDirectoryOverride { get { return this.GetToolchainArg("outputDirOverride"); } }
         public string CbxExportPath { get { return this.GetToolchainArg("cbxExportPath"); } }
