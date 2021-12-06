@@ -53,7 +53,7 @@ namespace Wax
             List<Dictionary<string, object>> responsePtr = new List<Dictionary<string, object>>();
 
             Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
-            WaxService service = this.GetService(serviceName);
+            WaxService service = this.GetService(serviceName) ?? this.GetService(serviceName + "Extension"); // TODO: do not require the Extension suffix
 
             if (service == null)
             {
