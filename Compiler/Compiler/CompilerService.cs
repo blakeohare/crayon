@@ -172,6 +172,8 @@ namespace Compiler
                 IconPaths = buildContext.IconFilePaths,
                 LaunchScreenPath = buildContext.LaunchScreenPath,
                 Orientations = buildContext.Orientation,
+                ExtensionArgs = buildContext.ExtensionArgs,
+                SkipRun = buildContext.SkipRun,
             };
         }
 

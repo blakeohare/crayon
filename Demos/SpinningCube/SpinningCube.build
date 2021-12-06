@@ -17,6 +17,7 @@
         {
             "name": "android",
             "inheritFrom": "mobile",
+            "skipRun": true,
             "extensions": [
                 {
                     "extension": "ExportAndroidSource"
@@ -26,6 +27,7 @@
         {
             "name": "ios",
             "inheritFrom": "mobile",
+            "skipRun": true,
             "extensions": [
                 {
                     "extension": "ExportIosSource",
@@ -36,6 +38,7 @@
         },
         {
             "name": "web",
+            "skipRun": true,
             "extensions": [
                 {
                     "extension": "ExportWeb",
@@ -46,6 +49,7 @@
         },
         {
             "name": "dotnet",
+            "skipRun": true,
             "extensions": [
                 {
                     "extension": "ExportDotNet",
