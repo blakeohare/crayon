@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Wax;
 using Wax.Util.Disk;
@@ -8,231 +7,142 @@ namespace Router
 {
     internal static class MainPipeline
     {
-        public static void Run(Command command, WaxHub waxHub)
+        public static Error[] Run(ToolchainCommand command, WaxHub waxHub)
         {
+            NotifyStatusChange("TOOLCHAIN-START");
             Error[] errors = RunImpl(command, waxHub);
-
-            if (command.IsJsonOutput)
-            {
-                string jsonErrors = "{\"errors\":[" +
-                    string.Join(',', errors.Select(err => err.ToJson())) +
-                    "]}";
-                ConsoleWriter.Print(ConsoleMessageType.COMPILER_INFORMATION, jsonErrors);
-            }
-            else if (errors != null && errors.Length > 0)
-            {
-                ErrorPrinter.ShowErrors(errors, command.ErrorsAsExceptions);
-            }
+            NotifyStatusChange("TOOLCHAIN-END");
+            return errors;
         }
 
-        private enum ExecutionType
+        public static Error[] RunImpl(ToolchainCommand command, WaxHub waxHub)
         {
-            GENERATE_DEFAULT_PROJECT,
-            EXPORT_VM_BUNDLE,
-            EXPORT_CBX,
-            RUN_CBX,
-            ERROR_CHECK_ONLY,
-            TRANSPILE_CSHARP_TO_ACRYLIC,
-        }
-
-        private static ExecutionType IdentifyUseCase(Command command)
-        {
-            if (command.IsCSharpToAcrylicTranspiler) return ExecutionType.TRANSPILE_CSHARP_TO_ACRYLIC;
-            if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
-            if (command.IsErrorCheckOnly) return ExecutionType.ERROR_CHECK_ONLY;
-            if (command.HasTarget) return ExecutionType.EXPORT_VM_BUNDLE;
-            if (command.IsCbxExport) return ExecutionType.EXPORT_CBX;
-            return ExecutionType.RUN_CBX;
-        }
-
-        private static BuildData WrappedCompile(BuildRequest buildRequest, WaxHub waxHub)
-        {
-            return new BuildData(waxHub.AwaitSendRequest("compiler", buildRequest.GetRawData()));
-        }
-
-        private static Error[] ExportVmBundle(Command command, BuildRequest buildRequest, WaxHub waxHub)
-        {
-            BuildData buildData = WrappedCompile(buildRequest, waxHub);
-
-            if (buildData.HasErrors)
+            // BUILD PHASE
+            NotifyStatusChange("BUILD-START");
+            BuildData buildResult = null;
+            if (command.BuildFile != null)
             {
-                return buildData.Errors;
-            }
+                buildResult = new BuildData(waxHub.AwaitSendRequest("compiler", new BuildRequest()
+                {
+                    BuildFile = command.BuildFile,
+                    BuildTarget = command.BuildTarget,
+                    OutputDirectoryOverride = command.OutputDirectoryOverride,
+                }));
 
-            if (command.ShowDependencyTree)
+                if (buildResult.HasErrors || command.IsErrorCheckOnly)
+                {
+                    return buildResult.Errors;
+                }
+            }
+            else
             {
-                ConsoleWriter.Print(ConsoleMessageType.LIBRARY_TREE, buildData.DependencyTreeJson);
+                NotifyStatusChange("BUILD-SKIP");
             }
+            NotifyStatusChange("BUILD-END");
 
-            string platformId = buildData.ExportProperties.ExportPlatform.ToLowerInvariant();
-            string exporterExtensionName;
-            switch (platformId)
+            // GET BUNDLE PHASE (Create a CBX bundle OR use the provided one)
+            string cbxFilePath = null;
+
+            NotifyStatusChange("CBX-EXPORT-START");
+            // Bundle phase version 1: Create one
+            if (command.CbxExportPath != null)
             {
-                case "csharp-app": exporterExtensionName = "ExportDotNetExtension"; break;
-                case "javascript-app": exporterExtensionName = "ExportWebExtension"; break;
-                case "javascript-app-android": exporterExtensionName = "ExportAndroidAppExtension"; break;
-                case "javascript-app-ios": exporterExtensionName = "ExportIosAppExtension"; break;
+                if (buildResult == null) return new Error[] { new Error() { Message = "Cannot export CBX file without a build file." } };
 
-                // This will cause an error with a reasonable message.
-                default: exporterExtensionName = "Export" + platformId + "Extension"; break;
+                string outputFolder = (command.CbxExportPath ?? "").Length > 0
+                    ? command.CbxExportPath
+                    : buildResult.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
+                if (!Path.IsAbsolute(outputFolder))
+                {
+                    outputFolder = FileUtil.JoinPath(
+                        buildResult.ExportProperties.ProjectDirectory,
+                        outputFolder);
+                }
+
+                byte[] cbxFileBytes = CbxFileEncoder.Encode(buildResult.CbxBundle);
+
+                FileUtil.EnsureFolderExists(outputFolder);
+                cbxFilePath = FileUtil.JoinPath(outputFolder, buildResult.ProjectID + ".cbx");
+                System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
             }
-            Dictionary<string, object> exportResponseRaw = waxHub.AwaitSendRequest(exporterExtensionName, buildData.GetRawData());
-
-            ExportResponse exportResponse = new ExportResponse(exportResponseRaw);
-
-            if (!exportResponse.HasErrors && command.ApkExportPath != null)
+            else
             {
-                Dictionary<string, object> result = waxHub.AwaitSendRequest("AndroidApkExtension", new Dictionary<string, object>() {
-                    { "isAndroid", buildData.ExportProperties.IsAndroid },
-                    { "apkExportPath", command.ApkExportPath },
-                    { "projOutputDir", buildData.ExportProperties.OutputDirectory },
-                });
-
-                return Error.GetErrorsFromResult(result);
+                NotifyStatusChange("CBX-EXPORT-SKIP");
             }
+            NotifyStatusChange("CBX-EXPORT-END");
 
-            return exportResponse.Errors;
-        }
-
-        private static Error[] GenerateDefaultProject(WaxHub waxHub, string projectId, string locale, string projectType, string targetDir)
-        {
-            Dictionary<string, object> result = waxHub.AwaitSendRequest("DefaultProjectExtension", new Dictionary<string, object>() {
-                { "type", projectType },
-                { "locale", locale },
-                { "projectId", projectId },
-                { "targetDir", targetDir + '/' + projectId },
-            });
-            return Error.GetErrorsFromResult(result);
-        }
-
-        private static Error[] RunImpl(Command command, WaxHub waxHub)
-        {
-            if (command.UseOutputPrefixes)
+            // Bundle phase version 2: Use the provided one
+            NotifyStatusChange("CBX-FETCH-START");
+            if (command.CbxFile != null)
             {
-                ConsoleWriter.EnablePrefixes();
+                if (!System.IO.File.Exists(cbxFilePath))
+                {
+                    return new Error[] { new Error() { Message = "The provided CBX file does not exist: " + command.CbxFile } };
+                }
+                cbxFilePath = command.CbxFile;
             }
-
-            BuildRequest buildRequest = new BuildRequest();
-            buildRequest.BuildFile = command.BuildFilePath;
-            buildRequest.BuildTarget = command.BuildTarget;
-            buildRequest.ErrorsAsExceptions = command.ErrorsAsExceptions;
-            buildRequest.OutputDirectoryOverride = command.OutputDirectoryOverride;
-
-            switch (IdentifyUseCase(command))
+            else
             {
-                case ExecutionType.GENERATE_DEFAULT_PROJECT:
-                    return GenerateDefaultProject(
-                        waxHub,
-                        command.DefaultProjectId,
-                        command.DefaultProjectLocale,
-                        command.DefaultProjectType,
-                        System.IO.Directory.GetCurrentDirectory());
-
-                case ExecutionType.EXPORT_VM_BUNDLE:
-                    return ExportVmBundle(command, buildRequest, waxHub);
-
-                case ExecutionType.ERROR_CHECK_ONLY:
-                    NotifyStatusChange("COMPILE-START");
-                    BuildData errorCheckOnlyResponse = ExportInMemoryCbxData(buildRequest, true, waxHub);
-                    NotifyStatusChange("COMPILE-END");
-                    return errorCheckOnlyResponse.Errors;
-
-                case ExecutionType.EXPORT_CBX:
-                    NotifyStatusChange("COMPILE-START");
-                    List<Error> errors = new List<Error>();
-                    DoExportStandaloneCbxFileAndGetPath(command, buildRequest, false, waxHub, errors);
-                    NotifyStatusChange("COMPILE-END");
-                    return errors.ToArray();
-
-                case ExecutionType.RUN_CBX:
-                    NotifyStatusChange("COMPILE-START");
-                    BuildData buildData = ExportInMemoryCbxData(buildRequest, false, waxHub);
-                    NotifyStatusChange("COMPILE-END");
-                    if (buildData.HasErrors)
-                    {
-                        NotifyStatusChange("RUN-ABORTED");
-                        return buildData.Errors;
-                    }
-
-                    NotifyStatusChange("RUN-START");
-                    waxHub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
-                        { "realTimePrint", true },
-                        { "cbxBundle", buildData.CbxBundle.GetRawData() },
-                        { "args", command.DirectRunArgs },
-                        { "showLibStack", command.DirectRunShowLibStack },
-                        { "useOutputPrefixes", command.UseOutputPrefixes },
-                    });
-                    NotifyStatusChange("RUN-END");
-
-                    return null;
-
-                default: throw new Exception(); // this shouldn't happen.
+                NotifyStatusChange("CBX-FETCH-SKIP");
             }
+            NotifyStatusChange("CBX-FETCH-END");
+
+            // EXTENSION PHASE
+            NotifyStatusChange("EXTENSIONS-START");
+            if (command.Extensions.Length == 0)
+            {
+                NotifyStatusChange("EXTENSIONS-SKIP");
+            }
+            foreach (string extensionName in command.Extensions)
+            {
+                NotifyStatusChange("EXTENSION-RUN-START:" + extensionName);
+                Dictionary<string, object> extensionRequest = new Dictionary<string, object>();
+                if (cbxFilePath != null) extensionRequest["cbxFile"] = cbxFilePath;
+                if (buildResult != null) extensionRequest["buildData"] = buildResult;
+                foreach (ExtensionArg extensionArg in command.ExtensionArgs.Where(extArg => extArg.Extension == extensionName && extArg.Name != null && extArg.Name.Length > 0))
+                {
+                    extensionRequest[extensionArg.Name] = extensionArg.Value;
+                }
+                Dictionary<string, object> extensionResult = waxHub.AwaitSendRequest(extensionName, extensionRequest);
+                Error[] extensionErrors = Error.GetErrorList(extensionResult);
+                if (extensionErrors.Length > 0) return extensionErrors;
+                NotifyStatusChange("EXTENSION-RUN-END:" + extensionName);
+            }
+            NotifyStatusChange("EXTENSIONS-END");
+
+            // RUN PHASE
+            NotifyStatusChange("RUN-START");
+            if (cbxFilePath != null || buildResult != null)
+            {
+                Dictionary<string, object> runtimeRequest = new Dictionary<string, object>() {
+                    { "realTimePrint", true },
+                    { "args", command.RuntimeArgs },
+                    { "showLibStack", command.ShowLibraryStackTraces },
+                    { "useOutputPrefixes", command.UseOutputPrefixes },
+                };
+                if (buildResult != null)
+                {
+                    runtimeRequest["cbxBundle"] = buildResult.CbxBundle;
+                }
+                else
+                {
+                    runtimeRequest["cbxPath"] = cbxFilePath;
+                }
+                Dictionary<string, object> runtimeResult = waxHub.AwaitSendRequest("runtime", runtimeRequest);
+                // TODO: return errors
+            }
+            else
+            {
+                NotifyStatusChange("RUN-SKIP");
+            }
+            NotifyStatusChange("RUN-END");
+
+            return new Error[0];
         }
 
         private static void NotifyStatusChange(string status)
         {
             ConsoleWriter.Print(ConsoleMessageType.STATUS_CHANGE, status);
-        }
-
-        private static BuildData ExportInMemoryCbxData(
-            BuildRequest buildRequest,
-            bool isDryRunErrorCheck,
-            WaxHub waxHub)
-        {
-            BuildData buildData = WrappedCompile(buildRequest, waxHub);
-
-            if (isDryRunErrorCheck || buildData.HasErrors)
-            {
-                return new BuildData() { Errors = buildData.Errors };
-            }
-
-            return buildData;
-        }
-
-        // TODO: ew, out params. Figure out a way to clean this up or avoid it.
-        // This used to be ExportResponse but that's for a different purpose.
-        private static string DoExportStandaloneCbxFileAndGetPath(
-            Command command,
-            BuildRequest buildRequest,
-            bool isDryRunErrorCheck,
-            WaxHub waxHub,
-            List<Error> errorsOut)
-        {
-            BuildData buildData = WrappedCompile(buildRequest, waxHub);
-
-            if (isDryRunErrorCheck || buildData.HasErrors)
-            {
-                errorsOut.AddRange(buildData.Errors);
-                return null;
-            }
-
-            ResourceDatabase resDb = buildData.CbxBundle.ResourceDB;
-            Dictionary<string, FileOutput> outputFiles = new Dictionary<string, FileOutput>();
-            string[] fileNames = resDb.FlatFileNames;
-            FileOutput[] files = resDb.FlatFiles;
-            for (int i = 0; i < files.Length; i++)
-            {
-                outputFiles[fileNames[i]] = files[i];
-            }
-
-            string outputFolder = (command.CbxExportPath ?? "").Length > 0
-                ? command.CbxExportPath
-                : buildData.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
-            if (!Path.IsAbsolute(outputFolder))
-            {
-                outputFolder = FileUtil.JoinPath(
-                    buildData.ExportProperties.ProjectDirectory,
-                    outputFolder);
-            }
-
-            byte[] cbxFileBytes = CbxFileEncoder.Encode(buildData.CbxBundle);
-
-            FileUtil.EnsureFolderExists(outputFolder);
-            string cbxFilePath = FileUtil.JoinPath(outputFolder, buildData.ProjectID + ".cbx");
-            System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
-
-            return cbxFilePath;
         }
     }
 }

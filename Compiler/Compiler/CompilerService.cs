@@ -23,7 +23,7 @@ namespace Compiler
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
-            BuildData buildData = Compile(buildContext, request.ErrorsAsExceptions, resourceDatabase, this.Hub);
+            BuildData buildData = Compile(buildContext, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
@@ -122,11 +122,10 @@ namespace Compiler
 
         private static BuildData Compile(
             BuildContext buildContext,
-            bool errorsAsExceptions,
             ResourceDatabase resDb,
             WaxHub waxHub)
         {
-            Parser.CompileRequest cr = new Parser.CompileRequest(buildContext, errorsAsExceptions, waxHub.SourceRoot);
+            Parser.CompileRequest cr = new Parser.CompileRequest(buildContext, waxHub.SourceRoot);
 
             Parser.InternalCompilationBundle icb = Parser.Compiler.Compile(cr, waxHub);
 

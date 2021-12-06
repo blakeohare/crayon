@@ -9,7 +9,7 @@ namespace Wax
 
         public string BuildFile { get { return this.GetString("buildFile"); } set { this.SetString("buildFile", value); } }
         public string BuildTarget { get { return this.GetString("target"); } set { this.SetString("target", value); } }
-        public bool ErrorsAsExceptions { get { return this.GetBoolean("errorsAsExceptions"); } set { this.SetBoolean("errorsAsExceptions", value); } }
         public string OutputDirectoryOverride { get { return this.GetString("outputDirOverride"); } set { this.SetString("outputDirOverride", value); } }
+        public bool IsErrorCheck { get { return this.GetBoolean("isErrorCheck"); } set { this.SetBoolean("isErrorCheck", value); } }
     }
 }
