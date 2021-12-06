@@ -45,16 +45,18 @@ class DefaultProjectExtensionService : ExtensionService {
     function handleRequestImpl(args) {
 
         // TODO: args should be verified before arriving here.
-        projType = (args.get('type') ?? '') + '';
+        projType = ((args.get('type') ?? '') + '').lower().trim();
         if (projType == '') projType = 'basic';
 
-        locale = ((args.get('locale') ?? '') + '').upper();
-        projectId = ((args.get('projectId') ?? '') + '');
+        projectId = ((args.get('projectId') ?? '') + '').trim();
         if (projectId == '') return { 'errors': [ "BAD_PROJECT_ID" ] };
         if (!this.isAlphanumeric(projectId)) return { 'errors': [ "BAD_PROJECT_ID" ] };
+
+        locale = ((args.get('locale') ?? '') + '').upper().trim();
+        if (locale == '') locale = 'EN';
         err = this.verifyLocale(locale);
 
-        targetDir = args.get('targetDir') + '';
+        targetDir = args.get('targetDir', '.') + '/' + projectId;
         try {
             if (!FileIO.directoryExists(targetDir)) {
                 FileIO.directoryCreate(targetDir, true);
