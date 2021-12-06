@@ -204,7 +204,7 @@ namespace Build
                     case "title": buildContext.ProjectTitle = value; break;
                     case "description": buildContext.Description = value; break;
                     case "orientation": buildContext.Orientation = ParseOrientations(value); break;
-                    case "output": buildContext.OutputFolder = value; break;
+                    case "output": buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDir, value); break;
                     case "delegateMainTo": buildContext.DelegateMainTo = value; break;
                     case "removeSymbols": buildContext.RemoveSymbols = GetBoolValue(value); break;
 
@@ -214,7 +214,7 @@ namespace Build
                     case "javaPackage": buildContext.JavaPackage = value; break;
                     case "jsFilePrefix": buildContext.JsFilePrefix = value; break;
                     case "jsFullPage": buildContext.JsFullPage = GetBoolValue(value); break;
-                    case "launchScreen": buildContext.LaunchScreenPath = value; break;
+                    case "launchScreen": buildContext.LaunchScreenPath = FileUtil.JoinAndCanonicalizePath(projectDir, value); break;
                     case "jsMin": buildContext.Minified = GetBoolValue(value); break;
                 }
             }
