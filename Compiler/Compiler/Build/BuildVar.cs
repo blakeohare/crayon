@@ -10,9 +10,9 @@
         UNKNOWN,
     }
 
-    public class BuildVarCanonicalized
+    public class BuildVar
     {
-        public BuildVarCanonicalized(string id, object value)
+        public BuildVar(string id, object value)
         {
             this.ID = id;
             if (value == null)

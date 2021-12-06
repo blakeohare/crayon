@@ -29,7 +29,7 @@ namespace Build
         public string DelegateMainTo { get; set; }
         public bool RemoveSymbols { get; set; }
         public ProjectFilePath[] SourceFolders { get; set; }
-        public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; set; }
+        public Dictionary<string, BuildVar> BuildVariableLookup { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
         public ProgrammingLanguage RootProgrammingLanguage { get; set; }
@@ -68,7 +68,7 @@ namespace Build
 
             List<Wax.BuildArg> buildArgs = new List<Wax.BuildArg>();
             List<Wax.ExtensionArg> extensionArgs = new List<Wax.ExtensionArg>();
-            List<BuildVarCanonicalized> buildVars = new List<BuildVarCanonicalized>();
+            List<BuildVar> buildVars = new List<BuildVar>();
 
             List<BuildItem> buildItems = new List<BuildItem>();
             if (nullableTargetName == null)
