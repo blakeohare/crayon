@@ -11,6 +11,7 @@ namespace Crayon
         {
             Dictionary<string, Dictionary<string, string>> extensionArgsByExtensionName = new Dictionary<string, Dictionary<string, string>>();
             Dictionary<string, string> crayonArgsByName = new Dictionary<string, string>();
+            Dictionary<string, string> buildArgsByName = new Dictionary<string, string>();
             List<string> runtimeArgs = new List<string>();
             string targetFile = null;
 
@@ -26,6 +27,13 @@ namespace Crayon
                         string argName = parts[0];
                         string argValue = parts.Length == 1 ? "" : parts[1];
                         crayonArgsByName[argName] = argValue;
+                    }
+                    else if (arg.StartsWith("-build:"))
+                    {
+                        parts = arg.Substring("-build:".Length).Split('=', 2, StringSplitOptions.None);
+                        string argName = parts[0];
+                        string argValue = parts.Length == 1 ? "" : parts[1];
+                        buildArgsByName[argName] = argValue;
                     }
                     else if (arg.StartsWith("-ext:"))
                     {
@@ -93,6 +101,13 @@ namespace Crayon
                 toolchainArgList.Add(new ToolchainArg() { Name = toolchainArg, Value = crayonArgsByName[toolchainArg] });
             }
             output.ToolchainArgs = toolchainArgList.ToArray();
+
+            List<BuildArg> buildArgList = new List<BuildArg>();
+            foreach (string buildArg in buildArgsByName.Keys.OrderBy(k => k))
+            {
+                buildArgList.Add(new BuildArg() { Name = buildArg, Value = buildArgsByName[buildArg] });
+            }
+            output.BuildArgs = buildArgList.ToArray();
 
             return output;
         }
