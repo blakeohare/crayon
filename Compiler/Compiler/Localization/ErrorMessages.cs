@@ -1,4 +1,4 @@
-﻿namespace Parser.Localization
+﻿namespace Builder.Localization
 {
     public enum ErrorMessages
     {

@@ -1,7 +1,7 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System;
 
-namespace Parser.ByteCode.Nodes
+namespace Builder.ByteCode.Nodes
 {
     internal static class AssignmentEncoder
     {

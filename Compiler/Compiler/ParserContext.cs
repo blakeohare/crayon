@@ -1,11 +1,11 @@
-﻿using Parser.Localization;
-using Parser.ParseTree;
-using Parser.Resolver;
+﻿using Builder.Localization;
+using Builder.ParseTree;
+using Builder.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     internal class ParserContext
     {
@@ -144,14 +144,14 @@ namespace Parser
 
             switch (scope.ProgrammingLanguage)
             {
-                case Build.ProgrammingLanguage.CRAYON:
+                case Builder.ProgrammingLanguage.CRAYON:
                     this.TopLevelParser = new Crayon.CrayonTopLevelParser(this);
                     this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
                     this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
                     this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
                     this.TypeParser = new Crayon.CrayonTypeParser();
                     break;
-                case Build.ProgrammingLanguage.ACRYLIC:
+                case Builder.ProgrammingLanguage.ACRYLIC:
                     this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
                     this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
                     this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);

@@ -1,6 +1,6 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 
-namespace Parser.Crayon
+namespace Builder.Crayon
 {
     internal class CrayonExecutableParser : AbstractExecutableParser
     {

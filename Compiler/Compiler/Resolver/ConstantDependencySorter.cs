@@ -1,8 +1,8 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.Resolver
+namespace Builder.Resolver
 {
     internal class ConstantDependencySorter
     {

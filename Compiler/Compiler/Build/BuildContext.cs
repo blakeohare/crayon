@@ -1,11 +1,11 @@
-﻿using Build.BuildParseNodes;
-using Parser.Localization;
+﻿using Builder.Build.BuildParseNodes;
+using Builder.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wax.Util.Disk;
 
-namespace Build
+namespace Builder
 {
     internal class BuildContext
     {

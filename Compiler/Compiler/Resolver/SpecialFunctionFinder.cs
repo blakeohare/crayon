@@ -1,8 +1,8 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System;
 using System.Linq;
 
-namespace Parser.Resolver
+namespace Builder.Resolver
 {
     internal static class SpecialFunctionFinder
     {

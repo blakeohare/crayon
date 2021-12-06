@@ -1,4 +1,4 @@
-﻿namespace Parser.ByteCode
+﻿namespace Builder.ByteCode
 {
     // duplicated in Constants.cry
     internal enum FunctionInvocationType

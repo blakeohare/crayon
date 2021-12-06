@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.ByteCode
+namespace Builder.ByteCode
 {
     internal class ByteBuffer
     {

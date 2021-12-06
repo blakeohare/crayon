@@ -1,9 +1,9 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     internal abstract class AbstractExpressionParser
     {

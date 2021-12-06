@@ -1,11 +1,11 @@
-﻿using Parser.ByteCode.Nodes;
-using Parser.Localization;
-using Parser.ParseTree;
+﻿using Builder.ByteCode.Nodes;
+using Builder.Localization;
+using Builder.ParseTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.ByteCode
+namespace Builder.ByteCode
 {
     internal class ByteCodeCompiler
     {

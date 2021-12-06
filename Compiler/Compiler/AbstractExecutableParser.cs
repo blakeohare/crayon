@@ -1,9 +1,9 @@
-﻿using Parser.Localization;
-using Parser.ParseTree;
+﻿using Builder.Localization;
+using Builder.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     // This class (and AbstractExpressionParser) ideally should be split into an AbstractCurlyBraceLanguageParser
     internal abstract class AbstractExecutableParser

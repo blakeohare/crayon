@@ -1,8 +1,8 @@
-﻿using Parser.Localization;
+﻿using Builder.Localization;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     internal class ScopeManager
     {
@@ -64,8 +64,8 @@ namespace Parser
                 }
                 else
                 {
-                    Dictionary<string, string> nameByLocale = Build.DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["nameByLocale"]);
-                    Dictionary<string, string> sourceCode = Build.DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["sourceCode"]);
+                    Dictionary<string, string> nameByLocale = DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["nameByLocale"]);
+                    Dictionary<string, string> sourceCode = DictionaryUtil.FlattenedDictionaryToDictionary((string[])response["sourceCode"]);
 
                     ExternalAssemblyMetadata md = new ExternalAssemblyMetadata()
                     {
@@ -164,9 +164,9 @@ namespace Parser
             Dictionary<string, string> sourceCode = assemblyMetadata.SourceCode;
 
             string arbitraryFilename = sourceCode.Keys.Where(t => t.Contains('.')).Select(t => t.ToLowerInvariant()).FirstOrDefault();
-            Build.ProgrammingLanguage programmingLanguage = arbitraryFilename != null && arbitraryFilename.EndsWith(".acr")
-                ? Build.ProgrammingLanguage.ACRYLIC
-                : Build.ProgrammingLanguage.CRAYON;
+            ProgrammingLanguage programmingLanguage = arbitraryFilename != null && arbitraryFilename.EndsWith(".acr")
+                ? ProgrammingLanguage.ACRYLIC
+                : ProgrammingLanguage.CRAYON;
 
             // If the assembly exists but hasn't been imported before, instantiate it and
             // add it to all the lookups. This needs to happen before parsing the embedded

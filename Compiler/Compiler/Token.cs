@@ -1,4 +1,4 @@
-﻿namespace Parser
+﻿namespace Builder
 {
     internal class Token
     {

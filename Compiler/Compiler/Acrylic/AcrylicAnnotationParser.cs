@@ -1,4 +1,4 @@
-﻿namespace Parser.Acrylic
+﻿namespace Builder.Acrylic
 {
     internal class AcrylicAnnotationParser : AbstractAnnotationParser
     {

@@ -1,6 +1,6 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 
-namespace Parser.Acrylic
+namespace Builder.Acrylic
 {
     internal class AcrylicExecutableParser : AbstractExecutableParser
     {

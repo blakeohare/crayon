@@ -1,4 +1,4 @@
-﻿namespace Build.BuildParseNodes
+﻿namespace Builder.Build.BuildParseNodes
 {
     public class BuildRoot : BuildItem
     {

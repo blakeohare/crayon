@@ -1,6 +1,6 @@
 ﻿using Wax;
 
-namespace Build.ImageSheets
+namespace Builder.ImageSheets
 {
     class Image
     {

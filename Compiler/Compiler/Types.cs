@@ -1,4 +1,4 @@
-﻿namespace Parser
+﻿namespace Builder
 {
     // These are also defined in Interpreter/source/Constants.pst
     // Please make sure they stay synchronized.

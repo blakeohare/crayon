@@ -1,7 +1,7 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System.Collections.Generic;
 
-namespace Parser.Crayon
+namespace Builder.Crayon
 {
     internal class CrayonExpressionParser : AbstractExpressionParser
     {

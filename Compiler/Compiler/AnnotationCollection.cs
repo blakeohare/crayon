@@ -1,8 +1,8 @@
-﻿using Parser.Localization;
-using Parser.ParseTree;
+﻿using Builder.Localization;
+using Builder.ParseTree;
 using System.Collections.Generic;
 
-namespace Parser
+namespace Builder
 {
     internal class AnnotationCollection
     {

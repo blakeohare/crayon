@@ -1,7 +1,7 @@
-﻿using Parser.Resolver;
+﻿using Builder.Resolver;
 using System.Collections.Generic;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     internal class NegativeSign : Expression
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Wax.Util.Images;
 
-namespace Build.ImageSheets
+namespace Builder.ImageSheets
 {
     class Chunk
     {

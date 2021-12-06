@@ -1,8 +1,8 @@
-﻿using Parser.Resolver;
+﻿using Builder.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     internal class BooleanCombination : Expression
     {

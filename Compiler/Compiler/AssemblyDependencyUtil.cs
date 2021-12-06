@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     internal static class AssemblyDependencyUtil
     {

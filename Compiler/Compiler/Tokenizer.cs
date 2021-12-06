@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Parser
+namespace Builder
 {
     internal static class Tokenizer
     {

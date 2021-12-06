@@ -1,8 +1,8 @@
-﻿using Parser.ByteCode;
-using Parser.ParseTree;
+﻿using Builder.ByteCode;
+using Builder.ParseTree;
 using Wax;
 
-namespace Parser
+namespace Builder
 {
     internal static class Compiler
     {

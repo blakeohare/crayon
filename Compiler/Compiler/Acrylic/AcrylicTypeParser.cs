@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Parser.Acrylic
+namespace Builder.Acrylic
 {
     internal class AcrylicTypeParser : AbstractTypeParser
     {

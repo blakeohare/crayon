@@ -1,4 +1,4 @@
-﻿namespace Parser.Crayon
+﻿namespace Builder.Crayon
 {
     internal class CrayonAnnotationParser : AbstractAnnotationParser
     {
