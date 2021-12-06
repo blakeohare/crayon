@@ -1,0 +1,25 @@
+﻿{
+    "id": "ShowDependencyTreeExtension",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "title": "ShowDependencyTreeExtension",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
+    "version": "1.0",
+    "iosBundlePrefix": "org.crayonlang.extensions.ShowDependencyTreeExtension,%VERSION%",
+    "guidSeed": "org.crayonlang.extensions.ShowDependencyTreeExtension,v1,%TARGET_NAME%",
+	"delegateMainTo": "Extensions",
+	
+    "targets": [
+        {
+            "name": "javascript",
+            "platform": "javascript-app"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}

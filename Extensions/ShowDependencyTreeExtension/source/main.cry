@@ -1,0 +1,23 @@
+﻿import Json;
+import Extensions;
+
+class ShowDependencyTreeExtensionService : ExtensionService {
+
+    function handleRequest(args, cb) {
+        depTree = this.getDepTree(args.get('buildData'));
+        if (depTree == null) {
+            cb({ "errors": [ "Build data not available. Did the build fail?" ] });
+        } else {
+            print(Json.serializeJson(depTree));
+            cb({ "deps": depTree });
+        }
+    }
+
+    function getDepTree(buildData) {
+        buildData = args.get('buildData');
+        if (buildData == null) return null;
+        depsJson = buildData.get('depTreeJson');
+        if (depsJson == null) return null;
+        return Json.parseJons(depsJson);
+    }
+}
