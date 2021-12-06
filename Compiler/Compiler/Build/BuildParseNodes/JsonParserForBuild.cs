@@ -3,7 +3,6 @@ using System.Linq;
 
 namespace Build.BuildParseNodes
 {
-    // TODO: after a few versions have passed, remove all the hyphenated aliases
     internal static class JsonParserForBuild
     {
         internal static BuildRoot Parse(string file, string projectDir)
