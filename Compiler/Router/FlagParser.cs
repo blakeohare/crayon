@@ -5,9 +5,9 @@ using Wax;
 
 namespace Router
 {
-    internal class FlagParser
+    public class FlagParser
     {
-        public ToolchainCommand Parse(string[] args)
+        public static ToolchainCommand Parse(string[] args)
         {
             Dictionary<string, Dictionary<string, string>> extensionArgsByExtensionName = new Dictionary<string, Dictionary<string, string>>();
             Dictionary<string, string> crayonArgsByName = new Dictionary<string, string>();

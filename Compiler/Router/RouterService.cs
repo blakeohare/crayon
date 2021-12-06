@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Router
 {
@@ -11,33 +12,33 @@ namespace Router
             Dictionary<string, object> request,
             Func<Dictionary<string, object>, bool> cb)
         {
-            bool errorsAsExceptions = request.ContainsKey("exceptionsAsErrors") && (request["errorsAsExceptions"] as bool?) == true;
-
-            if (errorsAsExceptions)
+            Wax.ToolchainCommand command = new Wax.ToolchainCommand(request);
+            Dictionary<string, object> result;
+            if (this.Hub.ErrorsAsExceptions)
             {
-                this.HandleRequestImpl(request, errorsAsExceptions);
+                result = this.HandleRequestImpl(command);
             }
             else
             {
                 try
                 {
-                    this.HandleRequestImpl(request, errorsAsExceptions);
+                    result = this.HandleRequestImpl(command);
                 }
                 catch (InvalidOperationException ioe)
                 {
-                    ErrorPrinter.ShowErrors(new Wax.Error[] { new Wax.Error { Message = ioe.Message } }, false);
+                    result = new Dictionary<string, object>() {
+                        { "errors", new Wax.Error[] { new Wax.Error { Message = ioe.Message } } }
+                    };
                 }
             }
 
-            cb(new Dictionary<string, object>());
+            cb(result);
         }
 
-        private void HandleRequestImpl(Dictionary<string, object> request, bool errorsAsExceptions)
+        private Dictionary<string, object> HandleRequestImpl(Wax.ToolchainCommand command)
         {
-            string[] commandLineArgs = (string[])request["args"];
-            Wax.Command command = LegacyFlagParser.Parse(commandLineArgs);
-            command.ErrorsAsExceptions = errorsAsExceptions;
-            MainPipeline.Run(command, this.Hub);
+            Wax.Error[] errors = MainPipeline.Run(command, this.Hub) ?? new Wax.Error[0];
+            return new Dictionary<string, object>() { { "errors", errors } };
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Parser
     {
         private Dictionary<string, string> codeFiles;
 
-        public CompileRequest(Build.BuildContext buildContext, bool errorsAsExceptions, string sourceRoot)
+        public CompileRequest(Build.BuildContext buildContext, string sourceRoot)
         {
             this.ProjectId = buildContext.ProjectID;
             this.DelegateMainTo = buildContext.DelegateMainTo;
@@ -16,7 +16,6 @@ namespace Parser
             this.codeFiles = buildContext.GetCodeFiles();
             this.RootProgrammingLanguage = buildContext.RootProgrammingLanguage;
             this.RemoveSymbols = buildContext.RemoveSymbols;
-            this.ErrorsAsExceptions = errorsAsExceptions;
             this.ActiveCrayonSourceRoot = sourceRoot;
 
             foreach (string key in buildContext.BuildVariableLookup.Keys)
@@ -41,7 +40,6 @@ namespace Parser
         public string[] LocalDeps { get; private set; }
         public string ProjectDirectory { get; private set; }
         public Build.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
-        public bool ErrorsAsExceptions { get; private set; }
         public string ActiveCrayonSourceRoot { get; private set; }
 
         public Dictionary<string, string> GetCodeFiles()
