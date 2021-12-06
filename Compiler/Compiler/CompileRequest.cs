@@ -20,7 +20,7 @@ namespace Parser
 
             foreach (string key in buildContext.BuildVariableLookup.Keys)
             {
-                Build.BuildVarCanonicalized buildVar = buildContext.BuildVariableLookup[key];
+                Build.BuildVar buildVar = buildContext.BuildVariableLookup[key];
                 switch (buildVar.Type)
                 {
                     case Build.VarType.BOOLEAN: this.AddCompileTimeBoolean(key, buildVar.BoolValue); break;
