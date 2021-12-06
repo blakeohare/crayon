@@ -18,8 +18,12 @@ namespace Compiler
 
         private BuildData HandleRequestImpl(BuildRequest request)
         {
-
-            BuildContext buildContext = GetBuildContext(request.BuildFile, request.BuildTarget, this.Hub);
+            BuildContext buildContext = GetBuildContext(
+                request.BuildFile,
+                request.BuildTarget,
+                this.Hub,
+                request.BuildArgOverrides,
+                request.ExtensionArgOverrides);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
@@ -39,7 +43,12 @@ namespace Compiler
             return buildData;
         }
 
-        private static BuildContext GetBuildContext(string buildFilePath, string buildTarget, WaxHub hub)
+        private static BuildContext GetBuildContext(
+            string buildFilePath,
+            string buildTarget,
+            WaxHub hub,
+            IList<BuildArg> buildArgOverrides,
+            IList<ExtensionArg> extensionArgOverrides)
         {
             string buildFile = buildFilePath;
 
@@ -55,7 +64,7 @@ namespace Compiler
             string projectDirectory = Wax.Util.Disk.FileUtil.GetParentDirectory(buildFile);
             string buildFileContent = Wax.Util.Disk.FileUtil.ReadFileText(buildFile);
 
-            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target);
+            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, buildArgOverrides, extensionArgOverrides);
 
             // command line arguments override build file values if present.
 
