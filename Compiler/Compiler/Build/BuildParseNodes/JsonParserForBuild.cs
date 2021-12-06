@@ -28,10 +28,10 @@ namespace Build.BuildParseNodes
 
         private static void ParseBuildItem(BuildItem item, IDictionary<string, object> jsonData, string projectDir)
         {
-            List<BuildVarCanonicalized> buildVars = new List<BuildVarCanonicalized>();
+            List<BuildVar> buildVars = new List<BuildVar>();
             List<Wax.BuildArg> buildArgs = new List<Wax.BuildArg>();
             List<Wax.ExtensionArg> extensionArgs = new List<Wax.ExtensionArg>();
-            List<BuildVarCanonicalized> envFileDefinedArgs = new List<BuildVarCanonicalized>();
+            List<BuildVar> envFileDefinedArgs = new List<BuildVar>();
 
             List<IDictionary<string, object>> rawVars = new List<IDictionary<string, object>>();
             foreach (string key in jsonData.Keys.OrderBy(k => k))
@@ -70,7 +70,7 @@ namespace Build.BuildParseNodes
                                 }
                                 if (name == null || name.Length == 0) throw new System.InvalidOperationException("There is a build variable with no name.");
 
-                                buildVars.Add(new BuildVarCanonicalized(name, value));
+                                buildVars.Add(new BuildVar(name, value));
                             }
                             else
                             {
@@ -114,7 +114,7 @@ namespace Build.BuildParseNodes
                                     IDictionary<string, object> envFileData = new Wax.Util.JsonParser(envContents).ParseAsDictionary();
                                     foreach (string envKey in envFileData.Keys)
                                     {
-                                        envFileDefinedArgs.Add(new BuildVarCanonicalized(envKey, envFileData[envKey]));
+                                        envFileDefinedArgs.Add(new BuildVar(envKey, envFileData[envKey]));
                                     }
                                 }
                                 else
@@ -143,8 +143,8 @@ namespace Build.BuildParseNodes
             item.ExtensionArgs = extensionArgs.ToArray();
 
             // Flatten build vars and env file defined vars (with the latter taking precedence)
-            Dictionary<string, BuildVarCanonicalized> flattenedVars = new Dictionary<string, BuildVarCanonicalized>();
-            foreach (BuildVarCanonicalized buildVar in buildVars.Concat(envFileDefinedArgs))
+            Dictionary<string, BuildVar> flattenedVars = new Dictionary<string, BuildVar>();
+            foreach (BuildVar buildVar in buildVars.Concat(envFileDefinedArgs))
             {
                 flattenedVars[buildVar.ID] = buildVar;
             }

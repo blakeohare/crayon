@@ -4,6 +4,6 @@
     {
         public Wax.BuildArg[] BuildArgs { get; set; }
         public Wax.ExtensionArg[] ExtensionArgs { get; set; }
-        public BuildVarCanonicalized[] BuildVars { get; set; }
+        public BuildVar[] BuildVars { get; set; }
     }
 }
