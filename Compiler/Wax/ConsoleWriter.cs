@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Router
+namespace Wax
 {
     public enum ConsoleMessageType
     {

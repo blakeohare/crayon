@@ -2,7 +2,7 @@
 
 namespace Router
 {
-    class ErrorPrinter
+    public class ErrorPrinter
     {
         public static void ShowErrors(IList<Wax.Error> errors, bool throwAnyway)
         {
@@ -31,7 +31,7 @@ namespace Router
             {
                 throw new System.Exception(finalErrorString);
             }
-            ConsoleWriter.Print(ConsoleMessageType.PARSER_ERROR, finalErrorString);
+            Wax.ConsoleWriter.Print(Wax.ConsoleMessageType.PARSER_ERROR, finalErrorString);
         }
     }
 }

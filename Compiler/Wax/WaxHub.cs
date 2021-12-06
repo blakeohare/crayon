@@ -11,6 +11,7 @@ namespace Wax
         internal List<string> ExtensionDirectories { get; private set; }
 
         public string SourceRoot { get; set; }
+        public bool ErrorsAsExceptions { get; set; }
 
         public WaxHub()
         {

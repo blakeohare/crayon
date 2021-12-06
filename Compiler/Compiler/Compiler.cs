@@ -9,7 +9,7 @@ namespace Parser
         public static InternalCompilationBundle Compile(CompileRequest compileRequest, WaxHub waxHub)
         {
             InternalCompilationBundle result;
-            if (compileRequest.ErrorsAsExceptions)
+            if (waxHub.ErrorsAsExceptions)
             {
                 result = CompileImpl(compileRequest, waxHub);
             }
