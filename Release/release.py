@@ -154,7 +154,7 @@ def copy_extensions(crayon_exe, copy_to_dir):
 		build_file = ext_src_dir + '/' + ext_name + '/' + ext_name + '.build'
 		if path_exists(build_file):
 			print("Exporting extension: " + ext_name)
-			run_command(crayon_exe + ' ' + build_file + ' -CR:cbxPath ..')
+			run_command(crayon_exe + ' ' + build_file + ' -build:cbxExportPath=..')
 			copy_file(ext_src_dir + '/' + ext_name + '.cbx', out_extensions_dir + '/' + ext_name + '.cbx')
 	
 def main(args):
@@ -328,7 +328,7 @@ def build_release(args):
 	ensure_directory_exists(temp_dir)
 	os.chdir(temp_dir)
 	
-	run_command(os.path.join('..', new_crayon_executable) + ' -genDefaultProj LibTest')
+	run_command(os.path.join('..', new_crayon_executable) + ' -ext:DefaultProject.type=basic -ext:DefaultProject.projectId=LibTest')
 	os.chdir(old_cwd)
 
 	code = []
@@ -346,6 +346,10 @@ def build_release(args):
 		print("The build output was this:")
 		print(result)
 		return
+
+	if is_windows:
+		print("Copying newCrayonProj.bat")
+		shutil.copyfile('newCrayonProject.bat', copy_to_dir + '/newCrayonProject.bat')
 
 	# Hooray, you're done!
 	log("Completed")
