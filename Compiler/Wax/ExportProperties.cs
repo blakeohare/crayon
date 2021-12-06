@@ -30,5 +30,8 @@ namespace Wax
         public string OutputDirectory { get { return this.GetString("outputDirectory"); } set { this.SetString("outputDirectory", value); } }
 
         public bool IsAndroid { get { return false; } } // TODO: fix this once the Android exporter is back
+
+        public bool SkipRun { get { return this.GetBoolean("skipRun"); } set { this.SetBoolean("skipRun", value); } }
+        public ExtensionArg[] ExtensionArgs { get { return this.GetObjectsAsType<ExtensionArg>("extensionArgs"); } set { this.SetObjects("extensionArgs", value); } }
     }
 }

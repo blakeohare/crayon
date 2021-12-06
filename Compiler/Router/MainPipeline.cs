@@ -17,6 +17,9 @@ namespace Router
 
         public static Error[] RunImpl(ToolchainCommand command, WaxHub waxHub)
         {
+            List<ExtensionArg> extensionArgs = new List<ExtensionArg>(command.ExtensionArgs);
+            bool skipRun = false;
+
             // BUILD PHASE
             NotifyStatusChange("BUILD-START");
             BuildData buildResult = null;
@@ -33,6 +36,9 @@ namespace Router
                 {
                     return buildResult.Errors;
                 }
+
+                extensionArgs = new List<ExtensionArg>(buildResult.ExportProperties.ExtensionArgs); // These include the flattened data from the command's ExtensionArgs.
+                skipRun = buildResult.ExportProperties.SkipRun;
             }
             else
             {
@@ -89,11 +95,11 @@ namespace Router
 
             // EXTENSION PHASE
             NotifyStatusChange("EXTENSIONS-START");
-            if (command.Extensions.Length == 0)
+            if (extensionArgs.Count == 0)
             {
                 NotifyStatusChange("EXTENSIONS-SKIP");
             }
-            foreach (string extensionName in command.Extensions)
+            foreach (string extensionName in extensionArgs.Select(ea => ea.Extension))
             {
                 NotifyStatusChange("EXTENSION-RUN-START:" + extensionName);
                 Dictionary<string, object> extensionRequest = new Dictionary<string, object>();
@@ -101,7 +107,7 @@ namespace Router
                 if (buildResult != null) extensionRequest["buildData"] = buildResult;
                 Dictionary<string, object> extensionDirectArgs = new Dictionary<string, object>();
                 extensionRequest["extArgs"] = extensionDirectArgs;
-                foreach (ExtensionArg extensionArg in command.ExtensionArgs.Where(extArg => extArg.Extension == extensionName && extArg.Name != null && extArg.Name.Length > 0))
+                foreach (ExtensionArg extensionArg in extensionArgs.Where(extArg => extArg.Extension == extensionName && extArg.Name != null && extArg.Name.Length > 0))
                 {
                     extensionDirectArgs[extensionArg.Name] = extensionArg.Value;
                 }
@@ -114,7 +120,7 @@ namespace Router
 
             // RUN PHASE
             NotifyStatusChange("RUN-START");
-            if (cbxFilePath != null || buildResult != null)
+            if ((cbxFilePath != null || buildResult != null) && !skipRun)
             {
                 Dictionary<string, object> runtimeRequest = new Dictionary<string, object>() {
                     { "realTimePrint", true },
