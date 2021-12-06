@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace Parser
+namespace Builder
 {
     internal class CompileRequest
     {
         private Dictionary<string, string> codeFiles;
 
-        public CompileRequest(Build.BuildContext buildContext, string sourceRoot)
+        public CompileRequest(Builder.BuildContext buildContext, string sourceRoot)
         {
             this.ProjectId = buildContext.ProjectID;
             this.DelegateMainTo = buildContext.DelegateMainTo;
-            this.CompilerLocale = Parser.Localization.Locale.Get(buildContext.CompilerLocale.ID);
+            this.CompilerLocale = Builder.Localization.Locale.Get(buildContext.CompilerLocale.ID);
             this.LocalDeps = buildContext.LocalDeps;
             this.ProjectDirectory = buildContext.ProjectDirectory;
             this.codeFiles = buildContext.GetCodeFiles();
@@ -20,14 +20,14 @@ namespace Parser
 
             foreach (string key in buildContext.BuildVariableLookup.Keys)
             {
-                Build.BuildVar buildVar = buildContext.BuildVariableLookup[key];
+                Builder.BuildVar buildVar = buildContext.BuildVariableLookup[key];
                 switch (buildVar.Type)
                 {
-                    case Build.VarType.BOOLEAN: this.AddCompileTimeBoolean(key, buildVar.BoolValue); break;
-                    case Build.VarType.FLOAT: this.AddCompileTimeFloat(key, buildVar.FloatValue); break;
-                    case Build.VarType.INT: this.AddCompileTimeInteger(key, buildVar.IntValue); break;
-                    case Build.VarType.STRING: this.AddCompileTimeString(key, buildVar.StringValue); break;
-                    case Build.VarType.NULL: throw new System.InvalidOperationException("The build variable '" + key + "' does not have a value assigned to it.");
+                    case Builder.VarType.BOOLEAN: this.AddCompileTimeBoolean(key, buildVar.BoolValue); break;
+                    case Builder.VarType.FLOAT: this.AddCompileTimeFloat(key, buildVar.FloatValue); break;
+                    case Builder.VarType.INT: this.AddCompileTimeInteger(key, buildVar.IntValue); break;
+                    case Builder.VarType.STRING: this.AddCompileTimeString(key, buildVar.StringValue); break;
+                    case Builder.VarType.NULL: throw new System.InvalidOperationException("The build variable '" + key + "' does not have a value assigned to it.");
                     default: throw new System.Exception(); // this should not happen.
                 }
             }
@@ -36,10 +36,10 @@ namespace Parser
         public bool RemoveSymbols { get; private set; }
         public string ProjectId { get; private set; }
         public string DelegateMainTo { get; private set; }
-        public Parser.Localization.Locale CompilerLocale { get; private set; }
+        public Builder.Localization.Locale CompilerLocale { get; private set; }
         public string[] LocalDeps { get; private set; }
         public string ProjectDirectory { get; private set; }
-        public Build.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
+        public Builder.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
         public string ActiveCrayonSourceRoot { get; private set; }
 
         public Dictionary<string, string> GetCodeFiles()

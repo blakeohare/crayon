@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Parser.Localization
+namespace Builder.Localization
 {
     public enum CharType
     {

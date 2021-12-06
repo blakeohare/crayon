@@ -1,8 +1,8 @@
-﻿using Parser.Resolver;
+﻿using Builder.Resolver;
 using System;
 using System.Collections.Generic;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     internal class CoreFunctionInvocation : Expression
     {
@@ -50,7 +50,7 @@ namespace Parser.ParseTree
             }
 
             this.ResolvedType =
-                this.FileScope.CompilationScope.ProgrammingLanguage == Build.ProgrammingLanguage.ACRYLIC
+                this.FileScope.CompilationScope.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC
                     ? parser.TypeContext.OBJECT
                     : parser.TypeContext.ANY;
 

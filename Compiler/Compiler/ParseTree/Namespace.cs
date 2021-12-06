@@ -1,10 +1,10 @@
-﻿using Parser.Localization;
-using Parser.Resolver;
+﻿using Builder.Localization;
+using Builder.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     // Despite being an "Executable", this isn't an executable thing.
     // It will get optimized away at resolution time.

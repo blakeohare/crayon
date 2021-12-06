@@ -1,8 +1,8 @@
-﻿using Parser.Localization;
+﻿using Builder.Localization;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     public class ExternalAssemblyMetadata
     {

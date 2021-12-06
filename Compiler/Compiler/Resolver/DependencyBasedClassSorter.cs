@@ -1,7 +1,7 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System.Collections.Generic;
 
-namespace Parser.Resolver
+namespace Builder.Resolver
 {
     // Rearranges the class definitions so that all base class declarations come first.
     // The makes metadata initialization at runtime easier.

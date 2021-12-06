@@ -1,8 +1,8 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System;
 using System.Collections.Generic;
 
-namespace Parser.Resolver
+namespace Builder.Resolver
 {
     internal static class LocalScopeVariableIdAllocator
     {

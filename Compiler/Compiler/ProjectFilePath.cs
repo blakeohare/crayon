@@ -1,6 +1,6 @@
 ﻿using Wax.Util.Disk;
 
-namespace Build
+namespace Builder
 {
     // Represents a source path root in the build file that may have an alias.
     public class ProjectFilePath

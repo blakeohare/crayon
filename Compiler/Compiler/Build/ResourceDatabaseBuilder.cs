@@ -1,11 +1,11 @@
-﻿using Build.ImageSheets;
+﻿using Builder.ImageSheets;
 using System;
 using System.Collections.Generic;
 using Wax;
 using Wax.Util.Disk;
 using Wax.Util.Images;
 
-namespace Build
+namespace Builder
 {
     public static class ResourceDatabaseBuilder
     {

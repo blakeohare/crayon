@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Parser
+namespace Builder
 {
     internal class InternalCompilationBundle
     {

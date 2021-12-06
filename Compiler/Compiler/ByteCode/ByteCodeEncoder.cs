@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Parser.ByteCode
+namespace Builder.ByteCode
 {
     internal static class ByteCodeEncoder
     {

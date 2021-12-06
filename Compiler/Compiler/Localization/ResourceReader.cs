@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.Localization
+namespace Builder.Localization
 {
     public static class ResourceReader
     {

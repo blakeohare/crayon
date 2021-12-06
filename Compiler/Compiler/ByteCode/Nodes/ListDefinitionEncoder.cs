@@ -1,7 +1,7 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 using System.Collections.Generic;
 
-namespace Parser.ByteCode.Nodes
+namespace Builder.ByteCode.Nodes
 {
     internal static class ListDefinitionEncoder
     {

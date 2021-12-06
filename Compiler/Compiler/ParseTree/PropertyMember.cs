@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     // Represents a property setter or getter.
     // I have the urge to rename this class to PropertyEtter

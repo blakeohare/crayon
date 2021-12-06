@@ -1,9 +1,9 @@
-﻿using Parser.Localization;
-using Parser.ParseTree;
+﻿using Builder.Localization;
+using Builder.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.Acrylic
+namespace Builder.Acrylic
 {
     internal class AcrylicTopLevelParser : AbstractTopLevelParser
     {

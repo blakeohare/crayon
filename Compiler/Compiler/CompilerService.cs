@@ -1,10 +1,9 @@
-﻿using Build;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Wax;
 
-namespace Compiler
+namespace Builder
 {
     public class CompilerService : WaxService
     {
@@ -82,7 +81,7 @@ namespace Compiler
             return buildContext;
         }
 
-        private static Dictionary<string, object> ActualCompilation(Parser.InternalCompilationBundle icb)
+        private static Dictionary<string, object> ActualCompilation(Builder.InternalCompilationBundle icb)
         {
             Dictionary<string, object> output = new Dictionary<string, object>();
             List<string> errors = new List<string>();
@@ -96,7 +95,7 @@ namespace Compiler
             else
             {
                 output["byteCode"] = icb.ByteCode;
-                output["depTree"] = Parser.AssemblyDependencyUtil.GetDependencyTreeJson(icb.RootScopeDependencyMetadata).Trim();
+                output["depTree"] = Builder.AssemblyDependencyUtil.GetDependencyTreeJson(icb.RootScopeDependencyMetadata).Trim();
                 output["usesU3"] = icb.AllScopesMetadata.Any(a => a.ID == "U3Direct");
                 if (icb.HasErrors)
                 {
@@ -119,9 +118,9 @@ namespace Compiler
             ResourceDatabase resDb,
             WaxHub waxHub)
         {
-            Parser.CompileRequest cr = new Parser.CompileRequest(buildContext, waxHub.SourceRoot);
+            Builder.CompileRequest cr = new Builder.CompileRequest(buildContext, waxHub.SourceRoot);
 
-            Parser.InternalCompilationBundle icb = Parser.Compiler.Compile(cr, waxHub);
+            Builder.InternalCompilationBundle icb = Builder.Compiler.Compile(cr, waxHub);
 
             // TODO: the CBX Bundle should be constructed directly from a Dictionary in this result.
             Dictionary<string, object> resultRaw = ActualCompilation(icb);

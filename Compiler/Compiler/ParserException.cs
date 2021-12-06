@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Wax;
 
-namespace Parser
+namespace Builder
 {
     internal class MultiParserException : Exception
     {
@@ -37,7 +37,7 @@ namespace Parser
         }
         public Token TokenInfo { get; set; }
 
-        internal ParserException(Parser.Localization.ErrorMessages errorType, Token token, Parser.Localization.Locale locale)
+        internal ParserException(Builder.Localization.ErrorMessages errorType, Token token, Builder.Localization.Locale locale)
             : this(token, locale.Strings.Get(errorType.ToString()))
         {
             this.TokenInfo = token;
@@ -89,7 +89,7 @@ namespace Parser
         // Throws an exception, but also returns an exception so that you can use 'throw' syntax
         // at the calling site to prevent the compiler from complaining about control flow branches
         // that aren't actually accessible.
-        internal static ParserException ThrowException(Parser.Localization.Locale locale, Parser.Localization.ErrorMessages errorType, Token token, params string[] args)
+        internal static ParserException ThrowException(Builder.Localization.Locale locale, Builder.Localization.ErrorMessages errorType, Token token, params string[] args)
         {
             throw new ParserException(token, locale.Strings.Get(errorType.ToString(), args));
         }

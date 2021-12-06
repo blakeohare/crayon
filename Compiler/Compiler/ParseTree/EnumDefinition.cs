@@ -1,9 +1,9 @@
-﻿using Parser.Localization;
-using Parser.Resolver;
+﻿using Builder.Localization;
+using Builder.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     internal class EnumDefinition : TopLevelEntity
     {

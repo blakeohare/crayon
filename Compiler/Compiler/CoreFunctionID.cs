@@ -1,6 +1,6 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 
-namespace Parser
+namespace Builder
 {
     internal enum CoreFunctionID
     {
@@ -250,14 +250,14 @@ namespace Parser
             }
         }
 
-        internal static int GetId(StringConstant str, Parser.Localization.Locale locale)
+        internal static int GetId(StringConstant str, Builder.Localization.Locale locale)
         {
             int output = GetId(str.Value);
             if (output == -1)
             {
                 throw ParserException.ThrowException(
                     locale,
-                    Parser.Localization.ErrorMessages.UNKNOWN_CORE_FUNCTION_ID,
+                    Builder.Localization.ErrorMessages.UNKNOWN_CORE_FUNCTION_ID,
                     str.FirstToken,
                     str.Value);
             }

@@ -1,8 +1,8 @@
-﻿using Parser.Resolver;
+﻿using Builder.Resolver;
 using System;
 using System.Collections.Generic;
 
-namespace Parser.ParseTree
+namespace Builder.ParseTree
 {
     internal class OpChain : Expression
     {

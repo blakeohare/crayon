@@ -1,4 +1,4 @@
-﻿namespace Parser.ParseTree
+﻿namespace Builder.ParseTree
 {
     internal class ImportStatement : Node
     {

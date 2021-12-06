@@ -4,7 +4,7 @@ using System.Linq;
 using Wax;
 using Wax.Util.Images;
 
-namespace Build.ImageSheets
+namespace Builder.ImageSheets
 {
     internal static class ImageResourceAllocator
     {

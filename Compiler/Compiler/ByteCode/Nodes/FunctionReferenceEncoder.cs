@@ -1,6 +1,6 @@
-﻿using Parser.ParseTree;
+﻿using Builder.ParseTree;
 
-namespace Parser.ByteCode.Nodes
+namespace Builder.ByteCode.Nodes
 {
     // Non-invoked function references.
     internal static class FunctionReferenceEncoder

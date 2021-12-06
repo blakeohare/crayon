@@ -1,4 +1,4 @@
-﻿namespace Parser.ByteCode
+﻿namespace Builder.ByteCode
 {
     internal enum OpCode
     {

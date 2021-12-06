@@ -1,4 +1,4 @@
-﻿namespace Build
+﻿namespace Builder
 {
     internal static class ProgrammingLanguageParser
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Build.BuildParseNodes
+namespace Builder.Build.BuildParseNodes
 {
     internal static class JsonParserForBuild
     {
