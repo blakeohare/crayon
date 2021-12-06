@@ -5,9 +5,9 @@ using Wax;
 
 namespace Builder
 {
-    public class CompilerService : WaxService
+    public class BuilderService : WaxService
     {
-        public CompilerService() : base("compiler") { }
+        public BuilderService() : base("builder") { }
 
         public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
         {

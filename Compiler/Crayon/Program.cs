@@ -36,7 +36,7 @@ namespace Crayon
             waxHub.RegisterService(new Router.RouterService());
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Runtime.RuntimeService());
-            waxHub.RegisterService(new Builder.CompilerService());
+            waxHub.RegisterService(new Builder.BuilderService());
 
             Wax.ToolchainCommand command = FlagParser.Parse(commandLineArgs);
 

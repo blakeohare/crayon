@@ -68,7 +68,7 @@ namespace Wax
             if (this.verifiedCbxPath == null)
             {
                 BuildRequest buildRequest = new BuildRequest() { BuildFile = this.buildFile };
-                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("compiler", buildRequest));
+                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("builder", buildRequest));
 
                 if (buildData.HasErrors) return buildData.Errors;
 
