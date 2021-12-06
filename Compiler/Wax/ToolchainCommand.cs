@@ -69,7 +69,7 @@ namespace Wax
         public ToolchainArg(IDictionary<string, object> data) : base(data) { }
 
         public string Name { get { return this.GetString("name"); } set { this.SetString("name", value); } }
-        public string Value { get { return this.GetString("value"); } set { this.SetString("value", Value); } }
+        public string Value { get { return this.GetString("value"); } set { this.SetString("value", value); } }
     }
 
     public class ExtensionArg : JsonBasedObject
@@ -79,7 +79,7 @@ namespace Wax
 
         public string Extension { get { return this.GetString("ext"); } set { this.SetString("ext", value); } }
         public string Name { get { return this.GetString("name"); } set { this.SetString("name", value); } }
-        public string Value { get { return this.GetString("value"); } set { this.SetString("value", Value); } }
+        public string Value { get { return this.GetString("value"); } set { this.SetString("value", value); } }
     }
 
     public class BuildArg : JsonBasedObject
@@ -88,6 +88,6 @@ namespace Wax
         public BuildArg(IDictionary<string, object> data) : base(data) { }
 
         public string Name { get { return this.GetString("name"); } set { this.SetString("name", value); } }
-        public string Value { get { return this.GetString("value"); } set { this.SetString("value", Value); } }
+        public string Value { get { return this.GetString("value") ?? ""; } set { this.SetString("value", value); } }
     }
 }

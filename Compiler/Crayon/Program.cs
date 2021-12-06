@@ -38,7 +38,7 @@ namespace Crayon
             waxHub.RegisterService(new Runtime.RuntimeService());
             waxHub.RegisterService(new Compiler.CompilerService());
 
-            Wax.ToolchainCommand command = FlagParser.Parse(args);
+            Wax.ToolchainCommand command = FlagParser.Parse(commandLineArgs);
 
             if (command.UseOutputPrefixes)
             {
