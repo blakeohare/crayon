@@ -1,4 +1,6 @@
-﻿namespace CrayonExporter {
+﻿import Json;
+
+namespace CrayonExporter {
     class BuildData : JsonBasedObject {
         constructor(data = null) : base(data) { }
 
@@ -8,6 +10,12 @@
 
         function usesU3() { return this.getBoolean('usesU3'); }
         function setUsesU3(v) { this.setBoolean('usesU3', v); }
+
+        function getDependencyTree() {
+            value = this.getString('depTreeJson');
+            if (value == null) return null;
+            return Json.parseJson(value);
+        }
 
         function getErrors() { return this.getObjects('errors', Error.class); }
         function setErrors(v) { return this.setList('errors', v); }
