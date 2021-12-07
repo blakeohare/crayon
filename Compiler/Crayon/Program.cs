@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Wax.Util.Disk;
@@ -13,6 +14,7 @@ namespace Crayon
         private const bool IS_RELEASE = true;
 #endif
 
+        [STAThread]
         static void Main(string[] args)
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
