@@ -25,22 +25,11 @@ namespace Builder
             this.ImportedAssemblyScopes = new List<CompilationScope>();
         }
 
-        public bool IsValidAssemblyNameFromLocale(Locale locale, string name)
+        public bool IsAlreadyImportedAnywhere(Locale locale, string name)
         {
-            // TODO: This is only checking if the library is available in this locale.
-            // It needs to check for all libraries.
-            // This is currently only used in slim circumstances.
-
-            Dictionary<string, object> response = this.wax.AwaitSendRequest("assembly", new Dictionary<string, object>() {
-                { "command", "GetAssemblyMetadataFromAnyPossibleKey" },
-                { "locale", locale.ID },
-                { "name", name },
-                { "localDeps", this.localDeps },
-                { "projectDir", this.projectDirectory },
-                { "includeSource", false },
+            return this.ImportedAssemblyScopes.Any(scope => {
+                return scope.Metadata.ID == name || scope.GetNamespaceNameForLocale(locale, scope.Metadata.ID) == name;
             });
-
-            return (bool)response["found"];
         }
 
         private Dictionary<string, ExternalAssemblyMetadata> assemblyCache = new Dictionary<string, ExternalAssemblyMetadata>();

@@ -86,7 +86,7 @@ namespace Builder.ParseTree
                 {
                     string name = this.FirstToken.Value;
 
-                    if (parser.ScopeManager.IsValidAssemblyNameFromLocale(this.Locale, name))
+                    if (parser.ScopeManager.IsAlreadyImportedAnywhere(this.Locale, name))
                     {
                         throw new ParserException(this, "'" + name + "' is referenced but not imported in this file.");
                     }
