@@ -32,7 +32,8 @@ namespace Crayon
             MainTask(commandLineArgs).Wait();
         }
 
-        private static async Task MainTask(string[] args) {
+        private static async Task MainTask(string[] args)
+        {
             Wax.WaxHub waxHub = new Wax.WaxHub();
 
             waxHub.SourceRoot = SourceDirectoryFinder.CrayonSourceDirectory;
@@ -42,6 +43,7 @@ namespace Crayon
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Runtime.RuntimeService());
             waxHub.RegisterService(new Builder.BuilderService());
+            waxHub.RegisterService(new U3Windows.U3Service());
 
             Wax.ToolchainCommand command = FlagParser.Parse(args);
 
