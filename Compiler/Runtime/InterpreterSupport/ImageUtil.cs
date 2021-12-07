@@ -9,7 +9,7 @@ namespace Interpreter.Vm
     {
         public static object NewBitmap(int width, int height)
         {
-            return new UniversalBitmap(width, height);
+            return new Wax.Util.Images.UniversalBitmap(width, height);
         }
 
         public static void ChunkLoadAsync(VmContext vm, Dictionary<int, object> loadedChunks, int chunkId, int[] chunkIds, Value loadedCallback)
@@ -32,8 +32,8 @@ namespace Interpreter.Vm
         public static object Scale(object rawBmp, int newWidth, int newHeight, int algo)
         {
             if (algo != 1) throw new NotImplementedException();
-            UniversalBitmap original = (UniversalBitmap)rawBmp;
-            UniversalBitmap target = new UniversalBitmap(newWidth, newHeight);
+            Wax.Util.Images.UniversalBitmap original = (Wax.Util.Images.UniversalBitmap)rawBmp;
+            Wax.Util.Images.UniversalBitmap target = new Wax.Util.Images.UniversalBitmap(newWidth, newHeight);
             target.CreateNewDrawingSession().Draw(original, 0, 0, 0, 0, newWidth, newHeight, original.Width, original.Height).Flush();
             target.ClearBuffer();
             return target;
@@ -41,27 +41,27 @@ namespace Interpreter.Vm
 
         public static object StartEditSession(object bmpObj)
         {
-            UniversalBitmap bmp = (UniversalBitmap)bmpObj;
-            UniversalBitmap.DrawingSession session = bmp.CreateNewDrawingSession();
+            Wax.Util.Images.UniversalBitmap bmp = (Wax.Util.Images.UniversalBitmap)bmpObj;
+            Wax.Util.Images.UniversalBitmap.DrawingSession session = bmp.CreateNewDrawingSession();
             return session;
         }
 
         public static void EndEditSession(object sessionObj, object bmpObj)
         {
-            UniversalBitmap.DrawingSession session = (UniversalBitmap.DrawingSession)sessionObj;
+            Wax.Util.Images.UniversalBitmap.DrawingSession session = (Wax.Util.Images.UniversalBitmap.DrawingSession)sessionObj;
             session.Flush();
         }
 
         public static void Blit(object targetObj, object srcObj, int sx, int sy, int sw, int sh, int tx, int ty, int tw, int th)
         {
-            UniversalBitmap.DrawingSession target = (UniversalBitmap.DrawingSession)targetObj;
-            UniversalBitmap src = (UniversalBitmap)srcObj;
+            Wax.Util.Images.UniversalBitmap.DrawingSession target = (Wax.Util.Images.UniversalBitmap.DrawingSession)targetObj;
+            Wax.Util.Images.UniversalBitmap src = (Wax.Util.Images.UniversalBitmap)srcObj;
             target.Draw(src, tx, ty, sx, sy, tw, th, sw, sh);
         }
 
         public static void GetPixel(object bmpRaw, object nullableEditSession, int x, int y, int[] colorOut)
         {
-            UniversalBitmap bmp = (UniversalBitmap)bmpRaw;
+            Wax.Util.Images.UniversalBitmap bmp = (Wax.Util.Images.UniversalBitmap)bmpRaw;
             if (x < 0 || y < 0 || x >= bmp.Width || y >= bmp.Height)
             {
                 colorOut[4] = 0;
@@ -75,7 +75,7 @@ namespace Interpreter.Vm
         // returns true for out of range
         public static bool SetPixel(object sessionObj, int x1, int y1, int x2, int y2, int r, int g, int b, int a)
         {
-            UniversalBitmap.DrawingSession session = (UniversalBitmap.DrawingSession)sessionObj;
+            Wax.Util.Images.UniversalBitmap.DrawingSession session = (Wax.Util.Images.UniversalBitmap.DrawingSession)sessionObj;
             if (x1 < 0 || y1 < 0 || x1 >= session.Parent.Width || y1 >= session.Parent.Height) return true;
             if (x2 < 0 || y2 < 0 || x2 >= session.Parent.Width || y2 >= session.Parent.Height) return true;
 
@@ -119,7 +119,7 @@ namespace Interpreter.Vm
 
         public static bool FromBytes(int[] bytesAsInts, int[] sizeOut, object[] nativeDataOut)
         {
-            UniversalBitmap bmp = new UniversalBitmap(bytesAsInts.Select(b => (byte)b).ToArray());
+            Wax.Util.Images.UniversalBitmap bmp = new Wax.Util.Images.UniversalBitmap(bytesAsInts.Select(b => (byte)b).ToArray());
             if (!bmp.IsValid)
             {
                 nativeDataOut[0] = null;
@@ -135,7 +135,7 @@ namespace Interpreter.Vm
 
         public static object Encode(object bmpObj, int format, bool[] formatOut)
         {
-            UniversalBitmap bmp = (UniversalBitmap)bmpObj;
+            Wax.Util.Images.UniversalBitmap bmp = (Wax.Util.Images.UniversalBitmap)bmpObj;
             byte[] bytes;
             switch (format)
             {

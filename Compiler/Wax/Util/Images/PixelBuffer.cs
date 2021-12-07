@@ -2,9 +2,9 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Interpreter
+namespace Wax.Util.Images
 {
-    internal class PixelBuffer
+    public class PixelBuffer
     {
         private int counter = 1;
         private int left = -1;

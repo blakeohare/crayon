@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Interpreter
+namespace Wax.Util.Images
 {
     public enum ImageFormat
     {
