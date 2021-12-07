@@ -35,8 +35,7 @@ namespace Wax {
         }
 
         function sendRequest(serviceId, payload, cb = null, errCb = null) {
-            if (Core.typeof(payload) != Type.DICTIONARY) throw new InvalidArgumentException("Payload must be a JSON-serializable dictionary.");
-            serializedData = Json.serializeJson(payload); // TODO: catch error here if there's a bad nested type
+            serializedData = WaxHub._serializeData(payload);
             $$$('waxSend', serviceId + '', serializedData, (err, rawData) => {
                 if (err == null) {
                     res = Json.parseJson(rawData);
@@ -47,8 +46,27 @@ namespace Wax {
                     if (errCb == null) throw new Exception(err);
                     errCb(err);
                 }
-            });
-            return null;
+            }, false);
+        }
+
+        static function _serializeData(payload) {
+            if (Core.typeof(payload) != Type.DICTIONARY) throw new InvalidArgumentException("Payload must be a JSON-serializable dictionary.");
+            serializedData = Json.serializeJson(payload); // TODO: catch error here if there's a bad nested type
+            return serializedData;
+        }
+
+        function registerListener(serviceId, payload, cb, errCb = null) {
+            if (cb == null) throw new InvalidArgumentException("Callback cannot be null");
+            serializedData = WaxHub._serializeData(payload);
+            $$$('waxSend', serviceId + '', serializedData, (err, rawData) => {
+                if (err != null) {
+                    if (errCb == null) throw new Exception(err);
+                    errCb(err);
+                } else {
+                    res = Json.parseJson(rawData);
+                    cb(res);
+                }
+            }, true);
         }
     }
 }

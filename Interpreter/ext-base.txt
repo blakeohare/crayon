@@ -56,7 +56,7 @@ EXT-TYPE: int CoreFunc_TextEncoding_ConvertTextToBytes(string value, bool includ
 
 EXT-TYPE: void CoreFunc_TimedCallback(VmContext vm, Value cb, double delay);
 
-EXT-TYPE: string CoreFunc_WaxSend(object eventLoopObj, object waxHub, string serviceId, string payloadJson, Value cb);
+EXT-TYPE: string CoreFunc_WaxSend(object eventLoopObj, object waxHub, bool isListener, string serviceId, string payloadJson, Value cb);
 
 EXT-TYPE: string UnixSocket_ClientCreate(VmContext vm, Array<object> nativeSocketOut, string path, Value onReadyCb, Value onDisonnectCb);
 EXT-TYPE: string UnixSocket_ClientSend(object nativeSocket, string msg);

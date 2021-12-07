@@ -5411,7 +5411,8 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 121:
 						// waxSend;
-						valueStackSize -= 3;
+						valueStackSize -= 4;
+						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
@@ -5419,7 +5420,7 @@ var interpretImpl = function(vm, executionContextId) {
 						prepareToSuspend(ec, stack, valueStackSize, pc);
 						ec[13] = [3, 0, "", 0.0, null];
 						hasInterrupt = true;
-						C$wax$send(vm[11][4], vm[11][6], arg1[1], arg2[1], arg3);
+						C$wax$send(vm[11][4], vm[11][6], arg4[1], arg1[1], arg2[1], arg3);
 						break;
 					case 122:
 						// waxServiceGetPayload;
