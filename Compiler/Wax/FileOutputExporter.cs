@@ -83,7 +83,7 @@ namespace Wax
             }
         }
 
-        private void ExportImageFile(string path, Bitmap image)
+        private void ExportImageFile(string path, UniversalBitmap image)
         {
             image.Save(path);
         }

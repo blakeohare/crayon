@@ -123,8 +123,8 @@ namespace Builder.ImageSheets
                 chunk.ID = chunkId++;
                 lines.Add("C," + chunk.ID + "," + chunk.Width + "," + chunk.Height);
 
-                Bitmap chunkBmp = new Bitmap(chunk.Width, chunk.Height);
-                Bitmap.Graphics g = chunkBmp.MakeGraphics();
+                UniversalBitmap chunkBmp = new UniversalBitmap(chunk.Width, chunk.Height);
+                UniversalBitmap.DrawingSession g = chunkBmp.CreateNewDrawingSession();
                 for (int i = 0; i < chunk.Images.Count; ++i)
                 {
                     Image image = chunk.Images[i];
