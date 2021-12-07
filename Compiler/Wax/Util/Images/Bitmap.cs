@@ -4,12 +4,6 @@ using Wax.Util.Disk;
 
 namespace Wax.Util.Images
 {
-    public enum ImageFormat
-    {
-        PNG,
-        JPEG,
-    }
-
     /**
      * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
      */

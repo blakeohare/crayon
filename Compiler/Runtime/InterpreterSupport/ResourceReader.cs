@@ -138,14 +138,14 @@ namespace Interpreter
             }
         }
 
-        public UniversalBitmap ReadImageResource(string path)
+        public Wax.Util.Images.UniversalBitmap ReadImageResource(string path)
         {
             IList<byte> data = ReadBytes("res/" + path);
             if (data == null)
             {
                 return null;
             }
-            return new UniversalBitmap(data.ToArray());
+            return new Wax.Util.Images.UniversalBitmap(data.ToArray());
         }
 
         public byte[] ReadSoundResource(string path)
