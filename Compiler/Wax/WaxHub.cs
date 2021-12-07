@@ -30,7 +30,7 @@ namespace Wax
             this.ExtensionDirectories.Add(path);
         }
 
-        private WaxService GetService(string serviceName)
+        public WaxService GetService(string serviceName)
         {
             if (!this.services.ContainsKey(serviceName))
             {

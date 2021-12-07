@@ -6906,7 +6906,8 @@ namespace Interpreter.Vm
                                 break;
                             case 121:
                                 // waxSend;
-                                valueStackSize -= 3;
+                                valueStackSize -= 4;
+                                arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
@@ -6914,7 +6915,7 @@ namespace Interpreter.Vm
                                 prepareToSuspend(ec, stack, valueStackSize, pc);
                                 ec.activeInterrupt = new Interrupt(3, 0, "", 0.0, null);
                                 hasInterrupt = true;
-                                CoreFunctions.WaxSend(vm.environment.platformEventLoop, vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, arg3);
+                                CoreFunctions.WaxSend(vm.environment.platformEventLoop, vm.environment.waxHub, (bool)arg4.internalValue, (string)arg1.internalValue, (string)arg2.internalValue, arg3);
                                 break;
                             case 122:
                                 // waxServiceGetPayload;
