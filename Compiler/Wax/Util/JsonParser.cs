@@ -138,18 +138,13 @@ namespace Wax.Util
                         default: break;
                     }
 
-                    if (c >= '0' && c <= '9')
+                    if ((c >= '0' && c <= '9') || c == '-' || c == '.')
                     {
                         if (tokenValue.Contains('.'))
                         {
                             return this.ParseFloat(tokens.Pop());
                         }
                         return this.ParseInteger(tokens.Pop());
-                    }
-
-                    if (c == '.')
-                    {
-                        return this.ParseFloat(tokens.Pop());
                     }
 
                     throw tokens.Pop().Throw("Unrecognized/unexpected value: '" + tokenValue + "'");
