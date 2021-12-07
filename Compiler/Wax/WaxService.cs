@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Wax
@@ -13,6 +14,7 @@ namespace Wax
         public string Name { get; set; }
         public WaxHub Hub { get; set; }
         public abstract Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request);
+        public virtual void RegisterListener(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> callback) { }
 
         public Task<Dictionary<string, object>> SendRequest(string serviceName, Dictionary<string, object> request)
         {
