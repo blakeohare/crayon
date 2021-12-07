@@ -87,14 +87,19 @@ namespace Runtime
             {
                 Interpreter.Vm.CrayonWrapper.vmEnableLibStackTrace(vm);
             }
+            TaskCompletionSource<Dictionary<string, object>> tcs = new TaskCompletionSource<Dictionary<string, object>>();
 
-            new Interpreter.Vm.EventLoop(vm).StartInterpreter();
+            Interpreter.Vm.EventLoop eventLoop = new Interpreter.Vm.EventLoop(vm, () =>
+            {
+                string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm) ?? "{}";
+                Dictionary<string, object> taskResponse = new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary());
+                tcs.SetResult(taskResponse);
 
-            string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm);
+                return true;
+            });
 
-            return Task.FromResult(response == null
-                ? new Dictionary<string, object>()
-                : new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary()));
+            eventLoop.StartInterpreter();
+            return tcs.Task;
         }
     }
 }

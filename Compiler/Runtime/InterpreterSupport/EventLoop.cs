@@ -8,10 +8,12 @@ namespace Interpreter.Vm
     public class EventLoop
     {
         private VmContext vm;
+        private Func<bool> completionCallback;
 
-        public EventLoop(VmContext vm)
+        public EventLoop(VmContext vm, Func<bool> completionCallback)
         {
             this.vm = vm;
+            this.completionCallback = completionCallback;
             CrayonWrapper.vmSetEventLoopObj(vm, this);
         }
 
@@ -207,6 +209,12 @@ namespace Interpreter.Vm
                 case 7: // BREAKPOINT
                     // do nothing
                     break;
+            }
+
+            if (!this.eventLoopAlive && this.completionCallback != null)
+            {
+                this.completionCallback();
+                this.completionCallback = null;
             }
         }
 
