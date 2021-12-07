@@ -101,7 +101,7 @@ namespace Builder
         REFLECT_GET_CLASS = 39,
         REFLECT_GET_METHODS = 38,
         REFLECT_NAMESPACE_FUNCTIONS = 120,
-        RESOURCE_GET_BYTES = 125,
+        RESOURCE_GET_BYTES = 124,
         RESOURCE_GET_MANIFEST = 50,
         RESOURCE_GET_TEXT = 51,
         SET_NATIVE_DATA = 35,
@@ -116,13 +116,12 @@ namespace Builder
         TYPE_OF = 4,
         TYPE_IS = 5,
         VALUE_TO_FLOAT_OR_NULL = 111,
-        WAX_AWAIT_SEND = 121,
-        WAX_SEND = 122,
-        WAX_SERVICE_GET_PAYLOAD = 123,
-        WAX_SERVICE_SEND_RESPONSE = 124,
+        WAX_SEND = 121,
+        WAX_SERVICE_GET_PAYLOAD = 122,
+        WAX_SERVICE_SEND_RESPONSE = 123,
         XML_PARSE = 84,
 
-        // Next ID: 126
+        // Next ID: 125
     }
 
     internal static class CoreFunctionIDHelper
@@ -242,7 +241,6 @@ namespace Builder
                 case "ipcUnixSocketClientSend": return (int)CoreFunctionID.IPC_UNIX_SOCKET_CLIENT_SEND;
                 case "ipcUnixSocketServerDisconnect": return (int)CoreFunctionID.IPC_UNIX_SOCKET_SERVER_DISCONNECT;
                 case "reflectNamespaceFunctions": return (int)CoreFunctionID.REFLECT_NAMESPACE_FUNCTIONS;
-                case "waxAwaitSend": return (int)CoreFunctionID.WAX_AWAIT_SEND;
                 case "waxSend": return (int)CoreFunctionID.WAX_SEND;
                 case "waxServiceGetPayload": return (int)CoreFunctionID.WAX_SERVICE_GET_PAYLOAD;
                 case "waxServiceSendResponse": return (int)CoreFunctionID.WAX_SERVICE_SEND_RESPONSE;

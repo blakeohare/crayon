@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wax.Util.Disk;
 
 namespace Crayon
@@ -28,6 +29,10 @@ namespace Crayon
                 return;
             }
 
+            MainTask(commandLineArgs).Wait();
+        }
+
+        private static async Task MainTask(string[] args) {
             Wax.WaxHub waxHub = new Wax.WaxHub();
 
             waxHub.SourceRoot = SourceDirectoryFinder.CrayonSourceDirectory;
@@ -38,7 +43,7 @@ namespace Crayon
             waxHub.RegisterService(new Runtime.RuntimeService());
             waxHub.RegisterService(new Builder.BuilderService());
 
-            Wax.ToolchainCommand command = FlagParser.Parse(commandLineArgs);
+            Wax.ToolchainCommand command = FlagParser.Parse(args);
 
             if (command.UseOutputPrefixes)
             {
@@ -50,7 +55,8 @@ namespace Crayon
                 waxHub.RegisterExtensionDirectory(directory);
             }
 
-            Dictionary<string, object> result = waxHub.AwaitSendRequest("router", command);
+            Dictionary<string, object> result = await waxHub.SendRequest("router", command);
+
             Wax.Error[] errors = Wax.Error.GetErrorsFromResult(result);
 
             if (command.UseJsonOutput)

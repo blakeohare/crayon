@@ -5410,43 +5410,27 @@ var interpretImpl = function(vm, executionContextId) {
 						output = buildBoolean(globals, bool1);
 						break;
 					case 121:
-						// waxAwaitSend;
-						valueStackSize -= 3;
-						arg3 = valueStack[(valueStackSize + 2)];
-						arg2 = valueStack[(valueStackSize + 1)];
-						arg1 = valueStack[valueStackSize];
-						stringList = PST$createNewArray(1);
-						string1 = C$wax$awaitSend(vm[11][6], arg1[1], arg2[1], stringList);
-						if ((stringList[0] != null)) {
-							setItemInList(arg3[1], 0, buildString(globals, stringList[0]));
-							output = vm[14];
-						} else {
-							output = buildString(globals, string1);
-						}
-						break;
-					case 122:
 						// waxSend;
 						valueStackSize -= 3;
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = C$wax$send(vm[11][6], arg1[1], arg2[1], arg4);
-						if ((string1 != null)) {
-							output = buildString(globals, string1);
-						} else {
-							output = vm[14];
-						}
+						output = vm[14];
+						prepareToSuspend(ec, stack, valueStackSize, pc);
+						ec[13] = [3, 0, "", 0.0, null];
+						hasInterrupt = true;
+						C$wax$send(vm[11][4], vm[11][6], arg1[1], arg2[1], arg3);
 						break;
-					case 123:
+					case 122:
 						// waxServiceGetPayload;
 						output = buildString(globals, vm[11][7]);
 						break;
-					case 124:
+					case 123:
 						// waxServiceSendResponse;
 						arg1 = valueStack[--valueStackSize];
 						vm[11][8] = arg1[1];
 						break;
-					case 125:
+					case 124:
 						// resourceGetBytes;
 						valueStackSize -= 4;
 						arg4 = valueStack[(valueStackSize + 3)];

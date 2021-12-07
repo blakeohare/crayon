@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wax;
 
 namespace Builder
@@ -9,13 +10,13 @@ namespace Builder
     {
         public BuilderService() : base("builder") { }
 
-        public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
+        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
-            BuildData result = this.HandleRequestImpl(new BuildRequest(request));
-            cb(result.GetRawData());
+            BuildData result = await this.HandleRequestImpl(new BuildRequest(request));
+            return result.GetRawData();
         }
 
-        private BuildData HandleRequestImpl(BuildRequest request)
+        private async Task<BuildData> HandleRequestImpl(BuildRequest request)
         {
             BuildContext buildContext = GetBuildContext(
                 request.BuildFile,
@@ -26,7 +27,7 @@ namespace Builder
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
-            BuildData buildData = Compile(buildContext, resourceDatabase, this.Hub);
+            BuildData buildData = await Compile(buildContext, resourceDatabase, this.Hub);
 
             buildData.ExportProperties = BuildExportRequest(buildContext);
             buildData.ExportProperties.ExportPlatform = buildContext.Platform;
@@ -113,14 +114,14 @@ namespace Builder
             return output;
         }
 
-        private static BuildData Compile(
+        private static async Task<BuildData> Compile(
             BuildContext buildContext,
             ResourceDatabase resDb,
             WaxHub waxHub)
         {
-            Builder.CompileRequest cr = new Builder.CompileRequest(buildContext, waxHub.SourceRoot);
+            CompileRequest cr = new CompileRequest(buildContext, waxHub.SourceRoot);
 
-            Builder.InternalCompilationBundle icb = Builder.Compiler.Compile(cr, waxHub);
+            InternalCompilationBundle icb = await Compiler.Compile(cr, waxHub);
 
             // TODO: the CBX Bundle should be constructed directly from a Dictionary in this result.
             Dictionary<string, object> resultRaw = ActualCompilation(icb);

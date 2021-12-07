@@ -1,23 +1,24 @@
 ﻿using Builder.ByteCode;
 using Builder.ParseTree;
+using System.Threading.Tasks;
 using Wax;
 
 namespace Builder
 {
     internal static class Compiler
     {
-        public static InternalCompilationBundle Compile(CompileRequest compileRequest, WaxHub waxHub)
+        public static async Task<InternalCompilationBundle> Compile(CompileRequest compileRequest, WaxHub waxHub)
         {
             InternalCompilationBundle result;
             if (waxHub.ErrorsAsExceptions)
             {
-                result = CompileImpl(compileRequest, waxHub);
+                result = await CompileImpl(compileRequest, waxHub);
             }
             else
             {
                 try
                 {
-                    result = CompileImpl(compileRequest, waxHub);
+                    result = await CompileImpl(compileRequest, waxHub);
                 }
                 catch (MultiParserException multiException)
                 {
@@ -44,10 +45,10 @@ namespace Builder
             return result;
         }
 
-        private static InternalCompilationBundle CompileImpl(CompileRequest compileRequest, Wax.WaxHub waxHub)
+        private static async Task<InternalCompilationBundle> CompileImpl(CompileRequest compileRequest, Wax.WaxHub waxHub)
         {
             ParserContext parserContext = new ParserContext(compileRequest, waxHub);
-            TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
+            TopLevelEntity[] resolvedParseTree = await parserContext.ParseAllTheThings();
 
             ByteCodeCompiler bcc = new ByteCodeCompiler();
             ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);
