@@ -56,10 +56,9 @@ namespace Builder
         // The localized view is an external view of a library, whereas this
         // is the actual compilation of the internal localization data.
         private Dictionary<string, string> getNamespaceNameForLocaleCache = new Dictionary<string, string>();
-        internal string GetNamespaceNameForLocale(Locale locale, Namespace ns)
+        internal string GetNamespaceNameForLocale(Locale locale, string namespaceFullyQualifiedDefaultName)
         {
-            string fullyQualifiedDefaultName = ns.FullyQualifiedDefaultName;
-            string key = locale.ID + ":" + fullyQualifiedDefaultName;
+            string key = locale.ID + ":" + namespaceFullyQualifiedDefaultName;
             if (!this.getNamespaceNameForLocaleCache.ContainsKey(key))
             {
                 Dictionary<string, NamespaceReferenceTemplate> lookup = this.namespaceFlattener.GetLookup(locale);

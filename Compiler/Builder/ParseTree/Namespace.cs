@@ -57,7 +57,7 @@ namespace Builder.ParseTree
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            return this.FileScope.CompilationScope.GetNamespaceNameForLocale(locale, this);
+            return this.FileScope.CompilationScope.GetNamespaceNameForLocale(locale, this.FullyQualifiedDefaultName);
         }
 
         internal override void Resolve(ParserContext parser)
