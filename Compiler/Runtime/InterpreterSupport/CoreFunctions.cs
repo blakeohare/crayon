@@ -400,25 +400,42 @@ namespace Interpreter.Vm
             bgWorker.RunWorkerAsync();
         }
 
-        public static void WaxSend(object eventLoopObj, object waxHubObj, string serviceId, string payloadJson, Value callback)
+        public static void WaxSend(object eventLoopObj, object waxHubObj, bool isListener, string serviceId, string payloadJson, Value callback)
         {
             Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
             EventLoop eventLoop = (EventLoop)eventLoopObj;
             Dictionary<string, object> payload = new Dictionary<string, object>(new Wax.Util.JsonParser(payloadJson).ParseAsDictionary());
 
-            waxHub.SendRequest(serviceId, payload).ContinueWith(responseTask =>
+            if (waxHub.GetService(serviceId) == null)
             {
-                object[] callbackArgs = new object[] { null, null };
-                if (responseTask.IsFaulted)
+                eventLoop.ExecuteFunctionPointerNativeArgs(callback, new object[] { "The service '" + serviceId + "' does not exist.", null });
+            }
+            else if (isListener)
+            {
+                waxHub.RegisterListener(serviceId, payload, (data) =>
                 {
-                    callbackArgs[0] = responseTask.Exception.Message;
-                }
-                else
+                    object[] callbackArgs = new object[] { null, null };
+                    callbackArgs[1] = Wax.Util.JsonUtil.SerializeJson(data);
+                    eventLoop.ExecuteFunctionPointerNativeArgs(callback, callbackArgs);
+                    return true;
+                });
+            }
+            else
+            {
+                waxHub.SendRequest(serviceId, payload).ContinueWith(responseTask =>
                 {
-                    callbackArgs[1] = new Wax.JsonBasedObject(responseTask.Result).ToJson();
-                }
-                eventLoop.ExecuteFunctionPointerNativeArgs(callback, callbackArgs);
-            });
+                    object[] callbackArgs = new object[] { null, null };
+                    if (responseTask.IsFaulted)
+                    {
+                        callbackArgs[0] = responseTask.Exception.Message;
+                    }
+                    else
+                    {
+                        callbackArgs[1] = Wax.Util.JsonUtil.SerializeJson(responseTask.Result);
+                    }
+                    eventLoop.ExecuteFunctionPointerNativeArgs(callback, callbackArgs);
+                });
+            }
         }
     }
 }
