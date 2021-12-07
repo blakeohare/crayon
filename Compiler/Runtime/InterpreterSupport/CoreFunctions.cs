@@ -400,25 +400,25 @@ namespace Interpreter.Vm
             bgWorker.RunWorkerAsync();
         }
 
-        public static string WaxAwaitSend(object waxHubObj, string serviceId, string payloadJson, string[] errOut)
+        public static void WaxSend(object eventLoopObj, object waxHubObj, string serviceId, string payloadJson, Value callback)
         {
             Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
-            try
-            {
-                Dictionary<string, object> result = waxHub.AwaitSendRequest(serviceId, new Dictionary<string, object>(new Wax.Util.JsonParser(payloadJson).ParseAsDictionary()));
-                return new Wax.JsonBasedObject(result).ToJson();
-            }
-            catch (InvalidOperationException ioe)
-            {
-                errOut[0] = ioe.Message;
-                return null;
-            }
-        }
+            EventLoop eventLoop = (EventLoop)eventLoopObj;
+            Dictionary<string, object> payload = new Dictionary<string, object>(new Wax.Util.JsonParser(payloadJson).ParseAsDictionary());
 
-        public static string WaxSend(object waxHubObj, string serviceId, string payloadJson, Value callback)
-        {
-            Wax.WaxHub waxHub = (Wax.WaxHub)waxHubObj;
-            throw new NotImplementedException();
+            waxHub.SendRequest(serviceId, payload).ContinueWith(responseTask =>
+            {
+                object[] callbackArgs = new object[] { null, null };
+                if (responseTask.IsFaulted)
+                {
+                    callbackArgs[0] = responseTask.Exception.Message;
+                }
+                else
+                {
+                    callbackArgs[1] = new Wax.JsonBasedObject(responseTask.Result).ToJson();
+                }
+                eventLoop.ExecuteFunctionPointerNativeArgs(callback, callbackArgs);
+            });
         }
     }
 }

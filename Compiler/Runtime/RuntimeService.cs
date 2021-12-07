@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Wax;
 using Wax.Util.Disk;
 
@@ -8,7 +9,7 @@ namespace Runtime
     {
         public RuntimeService() : base("runtime") { }
 
-        public override void HandleRequest(Dictionary<string, object> request, System.Func<Dictionary<string, object>, bool> cb)
+        public override Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             bool realTimePrint = (bool)request["realTimePrint"];
             bool showLibStack = (bool)request["showLibStack"];
@@ -64,10 +65,10 @@ namespace Runtime
                 extensionArgsJson = (string)request["extArgsJson"];
             }
 
-            cb(this.RunInlineVm(args, extensionArgsJson, cbxBundle, showLibStack, useOutputPrefixes, resourceReader));
+            return this.RunInlineVm(args, extensionArgsJson, cbxBundle, showLibStack, useOutputPrefixes, resourceReader);
         }
 
-        private Dictionary<string, object> RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
+        private Task<Dictionary<string, object>> RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
         {
             string byteCode = cbxBundle.ByteCode;
             string resourceManifest = cbxBundle.ResourceDB.ResourceManifestFile.TextContent;
@@ -90,8 +91,10 @@ namespace Runtime
             new Interpreter.Vm.EventLoop(vm).StartInterpreter();
 
             string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm);
-            if (response == null) return new Dictionary<string, object>();
-            return new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary());
+
+            return Task.FromResult(response == null
+                ? new Dictionary<string, object>()
+                : new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary()));
         }
     }
 }

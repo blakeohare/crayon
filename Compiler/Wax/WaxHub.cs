@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Wax
 {
@@ -41,12 +42,12 @@ namespace Wax
             return this.services[serviceName];
         }
 
-        public Dictionary<string, object> AwaitSendRequest(string serviceName, JsonBasedObject request)
+        public Task<Dictionary<string, object>> SendRequest(string serviceName, JsonBasedObject request)
         {
-            return AwaitSendRequest(serviceName, request.GetRawData());
+            return SendRequest(serviceName, request.GetRawData());
         }
 
-        public Dictionary<string, object> AwaitSendRequest(
+        public async Task<Dictionary<string, object>> SendRequest(
             string serviceName,
             Dictionary<string, object> request)
         {
@@ -60,16 +61,7 @@ namespace Wax
                 throw new InvalidOperationException("The extension '" + serviceName + "' could not be found or downloaded.");
             }
 
-            service.HandleRequest(
-                immutableEnsuredCopy,
-                response =>
-                {
-                    responsePtr.Add(response);
-                    return true;
-                });
-
-            if (responsePtr.Count == 0) throw new NotImplementedException();
-            return responsePtr[0];
+            return await service.HandleRequest(immutableEnsuredCopy);
         }
 
         internal static string SerializeWireData(Dictionary<string, object> data)

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Wax
 {
@@ -42,16 +42,15 @@ namespace Wax
             }
         }
 
-        public override void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb)
+        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
-            Error[] errors = this.EnsureReady() ?? new Error[0];
+            Error[] errors = await this.EnsureReady() ?? new Error[0];
             if (errors.Length > 0)
             {
-                cb(new Dictionary<string, object>() { { "errors", errors } });
-                return;
+                return new Dictionary<string, object>() { { "errors", errors } };
             }
 
-            Dictionary<string, object> result = this.Hub.AwaitSendRequest("runtime", new Dictionary<string, object>() {
+            return await this.Hub.SendRequest("runtime", new Dictionary<string, object>() {
                 { "cbxPath", this.verifiedCbxPath },
                 { "args", new string[0] },
                 { "extArgsJson", Util.JsonUtil.SerializeJson(request) },
@@ -59,16 +58,14 @@ namespace Wax
                 { "realTimePrint", true },
                 { "useOutputPrefixes", false },
             });
-
-            cb(result);
         }
 
-        private Error[] EnsureReady()
+        private async Task<Error[]> EnsureReady()
         {
             if (this.verifiedCbxPath == null)
             {
                 BuildRequest buildRequest = new BuildRequest() { BuildFile = this.buildFile };
-                BuildData buildData = new BuildData(this.Hub.AwaitSendRequest("builder", buildRequest));
+                BuildData buildData = new BuildData(await this.Hub.SendRequest("builder", buildRequest));
 
                 if (buildData.HasErrors) return buildData.Errors;
 
@@ -76,7 +73,7 @@ namespace Wax
                 System.IO.File.WriteAllBytes(this.expectedCbxPath, cbxBytes);
                 this.verifiedCbxPath = this.expectedCbxPath;
             }
-            return null;
+            return new Error[0];
         }
     }
 }

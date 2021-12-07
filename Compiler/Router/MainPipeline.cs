@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wax;
 using Wax.Util.Disk;
 
@@ -7,15 +8,15 @@ namespace Router
 {
     internal static class MainPipeline
     {
-        public static Error[] Run(ToolchainCommand command, WaxHub waxHub)
+        public static async Task<Error[]> Run(ToolchainCommand command, WaxHub waxHub)
         {
             NotifyStatusChange("TOOLCHAIN-START");
-            Error[] errors = RunImpl(command, waxHub);
+            Error[] errors = await RunImpl(command, waxHub);
             NotifyStatusChange("TOOLCHAIN-END");
             return errors;
         }
 
-        public static Error[] RunImpl(ToolchainCommand command, WaxHub waxHub)
+        public static async Task<Error[]> RunImpl(ToolchainCommand command, WaxHub waxHub)
         {
             List<ExtensionArg> extensionArgs = new List<ExtensionArg>(command.ExtensionArgs);
             bool skipRun = command.SkipRun;
@@ -25,7 +26,7 @@ namespace Router
             BuildData buildResult = null;
             if (command.BuildFile != null)
             {
-                buildResult = new BuildData(waxHub.AwaitSendRequest("builder", new BuildRequest()
+                buildResult = new BuildData(await waxHub.SendRequest("builder", new BuildRequest()
                 {
                     BuildFile = command.BuildFile,
                     BuildTarget = command.BuildTarget,
@@ -111,7 +112,7 @@ namespace Router
                 {
                     extensionDirectArgs[extensionArg.Name] = extensionArg.Value;
                 }
-                Dictionary<string, object> extensionResult = waxHub.AwaitSendRequest(extensionName, extensionRequest);
+                Dictionary<string, object> extensionResult = await waxHub.SendRequest(extensionName, extensionRequest);
                 Error[] extensionErrors = Error.GetErrorList(extensionResult);
                 if (extensionErrors.Length > 0) return extensionErrors;
                 NotifyStatusChange("EXTENSION-RUN-END:" + extensionName);
@@ -136,7 +137,7 @@ namespace Router
                 {
                     runtimeRequest["cbxPath"] = cbxFilePath;
                 }
-                Dictionary<string, object> runtimeResult = waxHub.AwaitSendRequest("runtime", runtimeRequest);
+                Dictionary<string, object> runtimeResult = await waxHub.SendRequest("runtime", runtimeRequest);
                 // TODO: return errors
             }
             else

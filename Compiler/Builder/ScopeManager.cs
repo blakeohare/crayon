@@ -1,6 +1,7 @@
 ﻿using Builder.Localization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Builder
 {
@@ -33,13 +34,13 @@ namespace Builder
         }
 
         private Dictionary<string, ExternalAssemblyMetadata> assemblyCache = new Dictionary<string, ExternalAssemblyMetadata>();
-        private ExternalAssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string localeId, string name)
+        private async Task<ExternalAssemblyMetadata> GetAssemblyMetadataFromAnyPossibleKey(string localeId, string name)
         {
             string key = (localeId == null || localeId == "") ? name : (localeId + ":" + name);
             if (!this.assemblyCache.ContainsKey(key))
             {
 
-                Dictionary<string, object> response = this.wax.AwaitSendRequest("assembly", new Dictionary<string, object>() {
+                Dictionary<string, object> response = await this.wax.SendRequest("assembly", new Dictionary<string, object>() {
                     { "command", "GetAssemblyMetadataFromAnyPossibleKey" },
                     { "locale", localeId },
                     { "name", name },
@@ -77,16 +78,16 @@ namespace Builder
             return this.assemblyCache[key];
         }
 
-        internal LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
+        internal async Task<LocalizedAssemblyView> GetCoreLibrary(ParserContext parser)
         {
-            ExternalAssemblyMetadata coreLib = this.GetAssemblyMetadataFromAnyPossibleKey("en", "Core");
+            ExternalAssemblyMetadata coreLib = await this.GetAssemblyMetadataFromAnyPossibleKey("en", "Core");
             string name = coreLib.GetName(parser.CurrentLocale);
-            return this.GetOrImportAssembly(parser, null, name);
+            return await this.GetOrImportAssembly(parser, null, name);
         }
 
-        internal LocalizedAssemblyView GetOrImportAssembly(ParserContext parser, Token throwToken, string fullImportNameWithDots)
+        internal async Task<LocalizedAssemblyView> GetOrImportAssembly(ParserContext parser, Token throwToken, string fullImportNameWithDots)
         {
-            LocalizedAssemblyView asmView = this.GetOrImportAssemblyImpl(parser, throwToken, fullImportNameWithDots);
+            LocalizedAssemblyView asmView = await this.GetOrImportAssemblyImpl(parser, throwToken, fullImportNameWithDots);
             if (asmView != null && asmView.Scope != parser.CurrentScope)
             {
                 parser.CurrentScope.AddDependency(throwToken, asmView);
@@ -94,19 +95,19 @@ namespace Builder
             return asmView;
         }
 
-        private LocalizedAssemblyView GetOrImportAssemblyImpl(ParserContext parser, Token throwToken, string fullImportNameWithDots)
+        private async Task<LocalizedAssemblyView> GetOrImportAssemblyImpl(ParserContext parser, Token throwToken, string fullImportNameWithDots)
         {
             // TODO: allow importing from a user-specified locale
             Locale fromLocale = parser.CurrentLocale;
             string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
 
             string secondAttemptedKey = name;
-            ExternalAssemblyMetadata assemblyMetadata = this.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID, name);
+            ExternalAssemblyMetadata assemblyMetadata = await this.GetAssemblyMetadataFromAnyPossibleKey(fromLocale.ID, name);
             Locale effectiveLocale = fromLocale;
 
             if (assemblyMetadata == null)
             {
-                assemblyMetadata = this.GetAssemblyMetadataFromAnyPossibleKey(null, name);
+                assemblyMetadata = await this.GetAssemblyMetadataFromAnyPossibleKey(null, name);
                 if (assemblyMetadata != null &&
                     assemblyMetadata.SupportedLocales.Contains(fromLocale) &&
                     assemblyMetadata.InternalLocale != fromLocale)
@@ -173,7 +174,7 @@ namespace Builder
             {
                 string fakeName = "[" + file + "]";
                 string code = sourceCode[file];
-                parser.ParseFile(fakeName, code);
+                await parser.ParseFile(fakeName, code);
             }
             parser.PopScope();
 

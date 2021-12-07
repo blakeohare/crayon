@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Router
 {
@@ -7,36 +8,31 @@ namespace Router
     {
         public RouterService() : base("router") { }
 
-        public override void HandleRequest(
-            Dictionary<string, object> request,
-            Func<Dictionary<string, object>, bool> cb)
+        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             Wax.ToolchainCommand command = new Wax.ToolchainCommand(request);
-            Dictionary<string, object> result;
             if (this.Hub.ErrorsAsExceptions)
             {
-                result = this.HandleRequestImpl(command);
+                return await this.HandleRequestImpl(command);
             }
             else
             {
                 try
                 {
-                    result = this.HandleRequestImpl(command);
+                    return await this.HandleRequestImpl(command);
                 }
                 catch (InvalidOperationException ioe)
                 {
-                    result = new Dictionary<string, object>() {
+                    return new Dictionary<string, object>() {
                         { "errors", new Wax.Error[] { new Wax.Error { Message = ioe.Message } } }
                     };
                 }
             }
-
-            cb(result);
         }
 
-        private Dictionary<string, object> HandleRequestImpl(Wax.ToolchainCommand command)
+        private async Task<Dictionary<string, object>> HandleRequestImpl(Wax.ToolchainCommand command)
         {
-            Wax.Error[] errors = MainPipeline.Run(command, this.Hub) ?? new Wax.Error[0];
+            Wax.Error[] errors = await MainPipeline.Run(command, this.Hub) ?? new Wax.Error[0];
             return new Dictionary<string, object>() { { "errors", errors } };
         }
     }

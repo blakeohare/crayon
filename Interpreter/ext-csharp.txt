@@ -56,8 +56,7 @@ EXT: CoreFunc_TextEncoding_ConvertTextToBytes: TextEncodingHelper.TextToBytes([A
 
 EXT: CoreFunc_TimedCallback: TranslationHelper.GetEventLoop([ARG:1]).ExecuteFunctionPointerWithDelay([ARG:2], [ARG:3])
 
-EXT: CoreFunc_WaxAwaitSend: CoreFunctions.WaxAwaitSend([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-EXT: CoreFunc_WaxSend: CoreFunctions.WaxSend([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: CoreFunc_WaxSend: CoreFunctions.WaxSend([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 
 EXT: UnixSocket_ClientCreate: CoreFunctions.UnixSocketClientCreate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: UnixSocket_ClientSend: CoreFunctions.UnixSocketClientSend([ARG:1], [ARG:2])
