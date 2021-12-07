@@ -6905,49 +6905,27 @@ namespace Interpreter.Vm
                                 output = buildBoolean(globals, bool1);
                                 break;
                             case 121:
-                                // waxAwaitSend;
-                                valueStackSize -= 3;
-                                arg3 = valueStack[(valueStackSize + 2)];
-                                arg2 = valueStack[(valueStackSize + 1)];
-                                arg1 = valueStack[valueStackSize];
-                                stringList = new string[1];
-                                string1 = CoreFunctions.WaxAwaitSend(vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, stringList);
-                                if ((stringList[0] != null))
-                                {
-                                    setItemInList((ListImpl)arg3.internalValue, 0, buildString(globals, stringList[0]));
-                                    output = vm.globalNull;
-                                }
-                                else
-                                {
-                                    output = buildString(globals, string1);
-                                }
-                                break;
-                            case 122:
                                 // waxSend;
                                 valueStackSize -= 3;
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = CoreFunctions.WaxSend(vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, arg4);
-                                if ((string1 != null))
-                                {
-                                    output = buildString(globals, string1);
-                                }
-                                else
-                                {
-                                    output = vm.globalNull;
-                                }
+                                output = vm.globalNull;
+                                prepareToSuspend(ec, stack, valueStackSize, pc);
+                                ec.activeInterrupt = new Interrupt(3, 0, "", 0.0, null);
+                                hasInterrupt = true;
+                                CoreFunctions.WaxSend(vm.environment.platformEventLoop, vm.environment.waxHub, (string)arg1.internalValue, (string)arg2.internalValue, arg3);
                                 break;
-                            case 123:
+                            case 122:
                                 // waxServiceGetPayload;
                                 output = buildString(globals, vm.environment.waxPayload);
                                 break;
-                            case 124:
+                            case 123:
                                 // waxServiceSendResponse;
                                 arg1 = valueStack[--valueStackSize];
                                 vm.environment.waxResponse = (string)arg1.internalValue;
                                 break;
-                            case 125:
+                            case 124:
                                 // resourceGetBytes;
                                 valueStackSize -= 4;
                                 arg4 = valueStack[(valueStackSize + 3)];

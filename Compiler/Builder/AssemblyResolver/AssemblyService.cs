@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AssemblyResolver
 {
@@ -20,9 +21,7 @@ namespace AssemblyResolver
             return this.assemblyFinderCache[finderKey];
         }
 
-        public override void HandleRequest(
-            Dictionary<string, object> request,
-            Func<Dictionary<string, object>, bool> cb)
+        public override Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             switch ((string)request["command"])
             {
@@ -68,8 +67,10 @@ namespace AssemblyResolver
                         }
                     }
 
-                    cb(output);
-                    return;
+                    return Task.FromResult(output);
+
+                default:
+                    throw new NotImplementedException();
             }
         }
     }

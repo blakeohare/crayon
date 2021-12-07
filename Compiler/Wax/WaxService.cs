@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Wax
 {
@@ -12,11 +12,11 @@ namespace Wax
 
         public string Name { get; set; }
         public WaxHub Hub { get; set; }
-        public abstract void HandleRequest(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> cb);
+        public abstract Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request);
 
-        public Dictionary<string, object> AwaitSendRequest(string serviceName, Dictionary<string, object> request)
+        public Task<Dictionary<string, object>> SendRequest(string serviceName, Dictionary<string, object> request)
         {
-            return this.Hub.AwaitSendRequest(serviceName, request);
+            return this.Hub.SendRequest(serviceName, request);
         }
     }
 }

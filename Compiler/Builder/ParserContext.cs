@@ -4,6 +4,7 @@ using Builder.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Builder
 {
@@ -319,7 +320,7 @@ namespace Builder
             return output.ToArray();
         }
 
-        public TopLevelEntity[] ParseAllTheThings()
+        public async Task<TopLevelEntity[]> ParseAllTheThings()
         {
             Dictionary<string, string> files = this.CompileRequest.GetCodeFiles();
 
@@ -336,11 +337,11 @@ namespace Builder
             {
                 string code = files[fileName];
 #if DEBUG
-                this.ParseFile(fileName, code);
+                await this.ParseFile(fileName, code);
 #else
                 try
                 {
-                    this.ParseFile(fileName, code);
+                    await this.ParseFile(fileName, code);
                 }
                 catch (ParserException pe)
                 {
@@ -362,7 +363,7 @@ namespace Builder
             return fileIdCounter++;
         }
 
-        public void ParseFile(string filename, string code)
+        public async Task ParseFile(string filename, string code)
         {
             FileScope fileScope = new FileScope(filename, code, this.CurrentScope, this.GetNextFileId());
             this.RegisterFileUsed(fileScope, code);
@@ -371,7 +372,7 @@ namespace Builder
             List<string> namespaceImportsBuilder = new List<string>();
 
             // Implicitly import the Core library for the current locale.
-            LocalizedAssemblyView implicitCoreImport = this.ScopeManager.GetCoreLibrary(this);
+            LocalizedAssemblyView implicitCoreImport = await this.ScopeManager.GetCoreLibrary(this);
             namespaceImportsBuilder.Add(implicitCoreImport.Name);
             fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, fileScope));
 
@@ -380,7 +381,7 @@ namespace Builder
                 ImportStatement importStatement = this.TopLevelParser.ParseImport(tokens, fileScope);
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                LocalizedAssemblyView localizedAssemblyView = this.ScopeManager.GetOrImportAssembly(this, importStatement.FirstToken, importStatement.ImportPath);
+                LocalizedAssemblyView localizedAssemblyView = await this.ScopeManager.GetOrImportAssembly(this, importStatement.FirstToken, importStatement.ImportPath);
                 if (localizedAssemblyView == null)
                 {
                     this.unresolvedImports.Add(importStatement);
