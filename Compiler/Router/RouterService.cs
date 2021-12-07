@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Router
@@ -11,6 +12,13 @@ namespace Router
         public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             Wax.ToolchainCommand command = new Wax.ToolchainCommand(request);
+
+            // Always show library stack traces when running from source.
+            if (this.Hub.SourceRoot != null)
+            {
+                command.ToolchainArgs = command.ToolchainArgs.Append(new Wax.ToolchainArg() { Name = "showLibStack", Value = "1" }).ToArray();
+            }
+
             if (this.Hub.ErrorsAsExceptions)
             {
                 return await this.HandleRequestImpl(command);
