@@ -51,17 +51,28 @@ namespace Wax
             string serviceName,
             Dictionary<string, object> request)
         {
-            List<Dictionary<string, object>> responsePtr = new List<Dictionary<string, object>>();
+            return CreateImmutableCopy(await GetServiceOrExtension(serviceName).HandleRequest(CreateImmutableCopy(request)));
+        }
 
-            Dictionary<string, object> immutableEnsuredCopy = ParseWireData(SerializeWireData(request));
+        public void RegisterListener(string serviceName, Dictionary<string, object> request, Func<Dictionary<string, object>, bool> callback)
+        {
+            GetServiceOrExtension(serviceName).RegisterListener(CreateImmutableCopy(request), obj => { callback(CreateImmutableCopy(obj)); return true; });
+        }
+
+        private WaxService GetServiceOrExtension(string serviceName)
+        {
             WaxService service = this.GetService(serviceName) ?? this.GetService(serviceName + "Extension"); // TODO: do not require the Extension suffix
 
             if (service == null)
             {
                 throw new InvalidOperationException("The extension '" + serviceName + "' could not be found or downloaded.");
             }
+            return service;
+        }
 
-            return await service.HandleRequest(immutableEnsuredCopy);
+        private static Dictionary<string, object> CreateImmutableCopy(Dictionary<string, object> original)
+        {
+            return ParseWireData(SerializeWireData(original));
         }
 
         internal static string SerializeWireData(Dictionary<string, object> data)
