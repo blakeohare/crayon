@@ -6,9 +6,9 @@ namespace Wax.Util.Images
 {
     public class IconGenerator
     {
-        private Dictionary<int, Bitmap> bitmaps = new Dictionary<int, Bitmap>();
+        private Dictionary<int, UniversalBitmap> bitmaps = new Dictionary<int, UniversalBitmap>();
 
-        public void AddImage(Bitmap bmp)
+        public void AddImage(UniversalBitmap bmp)
         {
             int width = bmp.Width;
             int height = bmp.Height;
@@ -42,16 +42,18 @@ namespace Wax.Util.Images
 
             foreach (int size in sizes)
             {
-                Bitmap originalImage = this.bitmaps[size];
+                UniversalBitmap originalImage = this.bitmaps[size];
                 int width = originalImage.Width;
                 int height = originalImage.Height;
                 int x = (size - width) / 2;
                 int y = (size - height) / 2;
-                Bitmap resource = new Bitmap(size, size);
-                Bitmap.Graphics g = resource.MakeGraphics();
-                g.Blit(originalImage, x, y);
+                UniversalBitmap resource = new UniversalBitmap(size, size);
+                UniversalBitmap.DrawingSession g = resource.CreateNewDrawingSession();
 
-                byte[] pngBytes = resource.SaveBytes(ImageFormat.PNG);
+                g.Blit(originalImage, x, y);
+                g.Flush();
+
+                byte[] pngBytes = resource.GetBytesAsPng();
                 pngPayloads.AddRange(pngBytes);
 
                 ToLittleEndian(size == 256 ? 0 : size, 1, pngHeaders);

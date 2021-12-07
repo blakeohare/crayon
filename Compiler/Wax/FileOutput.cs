@@ -58,7 +58,7 @@ namespace Wax
                 {
                     if (this.Type == FileOutputType.Image && this.Bitmap != null)
                     {
-                        this.binaryContentCache = this.Bitmap.SaveBytes(Wax.Util.Images.ImageFormat.PNG);
+                        this.binaryContentCache = this.Bitmap.GetBytesAsPng();
                     }
                     else if (this.BinaryContentB64 != null)
                     {
@@ -86,8 +86,8 @@ namespace Wax
             }
         }
 
-        private Wax.Util.Images.Bitmap bitmap = null;
-        public Wax.Util.Images.Bitmap Bitmap
+        private Wax.Util.Images.UniversalBitmap bitmap = null;
+        public Wax.Util.Images.UniversalBitmap Bitmap
         {
             get { return this.bitmap; }
             set

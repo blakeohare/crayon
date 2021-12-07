@@ -16,7 +16,7 @@ namespace Builder.ImageSheets
         public List<int> X { get; set; }
         public List<int> Y { get; set; }
 
-        public Bitmap FinalizedBitmap { get; set; }
+        public UniversalBitmap FinalizedBitmap { get; set; }
 
         private int currentRowTop;
         private int currentRowBottom;

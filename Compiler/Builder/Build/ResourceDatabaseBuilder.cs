@@ -168,7 +168,7 @@ namespace Builder
                                 imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Image,
-                                    Bitmap = new Bitmap(absolutePath),
+                                    Bitmap = new UniversalBitmap(absolutePath),
                                     OriginalPath = relativePath,
                                     AbsoluteInputPath = absolutePath,
                                 });
@@ -178,7 +178,7 @@ namespace Builder
                                 imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Image,
-                                    Bitmap = new Bitmap(absolutePath),
+                                    Bitmap = new UniversalBitmap(absolutePath),
                                     OriginalPath = relativePath,
                                     AbsoluteInputPath = absolutePath,
                                     IsLossy = true,
@@ -189,7 +189,7 @@ namespace Builder
                                 imageResources.Add(new FileOutput()
                                 {
                                     Type = FileOutputType.Copy,
-                                    Bitmap = new Bitmap(absolutePath),
+                                    Bitmap = new UniversalBitmap(absolutePath),
                                     RelativeInputPath = relativePath,
                                     OriginalPath = relativePath,
                                     AbsoluteInputPath = absolutePath,
