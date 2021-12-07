@@ -126,7 +126,7 @@ namespace Router
                 Dictionary<string, object> runtimeRequest = new Dictionary<string, object>() {
                     { "realTimePrint", true },
                     { "args", command.RuntimeArgs },
-                    { "showLibStack", command.ShowLibraryStackTraces },
+                    { "showLibStack", true }, // command.ShowLibraryStackTraces },
                     { "useOutputPrefixes", command.UseOutputPrefixes },
                 };
                 if (buildResult != null)
