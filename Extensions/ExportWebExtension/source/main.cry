@@ -1,0 +1,19 @@
+﻿import Extensions;
+import CrayonExporter;
+
+class ExportWebExtensionService : ExtensionService {
+
+    function handleRequest(args, cb) {
+        buildData = new CrayonExporter.BuildData(this.getBuildData());
+        exporter = new JavaScriptExporter(
+            buildData,
+            args.get('useTmpDir') == true
+        );
+        exporter.export();
+
+        cb({
+            'errors': [],
+            'outputDir': exporter.outputDir
+        });
+    }
+}

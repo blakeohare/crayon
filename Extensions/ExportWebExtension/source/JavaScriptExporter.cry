@@ -1,0 +1,39 @@
+﻿import CrayonExporter;
+import FileIOTemp;
+
+class JavaScriptExporter {
+
+    field buildData;
+    field resDb;
+    field properties;
+    field cbxBundle;
+    field templates;
+    field outputDir;
+
+    constructor(buildData, useTempDir) {
+        this.buildData = buildData;
+        this.cbxBundle = this.buildData.getCbxBundle();
+        this.resDb = this.cbxBundle.getResourceDatabase();
+        this.properties = this.buildData.getExportProperties();
+        this.templates = new TemplateLoader();
+        this.outputDir = useTempDir
+            ? FileIOTemp.TempFiles.createDirectory(5 * 60) // temp dir exists for 5 minutes
+            : this.properties.getOutputDirectory();
+    }
+
+    function export() {
+        files = {};
+        this.doExport(files);
+        FileData.writeToDisk(this.outputDir, files);
+    }
+
+    function doExport(files) {
+
+        projectId = this.buildData.getProjectId();
+
+        this.templates.addReplacement('PROJECT_ID', projectId);
+        this.templates.addReplacement('TITLE', projectId);
+
+        files['index.html'] = FileData.createTextFile('<html>\n    <body>Hello, World!</body>\n</html>');
+    }
+}
