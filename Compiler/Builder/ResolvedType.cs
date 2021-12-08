@@ -64,6 +64,8 @@ namespace Builder
         public readonly Dictionary<int, Dictionary<int, ResolvedType>> DictionaryTypes = new Dictionary<int, Dictionary<int, ResolvedType>>();
         public readonly Dictionary<FunctionDefinition, ResolvedType> FuncTypesByRef = new Dictionary<FunctionDefinition, ResolvedType>();
         public readonly Dictionary<string, ResolvedType> FuncTypes = new Dictionary<string, ResolvedType>();
+
+        internal object OpConsolidationLookupHack { get; set; }
     }
 
     internal class ResolvedType
