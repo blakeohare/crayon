@@ -1,0 +1,26 @@
+﻿namespace Suspension {
+    class ExecutionLock {
+
+        field _execId = -1;
+        field _unblocked = false;
+
+        constructor() { }
+
+        function block() {
+            if (this._unblocked) return;
+            this._execId = $$$('execId');
+            $$$('execSuspend');
+            return null;
+        }
+
+        function unblockCallback() {
+            if (this._unblocked) return;
+            if (this._execId < 0) {
+                this._unblocked = true;
+                return;
+            }
+            $$$('execResume', this._execId); // places the execution context ID in the event loop
+        }
+
+    }
+}

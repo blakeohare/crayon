@@ -437,5 +437,10 @@ namespace Interpreter.Vm
                 });
             }
         }
+
+        internal static void QueueExecContext(object eventLoopObj, int execId)
+        {
+            ((EventLoop)eventLoopObj).ResumeExecution(execId);
+        }
     }
 }

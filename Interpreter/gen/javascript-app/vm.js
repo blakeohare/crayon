@@ -5447,6 +5447,17 @@ var interpretImpl = function(vm, executionContextId) {
 							output = buildList(valueList1);
 						}
 						break;
+					case 125:
+						// execResume;
+						arg1 = valueStack[--valueStackSize];
+						C$common$queueExecContext(arg1[1]);;
+						break;
+					case 126:
+						// execSuspend;
+						prepareToSuspend(ec, stack, valueStackSize, pc);
+						ec[13] = [6, 0, "", 0.0, null];
+						hasInterrupt = true;
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {

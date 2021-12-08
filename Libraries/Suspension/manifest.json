@@ -1,0 +1,6 @@
+{
+    "name": "Suspension",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/suspension",
+    "description": "Library for suspending the VM and re-invoking it later."
+}
