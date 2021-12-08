@@ -1,0 +1,79 @@
+﻿(() => {
+	if (!window.CrayonInterop) window.CrayonInterop = {};
+	let CI = window.CrayonInterop;
+
+	let consumers = [];
+	CI.msghubRegisterConsumer = cb => { consumers.push(cb); };
+
+	CI['msghub_newInstance'] = token => {
+
+		let msgHub = {};
+		let listenersByType = {};
+		let msgIdAlloc = 0;
+		let callbacksById = {};
+
+		const usName = 'msghub_' + token + '_us';
+		const sendStr = s => {
+			CI[usName](s);
+		};
+
+		let recvStr = s => {
+			let msg = JSON.parse(s);
+			let isResponse = msg.r === 1;
+			let payload = msg.p;
+			let id = msg.i;
+			if (isResponse) {
+				let cb = callbacksById[id];
+				if (cb) {
+					delete callbacksById[id];
+					cb(payload);
+				}
+			} else {
+				let callbackWanted = msg.c === 1;
+				let type = msg.y;
+				let responseCallback = null;
+				if (callbackWanted) {
+					responseCallback = responseObj => {
+						sendStr(JSON.stringify({ i: id, p: responseObj, r: 1}));
+					};
+				} else {
+					responseCallback = responseObj => {};
+				}
+				let handler = listenersByType[type];
+				if (handler) {
+					handler(payload, responseCallback);
+				}
+			}
+		};
+
+		CI['msghub_' + token + '_ds'] = (rawStr) => {
+			recvStr(rawStr);
+			return null;
+		};
+
+		msgHub.send = (type, payload, cb) => {
+			let responseWanted = cb != null;
+			let id = ++msgIdAlloc;
+			let msg = {
+				i: id,
+				y: type,
+				p: payload,
+				c: responseWanted ? 1 : 0,
+			};
+
+			if (responseWanted) {
+				callbacksById[id] = cb;
+			}
+
+			sendStr(JSON.stringify(msg));
+		};
+
+		msgHub.listen = (type, callback) => {
+			listenersByType[type] = callback;
+		};
+
+		for (let consumer of consumers) {
+			consumer(msgHub);
+		}
+	};
+})();
