@@ -1,6 +1,8 @@
-﻿import CrayonExporter;
+﻿import Base64;
+import CrayonExporter;
 import FileIOTemp;
 import Json;
+import TextEncoding;
 
 class JavaScriptExporter {
 
@@ -30,7 +32,7 @@ class JavaScriptExporter {
         FileData.writeToDisk(this.outputDir, files);
     }
 
-    function doExport(files) {
+    function doExport(filesOut) {
 
         projectId = this.buildData.getProjectId();
 
@@ -51,11 +53,52 @@ class JavaScriptExporter {
             this.args.get('fullPage') == true ? '<script type="text/javascript">C$common$globalOptions["fullscreen"] = true;</script>' : '',
         ].join('\n'));
 
-        files['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server_py.txt'));
-        files['index.html'] = FileData.createTextFile(this.templates.getText('index_html.txt'));
-        files['common.js'] = FileData.createTextFile(this.templates.getText('common_js.txt'));
-        files['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
-        files['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
-        files['resources.js'] = FileData.createTextFile('// TODO: this\n');
+        filesOut['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server_py.txt'));
+        filesOut['index.html'] = FileData.createTextFile(this.templates.getText('index_html.txt'));
+        filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common_js.txt'));
+        filesOut['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
+        filesOut['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
+
+        resLookup = {};
+        fileNames = this.resDb.getFileNames();
+        files = this.resDb.getFiles();
+        for (i = 0; i < files.length; i++) {
+            resLookup[fileNames[i]] = files[i];
+        }
+        resources = [];
+        manifest = this.resDb.getManifestText();
+        for (line : manifest.split('\n')) {
+            parts = line.split(',');
+            if (parts.length >= 3) {
+                type = parts[0];
+                name = parts[-1];
+
+                switch (type) {
+                    case 'TXT':
+                        res = resLookup['res/' + name];
+                        txt = res.getTextContent();
+                        if (txt == null) {
+                            txtBase64 = res.getBytesB64();
+                            txtBytes = base64ToBytes(txtBase64);
+                            txt = TextEncoding.convertBytesToText(txtBytes, TextFormat.UTF8);
+                        }
+                        resources.add('C$common$addTextRes(', Json.serializeJson(name), ', ', Json.serializeJson(txt), ');\n');
+                        break;
+                    case 'IMG':
+                        filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
+                        break;
+                    case 'SND':
+                        filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
+                        break;
+                    case 'BIN':
+                        // consider placing a limit on this and instead relying on reading files via XHR
+                        bytesB64 = resLookup['res/' + name].getBytesB64();
+                        resources.add('C$common$addBinaryRes(', Json.serializeJson(name), ', ', '"', bytesB64, '");\n');
+                        break;
+                }
+            }
+        }
+        resources.add('C$common$resourceManifest = ', Json.serializeJson(manifest), ';\n');
+        filesOut['resources.js'] = FileData.createTextFile(resources.join(''));
     }
 }
