@@ -75,8 +75,6 @@ namespace Builder.ParseTree
             return this.TryConsolidate();
         }
 
-        private static Dictionary<string, Dictionary<ResolvedTypeCategory, Dictionary<ResolvedTypeCategory, OperationType>>> consolidationLookup = null;
-
         private Expression TryConsolidate()
         {
             if (!(this.Left is IConstantValue && this.Right is IConstantValue))
@@ -322,9 +320,15 @@ namespace Builder.ParseTree
             ResolvedTypeCategory rightType,
             string op)
         {
-            if (consolidationLookup == null)
+            Dictionary<string, Dictionary<ResolvedTypeCategory, Dictionary<ResolvedTypeCategory, OperationType>>> consolidationLookup;
+            if (tc.OpConsolidationLookupHack != null)
+            {
+                consolidationLookup = (Dictionary<string, Dictionary<ResolvedTypeCategory, Dictionary<ResolvedTypeCategory, OperationType>>>)tc.OpConsolidationLookupHack;
+            }
+            else
             {
                 consolidationLookup = new Dictionary<string, Dictionary<ResolvedTypeCategory, Dictionary<ResolvedTypeCategory, OperationType>>>();
+                tc.OpConsolidationLookupHack = consolidationLookup;
 
                 OperationType[] operations = new OperationType[] {
                     new OperationType(ResolvedTypeCategory.NULL, ResolvedTypeCategory.NULL, "==", tc.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, true); }),
