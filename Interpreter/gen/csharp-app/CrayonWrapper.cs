@@ -6945,6 +6945,17 @@ namespace Interpreter.Vm
                                     output = buildList(valueList1);
                                 }
                                 break;
+                            case 125:
+                                // execResume;
+                                arg1 = valueStack[--valueStackSize];
+                                CoreFunctions.QueueExecContext(vm.environment.platformEventLoop, (int)arg1.internalValue);;
+                                break;
+                            case 126:
+                                // execSuspend;
+                                prepareToSuspend(ec, stack, valueStackSize, pc);
+                                ec.activeInterrupt = new Interrupt(6, 0, "", 0.0, null);
+                                hasInterrupt = true;
+                                break;
                         }
                         if ((row[1] == 1))
                         {

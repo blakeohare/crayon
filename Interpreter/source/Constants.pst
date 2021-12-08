@@ -181,6 +181,7 @@ enum InterruptType {
     SLEEP = 3,
     LOAD_ASSEMBLY = 4,
     DEBUG_STEP = 5,
+    EXEC_SUSPEND = 6, // See Suspension library
 }
 
 const int INTEGER_POSITIVE_CACHE_SIZE = 2049;

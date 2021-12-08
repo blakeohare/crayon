@@ -48,6 +48,8 @@ namespace Builder
         ENVIRONMENT_DESCRIPTOR = 90,
         ENVIRONMENT_GET_VARIABLE = 52,
         ENVIRONMENT_IS_MOBILE = 115,
+        EXEC_RESUME = 125,
+        EXEC_SUSPEND = 126,
         EXECUTION_CONTEXT_ID = 6,
         FLOOR = 18,
         GET_EXCEPTION_TRACE = 36,
@@ -120,8 +122,7 @@ namespace Builder
         WAX_SERVICE_GET_PAYLOAD = 122,
         WAX_SERVICE_SEND_RESPONSE = 123,
         XML_PARSE = 84,
-
-        // Next ID: 125
+        // Next ID: 127
     }
 
     internal static class CoreFunctionIDHelper
@@ -227,6 +228,8 @@ namespace Builder
                 case "diskDirectoryCreate": return (int)CoreFunctionID.DISK_DIRECTORY_CREATE;
                 case "diskDirectoryDelete": return (int)CoreFunctionID.DISK_DIRECTORY_DELETE;
                 case "diskDirectoryMove": return (int)CoreFunctionID.DISK_DIRECTORY_MOVE;
+                case "execResume": return (int)CoreFunctionID.EXEC_RESUME;
+                case "execSuspend": return (int)CoreFunctionID.EXEC_SUSPEND;
                 case "processCurrentId": return (int)CoreFunctionID.PROCESS_CURRENT_ID;
                 case "processList": return (int)CoreFunctionID.PROCESS_LIST;
                 case "cookieGet": return (int)CoreFunctionID.COOKIE_GET;
