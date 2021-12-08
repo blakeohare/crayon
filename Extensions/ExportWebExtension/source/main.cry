@@ -7,7 +7,12 @@ class ExportWebExtensionService : ExtensionService {
         buildData = new CrayonExporter.BuildData(this.getBuildData());
         exporter = new JavaScriptExporter(
             buildData,
-            args.get('useTmpDir') == true
+            args.get('useTmpDir') == true,
+            {
+                'filePrefix': args.get('filePrefix'),
+                'fullPage': args.get('fullPage'),
+                'min': args.get('min') == true,
+            }
         );
         exporter.export();
 

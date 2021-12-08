@@ -1,5 +1,6 @@
 ﻿import CrayonExporter;
 import FileIOTemp;
+import Json;
 
 class JavaScriptExporter {
 
@@ -9,8 +10,9 @@ class JavaScriptExporter {
     field cbxBundle;
     field templates;
     field outputDir;
+    field args;
 
-    constructor(buildData, useTempDir) {
+    constructor(buildData, useTempDir, args) {
         this.buildData = buildData;
         this.cbxBundle = this.buildData.getCbxBundle();
         this.resDb = this.cbxBundle.getResourceDatabase();
@@ -19,6 +21,7 @@ class JavaScriptExporter {
         this.outputDir = useTempDir
             ? FileIOTemp.TempFiles.createDirectory(5 * 60) // temp dir exists for 5 minutes
             : this.properties.getOutputDirectory();
+        this.args = args;
     }
 
     function export() {
@@ -33,7 +36,26 @@ class JavaScriptExporter {
 
         this.templates.addReplacement('PROJECT_ID', projectId);
         this.templates.addReplacement('TITLE', projectId);
+        this.templates.addReplacement('PROJECT_TITLE', this.args.get('title') ?? projectId);
+        this.templates.addReplacement('FAVICON', this.properties.hasIcons()
+            ? ('<link rel="shortcut icon" href="' + this.args.get('filePrefix', '') + 'favicon.ico">')
+            : '');
+        this.templates.addReplacement('CSS_EXTRA', this.args.get('fullPage') == true
+            ? [
+                '#crayon_host { background-color:#000; text-align:left; width: 100%; height: 100%; }',
+                'body { overflow:hidden; }'
+            ].join('\n')
+            : '');
+        this.templates.addReplacement('JS_EXTRA_HEAD', [
+            this.args.get('usesU3') == true ? '<script src=\"u3.js\"></script>' : '',
+            this.args.get('fullPage') == true ? '<script type="text/javascript">C$common$globalOptions["fullscreen"] = true;</script>' : '',
+        ].join('\n'));
 
-        files['index.html'] = FileData.createTextFile('<html>\n    <body>Hello, World!</body>\n</html>');
+        files['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server_py.txt'));
+        files['index.html'] = FileData.createTextFile(this.templates.getText('index_html.txt'));
+        files['common.js'] = FileData.createTextFile(this.templates.getText('common_js.txt'));
+        files['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
+        files['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
+        files['resources.js'] = FileData.createTextFile('// TODO: this\n');
     }
 }
