@@ -1,0 +1,6 @@
+{
+    "name": "FileIOTemp",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.9.0/fileiotemp",
+    "description": "Library for creating temporary files and directories (tmp)"
+}
