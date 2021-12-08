@@ -354,6 +354,9 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             if (interrupt.type == InterruptType.LOAD_ASSEMBLY) {
                 return new InterpreterResult(InterpreterResultStatus.LOAD_ASSEMBLY, "", 0.0, 0, false, interrupt.exceptionMessage);
             }
+            if (interrupt.type == InterruptType.EXEC_SUSPEND) {
+                return new InterpreterResult(InterpreterResultStatus.SUSPENDED, "", 0.0, 0, false, "");
+            }
 
             // If the user is stepping with the debugger, the interrupt is always active until it hits the next line.
             // It's okay if this creates a huge performance hit since it only performs a couple operations for each step.
