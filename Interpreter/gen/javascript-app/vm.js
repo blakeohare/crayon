@@ -6536,6 +6536,9 @@ var interpretImpl = function(vm, executionContextId) {
 			if ((interrupt[0] == 4)) {
 				return [6, "", 0.0, 0, false, interrupt[2]];
 			}
+			if ((interrupt[0] == 6)) {
+				return [2, "", 0.0, 0, false, ""];
+			}
 		}
 		++pc;
 	}

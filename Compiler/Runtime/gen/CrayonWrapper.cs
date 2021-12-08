@@ -8342,6 +8342,10 @@ namespace Interpreter.Vm
                     {
                         return new InterpreterResult(6, "", 0.0, 0, false, interrupt.exceptionMessage);
                     }
+                    if ((interrupt.type == 6))
+                    {
+                        return new InterpreterResult(2, "", 0.0, 0, false, "");
+                    }
                 }
                 ++pc;
             }

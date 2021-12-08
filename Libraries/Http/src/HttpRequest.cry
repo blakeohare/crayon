@@ -1,5 +1,6 @@
 ﻿import Json;
 import Http.Internal;
+import Suspension;
 
 namespace Http {
 
@@ -104,18 +105,20 @@ namespace Http {
         }
 
         function awaitSend() {
+            lock = new ExecutionLock();
+
             failed = false;
             resp = null;
             this.send(r => {
                 resp = r;
+                lock.unblockCallback();
             },
             () => {
                 failed = true;
+                lock.unblockCallback();
             });
 
-            while (!failed && resp == null) {
-                Core.sleep(0.01);
-            }
+            lock.block();
 
             if (failed) throw new NoConnectionException();
             return resp;
