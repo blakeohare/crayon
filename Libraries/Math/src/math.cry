@@ -50,6 +50,14 @@ namespace Math {
         return $$$('floor', value);
     }
 
+    @localized('en', 'ceiling')
+    @localized('es', 'ESceiling')
+    @localized('jp', 'JPceiling')
+    function ceiling(value) {
+        t = $$$('floor', value);
+        return t == value ? t : (t + 1);
+    }
+
     @localized('en', 'sin')
     @localized('es', 'ESsin')
     @localized('jp', 'JPsin')
