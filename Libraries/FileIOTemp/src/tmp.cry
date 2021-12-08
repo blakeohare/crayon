@@ -1,0 +1,57 @@
+﻿import Environment;
+import FileIO;
+import Math;
+
+namespace FileIOTemp {
+
+    class TempFiles {
+
+        static function createFile(ttlSeconds = null) {
+            path = TempFiles.createPath(ttlSeconds, true);
+            FileIO.fileWriteBytes(path, []);
+            return path;
+        }
+
+        static function createDirectory(ttlSeconds = null) {
+            path = TempFiles.createPath(ttlSeconds, false);
+            FileIO.directoryCreate(path, true);
+            return path;
+        }
+
+        static function createPath(ttlSeconds = null, createParent = true) {
+            parent = TempFiles._getTempDirPath(ttlSeconds != null);
+            path = FileIO.pathJoin([parent, TempFiles._getName(ttlSeconds)]);
+            if (createParent) {
+                if (!FileIO.directoryExists(parent)) {
+                    FileIO.directoryCreate(parent, true);
+                }
+            }
+            return path;
+        }
+
+        static function _getName(ttlSeconds) {
+            sb = [];
+            for (i = 0; i < 15; i++) {
+                t = $$$('randomInt', 0, 36);
+                sb.add(t < 10 ? t : chr(ord('a') + t - 10));
+            }
+            name = sb.join('');
+            if (ttlSeconds != null) {
+                name = Math.ceiling(Core.currentTime() + ttlSeconds) + '-' + name;
+            }
+            return name;
+        }
+
+        static function _getTempDirPath(useTtl) {
+            env = getEnvironment();
+            if (env['implLang'] == 'javascript') {
+                sysTmp = useTtl ? '/tmpttl' : '/tmp';
+            } else if (env['platform'] == 'windows') {
+                sysTmp = Environment.getEnvironmentVariable('TEMP');
+            } else {
+                sysTmp = Environment.getEnvironmentVariable('TMPDIR') ?? '/tmp';
+            }
+            return FileIO.pathJoin([sysTmp, useTtl ? 'tmpCrayonTtl' : 'tmpCrayon']);
+        }
+    }
+}
