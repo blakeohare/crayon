@@ -21,8 +21,9 @@ namespace Interpreter.Structs
         public Value globalNull;
         public Value globalTrue;
         public Value globalFalse;
+        public int id;
 
-        public VmContext(Dictionary<int, ExecutionContext> executionContexts, int lastExecutionContextId, Code byteCode, SymbolData symbolData, VmMetadata metadata, int instanceCounter, bool initializationComplete, List<int> classStaticInitializationStack, Value[] funcArgs, ResourceDB resourceDatabase, List<Value> shutdownHandlers, VmEnvironment environment, NamedCallbackStore namedCallbacks, VmGlobals globals, Value globalNull, Value globalTrue, Value globalFalse)
+        public VmContext(Dictionary<int, ExecutionContext> executionContexts, int lastExecutionContextId, Code byteCode, SymbolData symbolData, VmMetadata metadata, int instanceCounter, bool initializationComplete, List<int> classStaticInitializationStack, Value[] funcArgs, ResourceDB resourceDatabase, List<Value> shutdownHandlers, VmEnvironment environment, NamedCallbackStore namedCallbacks, VmGlobals globals, Value globalNull, Value globalTrue, Value globalFalse, int id)
         {
             this.executionContexts = executionContexts;
             this.lastExecutionContextId = lastExecutionContextId;
@@ -41,6 +42,7 @@ namespace Interpreter.Structs
             this.globalNull = globalNull;
             this.globalTrue = globalTrue;
             this.globalFalse = globalFalse;
+            this.id = id;
         }
     }
 
