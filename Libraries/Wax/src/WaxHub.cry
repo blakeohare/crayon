@@ -1,4 +1,5 @@
 ﻿import Json;
+import Suspension;
 
 namespace Wax {
 
@@ -19,15 +20,17 @@ namespace Wax {
             isDone = false;
             result = null;
             err = null;
+
+            xlock = new ExecutionLock();
             this.sendRequest(serviceId, payload, _result => {
-                isDone = true;
+                xlock.unblockCallback();
                 result = _result;
             }, _err => {
-                isDone = true;
+                xlock.unblockCallback();
                 err = _err;
             });
 
-            while (!isDone) { Core.sleep(0.001); }
+            xlock.block();
 
             if (err != null) throw new Exception(err);
 
@@ -38,8 +41,8 @@ namespace Wax {
             serializedData = WaxHub._serializeData(payload);
             $$$('waxSend', serviceId + '', serializedData, (err, rawData) => {
                 if (err == null) {
-                    res = Json.parseJson(rawData);
                     if (cb != null) {
+                        res = Json.parseJson(rawData);
                         cb(res);
                     }
                 } else {
