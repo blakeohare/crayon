@@ -2,6 +2,7 @@
 import CrayonExporter;
 import FileIOTemp;
 import Json;
+import Resources;
 import TextEncoding;
 
 class JavaScriptExporter {
@@ -32,6 +33,23 @@ class JavaScriptExporter {
         FileData.writeToDisk(this.outputDir, files);
     }
 
+    function getU3Files() {
+        sbFirst = [];
+        sbSecond = [];
+
+        u3Files = Resources.directoryList('templates/u3');
+        for (file : u3Files) {
+            if (file.endsWith('_js.txt')) {
+                txt = Resources.readText('templates/u3/' + file); // no substitution, so read directly from resources.
+                name = file[:-'_js.txt'.length] + '.js';
+                buffer = name == 'shim.js' ? sbFirst : sbSecond;
+                buffer.add('\n// ' + name + '\n' + txt + '\n\n');
+            }
+        }
+        code = (sbFirst + sbSecond).join('\n').trim() + '\n';
+        return code;
+    }
+
     function doExport(filesOut) {
 
         projectId = this.buildData.getProjectId();
@@ -58,6 +76,7 @@ class JavaScriptExporter {
         filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common_js.txt'));
         filesOut['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
         filesOut['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
+        filesOut['u3.js'] = FileData.createTextFile(this.getU3Files());
 
         resLookup = {};
         fileNames = this.resDb.getFileNames();
