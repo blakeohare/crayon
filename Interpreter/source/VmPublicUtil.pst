@@ -38,3 +38,6 @@ void vmSetWaxPayload(VmContext vm, string v) {
 string vmGetWaxResponse(VmContext vm) {
     return vm.environment.waxResponse;
 }
+
+void setVmId(VmContext vm, int id) { vm.id = id; }
+int getVmId(VmContext vm) { return vm.id; }

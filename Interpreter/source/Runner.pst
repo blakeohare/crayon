@@ -115,8 +115,9 @@
         globals,
         globals.valueNull,
         globals.boolTrue,
-        globals.boolFalse
-        );
+        globals.boolFalse,
+
+        0); // vm ID (initialized here to 0 but set externally, if needed)
     return vm;
 }
 
