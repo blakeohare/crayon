@@ -118,11 +118,12 @@ namespace Builder
         TYPE_OF = 4,
         TYPE_IS = 5,
         VALUE_TO_FLOAT_OR_NULL = 111,
+        VM_ID = 127,
         WAX_SEND = 121,
         WAX_SERVICE_GET_PAYLOAD = 122,
         WAX_SERVICE_SEND_RESPONSE = 123,
         XML_PARSE = 84,
-        // Next ID: 127
+        // Next ID: 128
     }
 
     internal static class CoreFunctionIDHelper
@@ -243,6 +244,7 @@ namespace Builder
                 case "typeis": return (int)CoreFunctionID.TYPE_IS;
                 case "typeof": return (int)CoreFunctionID.TYPE_OF;
                 case "valueToFloatOrNull": return (int)CoreFunctionID.VALUE_TO_FLOAT_OR_NULL;
+                case "vmId": return (int)CoreFunctionID.VM_ID;
                 case "waxSend": return (int)CoreFunctionID.WAX_SEND;
                 case "waxServiceGetPayload": return (int)CoreFunctionID.WAX_SERVICE_GET_PAYLOAD;
                 case "waxServiceSendResponse": return (int)CoreFunctionID.WAX_SERVICE_SEND_RESPONSE;

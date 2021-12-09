@@ -31,9 +31,13 @@ namespace U3Windows
                         object[] initialData = GetValue<object[]>(request, "initialData", null) ?? new object[0];
                         string title = GetValue<string>(request, "title", "U3 Window");
                         bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
-
+                        int vmId = GetValue<int>(request, "vmId", 0);
+                        window.EventLoopTickler = async () =>
+                        {
+                            await this.Hub.SendRequest("runtime", new Dictionary<string, object>() { { "command", "tickleEventLoop" }, { "vmId", vmId } });
+                        };
                         TaskCompletionSource<Dictionary<string, object>> windowShownTask = new TaskCompletionSource<Dictionary<string, object>>();
-                        window.Show(title, width, height, icon, keepAspectRatio, initialData, () =>
+                        window.Show(title, width, height, icon, keepAspectRatio, initialData, vmId, () =>
                         {
                             windowShownTask.SetResult(new Dictionary<string, object>());
                             return true;

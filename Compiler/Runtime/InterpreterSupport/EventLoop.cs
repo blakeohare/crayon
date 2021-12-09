@@ -220,6 +220,22 @@ namespace Interpreter.Vm
 
         private bool eventLoopAlive = true;
 
+        public bool IsEventLoopAlive { get { return this.eventLoopAlive; } }
+
+        internal bool RunSingleEventLoopIteration()
+        {
+            if (this.eventLoopAlive)
+            {
+                EventLoopInvocation invocation = PopItemFromQueue();
+                if (invocation != null)
+                {
+                    RunEventLoopIteration(invocation);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void RunEventLoop()
         {
             while (this.eventLoopAlive)

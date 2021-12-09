@@ -7,9 +7,29 @@ namespace Runtime
 {
     public class RuntimeService : WaxService
     {
+        private int vmIdAlloc = 1;
+        private Dictionary<int, Interpreter.Structs.VmContext> vmContexts = new Dictionary<int, Interpreter.Structs.VmContext>();
+
         public RuntimeService() : base("runtime") { }
 
-        public override Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
+        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
+        {
+            string command = (request.ContainsKey("command") ? request["command"] as string : null) ?? "run";
+            switch (command)
+            {
+                case "run":
+                    return await this.RunNewVm(request);
+
+                case "tickleEventLoop":
+                    bool haltVm = this.TickleEventLoop((int)request["vmId"]);
+                    return new Dictionary<string, object>() { { "haltVm", haltVm } };
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
+
+        private Task<Dictionary<string, object>> RunNewVm(Dictionary<string, object> request)
         {
             bool realTimePrint = (bool)request["realTimePrint"];
             bool showLibStack = (bool)request["showLibStack"];
@@ -98,8 +118,22 @@ namespace Runtime
                 return true;
             });
 
+            int vmId = vmIdAlloc++;
+            Interpreter.Vm.CrayonWrapper.setVmId(vm, vmId);
+            vmContexts[vmId] = vm;
+
             eventLoop.StartInterpreter();
             return tcs.Task;
+        }
+
+        // Returns true if the VM is completed.
+        private bool TickleEventLoop(int vmId)
+        {
+            Interpreter.Structs.VmContext vm;
+            if (!vmContexts.TryGetValue(vmId, out vm)) return true;
+            Interpreter.Vm.EventLoop eventLoop = (Interpreter.Vm.EventLoop)Interpreter.Vm.CrayonWrapper.vmGetEventLoopObj(vm);
+            eventLoop.RunSingleEventLoopIteration();
+            return !eventLoop.IsEventLoopAlive;
         }
     }
 }
