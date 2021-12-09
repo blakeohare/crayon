@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runtime", "Runtime\Runtime.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Router", "Router\Router.csproj", "{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U3Windows", "U3Windows\U3Windows.csproj", "{D75E3F91-19EA-4529-AB7C-1A220625D9E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
