@@ -894,7 +894,7 @@ namespace Interpreter.Vm
             ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
             Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
             executionContexts[0] = executionContext;
-            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null, null, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+            VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null, null, null, null, null, null), new NamedCallbackStore(new List<System.Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse, 0);
             return vm;
         }
 
@@ -1987,6 +1987,11 @@ namespace Interpreter.Vm
                     return "function";
             }
             return null;
+        }
+
+        public static int getVmId(VmContext vm)
+        {
+            return vm.id;
         }
 
         public static double getVmReinvokeDelay(InterpreterResult result)
@@ -6956,6 +6961,10 @@ namespace Interpreter.Vm
                                 ec.activeInterrupt = new Interrupt(6, 0, "", 0.0, null);
                                 hasInterrupt = true;
                                 break;
+                            case 127:
+                                // vmId;
+                                output = buildInteger(globals, vm.id);
+                                break;
                         }
                         if ((row[1] == 1))
                         {
@@ -10139,6 +10148,11 @@ namespace Interpreter.Vm
         public static void setItemInList(ListImpl list, int i, Value v)
         {
             list.array[i] = v;
+        }
+
+        public static void setVmId(VmContext vm, int id)
+        {
+            vm.id = id;
         }
 
         public static bool sortHelperIsRevOrder(string[] keyStringList, double[] keyNumList, bool isString, int indexLeft, int indexRight)

@@ -116,6 +116,7 @@
     case 124: Core.EmitComment("resourceGetBytes"); @import("corefuncs/resourceGetBytes.pst"); break;
     case 125: Core.EmitComment("execResume"); @import("corefuncs/execResume.pst"); break;
     case 126: Core.EmitComment("execSuspend"); @import("corefuncs/execSuspend.pst"); break;
+    case 127: Core.EmitComment("vmId"); @import("corefuncs/vmId.pst"); break;
 }
 
 if (row[1] == 1) { // output used?

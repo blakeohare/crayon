@@ -22,4 +22,6 @@
     Value globalNull;
     Value globalTrue;
     Value globalFalse;
+
+    int id;
 }
