@@ -20,7 +20,7 @@ namespace Wax
         public string[] ListFiles(string pathPrefix)
         {
             return this.paths
-                .Where(path => path.StartsWith((this.prefix + '/' + pathPrefix + '/').Replace('/', '.').Replace("..", ".")))
+                .Where(path => path.StartsWith((this.prefix + '/' + pathPrefix).Replace('/', '.').Replace("..", ".")))
                 .Select(path => path.Substring(this.prefix.Length + 1))
                 .Select(path =>
                 {
@@ -38,6 +38,13 @@ namespace Wax
             List<byte> bytes = this.GetByteList(path);
             if (bytes == null) return null;
             return bytes.ToArray();
+        }
+
+        public string GetText(string path, string lineEnding)
+        {
+            string value = this.GetText(path);
+            if (value == null) return null;
+            return value.Replace("\r\n", "\n").Replace('\r', '\n').Replace("\n", lineEnding);
         }
 
         public string GetText(string path)
