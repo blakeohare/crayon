@@ -8,5 +8,12 @@ namespace Wax.Util
         {
             return new JsonBasedObject(root).ToJson();
         }
+
+        public static string SerializeStringRoot(string value)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            JsonBasedObject.ItemToJson(sb, value);
+            return sb.ToString();
+        }
     }
 }

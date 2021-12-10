@@ -191,7 +191,7 @@ namespace Wax
             else this.data[key] = value;
         }
 
-        private void ItemToJson(System.Text.StringBuilder sb, object value)
+        internal static void ItemToJson(System.Text.StringBuilder sb, object value)
         {
             if (value is bool)
             {
@@ -214,7 +214,7 @@ namespace Wax
                 for (int i = 0; i < items.Count; i++)
                 {
                     if (i > 0) sb.Append(',');
-                    this.ItemToJson(sb, items[i]);
+                    ItemToJson(sb, items[i]);
                 }
                 sb.Append(']');
             }
@@ -232,9 +232,9 @@ namespace Wax
                 {
                     if (isFirst) isFirst = false;
                     else sb.Append(',');
-                    this.ItemToJson(sb, key);
+                    ItemToJson(sb, key);
                     sb.Append(':');
-                    this.ItemToJson(sb, dict[key]);
+                    ItemToJson(sb, dict[key]);
                 }
                 sb.Append('}');
             }
@@ -260,7 +260,7 @@ namespace Wax
                 sb.Append('"');
                 sb.Append(keys[i]);
                 sb.Append("\":");
-                this.ItemToJson(sb, value);
+                ItemToJson(sb, value);
             }
             sb.Append('}');
         }
