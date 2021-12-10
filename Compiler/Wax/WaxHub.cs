@@ -127,10 +127,10 @@ namespace Wax
                     SerializeWireDataImpl(obj, buffer);
                 }
             }
-            else if (item is Dictionary<string, object>)
+            else if (item is IDictionary<string, object>)
             {
                 buffer.Add("D");
-                Dictionary<string, object> d = (Dictionary<string, object>)item;
+                IDictionary<string, object> d = (IDictionary<string, object>)item;
                 buffer.Add("" + d.Count);
                 foreach (string key in d.Keys.OrderBy(k => k))
                 {
