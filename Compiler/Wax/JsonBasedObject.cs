@@ -201,6 +201,10 @@ namespace Wax
             {
                 sb.Append((int)value);
             }
+            else if (value is double || value is float)
+            {
+                sb.Append((double)value);
+            }
             else if (value is string)
             {
                 sb.Append('"');
