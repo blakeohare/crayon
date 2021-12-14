@@ -12,17 +12,13 @@ namespace Runtime
 
         public RuntimeService() : base("runtime") { }
 
-        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
+        public override Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             string command = (request.ContainsKey("command") ? request["command"] as string : null) ?? "run";
             switch (command)
             {
                 case "run":
-                    return await this.RunNewVm(request);
-
-                case "tickleEventLoop":
-                    bool haltVm = this.TickleEventLoop((int)request["vmId"]);
-                    return new Dictionary<string, object>() { { "haltVm", haltVm } };
+                    return this.RunNewVm(request);
 
                 default:
                     throw new System.NotImplementedException();
@@ -88,7 +84,7 @@ namespace Runtime
             return this.RunInlineVm(args, extensionArgsJson, cbxBundle, showLibStack, useOutputPrefixes, resourceReader);
         }
 
-        private Task<Dictionary<string, object>> RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
+        private async Task<Dictionary<string, object>> RunInlineVm(string[] runtimeArgs, string extensionArgsJson, CbxBundle cbxBundle, bool showLibStack, bool showOutputPrefixes, Interpreter.ResourceReader resourceReader)
         {
             string byteCode = cbxBundle.ByteCode;
             string resourceManifest = cbxBundle.ResourceDB.ResourceManifestFile.TextContent;
@@ -107,33 +103,16 @@ namespace Runtime
             {
                 Interpreter.Vm.CrayonWrapper.vmEnableLibStackTrace(vm);
             }
-            TaskCompletionSource<Dictionary<string, object>> tcs = new TaskCompletionSource<Dictionary<string, object>>();
-
-            Interpreter.Vm.EventLoop eventLoop = new Interpreter.Vm.EventLoop(vm, () =>
-            {
-                string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm) ?? "{}";
-                Dictionary<string, object> taskResponse = new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary());
-                tcs.SetResult(taskResponse);
-
-                return true;
-            });
+            Interpreter.Vm.EventLoop eventLoop = new Interpreter.Vm.EventLoop(vm);
 
             int vmId = vmIdAlloc++;
             Interpreter.Vm.CrayonWrapper.setVmId(vm, vmId);
             vmContexts[vmId] = vm;
 
-            eventLoop.StartInterpreter();
-            return tcs.Task;
-        }
+            await eventLoop.StartInterpreter();
 
-        // Returns true if the VM is completed.
-        private bool TickleEventLoop(int vmId)
-        {
-            Interpreter.Structs.VmContext vm;
-            if (!vmContexts.TryGetValue(vmId, out vm)) return true;
-            Interpreter.Vm.EventLoop eventLoop = (Interpreter.Vm.EventLoop)Interpreter.Vm.CrayonWrapper.vmGetEventLoopObj(vm);
-            eventLoop.RunSingleEventLoopIteration();
-            return !eventLoop.IsEventLoopAlive;
+            string response = Interpreter.Vm.CrayonWrapper.vmGetWaxResponse(vm) ?? "{}";
+            return new Dictionary<string, object>(new Wax.Util.JsonParser(response).ParseAsDictionary());
         }
     }
 }

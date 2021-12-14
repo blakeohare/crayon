@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Interpreter.Vm
 {
@@ -10,24 +11,22 @@ namespace Interpreter.Vm
         private VmContext vm;
         private Func<bool> completionCallback;
 
-        public EventLoop(VmContext vm, Func<bool> completionCallback)
+        public EventLoop(VmContext vm)
         {
             this.vm = vm;
-            this.completionCallback = completionCallback;
             CrayonWrapper.vmSetEventLoopObj(vm, this);
         }
 
         private class EventLoopInvocation
         {
             public bool StartFromBeginning { get; set; }
-            public double Timestamp { get; set; }
             public Value FunctionPointer { get; set; }
             public Value[] FunctionPointerArgs { get; set; }
             public object[] FunctionPointerNativeArgs { get; set; }
             public int ExecutionContextId { get; set; }
         }
 
-        private List<EventLoopInvocation> queue = new List<EventLoopInvocation>();
+        private Queue<EventLoopInvocation> queue = new Queue<EventLoopInvocation>();
 
         public void ResumeExecution(int executionContextId)
         {
@@ -57,11 +56,13 @@ namespace Interpreter.Vm
 
         public void ExecuteFunctionPointerWithDelay(Value fp, double delay)
         {
-            AddItemToQueue(new EventLoopInvocation()
+            Task.Delay((int)(delay * 1000)).ContinueWith(_ =>
             {
-                FunctionPointer = fp,
-                FunctionPointerArgs = new Value[0],
-                Timestamp = TranslationHelper.GetCurrentTime() + delay,
+                AddItemToQueue(new EventLoopInvocation()
+                {
+                    FunctionPointer = fp,
+                    FunctionPointerArgs = new Value[0],
+                });
             });
         }
 
@@ -70,72 +71,52 @@ namespace Interpreter.Vm
             if (delay <= 0) ResumeExecution(executionContextId);
             else
             {
-                AddItemToQueue(new EventLoopInvocation()
+                Task.Delay((int)(delay * 1000)).ContinueWith(_ =>
                 {
-                    ExecutionContextId = executionContextId,
-                    Timestamp = TranslationHelper.GetCurrentTime() + delay,
+                    AddItemToQueue(new EventLoopInvocation()
+                    {
+                        ExecutionContextId = executionContextId,
+                    });
                 });
             }
         }
 
         private void AddItemToQueue(EventLoopInvocation invocation)
         {
-            if (invocation.Timestamp == 0)
-            {
-                invocation.Timestamp = TranslationHelper.GetCurrentTime() - 0.0000001;
-            }
             lock (queue)
             {
-                queue.Add(invocation);
+                if (this.queue == null) return;
+                queue.Enqueue(invocation);
+            }
+            lock (this.wakeupTaskMutex)
+            {
+                if (this.wakeupTask != null) // Root execution context starting will not have a wakup task to trigger
+                {
+                    this.wakeupTask.SetResult(true);
+                }
             }
         }
 
         private EventLoopInvocation PopItemFromQueue()
         {
-            double currentTime = TranslationHelper.GetCurrentTime();
-            EventLoopInvocation lowest = null;
-            int lowestIndex = -1;
             lock (queue)
             {
-                for (int i = 0; i < queue.Count; ++i)
+                if (queue.Count > 0)
                 {
-                    EventLoopInvocation item = queue[i];
-                    if (item.Timestamp < currentTime && (lowest == null || item.Timestamp < lowest.Timestamp))
-                    {
-                        lowestIndex = i;
-                        lowest = item;
-                    }
-                }
-
-                if (lowest != null)
-                {
-                    queue.RemoveAt(lowestIndex);
+                    return queue.Dequeue();
                 }
             }
 
-            return lowest;
+            return null;
         }
 
-        private int startingThreadId = 0;
-        private int GetThreadId() { return System.Threading.Thread.CurrentThread.ManagedThreadId; }
-
-        public void EnsureRunningOnStartingThread()
+        public Task StartInterpreter()
         {
-            if (GetThreadId() != startingThreadId)
-            {
-                throw new Exception("The VM cannot be invoked on a separate thread.");
-            }
-        }
-
-        public void StartInterpreter()
-        {
-            if (startingThreadId != 0) throw new Exception();
-            startingThreadId = GetThreadId();
             AddItemToQueue(new EventLoopInvocation()
             {
                 StartFromBeginning = true,
             });
-            RunEventLoop();
+            return RunEventLoop();
         }
 
         private Value ConvertNativeArg(object na)
@@ -158,8 +139,6 @@ namespace Interpreter.Vm
 
         private void RunEventLoopIteration(EventLoopInvocation invocation)
         {
-            EnsureRunningOnStartingThread();
-
             // Debugger.INSTANCE.FlushMessageQueue();
 
             if (invocation == null) return;
@@ -191,7 +170,7 @@ namespace Interpreter.Vm
             switch (result.status)
             {
                 case 1: // execution context is FINISHED
-                    if (result.isRootContext) this.eventLoopAlive = false;
+                    if (result.isRootContext) this.KillEventLoop();
                     break;
 
                 case 2: // SUSPEND
@@ -199,7 +178,7 @@ namespace Interpreter.Vm
                     break;
 
                 case 3: // FATAL ERROR
-                    if (result.isRootContext) this.eventLoopAlive = false;
+                    if (result.isRootContext) this.KillEventLoop();
                     break;
 
                 case 5: // RE-INVOKE, possibly with a delay
@@ -211,20 +190,35 @@ namespace Interpreter.Vm
                     break;
             }
 
-            if (!this.eventLoopAlive && this.completionCallback != null)
+            if (!this.IsEventLoopAlive && this.completionCallback != null)
             {
                 this.completionCallback();
                 this.completionCallback = null;
             }
         }
 
-        private bool eventLoopAlive = true;
+        private void KillEventLoop()
+        {
+            lock (this.queue)
+            {
+                this.queue = null;
+            }
+        }
 
-        public bool IsEventLoopAlive { get { return this.eventLoopAlive; } }
+        public bool IsEventLoopAlive
+        {
+            get
+            {
+                lock (this.queue)
+                {
+                    return this.queue != null;
+                }
+            }
+        }
 
         internal bool RunSingleEventLoopIteration()
         {
-            if (this.eventLoopAlive)
+            if (this.IsEventLoopAlive)
             {
                 EventLoopInvocation invocation = PopItemFromQueue();
                 if (invocation != null)
@@ -236,29 +230,26 @@ namespace Interpreter.Vm
             return false;
         }
 
-        public void RunEventLoop()
-        {
-            while (this.eventLoopAlive)
-            {
-                EventLoopInvocation invocation = PopItemFromQueue();
-                if (invocation != null)
-                {
-                    RunEventLoopIteration(invocation);
-                }
-                else
-                {
-                    // TODO: Check if root execution context has ended.
-                }
+        private object wakeupTaskMutex = new object();
+        private TaskCompletionSource<bool> wakeupTask = null;
 
-                if (invocation == null)
-                {
-                    // This is about half a millisecond I have determined on this particular computer I'm
-                    // sitting at right now. I may want to derive this at runtime, though.
-                    // Thread.Sleep() is inaccurate because the OS thread scheduler takes a non-trivial
-                    // amount of time.
-                    int aboutHalfAMillisecond = 100000;
-                    System.Threading.Thread.SpinWait(aboutHalfAMillisecond);
-                }
+        private Task CreateNewWakeupTask()
+        {
+            lock (this.wakeupTaskMutex)
+            {
+                this.wakeupTask = new TaskCompletionSource<bool>();
+                return this.wakeupTask.Task;
+            }
+        }
+
+        public async Task RunEventLoop()
+        {
+            while (this.IsEventLoopAlive)
+            {
+                Task wakeUp = this.CreateNewWakeupTask();
+                while (this.RunSingleEventLoopIteration()) { }
+                if (!this.IsEventLoopAlive) return;
+                await wakeUp;
             }
         }
     }
