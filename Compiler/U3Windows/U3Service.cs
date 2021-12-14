@@ -11,7 +11,7 @@ namespace U3Windows
 
         private Dictionary<int, U3Window> windows = new Dictionary<int, U3Window>();
 
-        public override Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
+        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             U3Window window = null;
             this.windows.TryGetValue(GetValue<int>(request, "windowId", 0), out window);
@@ -21,33 +21,45 @@ namespace U3Windows
                 case "prepareWindow":
                     window = new U3Window();
                     this.windows[window.ID] = window;
-                    return Task.FromResult(new Dictionary<string, object>() { { "windowId", window.ID } });
+                    return new Dictionary<string, object>() { 
+                        { "windowId", window.ID }
+                    };
 
                 case "show":
                     {
-                        int width = GetValue<int>(request, "width", 0);
-                        int height = GetValue<int>(request, "height", 0);
-                        string icon = GetValue<string>(request, "icon", "");
-                        object[] initialData = GetValue<object[]>(request, "initialData", null) ?? new object[0];
-                        string title = GetValue<string>(request, "title", "U3 Window");
-                        bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
-                        int vmId = GetValue<int>(request, "vmId", 0);
-                        window.EventLoopTickler = async () =>
-                        {
-                            await this.Hub.SendRequest("runtime", new Dictionary<string, object>() { { "command", "tickleEventLoop" }, { "vmId", vmId } });
-                        };
-                        TaskCompletionSource<Dictionary<string, object>> windowShownTask = new TaskCompletionSource<Dictionary<string, object>>();
-                        window.Show(title, width, height, icon, keepAspectRatio, initialData, vmId, () =>
-                        {
-                            windowShownTask.SetResult(new Dictionary<string, object>());
-                            return true;
-                        });
-                        return windowShownTask.Task;
+                        await CreateAndShowWindow(window, request);
+                        return new Dictionary<string, object>();
                     }
+
+                case "data":
+                    await window.Invoke(() => {
+                        window.SendDataBuffer((object[])request["buffer"]);
+                    });
+                    return new Dictionary<string, object>();
 
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private Task CreateAndShowWindow(U3Window window, Dictionary<string, object> request)
+        {
+            int width = GetValue<int>(request, "width", 0);
+            int height = GetValue<int>(request, "height", 0);
+            string icon = GetValue<string>(request, "icon", "");
+            object[] initialData = GetValue<object[]>(request, "initialData", null) ?? new object[0];
+            string title = GetValue<string>(request, "title", "U3 Window");
+            bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
+
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+            System.Threading.Thread thread = new System.Threading.Thread(() =>
+            {
+                window.Show(title, width, height, icon, keepAspectRatio, initialData, tcs);
+            });
+            thread.SetApartmentState(System.Threading.ApartmentState.STA);
+            thread.Start();
+            return tcs.Task;
         }
 
         public override void RegisterListener(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> callback)

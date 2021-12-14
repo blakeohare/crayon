@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Wax.Util.Disk;
@@ -13,7 +14,7 @@ namespace Crayon
         private const bool IS_RELEASE = true;
 #endif
 
-        [System.STAThread]
+        [STAThread]
         static void Main(string[] args)
         {
             string[] commandLineArgs = Program.GetEffectiveArgs(args);
@@ -33,7 +34,8 @@ namespace Crayon
             MainTask(commandLineArgs).Wait();
         }
 
-        private static async Task MainTask(string[] args) {
+        private static async Task MainTask(string[] args)
+        {
             Wax.WaxHub waxHub = new Wax.WaxHub();
 
             waxHub.SourceRoot = SourceDirectoryFinder.CrayonSourceDirectory;

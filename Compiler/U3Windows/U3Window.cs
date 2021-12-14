@@ -14,31 +14,47 @@ namespace U3Windows
         public Func<Dictionary<string, object>, bool> BatchListener { get; set; }
         public Func<Dictionary<string, object>, bool> ClosedListener { get; set; }
         public Func<Dictionary<string, object>, bool> LoadedListener { get; set; }
-        public Func<Task> EventLoopTickler { get; set; }
 
         private System.Windows.Window nativeWindow;
         private Microsoft.Web.WebView2.Wpf.WebView2 webview;
-
-        // Since this is all in the same process, there should be a way to invoke "tickles" from the event loop.
-        private System.Windows.Threading.DispatcherTimer eventLoopTicklerTimer;
+        private System.Windows.Threading.Dispatcher dispatcher;
 
         public U3Window()
         {
             this.ID = idAlloc++;
         }
 
-        public async Task Show(string title, int width, int height, string icon, bool keepAspectRatio, object[] initialData, int vmId, Func<bool> closedCallback)
+        public void Show(string title, int width, int height, string icon, bool keepAspectRatio, object[] initialData, TaskCompletionSource<bool> completionTask)
         {
+            System.Threading.SynchronizationContext syncCtx = System.Windows.Threading.DispatcherSynchronizationContext.Current;
+            int currentThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+
+            int invokedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
             this.nativeWindow = new System.Windows.Window() { Title = title, Width = width, Height = height };
             this.webview = new Microsoft.Web.WebView2.Wpf.WebView2();
             this.nativeWindow.Content = this.webview;
 
             this.nativeWindow.Loaded += (sender, e) => { LoadedHandler(initialData, keepAspectRatio); };
 
-            await Task.Delay(1);
             this.nativeWindow.ShowDialog();
 
-            this.eventLoopTicklerTimer.Stop();
+            completionTask.SetResult(true);
+        }
+
+        internal void SendDataBuffer(object[] buffer)
+        {
+            this.SendToJavaScript(new Dictionary<string, object>() { { "buffer", buffer } });
+        }
+
+        internal Task Invoke(Action fn)
+        {
+            TaskCompletionSource<bool> tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
+            this.dispatcher.BeginInvoke((Action)(() =>
+            {
+                fn();
+                tcs.SetResult(true);
+            }));
+            return tcs.Task;
         }
 
         private void SendToJavaScript(Dictionary<string, object> data)
@@ -49,13 +65,9 @@ namespace U3Windows
 
         private async void LoadedHandler(object[] initialData, bool keepAspectRatio)
         {
-            this.eventLoopTicklerTimer = new System.Windows.Threading.DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1) };
-            this.eventLoopTicklerTimer.Tick += (sender, e) =>
-            {
-                this.EventLoopTickler();
-            };
-
             await this.webview.EnsureCoreWebView2Async();
+
+            this.dispatcher = this.nativeWindow.Dispatcher;
 
             List<Dictionary<string, object>> queueEventsMessages = new List<Dictionary<string, object>>();
 
@@ -79,7 +91,7 @@ namespace U3Windows
                         break;
                     case "shown":
                         this.LoadedListener(new Dictionary<string, object>());
-                        this.eventLoopTicklerTimer.Start();
+
                         if (queueEventsMessages != null)
                         {
                             foreach (Dictionary<string, object> evMsg in queueEventsMessages)
@@ -111,6 +123,8 @@ namespace U3Windows
             }));
 
 #if DEBUG
+            // NavigateToString uses a data URI and so the JavaScript source is not available in the developer tools panel 
+            // when errors occur. Writing to a real file on disk avoids this problem in Debug builds.
             string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
             string debugHtmlFile = System.IO.Path.Combine(tempDir, "u3-debug.html");
             System.IO.File.WriteAllText(debugHtmlFile, GetU3Source());
