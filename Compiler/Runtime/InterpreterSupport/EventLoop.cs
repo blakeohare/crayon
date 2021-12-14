@@ -92,7 +92,7 @@ namespace Interpreter.Vm
             {
                 if (this.wakeupTask != null) // Root execution context starting will not have a wakup task to trigger
                 {
-                    this.wakeupTask.SetResult(true);
+                    this.wakeupTask.TrySetResult(true);
                 }
             }
         }
