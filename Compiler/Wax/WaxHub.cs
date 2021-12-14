@@ -93,6 +93,11 @@ namespace Wax
                 buffer.Add("I");
                 buffer.Add("" + item);
             }
+            else if (item is double || item is float)
+            {
+                buffer.Add("F");
+                buffer.Add("" + item);
+            }
             else if (item is bool)
             {
                 buffer.Add("B");
@@ -166,6 +171,7 @@ namespace Wax
                 case "N": return null;
                 case "B": return buffer.Dequeue() == "1";
                 case "I": return int.Parse(buffer.Dequeue());
+                case "F": return double.Parse(buffer.Dequeue());
                 case "S": return buffer.Dequeue();
                 case "As":
                     {
