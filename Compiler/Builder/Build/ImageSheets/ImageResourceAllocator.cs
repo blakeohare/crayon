@@ -158,6 +158,7 @@ namespace Builder.ImageSheets
                     }
                     lines.Add("F," + x + "," + y + "," + image.Width + "," + image.Height + "," + filename);
                 }
+                g.Flush();
                 chunk.FinalizedBitmap = chunkBmp;
             }
             return string.Join('\n', lines);
