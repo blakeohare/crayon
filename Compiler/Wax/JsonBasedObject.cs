@@ -208,7 +208,22 @@ namespace Wax
             else if (value is string)
             {
                 sb.Append('"');
-                sb.Append(((string)value).Replace("\\", "\\\\").Replace("\"", "\\\""));
+                string s = (string)value;
+                int len = s.Length;
+                char c;
+                for (int i = 0; i < len; i++)
+                {
+                    c = s[i];
+                    switch (c)
+                    {
+                        case '\\': sb.Append("\\\\"); break;
+                        case '"': sb.Append("\\\""); break;
+                        case '\n': sb.Append("\\n"); break;
+                        case '\r': sb.Append("\\r"); break;
+                        case '\t': sb.Append("\\t"); break;
+                        default: sb.Append(c); break;
+                    }
+                }
                 sb.Append('"');
             }
             else if (value is IList<string> || value is IList<object>)
