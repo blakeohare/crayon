@@ -24,7 +24,7 @@ namespace U3Windows
             this.ID = idAlloc++;
         }
 
-        public void Show(string title, int width, int height, string icon, bool keepAspectRatio, object[] initialData, TaskCompletionSource<bool> completionTask)
+        public void Show(string title, int width, int height, string iconBase64, bool keepAspectRatio, object[] initialData, TaskCompletionSource<bool> completionTask)
         {
             System.Threading.SynchronizationContext syncCtx = System.Windows.Threading.DispatcherSynchronizationContext.Current;
             int currentThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -33,6 +33,11 @@ namespace U3Windows
             this.nativeWindow = new System.Windows.Window() { Title = title, Width = width, Height = height };
             this.webview = new Microsoft.Web.WebView2.Wpf.WebView2();
             this.nativeWindow.Content = this.webview;
+
+            if (iconBase64.Length != 0)
+            {
+                this.nativeWindow.Icon = System.Windows.Media.Imaging.BitmapFrame.Create(new System.IO.MemoryStream(System.Convert.FromBase64String(iconBase64)));
+            }
 
             this.nativeWindow.Loaded += (sender, e) => { LoadedHandler(initialData, keepAspectRatio); };
 
