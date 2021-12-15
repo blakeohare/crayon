@@ -116,6 +116,10 @@ namespace U3Windows
                         }
                         break;
 
+                    case "eventBatch":
+                        this.BatchListener(new Dictionary<string, object>() { { "data", rawData } });
+                        break;
+
                     default:
                         throw new NotImplementedException();
                 }
