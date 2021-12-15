@@ -213,7 +213,7 @@ def build_release(args):
 		time.sleep(0.1)
 	log("create new output directory")
 	os.makedirs(copy_to_dir)
-	
+
 	# Compile the compiler bits in the source tree to their usual bin directory
 
 	cmd = ' '.join([
@@ -222,7 +222,7 @@ def build_release(args):
 		'-c Release',
 		'-r', 'osx-x64' if is_mac else 'win-x64',
 		'--self-contained true',
-		'-p:PublishTrimmed=true',
+		#'-p:PublishTrimmed=true', # U3 service throws TypeInitialization exception when trimmed (at least on Windows)
 		'-p:PublishSingleFile=true'
 	])
 	
@@ -269,31 +269,11 @@ def build_release(args):
 		log("Copy " + file + " to the output directory")
 		shutil.copyfile(release_dir + '/' + file, copy_to_dir + '/' + file)
 
-
-	print("\nCopying Interpreter/gen to crypkg files in vmsrc...")
-	for platform in platforms_for_interpreter_gen:
-		log("Copying " + platform + "'s files from Interpreter/gen to vmsrc/" + platform + ".crypkg")
-		print('  ' + platform + '...')
-		target_pkg_path = copy_to_dir + '/vmsrc/' + platform + '.crypkg'
-		interpreter_generated_code = '../Interpreter/gen/' + platform
-		ensure_directory_exists(get_parent_path(target_pkg_path))
-		crypkgmake.make_pkg(canonicalize_sep(interpreter_generated_code), canonicalize_sep(target_pkg_path))
-		print("Done!\n")
-
-
 	# Artifically set the CRAYON_HOME environment variable to the target directory with all the libraries
 	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copy_to_dir))
 	log("Set the CRAYON_HOME to " + os.environ['CRAYON_HOME'])
 	
 	
-	# Copy U3 window
-	copy_directory(u3_dir, copy_to_dir + '/u3')
-
-	if is_mac:
-		u3win_app = copy_to_dir + '/u3/u3window.app'
-		for file in list_all_files_recursive(u3win_app):
-			run_command('chmod +x ' + u3win_app + '/' + file.replace(' ', '\\ ').replace('(', '\\(').replace(')', '\\)'))
-
 	# Throw in setup instructions according to the platform you're generating
 	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
 	if is_windows:
