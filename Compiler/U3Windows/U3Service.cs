@@ -21,7 +21,7 @@ namespace U3Windows
                 case "prepareWindow":
                     window = new U3Window();
                     this.windows[window.ID] = window;
-                    return new Dictionary<string, object>() { 
+                    return new Dictionary<string, object>() {
                         { "windowId", window.ID }
                     };
 

@@ -127,7 +127,7 @@ namespace U3Windows
             }));
 
 #if DEBUG
-            // NavigateToString uses a data URI and so the JavaScript source is not available in the developer tools panel 
+            // NavigateToString uses a data URI and so the JavaScript source is not available in the developer tools panel
             // when errors occur. Writing to a real file on disk avoids this problem in Debug builds.
             string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
             string debugHtmlFile = System.IO.Path.Combine(tempDir, "u3-debug.html");

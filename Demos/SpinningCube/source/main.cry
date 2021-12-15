@@ -29,7 +29,7 @@ function main() {
     });
 
     new Frame()
-        .setWidth(800)
+        .setWidth(500)
         .setHeight(600)
         .setTitle("Spinning Cube")
         .setContent(ui)
