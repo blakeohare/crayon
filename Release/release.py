@@ -17,6 +17,7 @@ LIBRARIES = [
 	'Extensions',
 	'FileIO',
 	'FileIOCommon',
+	'FileIOTemp',
 	'Game',
 	'Gamepad',
 	'Graphics2D',
@@ -39,6 +40,7 @@ LIBRARIES = [
 	'Random',
 	'Resources',
 	'SRandom',
+	'Suspension',
 	'TextEncoding',
 	'U3Direct',
 	'UrlUtil',
@@ -211,18 +213,6 @@ def build_release(args):
 		time.sleep(0.1)
 	log("create new output directory")
 	os.makedirs(copy_to_dir)
-
-	if is_windows:
-		u3_dir = os.path.join('..', 'U3', 'dist', 'win')
-	elif is_mac:
-		u3_dir = os.path.join('..', 'U3', 'dist', 'mac')
-	else:
-		raise Exception("Not implemented")
-	
-	if not os.path.exists(u3_dir):
-		print("*** ERROR! ***")
-		print("U3 executable is missing. Run Scripts/u3packager.py first.")
-		return
 	
 	# Compile the compiler bits in the source tree to their usual bin directory
 
