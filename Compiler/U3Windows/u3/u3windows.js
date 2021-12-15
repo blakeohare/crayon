@@ -3,8 +3,6 @@ window.sendMessage = null;
 (() => {
 	let queue = [];
 	let bridgeInstance = null;
-	console.log(window.chrome.webview.hostObjects);
-	console.log(window.chrome.webview.hostObjects.u3bridge);
 	window.chrome.webview.hostObjects.u3bridge.then(async bridge => {
 		bridgeInstance = bridge;
 		await bridgeInstance.sendToCSharp('bridgeReady', '{}');
