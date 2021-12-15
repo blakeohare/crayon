@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace U3Windows
+namespace U3
 {
     [ClassInterface(ClassInterfaceType.None)]
     [ComVisible(true)]
