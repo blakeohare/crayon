@@ -66,15 +66,6 @@ namespace U3Direct {
                     this._inputBuffer.add(item);
                 }
             });
-
-            WaxHub.getActiveHub().registerListener('u3', { 'type': 'closed', 'windowId': this._windowId }, closeResponse => {
-                _data = closeResponse.get('data');
-                if (this._overrideClose != null) {
-                    this._overrideClose(_data + '');
-                } else {
-                    this.close();
-                }
-            });
         }
 
         field audioEntitiesById = {};
@@ -112,6 +103,10 @@ namespace U3Direct {
             }, _closeRes => {
                 // window is closed
                 closeLock.unblockCallback();
+
+                if (this._overrideClose != null) {
+                    this._overrideClose(_closeRes.get('cause', 'close-button'));
+                }
             });
 
             loadLock.block();

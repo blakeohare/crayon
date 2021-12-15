@@ -27,8 +27,8 @@ namespace U3Windows
 
                 case "show":
                     {
-                        await CreateAndShowWindow(window, request);
-                        return new Dictionary<string, object>();
+                        string closeMethod = await CreateAndShowWindow(window, request);
+                        return new Dictionary<string, object>() { { "cause", closeMethod } };
                     }
 
                 case "data":
@@ -42,7 +42,7 @@ namespace U3Windows
             }
         }
 
-        private Task CreateAndShowWindow(U3Window window, Dictionary<string, object> request)
+        private Task<string> CreateAndShowWindow(U3Window window, Dictionary<string, object> request)
         {
             int width = GetValue<int>(request, "width", 0);
             int height = GetValue<int>(request, "height", 0);
@@ -51,7 +51,7 @@ namespace U3Windows
             string title = GetValue<string>(request, "title", "U3 Window");
             bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
 
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
 
             System.Threading.Thread thread = new System.Threading.Thread(() =>
             {
