@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wax;
 
-namespace U3Windows
+namespace U3
 {
     public class U3Service : WaxService
     {
