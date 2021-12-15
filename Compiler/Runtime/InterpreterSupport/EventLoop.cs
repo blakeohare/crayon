@@ -8,6 +8,12 @@ namespace Interpreter.Vm
 {
     public class EventLoop
     {
+        private class EventLoopConcurrentState
+        {
+            public Queue<EventLoopInvocation> Queue { get; set; } = new Queue<EventLoopInvocation>();
+            public bool IsStillRunning { get; set; } = true;
+        }
+
         private VmContext vm;
         private Func<bool> completionCallback;
 
@@ -26,7 +32,7 @@ namespace Interpreter.Vm
             public int ExecutionContextId { get; set; }
         }
 
-        private Queue<EventLoopInvocation> queue = new Queue<EventLoopInvocation>();
+        private EventLoopConcurrentState state = new EventLoopConcurrentState();
 
         public void ResumeExecution(int executionContextId)
         {
@@ -83,10 +89,10 @@ namespace Interpreter.Vm
 
         private void AddItemToQueue(EventLoopInvocation invocation)
         {
-            lock (queue)
+            lock (this.state)
             {
-                if (this.queue == null) return;
-                queue.Enqueue(invocation);
+                if (!this.state.IsStillRunning) return;
+                this.state.Queue.Enqueue(invocation);
             }
             lock (this.wakeupTaskMutex)
             {
@@ -99,11 +105,11 @@ namespace Interpreter.Vm
 
         private EventLoopInvocation PopItemFromQueue()
         {
-            lock (queue)
+            lock (this.state)
             {
-                if (queue.Count > 0)
+                if (this.state.Queue.Count > 0)
                 {
-                    return queue.Dequeue();
+                    return this.state.Queue.Dequeue();
                 }
             }
 
@@ -199,9 +205,10 @@ namespace Interpreter.Vm
 
         private void KillEventLoop()
         {
-            lock (this.queue)
+            lock (this.state)
             {
-                this.queue = null;
+                this.state.IsStillRunning = false;
+                this.state.Queue.Clear();
             }
         }
 
@@ -209,9 +216,9 @@ namespace Interpreter.Vm
         {
             get
             {
-                lock (this.queue)
+                lock (this.state)
                 {
-                    return this.queue != null;
+                    return this.state.IsStillRunning;
                 }
             }
         }
