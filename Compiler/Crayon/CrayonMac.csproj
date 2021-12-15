@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Builder\Builder.csproj" />
+    <ProjectReference Include="..\Router\Router.csproj" />
+    <ProjectReference Include="..\Runtime\Runtime.csproj" />
+    <ProjectReference Include="..\U3Mac\U3Mac.csproj" />
+    <ProjectReference Include="..\Wax\Wax.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

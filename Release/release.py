@@ -218,7 +218,7 @@ def build_release(args):
 
 	cmd = ' '.join([
 		'dotnet publish',
-		os.path.join('..', 'Compiler', 'Crayon', 'Crayon.csproj'),
+		os.path.join('..', 'Compiler', 'Crayon', 'CrayonMac.csproj' if is_mac else 'CrayonWindows.csproj'),
 		'-c Release',
 		'-r', 'osx-x64' if is_mac else 'win-x64',
 		'--self-contained true',
@@ -226,7 +226,7 @@ def build_release(args):
 		'-p:PublishSingleFile=true'
 	])
 	
-	log("Compiling the .sln file with command: " + cmd)
+	log("Compiling the Toolchain with command: " + cmd)
 	print("Running: " + cmd)
 	print(run_command(cmd))
 
@@ -236,9 +236,9 @@ def build_release(args):
 	
 	log("Copying crayon.exe, readme, and license to output directory")
 	if is_windows:
-		crayon_exe_name = 'Crayon.exe'
+		crayon_exe_name = 'CrayonWindows.exe'
 	elif is_mac:
-		crayon_exe_name = 'Crayon'
+		crayon_exe_name = 'CrayonMac'
 	else:
 		raise Exception("Invalid platform")
 

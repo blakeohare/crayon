@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crayon", "Crayon\Crayon.csproj", "{F57E0C97-059A-423C-B345-E910C6124287}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crayon", "Crayon\CrayonWindows.csproj", "{F57E0C97-059A-423C-B345-E910C6124287}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Builder", "Builder\Builder.csproj", "{778DF8F6-82DD-47B0-8316-21941A73AE57}"
 EndProject
@@ -14,8 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Router", "Router\Router.csproj", "{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U3Windows", "U3Windows\U3Windows.csproj", "{D75E3F91-19EA-4529-AB7C-1A220625D9E2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U3Mac", "U3Mac\U3Mac.csproj", "{E40F6A02-4F4C-4B22-A20F-9823CA636168}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +45,6 @@ Global
 		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D75E3F91-19EA-4529-AB7C-1A220625D9E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E40F6A02-4F4C-4B22-A20F-9823CA636168}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E40F6A02-4F4C-4B22-A20F-9823CA636168}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E40F6A02-4F4C-4B22-A20F-9823CA636168}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E40F6A02-4F4C-4B22-A20F-9823CA636168}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
