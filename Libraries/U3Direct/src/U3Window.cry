@@ -119,10 +119,10 @@ namespace U3Direct {
             // The message hub will put these in the queue, if present.
             // The important thing is that u3init is first in the queue.
             q = this._hubSendQueue;
+            this._hubSendQueue = null;
             for (item : q) {
                 this.sendData(item);
             }
-            this._hubSendQueue = null;
 
             if (isBlocking) {
                 closeLock.block();
