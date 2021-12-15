@@ -24,7 +24,7 @@ namespace U3Windows
             this.ID = idAlloc++;
         }
 
-        public void Show(string title, int width, int height, string iconBase64, bool keepAspectRatio, object[] initialData, TaskCompletionSource<bool> completionTask)
+        public void Show(string title, int width, int height, string iconBase64, bool keepAspectRatio, object[] initialData, TaskCompletionSource<string> completionTask)
         {
             System.Threading.SynchronizationContext syncCtx = System.Windows.Threading.DispatcherSynchronizationContext.Current;
             int currentThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -41,9 +41,62 @@ namespace U3Windows
 
             this.nativeWindow.Loaded += (sender, e) => { LoadedHandler(initialData, keepAspectRatio); };
 
+            this.ApplyCloseCauseHandlers();
+
             this.nativeWindow.ShowDialog();
 
-            completionTask.SetResult(true);
+            completionTask.TrySetResult(this.closeCause);
+        }
+
+        private string closeCause = "close-button";
+
+        // Detecting whether or not a window was closed due to Alt + F4 or for the close button is not really a supported feature of the framework
+        // and so this is a really HACKY way to make that determination. It's not a good way, it's just the only way as far as I can tell.
+        private void ApplyCloseCauseHandlers()
+        {
+            bool altPressed = false;
+            bool systemPressed = false; // alt pressed while the window content doesn't have focus causes the key event to be marked as Key.System instead of Key.LeftAlt, etc.
+
+            this.nativeWindow.Closing += (sender, e) =>
+            {
+                if (systemPressed)
+                {
+                    // If the window closes while the "system" key (Alt while out of focus) is pressed, assume this is Alt + F4. This is NOT 100% accurate but will
+                    // likely catch most cases.
+                    this.closeCause = "alt-f4";
+                }
+            };
+
+            this.nativeWindow.KeyDown += (sender, e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.F4)
+                {
+                    if (altPressed)
+                    {
+                        this.closeCause = "alt-f4";
+                    }
+                }
+                else if (e.Key == System.Windows.Input.Key.LeftAlt || e.Key == System.Windows.Input.Key.RightAlt)
+                {
+                    altPressed = true;
+                }
+                else if (e.Key == System.Windows.Input.Key.System)
+                {
+                    systemPressed = true;
+                }
+            };
+
+            this.nativeWindow.KeyUp += (sender, e) =>
+            {
+                if (e.Key == System.Windows.Input.Key.LeftAlt || e.Key == System.Windows.Input.Key.RightAlt)
+                {
+                    altPressed = false;
+                }
+                else if (e.Key == System.Windows.Input.Key.System)
+                {
+                    systemPressed = false;
+                }
+            };
         }
 
         internal void SendDataBuffer(object[] buffer)
