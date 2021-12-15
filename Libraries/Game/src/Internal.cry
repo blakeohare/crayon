@@ -79,8 +79,8 @@ namespace Game {
             diff = now - start;
             target = 1.0 / f['f'];
             delay = Math.max(0, target - diff);
+            f['un'] = now + delay; // sleep() is not 100% precise, so use the current time + delay as the start of the next frame rather than calling currentTime() after sleep() is done.
             Core.sleep(delay);
-            f['un'] = Core.currentTime();
             return window;
         }
 
