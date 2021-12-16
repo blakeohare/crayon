@@ -6,9 +6,7 @@ namespace U3
 {
     public class U3Window
     {
-        [System.Runtime.InteropServices.DllImport("u3native.dylib")]
-        internal static extern int show_window(string title, int width, int height, string dataUri);
-
+        private static WebviewInterop interop = new WebviewInterop();
         private static int idAlloc = 1;
         internal int ID { get; set; }
 
@@ -17,7 +15,7 @@ namespace U3
         public Func<Dictionary<string, object>, bool> ClosedListener { get; set; }
         public Func<Dictionary<string, object>, bool> LoadedListener { get; set; }
 
-        private IntPtr nativeWindow;
+        private WebviewWindow nativeWindow;
 
         private object[] initialData;
         private bool keepAspectRatio;
@@ -31,12 +29,15 @@ namespace U3
         {
             this.initialData = initialData;
             this.keepAspectRatio = keepAspectRatio;
+            
+            this.nativeWindow = new WebviewWindow();
+            this.nativeWindow.SetTitle(title);
+            this.nativeWindow.SetSize(width, height);
+            this.nativeWindow.SetContent(GetU3Source());
 
-            string html = GetU3Source();
-            byte[] htmlUtf8 = System.Text.Encoding.UTF8.GetBytes(html);
-            string dataUri = "data:text/html;base64," + Convert.ToBase64String(htmlUtf8);
-            int value = show_window(title, width, height, dataUri);
-            this.nativeWindow = new IntPtr(value);
+            this.nativeWindow.Show().ContinueWith(closeMethod => {
+                closeCallback.TrySetResult(closeMethod.Result);
+            });
         }
 
         internal void SendDataBuffer(object[] buffer)
@@ -51,7 +52,6 @@ namespace U3
         }
 
         private List<Dictionary<string, object>> queueEventsMessages = new List<Dictionary<string, object>>();
-
 
         private void HandleMessageFromJavaScript(string messageType, string payloadJson)
         {
