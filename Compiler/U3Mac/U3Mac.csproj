@@ -5,13 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="u3\*.html" />
+    <EmbeddedResource Include="u3\*.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="u3native.dylib">
+    <Content Include="u3native.dylib">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
 </Project>
