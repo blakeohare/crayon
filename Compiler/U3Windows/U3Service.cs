@@ -9,17 +9,16 @@ namespace U3
     {
         public U3Service() : base("u3") { }
 
+        private int idAlloc = 1;
         private Dictionary<int, U3Window> windows = new Dictionary<int, U3Window>();
 
         public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
-            U3Window window = null;
-            this.windows.TryGetValue(GetValue<int>(request, "windowId", 0), out window);
-
+            U3Window window = GetWindow(request);
             switch (GetValue(request, "type", ""))
             {
                 case "prepareWindow":
-                    window = new U3Window();
+                    window = new U3Window() { ID = idAlloc++ };
                     this.windows[window.ID] = window;
                     return new Dictionary<string, object>() {
                         { "windowId", window.ID }
@@ -27,14 +26,18 @@ namespace U3
 
                 case "show":
                     {
-                        string closeMethod = await CreateAndShowWindow(window, request);
+                        int width = GetValue<int>(request, "width", 0);
+                        int height = GetValue<int>(request, "height", 0);
+                        string icon = GetValue<string>(request, "icon", "");
+                        object[] initialData = GetValue<object[]>(request, "initialData", null) ?? new object[0];
+                        string title = GetValue<string>(request, "title", "U3 Window");
+                        bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
+                        string closeMethod = await window.CreateAndShowWindow(title, icon, width, height, keepAspectRatio, initialData);
                         return new Dictionary<string, object>() { { "cause", closeMethod } };
                     }
 
                 case "data":
-                    await window.Invoke(() => {
-                        window.SendDataBuffer((object[])request["buffer"]);
-                    });
+                    await window.SendDataBuffer((object[])request["buffer"]);
                     return new Dictionary<string, object>();
 
                 default:
@@ -42,30 +45,10 @@ namespace U3
             }
         }
 
-        private Task<string> CreateAndShowWindow(U3Window window, Dictionary<string, object> request)
-        {
-            int width = GetValue<int>(request, "width", 0);
-            int height = GetValue<int>(request, "height", 0);
-            string icon = GetValue<string>(request, "icon", "");
-            object[] initialData = GetValue<object[]>(request, "initialData", null) ?? new object[0];
-            string title = GetValue<string>(request, "title", "U3 Window");
-            bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
-
-            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
-
-            System.Threading.Thread thread = new System.Threading.Thread(() =>
-            {
-                window.Show(title, width, height, icon, keepAspectRatio, initialData, tcs);
-            });
-            thread.SetApartmentState(System.Threading.ApartmentState.STA);
-            thread.Start();
-            return tcs.Task;
-        }
-
         public override void RegisterListener(Dictionary<string, object> request, Func<Dictionary<string, object>, bool> callback)
         {
-            U3Window window = null;
-            this.windows.TryGetValue(GetValue<int>(request, "windowId", 0), out window);
+            U3Window window = GetWindow(request);
+            if (window == null) return;
 
             switch (GetValue<string>(request, "type", ""))
             {
@@ -84,6 +67,15 @@ namespace U3
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        private U3Window GetWindow(Dictionary<string, object> request)
+        {
+            if (this.windows.TryGetValue(GetValue<int>(request, "windowId", 0), out U3Window window))
+            {
+                return window;
+            }
+            return null;
         }
 
         private static T GetValue<T>(Dictionary<string, object> request, string key, T defaultValue)
