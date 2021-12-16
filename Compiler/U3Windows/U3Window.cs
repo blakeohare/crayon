@@ -7,9 +7,8 @@ namespace U3
 {
     internal class U3Window
     {
-        private static int idAlloc = 1;
+        public int ID { get; set; }
 
-        public int ID { get; private set; }
         public Func<Dictionary<string, object>, bool> EventsListener { get; set; }
         public Func<Dictionary<string, object>, bool> BatchListener { get; set; }
         public Func<Dictionary<string, object>, bool> ClosedListener { get; set; }
@@ -19,9 +18,18 @@ namespace U3
         private Microsoft.Web.WebView2.Wpf.WebView2 webview;
         private System.Windows.Threading.Dispatcher dispatcher;
 
-        public U3Window()
+        public U3Window() { }
+
+        public Task<string> CreateAndShowWindow(string title, string icon, int width, int height, bool keepAspectRatio, object[] initialData)
         {
-            this.ID = idAlloc++;
+            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
+            System.Threading.Thread thread = new System.Threading.Thread(() =>
+            {
+                this.Show(title, width, height, icon, keepAspectRatio, initialData, tcs);
+            });
+            thread.SetApartmentState(System.Threading.ApartmentState.STA);
+            thread.Start();
+            return tcs.Task;
         }
 
         public void Show(string title, int width, int height, string iconBase64, bool keepAspectRatio, object[] initialData, TaskCompletionSource<string> completionTask)
@@ -99,17 +107,11 @@ namespace U3
             };
         }
 
-        internal void SendDataBuffer(object[] buffer)
+        internal Task SendDataBuffer(object[] buffer)
         {
-            this.SendToJavaScript(new Dictionary<string, object>() { { "buffer", buffer } });
-        }
-
-        internal Task Invoke(Action fn)
-        {
-            TaskCompletionSource<bool> tcs = new System.Threading.Tasks.TaskCompletionSource<bool>();
-            this.dispatcher.BeginInvoke((Action)(() =>
-            {
-                fn();
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            this.dispatcher.BeginInvoke((Action)(() => {
+                this.SendToJavaScript(new Dictionary<string, object>() { { "buffer", buffer } });
                 tcs.SetResult(true);
             }));
             return tcs.Task;
