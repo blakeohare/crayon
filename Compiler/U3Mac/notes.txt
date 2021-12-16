@@ -1,0 +1,5 @@
+
+Run this command to create u3native.dylib
+    g++ u3native.c -std=c++11 -framework WebKit -o u3native.dylib -dynamiclib
+
+The resulting dylib needs to be copied to the output directory before running.

@@ -8,4 +8,10 @@
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="u3native.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
