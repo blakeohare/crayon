@@ -17,7 +17,7 @@ namespace Wax
             this.prefix = this.paths.Length == 0 ? "" : this.paths[0].Split('.')[0];
         }
 
-        public string[] ListFiles(string pathPrefix)
+        public string[] ListFiles(string pathPrefix, bool includeSubDir)
         {
             return this.paths
                 .Where(path => path.StartsWith((this.prefix + '/' + pathPrefix).Replace('/', '.').Replace("..", ".")))
@@ -29,6 +29,13 @@ namespace Wax
                     if (parts.Count == 0) return last;
                     parts.Push(parts.Pop() + "." + last);
                     return string.Join('/', parts.ToArray().Reverse());
+                })
+                .Where(path => {
+                    if (!includeSubDir)
+                    {
+                        return !path.Substring(pathPrefix.Length).Contains('/');
+                    }
+                    return true;
                 })
                 .ToArray();
         }
