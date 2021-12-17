@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runtime", "Runtime\Runtime.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Router", "Router\Router.csproj", "{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U3Windows", "U3Windows\U3Windows.csproj", "{D75E3F91-19EA-4529-AB7C-1A220625D9E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U3Windows", "U3\U3Windows.csproj", "{D75E3F91-19EA-4529-AB7C-1A220625D9E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

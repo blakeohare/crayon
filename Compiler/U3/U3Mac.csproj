@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE;MAC</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="u3\*.html" />
+    <EmbeddedResource Include="u3\*.js" />
+    <EmbeddedResource Include="u3\mac\*.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wax\Wax.csproj" />
+  </ItemGroup>
+
+</Project>
