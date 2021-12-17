@@ -9,3 +9,4 @@ obj
 /Compiler/Pastel/.vs
 __pycache__
 *.pyc
+DEBUG_ARGS.txt

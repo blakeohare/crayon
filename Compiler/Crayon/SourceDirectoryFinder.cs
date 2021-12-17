@@ -20,7 +20,7 @@ namespace Crayon
                     {
                         string librariesPath = FileUtil.JoinPath(currentDirectory, "Libraries");
                         if (FileUtil.DirectoryExists(librariesPath) &&
-                            FileUtil.FileExists(FileUtil.JoinPath(currentDirectory, "Compiler", "Crayon.sln"))) // quick sanity check
+                            FileUtil.FileExists(FileUtil.JoinPath(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
                         {
                             crayonSourceDirectoryCached = currentDirectory;
                             break;

@@ -10,6 +10,7 @@ namespace Wax
         private Dictionary<string, WaxService> services = new Dictionary<string, WaxService>();
 
         internal List<string> ExtensionDirectories { get; private set; }
+        internal List<string> LibraryDirectories { get; private set; }
 
         public string SourceRoot { get; set; }
         public bool ErrorsAsExceptions { get; set; }
@@ -17,12 +18,23 @@ namespace Wax
         public WaxHub()
         {
             this.ExtensionDirectories = new List<string>();
+            this.LibraryDirectories = new List<string>();
+        }
+
+        public string[] GetLibraryDirectories()
+        {
+            return this.LibraryDirectories.ToArray();
         }
 
         public void RegisterService(WaxService service)
         {
             service.Hub = this;
             this.services[service.Name] = service;
+        }
+
+        public void RegisterLibraryDirectory(string path)
+        {
+            this.LibraryDirectories.Add(path);
         }
 
         public void RegisterExtensionDirectory(string path)

@@ -16,7 +16,7 @@ namespace AssemblyResolver
             string finderKey = string.Join(';', localDeps) + ";PROJ:" + projectDir;
             if (!this.assemblyFinderCache.ContainsKey(finderKey))
             {
-                this.assemblyFinderCache[finderKey] = new AssemblyFinder(localDeps, projectDir, nullableCrayonSourceRoot);
+                this.assemblyFinderCache[finderKey] = new AssemblyFinder(localDeps, this.Hub.GetLibraryDirectories(), projectDir, nullableCrayonSourceRoot);
             }
             return this.assemblyFinderCache[finderKey];
         }
