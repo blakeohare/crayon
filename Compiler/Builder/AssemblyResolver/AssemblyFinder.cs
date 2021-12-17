@@ -13,10 +13,11 @@ namespace AssemblyResolver
 
         public AssemblyFinder(
             string[] nullableBuildFileLocalDepsList,
+            string[] libraryDirectories,
             string nullableProjectDirectory,
             string nullableCrayonSourceRoot)
         {
-            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory, nullableCrayonSourceRoot).ToArray();
+            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, libraryDirectories, nullableProjectDirectory).ToArray();
 
             libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
             foreach (InternalAssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
@@ -38,30 +39,9 @@ namespace AssemblyResolver
 
         private static InternalAssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
             string[] nullableBuildFileLocalDepsList,
-            string nullableProjectDirectory,
-            string nullableCrayonSourceRoot)
+            string[] libraryDirectories,
+            string nullableProjectDirectory)
         {
-            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
-
-#if RELEASE
-            if (crayonHome == null)
-            {
-                throw new System.InvalidOperationException("Please set the CRAYON_HOME environment variable to the location of the directory containing both 'crayon.exe' and the 'lib' directory.");
-            }
-#endif
-
-            string placesWhereLibraryDirectoriesCanExist = "";
-
-            if (crayonHome != null)
-            {
-                placesWhereLibraryDirectoriesCanExist += ";" + FileUtil.JoinPath(crayonHome, "libs");
-            }
-            placesWhereLibraryDirectoriesCanExist += ";" + (Wax.Util.EnvironmentVariables.Get("CRAYON_PATH") ?? "");
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
-            }
-
             List<string> unverifiedLibraryDirectories = new List<string>();
 
             if (nullableBuildFileLocalDepsList != null)
@@ -73,21 +53,9 @@ namespace AssemblyResolver
                 }
             }
 
-            string[] paths = placesWhereLibraryDirectoriesCanExist.Split(";", System.StringSplitOptions.RemoveEmptyEntries);
-            foreach (string path in paths)
+            foreach (string registeredLibraryPath in libraryDirectories)
             {
-                // TODO: figure out why this says nullable yet is being used directly.
-                string absolutePath = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(nullableProjectDirectory, path);
-                if (FileUtil.DirectoryExists(absolutePath))
-                {
-                    unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(absolutePath));
-                }
-            }
-
-            if (nullableCrayonSourceRoot != null) // returns null on release builds.
-            {
-                string libraryPath = FileUtil.JoinPath(nullableCrayonSourceRoot, "Libraries");
-                unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(libraryPath));
+                unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(registeredLibraryPath));
             }
 
             List<string> verifiedLibraryPaths = new List<string>();
@@ -106,7 +74,7 @@ namespace AssemblyResolver
             // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts
             // buttons in the corners of the screen, but without having to change any code to be platform-aware.
             Dictionary<string, InternalAssemblyMetadata> uniqueAssemblies = new Dictionary<string, InternalAssemblyMetadata>();
-            foreach (string path in verifiedLibraryPaths)
+            foreach (string path in verifiedLibraryPaths.Reverse<string>())
             {
                 string defaultName = Path.GetFileName(path);
                 InternalAssemblyMetadata metadata = AssemblyMetadataFactory.CreateLibrary(path, defaultName);

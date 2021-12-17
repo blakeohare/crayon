@@ -59,6 +59,8 @@ namespace Crayon
                 waxHub.RegisterExtensionDirectory(directory);
             }
 
+            waxHub.RegisterLibraryDirectory(GetLibraryDirectory());
+
             Dictionary<string, object> result = await waxHub.SendRequest("router", command);
 
             Wax.Error[] errors = Wax.Error.GetErrorsFromResult(result);
@@ -76,7 +78,7 @@ namespace Crayon
             }
         }
 
-        private static IList<string> GetExtensionDirectories()
+        private static string[] GetExtensionDirectories()
         {
             List<string> directories = new List<string>();
 
@@ -86,13 +88,32 @@ namespace Crayon
                 directories.Add(System.IO.Path.Combine(crayonSource, "Extensions"));
             }
 
-            string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
-            if (crayonHome != null)
+            directories.Add(System.IO.Path.Combine(GetExecutableDirectory(), "extensions"));
+
+            return directories
+                .Where(path => System.IO.Directory.Exists(path))
+                .ToArray();
+        }
+
+        private static string GetExecutableDirectory()
+        {
+            string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            Uri uri = new Uri(codeBase + "/..");
+            return uri.AbsolutePath;
+        }
+
+        private static string GetLibraryDirectory()
+        {
+            string libraryDir = System.IO.Path.Combine(GetExecutableDirectory(), "libs");
+            if (System.IO.Directory.Exists(libraryDir)) return libraryDir;
+
+            string srcDir = SourceDirectoryFinder.CrayonSourceDirectory;
+            if (srcDir != null)
             {
-                directories.Add(System.IO.Path.Combine(crayonHome, "extensions"));
+                return System.IO.Path.Combine(srcDir, "Libraries");
             }
 
-            return directories;
+            return null;
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
@@ -100,7 +121,7 @@ namespace Crayon
 #if DEBUG
             if (actualArgs.Length == 0)
             {
-                string crayonHome = Wax.Util.EnvironmentVariables.Get("CRAYON_HOME");
+                string crayonHome = SourceDirectoryFinder.CrayonSourceDirectory;
                 if (crayonHome != null)
                 {
                     string debugArgsFile = FileUtil.JoinPath(crayonHome, "DEBUG_ARGS.txt");
