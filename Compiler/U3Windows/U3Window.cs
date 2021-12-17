@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace U3
@@ -191,41 +190,12 @@ namespace U3
             // when errors occur. Writing to a real file on disk avoids this problem in Debug builds.
             string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
             string debugHtmlFile = System.IO.Path.Combine(tempDir, "u3-debug.html");
-            System.IO.File.WriteAllText(debugHtmlFile, GetU3Source());
+            System.IO.File.WriteAllText(debugHtmlFile, JsResourceUtil.GetU3Source());
             this.webview.CoreWebView2.Navigate("file:///" + debugHtmlFile.Replace('\\', '/'));
 #else
             this.webview.NavigateToString(GetU3Source());
 #endif
         }
 
-        private static Wax.EmbeddedResourceReader resourceReader = new Wax.EmbeddedResourceReader(typeof(U3Window).Assembly);
-
-        private static string GetU3Source()
-        {
-            string[] lines = resourceReader.GetText("u3/index.html", "\n").Split('\n');
-            List<string> newLines = new List<string>();
-            foreach (string line in lines)
-            {
-                if (line.Contains("SCRIPTS_GO_HERE"))
-                {
-                    string[] files = resourceReader.ListFiles("u3/").Where(name => name.EndsWith(".js")).ToArray();
-
-                    foreach (string file in files)
-                    {
-                        newLines.Add("<script>");
-                        newLines.Add("// " + file);
-                        newLines.Add(resourceReader.GetText(file, "\n").Trim());
-                        newLines.Add("</script>");
-                    }
-                }
-                else
-                {
-                    newLines.Add(line);
-                }
-            }
-
-            string u3Source = string.Join("\n", newLines);
-            return u3Source;
-        }
     }
 }
