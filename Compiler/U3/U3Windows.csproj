@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="u3\*.html" />
-	<EmbeddedResource Include="u3\*.js" />
-	<EmbeddedResource Include="u3\win\*.js" />
+  <EmbeddedResource Include="u3\*.js" />
+  <EmbeddedResource Include="u3\win\*.js" />
   </ItemGroup>
 
   <ItemGroup>
