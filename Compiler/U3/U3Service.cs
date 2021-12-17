@@ -28,16 +28,21 @@ namespace U3
                     {
                         int width = GetValue<int>(request, "width", 0);
                         int height = GetValue<int>(request, "height", 0);
-                        string icon = GetValue<string>(request, "icon", "");
+                        string iconBase64 = GetValue<string>(request, "icon", "");
                         object[] initialData = GetValue<object[]>(request, "initialData", null) ?? new object[0];
-                        string title = GetValue<string>(request, "title", "U3 Window");
+                        string title = GetValue<string>(request, "title", "Crayon Window");
                         bool keepAspectRatio = GetValue<bool>(request, "keepAspectRatio", false);
-                        string closeMethod = await window.CreateAndShowWindow(title, icon, width, height, keepAspectRatio, initialData);
+                        string closeMethod = await window.CreateAndShowWindow(
+                            title,
+                            iconBase64 == "" ? null : Convert.FromBase64String(iconBase64),
+                            width, height,
+                            keepAspectRatio,
+                            initialData);
                         return new Dictionary<string, object>() { { "cause", closeMethod } };
                     }
 
                 case "data":
-                    await window.SendDataBuffer((object[])request["buffer"]);
+                    await window.SendData(new Dictionary<string, object>() { { "buffer", request["buffer"] } });
                     return new Dictionary<string, object>();
 
                 default:

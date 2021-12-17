@@ -6,12 +6,12 @@
 
     internal class U3WindowMac : U3Window
     {
-        internal override Task<string> CreateAndShowWindow(string title, string icon, int width, int height, bool keepAspectRatio, object[] initialData)
+        internal override Task<string> CreateAndShowWindowImpl(string title, byte[] nullableIcon, int width, int height, Func<string, string, bool> handleVmBoundMessage)
         {
             throw new NotImplementedException();
         }
 
-        internal override Task SendDataBuffer(object[] buffer)
+        internal override Task SendJsonData(string jsonString)
         {
             throw new NotImplementedException();
         }
