@@ -13,42 +13,58 @@
 
         public U3WindowWindows() { }
 
-        internal override Task<string> CreateAndShowWindow(string title, string icon, int width, int height, bool keepAspectRatio, object[] initialData)
+        internal override Task<string> CreateAndShowWindowImpl(string title, byte[] nullableIcon, int width, int height, Func<string, string, bool> handleVmBoundMessage)
         {
-            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
+            TaskCompletionSource<string> completionTask = new TaskCompletionSource<string>();
             System.Threading.Thread thread = new System.Threading.Thread(() =>
             {
-                this.Show(title, width, height, icon, keepAspectRatio, initialData, tcs);
+                this.nativeWindow = new System.Windows.Window() { Title = title, Width = width, Height = height };
+                this.webview = new Microsoft.Web.WebView2.Wpf.WebView2();
+                this.nativeWindow.Content = this.webview;
+
+                if (nullableIcon != null)
+                {
+                    this.nativeWindow.Icon = System.Windows.Media.Imaging.BitmapFrame.Create(new System.IO.MemoryStream(nullableIcon));
+                }
+
+                this.nativeWindow.Loaded += async (sender, e) =>
+                {
+                    await this.webview.EnsureCoreWebView2Async();
+
+                    this.dispatcher = this.nativeWindow.Dispatcher;
+
+                    this.webview.CoreWebView2.AddHostObjectToScript("u3bridge", new JsBridge((type, payloadJson) =>
+                    {
+                        handleVmBoundMessage(type, payloadJson);
+                        return "{}";
+                    }));
+
+                    LoadHtmlInWebview();
+                };
+
+                this.ApplyCloseCauseHandlers();
+
+                this.nativeWindow.ShowDialog();
+
+                completionTask.TrySetResult(this.closeCause);
             });
             thread.SetApartmentState(System.Threading.ApartmentState.STA);
             thread.Start();
-            return tcs.Task;
-
-            throw new System.NotImplementedException();
+            return completionTask.Task;
         }
 
-        public void Show(string title, int width, int height, string iconBase64, bool keepAspectRatio, object[] initialData, TaskCompletionSource<string> completionTask)
+        internal override Task SendJsonData(string jsonString)
         {
-            System.Threading.SynchronizationContext syncCtx = System.Windows.Threading.DispatcherSynchronizationContext.Current;
-            int currentThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            string serializedString = Wax.Util.JsonUtil.SerializeStringRoot(jsonString);
 
-            int invokedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            this.nativeWindow = new System.Windows.Window() { Title = title, Width = width, Height = height };
-            this.webview = new Microsoft.Web.WebView2.Wpf.WebView2();
-            this.nativeWindow.Content = this.webview;
-
-            if (iconBase64.Length != 0)
+            this.dispatcher.BeginInvoke((Action)(() =>
             {
-                this.nativeWindow.Icon = System.Windows.Media.Imaging.BitmapFrame.Create(new System.IO.MemoryStream(System.Convert.FromBase64String(iconBase64)));
-            }
-
-            this.nativeWindow.Loaded += (sender, e) => { LoadedHandler(initialData, keepAspectRatio); };
-
-            this.ApplyCloseCauseHandlers();
-
-            this.nativeWindow.ShowDialog();
-
-            completionTask.TrySetResult(this.closeCause);
+                string js = "window.csharpToJavaScript(" + serializedString + ");";
+                this.webview.ExecuteScriptAsync(js);
+                tcs.SetResult(true);
+            }));
+            return tcs.Task;
         }
 
         private string closeCause = "close-button";
@@ -102,97 +118,19 @@
             };
         }
 
-        internal override Task SendDataBuffer(object[] buffer)
+        private void LoadHtmlInWebview()
         {
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            this.dispatcher.BeginInvoke((Action)(() => {
-                this.SendToJavaScript(new Dictionary<string, object>() { { "buffer", buffer } });
-                tcs.SetResult(true);
-            }));
-            return tcs.Task;
-        }
-
-        private void SendToJavaScript(Dictionary<string, object> data)
-        {
-            string js = "window.csharpToJavaScript(" + Wax.Util.JsonUtil.SerializeStringRoot(Wax.Util.JsonUtil.SerializeJson(data)) + ");";
-            this.webview.ExecuteScriptAsync(js);
-        }
-
-        private async void LoadedHandler(object[] initialData, bool keepAspectRatio)
-        {
-            await this.webview.EnsureCoreWebView2Async();
-
-            this.dispatcher = this.nativeWindow.Dispatcher;
-
-            List<Dictionary<string, object>> queueEventsMessages = new List<Dictionary<string, object>>();
-
-            this.webview.CoreWebView2.AddHostObjectToScript("u3bridge", new JsBridge((type, payloadJson) =>
-            {
-                IDictionary<string, object> wrappedData = new Wax.Util.JsonParser("{\"rawData\": " + payloadJson + "}").ParseAsDictionary();
-                object rawData = wrappedData["rawData"];
-                int bridgeThreadId1 = System.Threading.Thread.CurrentThread.ManagedThreadId;
-                switch (type)
-                {
-                    case "bridgeReady":
-                        this.SendToJavaScript(new Dictionary<string, object>()
-                        {
-                            { "buffer", initialData },
-                            { "options", new Dictionary<string, object>()
-                                {
-                                    { "keepAspectRatio", keepAspectRatio }
-                                }
-                            }
-                        });
-                        break;
-                    case "shown":
-                        this.LoadedListener(new Dictionary<string, object>());
-
-                        if (queueEventsMessages != null)
-                        {
-                            foreach (Dictionary<string, object> evMsg in queueEventsMessages)
-                            {
-                                this.EventsListener(evMsg);
-                            }
-                            queueEventsMessages = null;
-                        }
-                        break;
-
-                    case "events":
-                        Dictionary<string, object> eventData = new Dictionary<string, object>() {
-                            { "msgs", rawData },
-                        };
-                        if (queueEventsMessages != null)
-                        {
-                            queueEventsMessages.Add(eventData);
-                        }
-                        else
-                        {
-                            this.EventsListener(eventData);
-                        }
-                        break;
-
-                    case "eventBatch":
-                        this.BatchListener(new Dictionary<string, object>() { { "data", rawData } });
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-                return "{}";
-            }));
-
 #if DEBUG
             // NavigateToString uses a data URI and so the JavaScript source is not available in the developer tools panel
             // when errors occur. Writing to a real file on disk avoids this problem in Debug builds.
-            string tempDir = System.Environment.GetEnvironmentVariable("TEMP");
+            string tempDir = Environment.GetEnvironmentVariable("TEMP");
             string debugHtmlFile = System.IO.Path.Combine(tempDir, "u3-debug.html");
             System.IO.File.WriteAllText(debugHtmlFile, JsResourceUtil.GetU3Source());
             this.webview.CoreWebView2.Navigate("file:///" + debugHtmlFile.Replace('\\', '/'));
 #else
-            this.webview.NavigateToString(GetU3Source());
+            this.webview.NavigateToString(JsResourceUtil.GetU3Source());
 #endif
         }
-
     }
 #endif
 }
