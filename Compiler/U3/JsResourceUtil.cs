@@ -5,8 +5,6 @@ namespace U3
 {
     internal static class JsResourceUtil
     {
-        private static readonly string PLATFORM = "win";
-
         private static Wax.EmbeddedResourceReader resourceReader = new Wax.EmbeddedResourceReader(typeof(JsResourceUtil).Assembly);
 
         private static string u3Source = null;
@@ -22,7 +20,7 @@ namespace U3
                     {
                         string[] files =
                             resourceReader.ListFiles("u3/", false)
-                                .Concat(resourceReader.ListFiles("u3/" + PLATFORM + "/", true))
+                                .Concat(resourceReader.ListFiles("u3/" + PlatformUtil.PLATFORM + "/", true))
                             .Where(name => name.EndsWith(".js"))
                             .ToArray();
 

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runtime", "Runtime\Runtime.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Router", "Router\Router.csproj", "{C7CED7C7-5AE1-496E-9D99-4EE10AD7CDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U3Mac", "U3Mac\U3Mac.csproj", "{E40F6A02-4F4C-4B22-A20F-9823CA636168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "U3Mac", "U3\U3Mac.csproj", "{E40F6A02-4F4C-4B22-A20F-9823CA636168}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

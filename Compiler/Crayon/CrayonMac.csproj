@@ -9,7 +9,7 @@
     <ProjectReference Include="..\Builder\Builder.csproj" />
     <ProjectReference Include="..\Router\Router.csproj" />
     <ProjectReference Include="..\Runtime\Runtime.csproj" />
-    <ProjectReference Include="..\U3Mac\U3Mac.csproj" />
+    <ProjectReference Include="..\U3\U3Mac.csproj" />
     <ProjectReference Include="..\Wax\Wax.csproj" />
   </ItemGroup>
 
