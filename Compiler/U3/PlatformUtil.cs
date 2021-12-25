@@ -10,12 +10,12 @@
         internal static readonly string PLATFORM = "linux";
 #endif
 
-        internal static U3Window CreateWindow(int id)
+        internal static U3Window CreateWindow(int id, Wax.WaxHub waxHub)
         {
 #if WINDOWS
             return new U3WindowWindows() { ID = id };
 #elif MAC
-            return new U3WindowMac() { ID = id };
+            return new U3WindowMac(waxHub) { ID = id };
 #elif LINUX
             throw new System.NotImplementedException();
 #else

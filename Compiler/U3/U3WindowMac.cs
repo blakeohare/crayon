@@ -13,8 +13,25 @@
 
         private System.Net.Sockets.Socket downstreamSocket = null;
 
-        internal U3WindowMac()
+        private static string GetExecutableDirectory()
         {
+            string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            Uri uri = new Uri(codeBase + "/..");
+            return uri.AbsolutePath;
+        }
+
+        internal U3WindowMac(Wax.WaxHub waxHub)
+        {
+            string u3Path = null;
+            string srcRoot = waxHub.SourceRoot;
+            if (srcRoot != null) {
+                u3Path = System.IO.Path.Combine(waxHub.SourceRoot, "Compiler", "U3", "webview", "u3mac");
+            } else {
+                u3Path = System.IO.Path.Combine(GetExecutableDirectory(), "u3", "u3mac");
+            }
+            if (!System.IO.File.Exists(u3Path)) {
+                throw new System.Exception("Coudl not find U3 executable: " + u3Path);
+            }
             this.token = GetGibberishToken();
             this.filePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("TMPDIR"), "u3_" + this.token);
         }
