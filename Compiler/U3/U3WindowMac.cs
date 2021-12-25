@@ -8,8 +8,8 @@
     internal class U3WindowMac : U3Window
     {
         private readonly string token;
-
         private readonly string filePath;
+        private readonly string u3Path;
 
         private System.Net.Sockets.Socket downstreamSocket = null;
 
@@ -22,16 +22,21 @@
 
         internal U3WindowMac(Wax.WaxHub waxHub)
         {
-            string u3Path = null;
+            string u3Path;
             string srcRoot = waxHub.SourceRoot;
-            if (srcRoot != null) {
+            if (srcRoot != null)
+            {
                 u3Path = System.IO.Path.Combine(waxHub.SourceRoot, "Compiler", "U3", "webview", "u3mac");
-            } else {
+            }
+            else
+            {
                 u3Path = System.IO.Path.Combine(GetExecutableDirectory(), "u3", "u3mac");
             }
-            if (!System.IO.File.Exists(u3Path)) {
-                throw new System.Exception("Coudl not find U3 executable: " + u3Path);
+            if (!System.IO.File.Exists(u3Path))
+            {
+                throw new Exception("Coudl not find U3 executable: " + u3Path);
             }
+            this.u3Path = u3Path;
             this.token = GetGibberishToken();
             this.filePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("TMPDIR"), "u3_" + this.token);
         }
@@ -227,8 +232,6 @@
 
             System.Diagnostics.Process p = new System.Diagnostics.Process();
 
-            string execName = "/Users/blakeohare/Repos/Crayon/Compiler/U3/webview/u3mac";
-
             string argsFlatString = string.Join(' ', new string[] {
                 "width", width + "",
                 "height", height + "",
@@ -238,7 +241,7 @@
                 "pid", System.Diagnostics.Process.GetCurrentProcess().Id + "",
 
             });
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(execName, argsFlatString);
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(this.u3Path, argsFlatString);
 
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             p.EnableRaisingEvents = true;
