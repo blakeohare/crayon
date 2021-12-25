@@ -69,7 +69,7 @@ namespace U3
                     break;
 
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("No handler for message type: " + type);
             }
         }
 
