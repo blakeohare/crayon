@@ -111,6 +111,7 @@ MATCHERS = [
   # JavaScript
   ('Compiler/Pastel/Transpilers/Resources/*_js.txt', JAVASCRIPT_STYLE),
   ('U3/src/render/*.js', JAVASCRIPT_NODE_STYLE),
+  ('Compiler/U3/u3/*.js', JAVASCRIPT_STYLE),
 
   # Python
   ('Compiler/Pastel/Transpilers/Resources/*_py.txt', PYTHON_STYLE_2_SPACES),

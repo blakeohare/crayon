@@ -18,7 +18,7 @@ namespace U3
             switch (GetValue(request, "type", ""))
             {
                 case "prepareWindow":
-                    window = PlatformUtil.CreateWindow(idAlloc++);
+                    window = PlatformUtil.CreateWindow(idAlloc++, this.Hub);
                     this.windows[window.ID] = window;
                     return new Dictionary<string, object>() {
                         { "windowId", window.ID }
