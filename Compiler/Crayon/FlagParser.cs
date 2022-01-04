@@ -11,7 +11,6 @@ namespace Crayon
         {
             Dictionary<string, Dictionary<string, string>> extensionArgsByExtensionName = new Dictionary<string, Dictionary<string, string>>();
             Dictionary<string, string> crayonArgsByName = new Dictionary<string, string>();
-            Dictionary<string, string> buildArgsByName = new Dictionary<string, string>();
             List<string> runtimeArgs = new List<string>();
             List<BuildArg> buildArgList = new List<BuildArg>();
             string targetFile = null;
@@ -38,11 +37,10 @@ namespace Crayon
                     }
                     else if (arg.StartsWith("-ext:"))
                     {
-                        string extName;
                         string extArgName = null;
                         string extArgValue = null;
                         parts = arg.Substring("-ext:".Length).Split('.', 2, StringSplitOptions.None);
-                        extName = parts[0];
+                        string extName = parts[0];
                         if (parts.Length > 1)
                         {
                             parts = parts[1].Split('=', 2, StringSplitOptions.None);
