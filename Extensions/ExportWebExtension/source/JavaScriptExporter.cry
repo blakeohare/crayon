@@ -50,8 +50,8 @@ class JavaScriptExporter {
         return code;
     }
 
-    function getMainJsFile() {
-        template = Resources.readText('templates/main.js');
+    function getJsFileWithSwaps(path) {
+        template = Resources.readText('templates/' + path);
         lines = template.split('\n');
         newLines = [];
         for (line : lines) {
@@ -85,6 +85,7 @@ class JavaScriptExporter {
 
         projectId = this.buildData.getProjectId();
 
+        this.templates.addReplacement('INIT_ARGS', "['" + projectId + ".cbx']");
         this.templates.addReplacement('PROJECT_ID', projectId);
         this.templates.addReplacement('TITLE', projectId);
         this.templates.addReplacement('PROJECT_TITLE', this.args.get('title') ?? projectId);
@@ -105,11 +106,11 @@ class JavaScriptExporter {
         filesOut['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server.py'));
         filesOut['index.html'] = FileData.createTextFile(this.templates.getText('index.html'));
         filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common.js'));
-        //filesOut['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
         filesOut['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
         filesOut['u3.js'] = FileData.createTextFile(this.getU3Files());
 
-        filesOut['main.js'] = FileData.createTextFile(this.getMainJsFile());
+        filesOut['main.js'] = FileData.createTextFile(this.getJsFileWithSwaps('main.js'));
+        filesOut['RuntimeService.js'] = FileData.createTextFile(this.getJsFileWithSwaps('RuntimeService.js'));
 
         resLookup = {};
         fileNames = this.resDb.getFileNames();

@@ -1,7 +1,6 @@
 const argParse = args => {
     let extensionArgsByExtensionName = {};
     let crayonArgsByName = {};
-    let buildArgsByName = {};
     let runtimeArgs = [];
     let buildArgList = [];
     let targetFile = null;
@@ -54,14 +53,14 @@ const argParse = args => {
     output.runtimeArgs = runtimeArgs;
 
     let extensionArgList = [];
-    let extensionNames = [...extensionArgsByExtensionName.keys()];
+    let extensionNames = [...Object.keys(extensionArgsByExtensionName)];
     extensionNames.sort();
     for (let extension of extensionNames) {
         let extensionArgs = extensionArgsByExtensionName[extension];
-        if (extensionArgs.keys().length == 0) {
+        if (Object.keys(extensionArgs).length == 0) {
             extensionArgList.push({ extension });
         }
-        let argNames = [...extensionArgs.keys()];
+        let argNames = [...Object.keys(extensionArgs)];
         argNames.sort();
         for (let argName of argNames) {
             extensionArgList.push({ extension, name: argName, value: extensionArgs[argName] });
@@ -70,7 +69,7 @@ const argParse = args => {
     output.extensionArgs = extensionArgList;
 
     let toolchainArgList = [];
-    let toolchainArgNames = [...crayonArgsByName.keys()];
+    let toolchainArgNames = [...Object.keys(crayonArgsByName)];
     toolchainArgNames.sort();
     for (let toolchainArg of toolchainArgNames) {
         toolchainArgList.push({ name: toolchainArg, value: crayonArgsByName[toolchainArg] });

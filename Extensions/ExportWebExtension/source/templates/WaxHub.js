@@ -6,7 +6,7 @@ const createWaxHub = () => {
     };
 
     let sendRequest = (serviceId, req) => {
-        let service = servicessById[serviceId];
+        let service = servicesById[serviceId];
         if (!service) {
             throw new Error(serviceId + " does not exist.");
             // TODO: extensions
