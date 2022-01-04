@@ -1,16 +1,6 @@
-const main = () => {
+const crayonToolchainRun = (() => {
 
     // @INCLUDE@: argParser.js
-
-    let runtime = (() => {
-        // @INCLUDE@: vm.js
-
-        return {
-            runInterpreter,
-            runInterpreterWithFunctionPointer,
-        };
-    })();
-    
     // @INCLUDE@: RouterService.js
     // @INCLUDE@: common.js
     // @INCLUDE@: WaxHub.js
@@ -30,9 +20,10 @@ const main = () => {
         hub.registerService(createAssemblyResolverService());
     }
 
-    let args = [];
-    // @INCLUDE@: ARGS-OVERRIDE
-    let cmd = argParse(args);
+    return args => {
+        let cmd = argParse(args);
+        console.log(cmd);
+        hub.sendRequest('router', cmd)
+    };
 
-    hub.sendRequest('router', cmd)
-};
+})();
