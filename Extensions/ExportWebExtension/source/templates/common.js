@@ -11,11 +11,13 @@ C$common$globalOptions['fullscreen'] = false;
 C$common$jsFilePrefix = '';
 C$common$imageManifest = '';
 
+/*
 function main() {
 	C$common$programData = createVm(C$bytecode, C$common$resourceManifest, C$common$imageManifest);
 	vmEnableLibStackTrace(C$common$programData);
 	C$handleVmResult(startVm(C$common$programData));
 }
+*/
 
 function C$runInterpreter(execId) {
 	var vm = C$common$programData;

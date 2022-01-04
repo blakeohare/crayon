@@ -46,6 +46,17 @@
         {
             "name": "csharp",
             "platform": "csharp-app"
+        },
+        {
+            "name": "web",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportWeb",
+                    "name": "jsFilePrefix",
+                    "value": "demos/squishysquid"
+                }
+            ]
         }
     ]
 }

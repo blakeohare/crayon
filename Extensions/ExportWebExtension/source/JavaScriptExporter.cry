@@ -50,6 +50,37 @@ class JavaScriptExporter {
         return code;
     }
 
+    function getMainJsFile() {
+        template = Resources.readText('templates/main.js');
+        lines = template.split('\n');
+        newLines = [];
+        for (line : lines) {
+            if (line.contains('@INCLUDE@:')) {
+                instruction = line.split('@INCLUDE@:').pop().trim();
+                switch (instruction) {
+                    case 'USE-U3-OVERRIDE':
+                        break;
+                    case 'USE-BUILD-OVERRIDE':
+                        break;
+                    case 'ARGS-OVERRIDE':
+                        break;
+                    default:
+                        if (!instruction.endsWith('.js')) {
+                            throw new Exception("Unknown @INCLUDE@ instruction: " + instruction);
+                        }
+
+                        newLines.add('// ' + instruction);
+                        newLines.add(Resources.readText('templates/' + instruction));
+                        break;
+                }
+            } else {
+                newLines.add(line);
+            }
+        }
+
+        return newLines.join('\n').trim() + '\n';
+    }
+
     function doExport(filesOut) {
 
         projectId = this.buildData.getProjectId();
@@ -71,12 +102,14 @@ class JavaScriptExporter {
             this.args.get('fullPage') == true ? '<script type="text/javascript">C$common$globalOptions["fullscreen"] = true;</script>' : '',
         ].join('\n'));
 
-        filesOut['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server_py.txt'));
-        filesOut['index.html'] = FileData.createTextFile(this.templates.getText('index_html.txt'));
-        filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common_js.txt'));
-        filesOut['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
+        filesOut['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server.py'));
+        filesOut['index.html'] = FileData.createTextFile(this.templates.getText('index.html'));
+        filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common.js'));
+        //filesOut['vm.js'] = FileData.createTextFile(this.templates.getText('vm_js.txt'));
         filesOut['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
         filesOut['u3.js'] = FileData.createTextFile(this.getU3Files());
+
+        filesOut['main.js'] = FileData.createTextFile(this.getMainJsFile());
 
         resLookup = {};
         fileNames = this.resDb.getFileNames();
@@ -91,7 +124,6 @@ class JavaScriptExporter {
             if (parts.length >= 3) {
                 type = parts[0];
                 name = parts[-1];
-
                 switch (type) {
                     case 'TXT':
                         res = resLookup['res/' + name];
@@ -104,10 +136,10 @@ class JavaScriptExporter {
                         resources.add('C$common$addTextRes(', Json.serializeJson(name), ', ', Json.serializeJson(txt), ');\n');
                         break;
                     case 'IMG':
-                        filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
+                        //filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
                         break;
                     case 'SND':
-                        filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
+                        //filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
                         break;
                     case 'BIN':
                         // consider placing a limit on this and instead relying on reading files via XHR
