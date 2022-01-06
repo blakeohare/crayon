@@ -655,7 +655,7 @@ var createVm = function(rawByteCode, resourceManifest, imageAtlasManifest) {
 	var executionContext = [0, stack, 0, 100, PST$createNewArray(100), localsStack, localsStackSet, 1, 0, false, null, false, 0, null];
 	var executionContexts = {};
 	executionContexts[0] = executionContext;
-	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null, null, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
+	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null, null, null, null, null, null], [[], {}], globals, globals[0], globals[1], globals[2], 0];
 	return vm;
 };
 
@@ -1578,6 +1578,10 @@ var getTypeFromId = function(id) {
 			return "function";
 	}
 	return null;
+};
+
+var getVmId = function(vm) {
+	return vm[17];
 };
 
 var getVmReinvokeDelay = function(result) {
@@ -5458,6 +5462,10 @@ var interpretImpl = function(vm, executionContextId) {
 						ec[13] = [6, 0, "", 0.0, null];
 						hasInterrupt = true;
 						break;
+					case 127:
+						// vmId;
+						output = buildInteger(globals, vm[17]);
+						break;
 				}
 				if ((row[1] == 1)) {
 					if ((valueStackSize == valueStackCapacity)) {
@@ -7932,6 +7940,10 @@ var runShutdownHandlers = function(vm) {
 
 var setItemInList = function(list, i, v) {
 	list[2][i] = v;
+};
+
+var setVmId = function(vm, id) {
+	vm[17] = id;
 };
 
 var sortHelperIsRevOrder = function(keyStringList, keyNumList, isString, indexLeft, indexRight) {
