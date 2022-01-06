@@ -1,6 +1,15 @@
 const createRuntimeService = (hub) => {
     let waxhub = hub;
 
+    let C$wax$send = async (eventLoop, _hubIgnored, isListener, serviceId, payloadJson, cbFpValue) => {
+        if (isListener) {
+            throw new Error("TODO: adding a listener");
+        } else {
+            let response = await waxhub.sendRequest(serviceId, JSON.parse(payloadJson));
+            throw new Error("I AM HERE");
+        }
+    };
+
     const GEN = (() => {
         // @INCLUDE@: vm.js
             
@@ -10,13 +19,14 @@ const createRuntimeService = (hub) => {
             runInterpreter,
             runInterpreterWithFunctionPointer,
             vmEnableLibStackTrace,
+            vmSetEventLoopObj,
         };
     })();
 
-    let runEventLoopIteration = (q, vm, endCb) => {
-        if (!q.isRunning) return;
-        let node = q.head;
-        q.head = node.next;
+    let runEventLoopIteration = (evLoop, vm) => {
+        if (!evLoop.isRunning) return;
+        let node = evLoop.head;
+        evLoop.head = node.next;
         let item = node.value;
 
         let result;
@@ -47,15 +57,19 @@ const createRuntimeService = (hub) => {
     };
 
     let runVmEventLoop = (vm) => {
-        let q = {
+        let evLoop = {
             isRunning: true,
             head: {
                 value: { startFromBeginning: true },
                 next: null,
-            }
+            },
+            isDoneCb: null,
         };
+
         return new Promise(res => {
-            runEventLoopIteration(q, vm, () => res(1));
+            evLoop.isDoneCb = () => res(1);
+            GEN.vmSetEventLoopObj(vm, evLoop);
+            runEventLoopIteration(evLoop, vm);
         });
     };
 
