@@ -10,13 +10,13 @@
 		</style>
 		
 		<script type="text/javascript" src="common.js"></script>
-		<script type="text/javascript" src="bytecode.js"></script>
-		<script type="text/javascript" src="resources.js"></script>
 		<Script type="text/javascript" src="RuntimeService.js"></Script>
+		<script type="text/javascript" src="cbx.js"></script>
+		<script type="text/javascript" src="%%%PROJECT_ID%%%_cbx.js"></script>
 		<script type="text/javascript" src="main.js"></script>
 %%%JS_EXTRA_HEAD%%%
 		<script>
-			window.addEventListener('load', () => crayonToolchainRun(%%%INIT_ARGS%%%));
+			window.addEventListener('load', () => Wax.toolchainRun(%%%INIT_ARGS%%%));
 		</script>
 	</head>
 	<body>
