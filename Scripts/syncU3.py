@@ -12,6 +12,9 @@ def main():
     { "from_dir": '../U3/js',
       "to_dir": '../Compiler/U3/u3',
     },
+    { "from_dir": '../U3/js',
+      "to_dir": '../Extensions/ExportWebExtension/source/templates/u3',
+    },
   ]
 
   for op in ops:
