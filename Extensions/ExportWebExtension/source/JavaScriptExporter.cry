@@ -106,6 +106,7 @@ class JavaScriptExporter {
         filesOut['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server.py'));
         filesOut['index.html'] = FileData.createTextFile(this.templates.getText('index.html'));
         filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common.js'));
+        filesOut['cbx.js'] = FileData.createTextFile(this.templates.getText('cbx.js'));
         filesOut['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
         filesOut['u3.js'] = FileData.createTextFile(this.getU3Files());
 
@@ -152,5 +153,27 @@ class JavaScriptExporter {
         }
         resources.add('C$common$resourceManifest = ', Json.serializeJson(manifest), ';\n');
         filesOut['resources.js'] = FileData.createTextFile(resources.join(''));
+
+        filesOut[projectId + '_cbx.js'] = FileData.createTextFile(this.createCbxJs());
+    }
+
+    function createCbxJs() {
+        projectId = this.buildData.getProjectId();
+        lines = [
+            '(() => {',
+            "  CBX.addBundle('" + projectId + ".cbx', CBX.createCbxBundleBuilder()"];
+
+        lines.add("    .setMetadata('bytecode', " + Json.serializeJson(this.cbxBundle.getByteCode()) + ")");
+        lines.add("    .setMetadata('resManifest', " + Json.serializeJson(this.resDb.getManifestText() ?? '') + ")");
+        lines.add("    .setMetadata('imgManifest', " + Json.serializeJson(this.resDb.getImageManifestText() ?? '') + ")");
+        lines.add("    .setMetadata('jsPrefix', '/')");
+
+        // TODO: loop through images and resources and stuff
+
+        lines.add(
+            '    .finalize());',
+            '})();'
+        );
+        return lines.join('\n').trim() + '\n';
     }
 }
