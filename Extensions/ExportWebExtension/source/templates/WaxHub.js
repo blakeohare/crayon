@@ -11,7 +11,7 @@ const createWaxHub = () => {
             throw new Error(serviceId + " does not exist.");
             // TODO: extensions
         }
-        return service.handleRequest(req);
+        return Promise.resolve(service.handleRequest(req));
     };
 
     return {

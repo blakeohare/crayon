@@ -59,6 +59,9 @@ class JavaScriptExporter {
                 instruction = line.split('@INCLUDE@:').pop().trim();
                 switch (instruction) {
                     case 'USE-U3-OVERRIDE':
+                        if (this.buildData.usesU3()) {
+                            newLines.add('    useU3 = true;');
+                        }
                         break;
                     case 'USE-BUILD-OVERRIDE':
                         break;
