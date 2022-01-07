@@ -16,12 +16,55 @@ const createRuntimeService = (hub) => {
         return null;
     };
 
+    let C$common$parseJson = (() => {
+        let getType = (t) => {
+            if (typeof t == "string") return 'S';
+            if (!t) return t === false ? 'B' : t === 0 ? 'I' : 'N';
+            if (t === true) return 'B';
+            if (typeof t == "number") return (t % 1 == 0) ? 'I' : 'F';
+            if (typeof t == 'object') return Array.isArray(t) ? 'L' : 'O';
+            return 'null';
+        };
+        let convert = (g, v) => {
+            switch (getType(v)) {
+                case 'N': return GEN.buildNull(g);
+                case 'B': return GEN.buildBoolean(g, v);
+                case 'I': return GEN.buildInteger(g, v);
+                case 'F': return GEN.buildFloat(g, v);
+                case 'S': return GEN.buildString(g, v);
+                case 'L':
+                    let list = [];
+                    for (let m of v) list.push(convert(g, m));
+                    return GEN.buildList(list);
+                case 'O':
+                    let keys = Object.keys(v);
+                    let values = [];
+                    for (let k of keys) values.push(convert(g, v[k]));
+                    return GEN.buildStringDictionary(g, keys, values);
+                default: return GEN.buildNull(g);
+            }
+        };
+        
+        return (globals, txt) => {
+            try {
+                return convert(globals, JSON.parse(txt));
+            } catch (e) {
+                return null;
+            }
+        };
+    })();
+        
     GEN = (() => {
         // @INCLUDE@: vm.js
             
         return {
+            buildBoolean,
+            buildFloat,
+            buildInteger,
+            buildList,
             buildNull,
             buildString,
+            buildStringDictionary,
             createVm,
             startVm,
             runInterpreter,
