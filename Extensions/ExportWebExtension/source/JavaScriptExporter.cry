@@ -157,6 +157,19 @@ class JavaScriptExporter {
         filesOut['resources.js'] = FileData.createTextFile(resources.join(''));
 
         filesOut[projectId + '_cbx.js'] = FileData.createTextFile(this.createCbxJs());
+
+        fileNames = this.resDb.getFileNames() ?? [];
+        fileData = this.resDb.getFiles() ?? [];
+        for (i = 0; i < fileData.length; i++) {
+            file = fileData[i];
+            name = fileNames[i]['res/'.length:]; // trim "res/"
+            if (file.getType() == 'text') {
+                // emitFile = FileData.createTextFile(file.getTextContent());
+            } else {
+                emitFile = FileData.createBinaryFileFromB64(file.getBytesB64());
+            }
+            filesOut['resources/images/' + name] = emitFile;
+        }
     }
 
     function createCbxJs() {
