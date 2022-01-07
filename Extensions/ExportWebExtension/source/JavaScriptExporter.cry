@@ -39,11 +39,10 @@ class JavaScriptExporter {
 
         u3Files = Resources.directoryList('templates/u3');
         for (file : u3Files) {
-            if (file.endsWith('_js.txt')) {
+            if (file.endsWith('.js')) {
                 txt = Resources.readText('templates/u3/' + file); // no substitution, so read directly from resources.
-                name = file[:-'_js.txt'.length] + '.js';
-                buffer = name == 'shim.js' ? sbFirst : sbSecond;
-                buffer.add('\n// ' + name + '\n' + txt + '\n\n');
+                buffer = (file == 'shim.js' || file == 'u3service.js') ? sbFirst : sbSecond;
+                buffer.add('\n// ' + file + '\n' + txt + '\n\n');
             }
         }
         code = (sbFirst + sbSecond).join('\n').trim() + '\n';
@@ -102,7 +101,7 @@ class JavaScriptExporter {
             ].join('\n')
             : '');
         this.templates.addReplacement('JS_EXTRA_HEAD', [
-            this.args.get('usesU3') == true ? '<script src=\"u3.js\"></script>' : '',
+            this.buildData.usesU3() == true ? '<script src=\"u3.js\"></script>' : '',
             this.args.get('fullPage') == true ? '<script type="text/javascript">C$common$globalOptions["fullscreen"] = true;</script>' : '',
         ].join('\n'));
 
