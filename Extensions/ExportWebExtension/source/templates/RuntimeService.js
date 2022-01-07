@@ -5,10 +5,13 @@ const createRuntimeService = (hub) => {
     let C$wax$send = async (eventLoop, _hubIgnored, isListener, serviceId, payloadJson, cbFpValue) => {
         let vm = eventLoop.vm;
         let glo = GEN.vmGetGlobals(vm);
+        let req = JSON.parse(payloadJson);
         if (isListener) {
-            throw new Error("TODO: adding a listener");
+            waxhub.addListener(serviceId, req, (res) => {
+                GEN.runInterpreterWithFunctionPointer(vm, cbFpValue, [GEN.buildString(glo), JSON.stringify(res)]);
+            });
         } else {
-            let response = await waxhub.sendRequest(serviceId, JSON.parse(payloadJson));
+            let response = await waxhub.sendRequest(serviceId, req);
             let responseStr = JSON.stringify(response);
             let strVal = GEN.buildString(glo, responseStr);
             GEN.runInterpreterWithFunctionPointer(vm, cbFpValue, [GEN.buildNull(glo), strVal]);
@@ -18,6 +21,7 @@ const createRuntimeService = (hub) => {
 
     let C$common$queueExecContext = (evLoop, execId) => {
         evLoop.queueExecId(execId);
+        window.setTimeout(() => evSpin(evLoop), 0);
     };
 
     let C$common$parseJson = (() => {
