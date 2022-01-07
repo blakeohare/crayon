@@ -5,17 +5,28 @@ const createWaxHub = () => {
         servicesById[service.name] = service;
     };
 
-    let sendRequest = (serviceId, req) => {
+    let getService = serviceId => {
         let service = servicesById[serviceId];
         if (!service) {
             throw new Error(serviceId + " does not exist.");
             // TODO: extensions
         }
-        return Promise.resolve(service.handleRequest(req));
+        return service;
+    };
+
+    let sendRequest = (serviceId, req) => {
+        return Promise.resolve(getService(serviceId).handleRequest(req));
+    };
+
+    let addListener = (serviceId, req, cb) => {
+        let service = getService(serviceId);
+        if (!service.addListener) throw new Error(serviceId + " does not support listeners");
+        service.addListener(req, cb);
     };
 
     return {
         registerService,
         sendRequest,
+        addListener,
     };
 };
