@@ -819,46 +819,6 @@ return {
 
 })();
 
-let C$common$parseJson = (() => {
-
-let convert = (g, v) => {
-	switch (getType(v)) {
-		case 'N': return buildNull(g);
-		case 'B': return buildBoolean(g, v);
-		case 'I': return buildInteger(g, v);
-		case 'F': return buildFloat(g, v);
-		case 'S': return buildString(g, v);
-		case 'L':
-			let list = [];
-			for (let m of v) list.push(convert(g, m));
-			return buildList(list);
-		case 'O':
-			let keys = Object.keys(v);
-			let values = [];
-			for (let k of keys) values.push(convert(g, v[k]));
-			return buildStringDictionary(g, keys, values);
-		default: return buildNull(g);
-	}
-};
-
-let getType = (t) => {
-	if (typeof t == "string") return 'S';
-	if (!t) return t === false ? 'B' : t === 0 ? 'I' : 'N';
-	if (t === true) return 'B';
-	if (typeof t == "number") return (t % 1 == 0) ? 'I' : 'F';
-	if (typeof t == 'object') return Array.isArray(t) ? 'L' : 'O';
-	return 'null';
-};
-
-return (globals, txt) => {
-	try {
-		return convert(globals, JSON.parse(txt));
-	} catch (e) {
-		return null;
-	}
-};
-})();
-
 /////// fakedisk.js
 // TODO: conditionally include fake disk if FileIOCommon is used.
 // TODO: rename these functions and wrap things more nicely
