@@ -91,7 +91,7 @@ let createCbxBundleBuilder = () => {
         finalize: () => {
             return {
                 getByteCode: () => getMetadata('bytecode'),
-                getImageManifest: () => getMetadata('imageManifest'),
+                getImageManifest: () => getMetadata('imgManifest'),
                 getResourceManifest: () => getMetadata('resManifest'),
                 getTextResource,
                 getBinaryResource,

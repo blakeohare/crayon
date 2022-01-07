@@ -8,7 +8,7 @@ const createRuntimeService = (hub) => {
         let req = JSON.parse(payloadJson);
         if (isListener) {
             waxhub.addListener(serviceId, req, (res) => {
-                GEN.runInterpreterWithFunctionPointer(vm, cbFpValue, [GEN.buildString(glo), JSON.stringify(res)]);
+                GEN.runInterpreterWithFunctionPointer(vm, cbFpValue, [GEN.buildNull(glo), GEN.buildString(glo, JSON.stringify(res))]);
             });
         } else {
             let response = await waxhub.sendRequest(serviceId, req);
@@ -16,12 +16,13 @@ const createRuntimeService = (hub) => {
             let strVal = GEN.buildString(glo, responseStr);
             GEN.runInterpreterWithFunctionPointer(vm, cbFpValue, [GEN.buildNull(glo), strVal]);
         }
+        queueEvSpin(eventLoop);
         return null;
     };
 
     let C$common$queueExecContext = (evLoop, execId) => {
         evLoop.queueExecId(execId);
-        window.setTimeout(() => evSpin(evLoop), 0);
+        queueEvSpin(evLoop);
     };
 
     let C$common$parseJson = (() => {
@@ -116,6 +117,10 @@ const createRuntimeService = (hub) => {
             case 7: // BREAKPOINT
                 throw new Error("TODO: not implemented");
         }
+    };
+
+    let queueEvSpin = evLoop => {
+        window.setTimeout(() => evSpin(evLoop), 0);
     };
 
     let evSpin = async (evLoop) => {
