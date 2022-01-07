@@ -5454,7 +5454,7 @@ var interpretImpl = function(vm, executionContextId) {
 					case 125:
 						// execResume;
 						arg1 = valueStack[--valueStackSize];
-						C$common$queueExecContext(arg1[1]);;
+						C$common$queueExecContext(vm[11][4], arg1[1]);
 						break;
 					case 126:
 						// execSuspend;
