@@ -42,9 +42,14 @@ const createU3Service = (hub) => {
             return { errors: [e] };
         }
     };
+
+    let addListener = (req, cb) => {
+        throw new Error("Not implemented");
+    };
     
     return {
         name: 'u3',
         handleRequest,
+        addListener,
     };
 };
