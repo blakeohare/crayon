@@ -16,6 +16,10 @@ const createRuntimeService = (hub) => {
         return null;
     };
 
+    let C$common$queueExecContext = (evLoop, execId) => {
+        evLoop.queueExecId(execId);
+    };
+
     let C$common$parseJson = (() => {
         let getType = (t) => {
             if (typeof t == "string") return 'S';
@@ -75,15 +79,17 @@ const createRuntimeService = (hub) => {
         };
     })();
 
-    let runEventLoopIteration = (evLoop, vm) => {
-        if (!evLoop.isRunning) return;
-        let node = evLoop.head;
-        evLoop.head = node.next;
-        let item = node.value;
+    let runEventLoopIteration = (evLoop) => {
+        if (!evLoop.isRunning || evLoop.items.length === 0) return;
+        let item = evLoop.items[0];
+        evLoop.items = evLoop.items.slice(1);
 
+        let vm = evLoop.vm;
         let result;
         if (item.startFromBeginning) {
             result = GEN.startVm(vm);
+        } else if (item.execId !== undefined) {
+            result = GEN.runInterpreter(vm, item.execId);
         } else if (item.functionPointer) {
             let args = item.functionPointerArgs;
             if (!args) {
@@ -92,7 +98,7 @@ const createRuntimeService = (hub) => {
             }
             result = GEN.runInterpreterWithFunctionPointer(vm, item.functionPointer, args);
         } else {
-            result = GEN.runInterpreter(vm, item.executionContextId);
+            throw new Error(); // unknown condition
         }
         switch (result.status) {
             case 1: // FINISHED
@@ -108,21 +114,28 @@ const createRuntimeService = (hub) => {
         }
     };
 
+    let evSpin = async (evLoop) => {
+        while (evLoop.items.length > 0 && evLoop.isRunning) {
+            runEventLoopIteration(evLoop);
+        }
+    };
+
     let runVmEventLoop = (vm) => {
-        let evLoop = {
+        let evLoop = null;
+        evLoop = {
             vm,
             isRunning: true,
-            head: {
-                value: { startFromBeginning: true },
-                next: null,
-            },
+            items: [{ startFromBeginning: true }],
             isDoneCb: null,
+            queueExecId: id => {
+                evLoop.items.push({ execId: id });
+            },
         };
 
         return new Promise(res => {
             evLoop.isDoneCb = () => res(1);
             GEN.vmSetEventLoopObj(vm, evLoop);
-            runEventLoopIteration(evLoop, vm);
+            evSpin(evLoop);
         });
     };
 
