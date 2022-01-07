@@ -30,13 +30,13 @@ let getWindowSize = () => {
     return [window.innerWidth, window.innerHeight];
 };
 
-function shimInit(uiData, options) {
+function shimInit(uiData, options, uiRoot) {
     let shownCb = () => { window.sendMessage('shown', true); };
     let eventBatchSender = data => { window.sendMessage('eventBatch', data); };
     let keepAspectRatio = options && options.keepAspectRatio;
     let targetAspectRatio = window.innerWidth / Math.max(1, window.innerHeight);
     let noriRoot;
-    let root = document.getElementById('html_render_host');
+    let root = uiRoot;
     if (keepAspectRatio) {
         let currentSize = [window.innerWidth, window.innerHeight];
         getWindowSize = () => currentSize.slice(0);
@@ -85,3 +85,30 @@ function shimInit(uiData, options) {
     }
     noriInit(noriRoot, uiData, shownCb, eventBatchSender);
 }
+
+const actualU3Initialize = (uiRoot) => {
+    
+    let initialized = false;
+    let handleMessageBuffer = (buffer, options) => {
+        if (!initialized) {
+            initialized = true;
+            shimInit(buffer, options, uiRoot);
+        } else {
+            flushUpdates(buffer);
+        }
+    };
+
+    registerMessageListener(data => {
+        if (data.buffer) {
+            handleMessageBuffer(data.buffer, data.options);
+        } else if (data.buffers) {
+            let options = data.options || null;
+            for (let buffer of data.buffers) {
+                handleMessageBuffer(buffer, options);
+                options = null;
+            }
+        } else {
+            throw new Error("Empty message!");
+        }
+    });
+};

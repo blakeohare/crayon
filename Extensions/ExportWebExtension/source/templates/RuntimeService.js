@@ -1,24 +1,33 @@
 const createRuntimeService = (hub) => {
     let waxhub = hub;
+    let GEN;
 
     let C$wax$send = async (eventLoop, _hubIgnored, isListener, serviceId, payloadJson, cbFpValue) => {
+        let vm = eventLoop.vm;
+        let glo = GEN.vmGetGlobals(vm);
         if (isListener) {
             throw new Error("TODO: adding a listener");
         } else {
             let response = await waxhub.sendRequest(serviceId, JSON.parse(payloadJson));
-            throw new Error("I AM HERE");
+            let responseStr = JSON.stringify(response);
+            let strVal = GEN.buildString(glo, responseStr);
+            GEN.runInterpreterWithFunctionPointer(vm, cbFpValue, [GEN.buildNull(glo), strVal]);
         }
+        return null;
     };
 
-    const GEN = (() => {
+    GEN = (() => {
         // @INCLUDE@: vm.js
             
         return {
+            buildNull,
+            buildString,
             createVm,
             startVm,
             runInterpreter,
             runInterpreterWithFunctionPointer,
             vmEnableLibStackTrace,
+            vmGetGlobals,
             vmSetEventLoopObj,
         };
     })();
@@ -58,6 +67,7 @@ const createRuntimeService = (hub) => {
 
     let runVmEventLoop = (vm) => {
         let evLoop = {
+            vm,
             isRunning: true,
             head: {
                 value: { startFromBeginning: true },
