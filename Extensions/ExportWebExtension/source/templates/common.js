@@ -66,6 +66,8 @@ function C$handleVmResult(res) {
 
 const COMMON = (() => {
 
+	let runtime = null; // set externally
+
 	let alwaysTrue = () => true;
 	let alwaysFalse = () => false;
 	
@@ -183,6 +185,9 @@ const COMMON = (() => {
 			return -60 * d.getTimezoneOffset();
 		};
 		
+		let isDstOccurringAt = (tz, unixTime) => { throw new Error("Not implemented"); };
+		let initializeTimeZoneList = () => { throw new Error("Not implemented"); };
+
 		return { parseDate, unixToStructured, getDataForLocalTimeZone, getUtcOffsetAt, isDstOccurringAt, initializeTimeZoneList };
 	})();
 
@@ -371,20 +376,15 @@ const COMMON = (() => {
 	let imageUtil = (() => {
 		
 		let chunkLoadAsync = (vm, loadedChunks, chunkId, chunkIds, cb) => {
-			let path = C$common$jsFilePrefix + 'resources/images/ch_' + chunkId + '.png';
-			let loader = new Image();
-			loader.onload = () => {
-				let canvas = document.createElement('canvas');
-				canvas.width = loader.width;
-				canvas.height = loader.height;
-				let ctx = canvas.getContext('2d');
-				ctx.drawImage(loader, 0, 0);
-				loadedChunks[chunkId] = { canvas, ctx, b64: null };
+			let resLoader = runtime.vmGetResourceReaderObj(vm);
+			let evLoop = runtime.vmGetEventLoopObj(vm);
+			let path = 'resources/ch_' + chunkId + '.png';
+			resLoader.cbxBundle.getImageResource(path).then(canvas => {
+				loadedChunks[chunkId] = { canvas, ctx: canvas.getContext('2d'), b64: null };
 				let total = chunkIds.length;
 				let loaded = chunkIds.filter(id => loadedChunks[id]).length;
-				setTimeout(() => C$runInterpreterWithFunctionPointerNativeArgs(cb, [chunkId, loaded, total]), 0);
-			};
-			loader.src = path;
+				evLoop.runVmWithNativeArgs(cb, [chunkId, loaded, total]);
+			});
 		};
 		
 		let scale = (bmp, w, h, algo) => {
@@ -1373,6 +1373,8 @@ const COMMON = (() => {
 		dateTime,
 		res,
 		imageUtil,
+
+		setRuntime: (rt) => { runtime = rt; },
 
 		fakeDisk: {
 			create: fakedisk_create,
