@@ -51,6 +51,34 @@
             "name": "ios",
             "source": "source",
             "platform": "javascript-app-ios"
+        },
+        {
+            "name": "en",
+            "source": "source"
+        },
+        {
+            "name": "dotnet",
+            "source": "source",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportDotNet",
+                    "name": "guidSeed",
+                    "value": "org.crayonlang.demos.Conway,v1,%TARGET_NAME%"
+                }
+            ]
+        },
+        {
+            "name": "web",
+            "source": "source",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportWeb",
+                    "name": "jsFilePrefix",
+                    "value": "/demos/conway"
+                }
+            ]
         }
     ]
 }
