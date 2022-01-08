@@ -10,27 +10,32 @@
     "version": "2.9.0",
     "guidSeed": "org.crayonlang.demos.calculator,%VERSION%,%TARGET_NAME%",
 
-    "vars": [
-        { "name": "CRAYON_LIB_MESSAGE_HUB_DEBUG_MODE", "value": false }
-    ],
-
     "targets": [
-        {
-            "name": "javascript",
-            "platform": "javascript-app",
-            "jsFilePrefix": "calculator/"
-        },
-        {
-            "name": "csharp",
-            "platform": "csharp-app"
-        },
-        {
-            "name": "java",
-            "platform": "java-app"
-        },
         {
             "name": "android",
             "platform": "javascript-app-android"
+        },
+        {
+            "name": "dotnet",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportDotNet",
+                    "name": "guidSeed",
+                    "value": "org.crayonlang.demos.Calculator,v1,%TARGET_NAME%"
+                }
+            ]
+        },
+        {
+            "name": "web",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportWeb",
+                    "name": "jsFilePrefix",
+                    "value": "/demos/calculator"
+                }
+            ]
         }
     ]
 }
