@@ -1,41 +1,41 @@
 
-EXT: BrowserInterop_GetUrlPath: C$getUrlPath()
-EXT: BrowserInterop_SetUrlPath: C$setUrlPath([ARG:1])
+EXT: BrowserInterop_GetUrlPath: COMMON.getUrlPath()
+EXT: BrowserInterop_SetUrlPath: COMMON.setUrlPath([ARG:1])
 EXT: Cookie_Get: C$cookie$get([ARG:1])
 EXT: Cookie_Set: C$cookie$set([ARG:1], [ARG:2], [ARG:3])
 
-EXT: CoreFunc_DateTimeParseDate: LIB$datetime$parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
-EXT: CoreFunc_DateTimeUnixToStructured: LIB$datetime$unixToStructured([ARG:1], [ARG:2], [ARG:3])
-EXT: CoreFunc_DateTimeGetDataForLocalTimeZone: LIB$datetime$getDataForLocalTimeZone([ARG:1], [ARG:2])
-EXT: CoreFunc_DateTimeGetUtcOffsetAt: LIB$datetime$getUtcOffsetAt([ARG:1], [ARG:2])
-EXT: CoreFunc_DateTimeIsDstOccurringAt: LIB$datetime$isDstOccurringAt([ARG:1], [ARG:2])
-EXT: CoreFunc_DateTimeInitializeTimeZoneList: LIB$datetime$initializeTimeZoneList()
+EXT: CoreFunc_DateTimeParseDate: COMMON.dateTime.parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: CoreFunc_DateTimeUnixToStructured: COMMON.dateTime.unixToStructured([ARG:1], [ARG:2], [ARG:3])
+EXT: CoreFunc_DateTimeGetDataForLocalTimeZone: COMMON.dateTime.getDataForLocalTimeZone([ARG:1], [ARG:2])
+EXT: CoreFunc_DateTimeGetUtcOffsetAt: COMMON.dateTime.getUtcOffsetAt([ARG:1], [ARG:2])
+EXT: CoreFunc_DateTimeIsDstOccurringAt: COMMON.dateTime.isDstOccurringAt([ARG:1], [ARG:2])
+EXT: CoreFunc_DateTimeInitializeTimeZoneList: COMMON.dateTime.initializeTimeZoneList()
 
-EXT: CoreFunc_EnvironmentDescriptor: C$common$envDescriptor()
+EXT: CoreFunc_EnvironmentDescriptor: COMMON.environment.descriptor
 EXT: CoreFunc_EnvironmentGetVariable: null
-EXT: CoreFunc_EnvironmentIsMobile: C$common$envIsMobile()
+EXT: CoreFunc_EnvironmentIsMobile: COMMON.environment.isMobile
 
-EXT: CoreFunc_HttpSend: C$http$send([ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10], [ARG:11])
+EXT: CoreFunc_HttpSend: COMMON.httpSend([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10], [ARG:11])
 
 EXT: CoreFunc_ImageB64BytesPreferred: true
-EXT: CoreFunc_ImageBlit: C$ImageUtil$blit([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
-EXT: CoreFunc_ImageChunkLoadAsync: C$ImageUtil$chunkLoadAsync([ARG:2], [ARG:3], [ARG:4], [ARG:5])
-EXT: CoreFunc_ImageEncode: C$ImageUtil$encode([ARG:1], [ARG:2], [ARG:3])
-EXT: CoreFunc_ImageEndEditSession: C$ImageUtil$endEditSession([ARG:1], [ARG:2])
-EXT: CoreFunc_ImageFromBytes: C$ImageUtil$fromBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-EXT: CoreFunc_ImageGetPixel: C$ImageUtil$getPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
-EXT: CoreFunc_ImageNewBmp: C$ImageUtil$newBitmap([ARG:1], [ARG:2])
-EXT: CoreFunc_ImageScale: C$ImageUtil$scale([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-EXT: CoreFunc_ImageSetPixel: C$ImageUtil$setPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
-EXT: CoreFunc_ImageStartEditSession: C$ImageUtil$startEditSession([ARG:1])
+EXT: CoreFunc_ImageBlit: COMMON.imageUtil.blit([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
+EXT: CoreFunc_ImageChunkLoadAsync: COMMON.imageUtil.chunkLoadAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: CoreFunc_ImageEncode: COMMON.imageUtil.encode([ARG:1], [ARG:2], [ARG:3])
+EXT: CoreFunc_ImageEndEditSession: COMMON.imageUtil.endEditSession([ARG:1], [ARG:2])
+EXT: CoreFunc_ImageFromBytes: COMMON.imageUtil.fromBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: CoreFunc_ImageGetPixel: COMMON.imageUtil.getPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: CoreFunc_ImageNewBmp: COMMON.imageUtil.newBitmap([ARG:1], [ARG:2])
+EXT: CoreFunc_ImageScale: COMMON.imageUtil.scale([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: CoreFunc_ImageSetPixel: COMMON.imageUtil.setPixel([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9])
+EXT: CoreFunc_ImageStartEditSession: COMMON.imageUtil.startEditSession([ARG:1])
 
 EXT: CoreFunc_JsonParse: C$common$parseJson([ARG:1], [ARG:2])
 
-EXT: CoreFunc_LaunchBrowser: C$common$launchBrowser([ARG:1], [ARG:2], [ARG:3])
+EXT: CoreFunc_LaunchBrowser: COMMON.launchBrowser([ARG:1], [ARG:2], [ARG:3])
 
-EXT: JsInterop_CallbackReturn: C$interop$callbackReturn([ARG:1], [ARG:2])
-EXT: JsInterop_Invoke: C$interop$invoke([ARG:1], [ARG:2], [ARG:3])
-EXT: JsInterop_RegisterCallback: C$interop$registerCallback([ARG:1], [ARG:2], [ARG:3])
+EXT: JsInterop_CallbackReturn: COMMON.interop.callbackReturn([ARG:1], [ARG:2])
+EXT: JsInterop_Invoke: COMMON.interop.invoke([ARG:1], [ARG:2], [ARG:3])
+EXT: JsInterop_RegisterCallback: COMMON.interop.registerCallback([ARG:1], [ARG:2], [ARG:3])
 
 EXT: CoreFunc_NamedPipeCreate: (() => {})()
 EXT: CoreFunc_NamedPipeSend: (() => {})()
@@ -50,13 +50,13 @@ EXT: CoreFunc_ProcessKill: false
 
 EXT: CoreFunc_QueueExecContext: C$common$queueExecContext([ARG:1], [ARG:2])
 
-EXT: CoreFunc_ResourceGetBytes: C$common$readResourceBytes([ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
-EXT: CoreFunc_ResourceGetText: C$common$readResourceText([ARG:2], [ARG:3])
+EXT: CoreFunc_ResourceGetBytes: COMMON.res.readBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+EXT: CoreFunc_ResourceGetText: COMMON.res.readText([ARG:1], [ARG:2], [ARG:3])
 
-EXT: CoreFunc_TextEncoding_ConvertBytesToText: C$textEncoding.bytesToText([ARG:1], [ARG:2], [ARG:3])
-EXT: CoreFunc_TextEncoding_ConvertTextToBytes: C$textEncoding.textToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+EXT: CoreFunc_TextEncoding_ConvertBytesToText: COMMON.textEncoding.bytesToText([ARG:1], [ARG:2], [ARG:3])
+EXT: CoreFunc_TextEncoding_ConvertTextToBytes: COMMON.textEncoding.textToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
 
-EXT: CoreFunc_TimedCallback: C$common$timedCallback([ARG:2], [ARG:3])
+EXT: CoreFunc_TimedCallback: COMMON.timedCallback([ARG:1], [ARG:2], [ARG:3])
 
 EXT: CoreFunc_WaxSend: C$wax$send([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
 
@@ -65,19 +65,18 @@ EXT: UnixSocket_ClientSend: (() => {})()
 EXT: UnixSocket_ServerCreate: (() => {})()
 EXT: UnixSocket_ServerDisconnect: (() => {})()
 
-
-EXT: _lib_fileiocommon_directoryCreate: LIB$fileiocommon$fakedisk$mkdir([ARG:1], [ARG:2])
-EXT: _lib_fileiocommon_directoryDelete: LIB$fileiocommon$fakedisk$rmdir([ARG:1], [ARG:2])
-EXT: _lib_fileiocommon_directoryExists: LIB$fileiocommon$fakedisk$dirExists([ARG:1], [ARG:2])
-EXT: _lib_fileiocommon_directoryList: LIB$fileiocommon$fakedisk$listdir([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-EXT: _lib_fileiocommon_directoryMove: LIB$fileiocommon$fakedisk$movedir([ARG:1], [ARG:2], [ARG:3])
-EXT: _lib_fileiocommon_fileDelete: LIB$fileiocommon$fakedisk$fileDelete([ARG:1], [ARG:2])
-EXT: _lib_fileiocommon_fileMove: LIB$fileiocommon$fakedisk$fileMove([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
-EXT: _lib_fileiocommon_fileRead: LIB$fileiocommon$fakedisk$fileRead([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
-EXT: _lib_fileiocommon_fileWrite: LIB$fileiocommon$fakedisk$fileWrite([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_directoryCreate: COMMON.fakeDisk.mkdir([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_directoryDelete: COMMON.fakeDisk.rmdir([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_directoryExists: COMMON.fakeDisk.dirExists([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_directoryList: COMMON.fakeDisk.listdir([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: _lib_fileiocommon_directoryMove: COMMON.fakeDisk.movedir([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_fileiocommon_fileDelete: COMMON.fakeDisk.fileDelete([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_fileMove: COMMON.fakeDisk.fileMove([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_fileRead: COMMON.fakeDisk.fileRead([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+EXT: _lib_fileiocommon_fileWrite: COMMON.fakeDisk.fileWrite([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: _lib_fileiocommon_getCurrentDirectory: '/'
-EXT: _lib_fileiocommon_getDirParent: LIB$fileiocommon$fakedisk$getPathParent([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_getDirParent: COMMON.fakeDisk.getPathParent([ARG:1], [ARG:2])
 EXT: _lib_fileiocommon_getDirRoot: '/'
-EXT: _lib_fileiocommon_getFileInfo: LIB$fileiocommon$fakedisk$getPathInfoExt([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_getFileInfo: COMMON.fakeDisk.getPathInfoExt([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: _lib_fileiocommon_getUserDirectory: '/'
-EXT: _lib_fileiocommon_initializeDisk: LIB$fileiocommon$fakedisk$create([ARG:1])
+EXT: _lib_fileiocommon_initializeDisk: COMMON.fakeDisk.create([ARG:1])

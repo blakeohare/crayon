@@ -89,6 +89,8 @@ PST$floatParseHelper = function(o, s) {
 
 PST$floatBuffer16 = PST$multiplyList([0.0], 16);
 
+PST$stdout = v => { console.log(v); };
+
 PST$sortedCopyOfArray = function(n) {
 	var a = n.concat([]);
 	a.sort();
@@ -1618,7 +1620,7 @@ var ImageHelper_fromBytes = function(globals, bmp, isB64, rawData, sizeOut, call
 	}
 	var sizeOutInt = PST$createNewArray(2);
 	bmp[3] = PST$createNewArray(1);
-	var isSync = C$ImageUtil$fromBytes(data, sizeOutInt, bmp[3], callback);
+	var isSync = COMMON.imageUtil.fromBytes(data, sizeOutInt, bmp[3], callback);
 	if (isSync) {
 		if ((bmp[3][0] == null)) {
 			return 2;
@@ -1655,7 +1657,7 @@ var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
 	if ((edit != null)) {
 		e = edit[3][0];
 	}
-	C$ImageUtil$getPixel(bmp[3][0], e, xv[1], yv[1], arr);
+	COMMON.imageUtil.getPixel(bmp[3][0], e, xv[1], yv[1], arr);
 	if ((arr[4] == 0)) {
 		return 2;
 	}
@@ -1670,17 +1672,17 @@ var ImageHelper_GetPixel = function(nums, bmp, edit, xv, yv, pOut, arr) {
 };
 
 var ImageHelper_ImageBlit = function(target, src, sx, sy, sw, sh, tx, ty, tw, th) {
-	C$ImageUtil$blit(target[3][0], src[3][0], sx, sy, sw, sh, tx, ty, tw, th);
+	COMMON.imageUtil.blit(target[3][0], src[3][0], sx, sy, sw, sh, tx, ty, tw, th);
 };
 
 var ImageHelper_ImageCreate = function(o, w, h) {
 	o[3] = PST$createNewArray(1);
-	o[3][0] = C$ImageUtil$newBitmap(w, h);
+	o[3][0] = COMMON.imageUtil.newBitmap(w, h);
 };
 
 var ImageHelper_ImageEncode = function(globals, bmp, format) {
 	var o = PST$createNewArray(1);
-	var result = C$ImageUtil$encode(bmp, format, o);
+	var result = COMMON.imageUtil.encode(bmp, format, o);
 	if (o[0]) {
 		return buildString(globals, result);
 	}
@@ -1695,21 +1697,21 @@ var ImageHelper_LoadChunk = function(vm, cacheWrapper, chunkId, allChunkIds, loa
 		chunkIds[i] = allChunkIds[2][i][1];
 		++i;
 	}
-	C$ImageUtil$chunkLoadAsync(ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
+	COMMON.imageUtil.chunkLoadAsync(ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
 };
 
 var ImageHelper_Scale = function(src, dest, newWidth, newHeight, algo) {
 	dest[3] = PST$createNewArray(1);
-	dest[3][0] = C$ImageUtil$scale(src[3][0], newWidth, newHeight, algo);
+	dest[3][0] = COMMON.imageUtil.scale(src[3][0], newWidth, newHeight, algo);
 };
 
 var ImageHelper_SessionFinish = function(edit, bmp) {
-	C$ImageUtil$endEditSession(edit[3][0], bmp[3][0]);
+	COMMON.imageUtil.endEditSession(edit[3][0], bmp[3][0]);
 };
 
 var ImageHelper_SessionStart = function(edit, bmp) {
 	edit[3] = PST$createNewArray(1);
-	edit[3][0] = C$ImageUtil$startEditSession(bmp[3][0]);
+	edit[3][0] = COMMON.imageUtil.startEditSession(bmp[3][0]);
 };
 
 var ImageHelper_SetPixel = function(edit, xv1, yv1, xv2, yv2, rOrList, gv, bv, av) {
@@ -1747,7 +1749,7 @@ var ImageHelper_SetPixel = function(edit, xv1, yv1, xv2, yv2, rOrList, gv, bv, a
 	if (((r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (a < 0) || (a > 255))) {
 		return 4;
 	}
-	var outOfRange = C$ImageUtil$setPixel(edit[3][0], xv1[1], yv1[1], xv2[1], yv2[1], r, g, b, a);
+	var outOfRange = COMMON.imageUtil.setPixel(edit[3][0], xv1[1], yv1[1], xv2[1], yv2[1], r, g, b, a);
 	if (outOfRange) {
 		return 2;
 	}
@@ -4870,7 +4872,7 @@ var interpretImpl = function(vm, executionContextId) {
 						if ((arg3[0] == 1)) {
 							arg3 = null;
 						}
-						output = buildBoolean(globals, C$interop$invoke(arg1[1], arg2[1], arg3));
+						output = buildBoolean(globals, COMMON.interop.invoke(arg1[1], arg2[1], arg3));
 						break;
 					case 64:
 						// jsInteropRegisterCallback;
@@ -4878,14 +4880,14 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						C$interop$registerCallback(arg1[1], arg2[1], arg3);
+						COMMON.interop.registerCallback(arg1[1], arg2[1], arg3);
 						break;
 					case 65:
 						// jsInteropCallbackReturn;
 						valueStackSize -= 2;
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						C$interop$callbackReturn(arg1[1], arg2[1]);
+						COMMON.interop.callbackReturn(arg1[1], arg2[1]);
 						break;
 					case 66:
 						// imageCreate;
@@ -5036,7 +5038,7 @@ var interpretImpl = function(vm, executionContextId) {
 						}
 						objInstance1 = arg9[1];
 						objInstance1[3] = PST$createNewArray(1);
-						C$http$send(arg1, arg2, arg3[1], arg4[1], arg6[1], intArray1, string1, stringList, arg9, objInstance1[3]);
+						COMMON.httpSend(vm, arg1, arg2, arg3[1], arg4[1], arg6[1], intArray1, string1, stringList, arg9, objInstance1[3]);
 						output = VALUE_NULL;
 						break;
 					case 79:
@@ -5115,7 +5117,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						C$common$launchBrowser(arg1[1], arg2[1], arg3[1]);
+						COMMON.launchBrowser(arg1[1], arg2[1], arg3[1]);
 						output = vm[14];
 						break;
 					case 86:
@@ -5156,7 +5158,7 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 90:
 						// environmentDescriptor;
-						output = buildString(globals, C$common$envDescriptor());
+						output = buildString(globals, COMMON.envDescriptor());
 						break;
 					case 91:
 						// jsonParse;
@@ -5334,7 +5336,7 @@ var interpretImpl = function(vm, executionContextId) {
 					case 112:
 						// browserInteropGetUrlPath;
 						output = VALUE_NULL;
-						string1 = C$getUrlPath();
+						string1 = COMMON.getUrlPath();
 						if ((string1 != null)) {
 							output = buildString(globals, string1);
 						}
@@ -5343,7 +5345,7 @@ var interpretImpl = function(vm, executionContextId) {
 						// browserInteropSetUrlPath;
 						arg1 = valueStack[--valueStackSize];
 						output = VALUE_NULL;
-						C$setUrlPath(arg1[1]);
+						COMMON.setUrlPath(arg1[1]);
 						break;
 					case 114:
 						// base64FromBytes;
@@ -5358,7 +5360,7 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 115:
 						// environmentIsMobile;
-						output = buildBoolean(globals, C$common$envIsMobile());
+						output = buildBoolean(globals, COMMON.envIsMobile());
 						break;
 					case 116:
 						// ipcUnixSocketClientCreate;
@@ -6800,14 +6802,14 @@ var lib_fileiocommon_directoryCreate = function(vm, arg1, arg2, arg3) {
 	var path = arg2[1];
 	if (arg3[1]) {
 		int1 = 0;
-		if (!LIB$fileiocommon$fakedisk$dirExists(lib_fileiocommon_getDiskObject(hostObject), '/')) {
+		if (!COMMON.fakeDisk.dirExists(lib_fileiocommon_getDiskObject(hostObject), '/')) {
 			int1 = 4;
 		} else {
 			stringList1 = [];
 			bool1 = true;
-			while ((bool1 && !LIB$fileiocommon$fakedisk$dirExists(lib_fileiocommon_getDiskObject(hostObject), path))) {
+			while ((bool1 && !COMMON.fakeDisk.dirExists(lib_fileiocommon_getDiskObject(hostObject), path))) {
 				stringList1.push(path);
-				int1 = LIB$fileiocommon$fakedisk$getPathParent(path, PST$stringBuffer16);
+				int1 = COMMON.fakeDisk.getPathParent(path, PST$stringBuffer16);
 				path = PST$stringBuffer16[0];
 				if ((int1 != 0)) {
 					bool1 = false;
@@ -6817,7 +6819,7 @@ var lib_fileiocommon_directoryCreate = function(vm, arg1, arg2, arg3) {
 				i = (stringList1.length - 1);
 				while ((i >= 0)) {
 					path = stringList1[i];
-					int1 = LIB$fileiocommon$fakedisk$mkdir(lib_fileiocommon_getDiskObject(hostObject), path);
+					int1 = COMMON.fakeDisk.mkdir(lib_fileiocommon_getDiskObject(hostObject), path);
 					if ((int1 != 0)) {
 						i = -1;
 					}
@@ -6826,13 +6828,13 @@ var lib_fileiocommon_directoryCreate = function(vm, arg1, arg2, arg3) {
 			}
 		}
 	} else {
-		int1 = LIB$fileiocommon$fakedisk$mkdir(lib_fileiocommon_getDiskObject(hostObject), path);
+		int1 = COMMON.fakeDisk.mkdir(lib_fileiocommon_getDiskObject(hostObject), path);
 	}
 	return buildInteger(vm[13], int1);
 };
 
 var lib_fileiocommon_directoryDelete = function(vm, arg1, arg2) {
-	var sc = LIB$fileiocommon$fakedisk$rmdir(lib_fileiocommon_getDiskObject(arg1), arg2[1]);
+	var sc = COMMON.fakeDisk.rmdir(lib_fileiocommon_getDiskObject(arg1), arg2[1]);
 	return buildInteger(vm[13], sc);
 };
 
@@ -6842,7 +6844,7 @@ var lib_fileiocommon_directoryList = function(vm, arg1, arg2, arg3, arg4) {
 	var useFullPath = arg3[1];
 	var outputList = arg4[1];
 	var stringList1 = [];
-	var sc = LIB$fileiocommon$fakedisk$listdir(lib_fileiocommon_getDiskObject(diskhost), path, useFullPath, stringList1);
+	var sc = COMMON.fakeDisk.listdir(lib_fileiocommon_getDiskObject(diskhost), path, useFullPath, stringList1);
 	if ((sc == 0)) {
 		var i = 0;
 		while ((i < stringList1.length)) {
@@ -6854,18 +6856,18 @@ var lib_fileiocommon_directoryList = function(vm, arg1, arg2, arg3, arg4) {
 };
 
 var lib_fileiocommon_directoryMove = function(vm, arg1, arg2, arg3) {
-	var statusCode = LIB$fileiocommon$fakedisk$movedir(lib_fileiocommon_getDiskObject(arg1), arg2[1], arg3[1]);
+	var statusCode = COMMON.fakeDisk.movedir(lib_fileiocommon_getDiskObject(arg1), arg2[1], arg3[1]);
 	return buildInteger(vm[13], statusCode);
 };
 
 var lib_fileiocommon_fileDelete = function(vm, arg1, arg2) {
-	var statusCode = LIB$fileiocommon$fakedisk$fileDelete(lib_fileiocommon_getDiskObject(arg1), arg2[1]);
+	var statusCode = COMMON.fakeDisk.fileDelete(lib_fileiocommon_getDiskObject(arg1), arg2[1]);
 	return buildInteger(vm[13], statusCode);
 };
 
 var lib_fileiocommon_fileInfo = function(vm, arg1, arg2, arg3, arg4) {
 	var mask = arg3[1];
-	LIB$fileiocommon$fakedisk$getPathInfoExt(lib_fileiocommon_getDiskObject(arg1), arg2[1], mask, PST$intBuffer16, PST$floatBuffer16);
+	COMMON.fakeDisk.getPathInfoExt(lib_fileiocommon_getDiskObject(arg1), arg2[1], mask, PST$intBuffer16, PST$floatBuffer16);
 	var outputList = arg4[1];
 	clearList(outputList);
 	var globals = vm[13];
@@ -6895,7 +6897,7 @@ var lib_fileiocommon_fileInfo = function(vm, arg1, arg2, arg3, arg4) {
 };
 
 var lib_fileiocommon_fileMove = function(vm, arg1, arg2, arg3, arg4, arg5) {
-	var statusCode = LIB$fileiocommon$fakedisk$fileMove(lib_fileiocommon_getDiskObject(arg1), arg2[1], arg3[1], arg4[1], arg5[1]);
+	var statusCode = COMMON.fakeDisk.fileMove(lib_fileiocommon_getDiskObject(arg1), arg2[1], arg3[1], arg4[1], arg5[1]);
 	return buildInteger(vm[13], statusCode);
 };
 
@@ -6905,7 +6907,7 @@ var lib_fileiocommon_fileRead = function(vm, arg1, arg2, arg3, arg4) {
 	var readDataAsBytes = arg3[1];
 	var outputList = arg4[1];
 	var tList = [];
-	var statusCode = LIB$fileiocommon$fakedisk$fileRead(lib_fileiocommon_getDiskObject(diskHostObject), sandboxedPath, readDataAsBytes, PST$stringBuffer16, vm[13][9], tList);
+	var statusCode = COMMON.fakeDisk.fileRead(lib_fileiocommon_getDiskObject(diskHostObject), sandboxedPath, readDataAsBytes, PST$stringBuffer16, vm[13][9], tList);
 	if (((statusCode == 0) && !readDataAsBytes)) {
 		addToList(outputList, buildString(vm[13], PST$stringBuffer16[0]));
 	} else {
@@ -6935,7 +6937,7 @@ var lib_fileiocommon_fileWrite = function(vm, arg1, arg2, arg3, arg4) {
 		contentString = arg3[1];
 	}
 	if ((statusCode == 0)) {
-		statusCode = LIB$fileiocommon$fakedisk$fileWrite(lib_fileiocommon_getDiskObject(arg1), arg2[1], format, contentString, byteArrayRef);
+		statusCode = COMMON.fakeDisk.fileWrite(lib_fileiocommon_getDiskObject(arg1), arg2[1], format, contentString, byteArrayRef);
 	}
 	return buildInteger(vm[13], statusCode);
 };
@@ -6957,7 +6959,7 @@ var lib_fileiocommon_initializeDisk = function(vm, arg1, arg2) {
 	var objInstance1 = arg1[1];
 	var objArray1 = PST$createNewArray(1);
 	objInstance1[3] = objArray1;
-	var object1 = LIB$fileiocommon$fakedisk$create(arg2[1]);
+	var object1 = COMMON.fakeDisk.create(arg2[1]);
 	objArray1[0] = object1;
 	return vm[13][0];
 };
@@ -7405,13 +7407,13 @@ var primitiveMethodWrongArgCountError = function(name, expected, actual) {
 
 var printToStdOut = function(prefix, line) {
 	if ((prefix == null)) {
-		C$common$print(line);
+		PST$stdout(line);
 	} else {
 		var canonical = line.split("\r\n").join("\n").split("\r").join("\n");
 		var lines = canonical.split("\n");
 		var i = 0;
 		while ((i < lines.length)) {
-			C$common$print([prefix, ": ", lines[i]].join(''));
+			PST$stdout([prefix, ": ", lines[i]].join(''));
 			i += 1;
 		}
 	}
@@ -8144,7 +8146,7 @@ var textencoding_convertBytesToText = function(vm, arg1, arg2, arg3) {
 		unwrappedBytes[i] = c;
 		i += 1;
 	}
-	var sc = C$textEncoding.bytesToText(unwrappedBytes, format, strOut);
+	var sc = COMMON.textEncoding.bytesToText(unwrappedBytes, format, strOut);
 	if ((sc == 0)) {
 		addToList(output, buildString(vm[13], strOut[0]));
 	}
@@ -8158,7 +8160,7 @@ var textencoding_convertTextToBytes = function(vm, arg1, arg2, arg3, arg4) {
 	var output = arg4[1];
 	var byteList = [];
 	var intOut = PST$intBuffer16;
-	var sc = C$textEncoding.textToBytes(value, includeBom, format, byteList, vm[13][9], intOut);
+	var sc = COMMON.textEncoding.textToBytes(value, includeBom, format, byteList, vm[13][9], intOut);
 	var swapWordSize = intOut[0];
 	if ((swapWordSize != 0)) {
 		var i = 0;
