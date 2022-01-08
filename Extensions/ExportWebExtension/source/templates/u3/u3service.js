@@ -17,13 +17,15 @@ const createU3Service = (hub) => {
         inst = {
             windowId: windowIdAlloc++,
             sendMessage: async (msgType, msgPayload) => {
-                console.log(msgType, msgPayload);
                 switch (msgType) {
                     case 'events':
                         inst.listeners.events({ msgs: msgPayload });
                         break;
                     case 'shown':
                         inst.listeners.loaded({});
+                        break;
+                    case 'eventBatch':
+                        inst.listeners.batch({ data: msgPayload });
                         break;
                     default:
                         throw new Error("Send message not implemetned yet for " + msgType);
