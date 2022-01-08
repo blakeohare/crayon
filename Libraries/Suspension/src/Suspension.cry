@@ -3,6 +3,7 @@
 
         field _execId = -1;
         field _unblocked = false;
+        field _value = null;
 
         constructor() { }
 
@@ -10,11 +11,12 @@
             if (this._unblocked) return;
             this._execId = $$$('execId');
             $$$('execSuspend');
-            return null;
+            return this._value;
         }
 
-        function unblockCallback() {
+        function unblockCallback(value = null) {
             if (this._unblocked) return;
+            this._value = value;
             if (this._execId < 0) {
                 this._unblocked = true;
                 return;

@@ -6244,18 +6244,12 @@ namespace Interpreter.Vm
                                 break;
                             case 51:
                                 // resourceGetText;
-                                valueStackSize -= 2;
+                                valueStackSize -= 3;
+                                arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                string1 = ((ResourceReader)vm.environment.resourceReader).ReadTextResource((string)arg1.internalValue);
-                                if ((string1 == null))
-                                {
-                                    output = vm.globalNull;
-                                }
-                                else
-                                {
-                                    output = buildString(globals, string1);
-                                }
+                                ((ResourceReader)vm.environment.resourceReader).ReadTextResourceWithCallback((string)arg1.internalValue, arg3);
+                                output = vm.globalNull;
                                 break;
                             case 52:
                                 // environmentGetVariable;
@@ -6933,22 +6927,14 @@ namespace Interpreter.Vm
                                 break;
                             case 124:
                                 // resourceGetBytes;
-                                valueStackSize -= 4;
+                                valueStackSize -= 5;
+                                arg5 = valueStack[(valueStackSize + 4)];
                                 arg4 = valueStack[(valueStackSize + 3)];
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                bool1 = (bool)arg3.internalValue;
-                                valueList1 = new List<Value>();
-                                string1 = ((ResourceReader)vm.environment.resourceReader).ReadBinaryResource((string)arg1.internalValue, (bool)arg2.internalValue, bool1, valueList1, globals.positiveIntegers);
-                                if (bool1)
-                                {
-                                    output = buildString(globals, string1);
-                                }
-                                else
-                                {
-                                    output = buildList(valueList1);
-                                }
+                                ((ResourceReader)vm.environment.resourceReader).ReadBinaryResourceWithCallback((string)arg1.internalValue, (bool)arg2.internalValue, (bool)arg3.internalValue, new List<Value>(), globals.positiveIntegers, arg5);
+                                output = VALUE_NULL;
                                 break;
                             case 125:
                                 // execResume;

@@ -19,8 +19,17 @@
 			throw new Error("Not implemented");
 		};
 		
-		let readText = (reader, path, isText) => {
-			throw new Error("Not implemented");
+		let readText = (reader, path, isText, cb) => {
+			if (isText) {
+				throw new Error("Not implemented");
+			} else {
+				reader.cbxBundle.getBinaryResource(path, false).then(res => {
+					let s = [0];
+					let err = textEncoding.bytesToText(res, 3, s);
+					let str = err === 0 ? s[0] : null;
+					reader.evLoop.runVmWithNativeArgs(cb, [str]);
+				});
+			}
 		};
 		return { readBytes, readText };
 	})();
@@ -188,7 +197,7 @@
 		return { callbackReturn, invoke, registerCallback };
 	})();
 
-	let b64Decode = (() => { // It's late 2020, but in Android WebView it's still 2009!
+	let b64Decode = (() => {
 		let lu = {};
 		lu['+'] = 62;
 		lu['/'] = 63;
@@ -1299,6 +1308,7 @@
 		getUrlPath,
 		launchBrowser,
 		timedCallback,
+		b64Decode,
 		print, // TODO: this is not actually used. Pastel uses console.log directly. Use this instead so it can be overwritten.
 
 		textEncoding,

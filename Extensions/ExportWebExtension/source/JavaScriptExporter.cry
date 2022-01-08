@@ -130,6 +130,7 @@ class JavaScriptExporter {
                 name = parts[-1];
                 switch (type) {
                     case 'TXT':
+                        /*
                         res = resLookup['res/' + name];
                         txt = res.getTextContent();
                         if (txt == null) {
@@ -138,6 +139,7 @@ class JavaScriptExporter {
                             txt = TextEncoding.convertBytesToText(txtBytes, TextFormat.UTF8);
                         }
                         resources.add('C$common$addTextRes(', Json.serializeJson(name), ', ', Json.serializeJson(txt), ');\n');
+                        //*/
                         break;
                     case 'IMG':
                         //filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
@@ -146,7 +148,7 @@ class JavaScriptExporter {
                         //filesOut['resources/' + name] = FileData.createBinaryFileFromBytes([1, 2, 3]);
                         break;
                     case 'BIN':
-                        // consider placing a limit on this and instead relying on reading files via XHR
+                        // TODO: consider placing a limit on this and instead relying on reading files via XHR
                         bytesB64 = resLookup['res/' + name].getBytesB64();
                         resources.add('C$common$addBinaryRes(', Json.serializeJson(name), ', ', '"', bytesB64, '");\n');
                         break;
@@ -154,10 +156,11 @@ class JavaScriptExporter {
             }
         }
         resources.add('C$common$resourceManifest = ', Json.serializeJson(manifest), ';\n');
-        filesOut['resources.js'] = FileData.createTextFile(resources.join(''));
+        //filesOut['resources.js'] = FileData.createTextFile(resources.join(''));
 
         filesOut[projectId + '_cbx.js'] = FileData.createTextFile(this.createCbxJs());
 
+        /*
         fileNames = this.resDb.getFileNames() ?? [];
         fileData = this.resDb.getFiles() ?? [];
         for (i = 0; i < fileData.length; i++) {
@@ -166,10 +169,12 @@ class JavaScriptExporter {
             if (file.getType() == 'text') {
                 // emitFile = FileData.createTextFile(file.getTextContent());
             } else {
-                emitFile = FileData.createBinaryFileFromB64(file.getBytesB64());
+                // TODO: consider placing a limit on this and instead relying on reading files via XHR
+                //emitFile = FileData.createBinaryFileFromB64(file.getBytesB64());
             }
-            filesOut['resources/' + name] = emitFile;
+            //filesOut['resources/' + name] = emitFile;
         }
+        //*/
     }
 
     function createCbxJs() {
@@ -184,6 +189,20 @@ class JavaScriptExporter {
         lines.add("    .setMetadata('jsPrefix', '/')");
 
         // TODO: loop through images and resources and stuff
+
+
+        fileNames = this.resDb.getFileNames() ?? [];
+        fileData = this.resDb.getFiles() ?? [];
+        for (i = 0; i < fileData.length; i++) {
+            file = fileData[i];
+            name = fileNames[i]['res/'.length:]; // trim "res/"
+            if (file.getType() == 'text') {
+                // emitFile = FileData.createTextFile(file.getTextContent());
+            } else {
+                // TODO: consider placing a limit on this and instead relying on reading files via XHR. That would be okay since resource reader is now asynchronous.
+                lines.add("    .setBinaryResourceLiteral(" + Json.serializeJson(name) + ", '" + file.getBytesB64() + "')");
+            }
+        }
 
         lines.add(
             '    .finalize());',

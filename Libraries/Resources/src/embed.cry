@@ -1,11 +1,16 @@
-﻿namespace Resources {
+﻿import Suspension;
+
+namespace Resources {
 
     function readText(filepath) {
         node = _getNode(filepath, false);
-        str = null;
+        lock = new ExecutionLock();
         if (node.type == ResourceNodeType.TEXT || node.type == ResourceNodeType.BINARY) {
-            str = $$$('resourceGetText', node.realPath, node.type == ResourceNodeType.TEXT);
+            $$$('resourceGetText', node.realPath, node.type == ResourceNodeType.TEXT, s => {
+                lock.unblockCallback(s);
+            });
         }
+        str = lock.block();
         if (str == null) throw new Core.Exception("'" + filepath + "' is not a text file.");
         return str;
     }
@@ -15,7 +20,11 @@
 
     function _readBytes(filepath, useB64 = false) {
         node = _getNode(filepath, false);
-        return $$$('resourceGetBytes', node.realPath, node.type == ResourceNodeType.TEXT, useB64 == true, []);
+        lock = new ExecutionLock();
+        $$$('resourceGetBytes', node.realPath, node.type == ResourceNodeType.TEXT, useB64 == true, [], res => {
+            lock.unblockCallback(res);
+        });
+        return lock.block();
     }
 
     function fileExists(filepath) {
