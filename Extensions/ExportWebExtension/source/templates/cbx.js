@@ -49,6 +49,12 @@ let createCbxBundleBuilder = () => {
     let getMetadata = type => getRawTextResource(type, metadata);
 
     let getBinaryResource = async (path, asB64) => {
+        let file = files[path];
+        if (!file) return null;
+        if (file.type == 'B64') {
+            if (asB64) return file.value;
+            return COMMON.b64Decode(file.value);
+        }
         throw new Error("Not implemented");
     };
     let getImageResource = async (path) => {

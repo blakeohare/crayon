@@ -4773,15 +4773,12 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 51:
 						// resourceGetText;
-						valueStackSize -= 2;
+						valueStackSize -= 3;
+						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = COMMON.res.readText(vm[11][5], arg1[1], arg2[1]);
-						if ((string1 == null)) {
-							output = vm[14];
-						} else {
-							output = buildString(globals, string1);
-						}
+						COMMON.res.readText(vm[11][5], arg1[1], arg2[1], arg3);
+						output = vm[14];
 						break;
 					case 52:
 						// environmentGetVariable;
@@ -5439,19 +5436,14 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 124:
 						// resourceGetBytes;
-						valueStackSize -= 4;
+						valueStackSize -= 5;
+						arg5 = valueStack[(valueStackSize + 4)];
 						arg4 = valueStack[(valueStackSize + 3)];
 						arg3 = valueStack[(valueStackSize + 2)];
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						bool1 = arg3[1];
-						valueList1 = [];
-						string1 = COMMON.res.readBytes(vm[11][5], arg1[1], arg2[1], bool1, valueList1, globals[9]);
-						if (bool1) {
-							output = buildString(globals, string1);
-						} else {
-							output = buildList(valueList1);
-						}
+						COMMON.res.readBytes(vm[11][5], arg1[1], arg2[1], arg3[1], [], globals[9], arg5);
+						output = VALUE_NULL;
 						break;
 					case 125:
 						// execResume;

@@ -88,6 +88,8 @@ namespace Interpreter
 
     internal abstract class ResourceReader
     {
+        internal Interpreter.Structs.VmContext Vm { get; set; }
+
         public abstract List<byte> ReadBytes(string path);
 
         public string ReadMetadata(string path, bool returnEmptyOnFail)
@@ -100,6 +102,20 @@ namespace Interpreter
             return value;
         }
 
+        public void ReadBinaryResourceWithCallback(string path, bool isText, bool useBase64, List<Interpreter.Structs.Value> bytesOut, Interpreter.Structs.Value[] integers, Interpreter.Structs.Value callback)
+        {
+            string output = ReadBinaryResource(path, isText, useBase64, bytesOut, integers);
+            Interpreter.Vm.EventLoop evLoop = (Interpreter.Vm.EventLoop)this.Vm.environment.platformEventLoop;
+            if (output == null)
+            {
+                evLoop.ExecuteFunctionPointer(callback, bytesOut);
+            }
+            else
+            {
+                evLoop.ExecuteFunctionPointerNativeArgs(callback, new object[] { output });
+            }
+        }
+
         public string ReadBinaryResource(string path, bool isText, bool useBase64, List<Interpreter.Structs.Value> bytesOut, Interpreter.Structs.Value[] integers)
         {
             byte[] bytes;
@@ -107,7 +123,8 @@ namespace Interpreter
             {
                 string text = this.ReadTextResource(path);
                 bytes = System.Text.Encoding.UTF8.GetBytes(text);
-            } else
+            }
+            else
             {
                 bytes = this.ReadBytes("res/" + path).ToArray();
             }
@@ -120,6 +137,12 @@ namespace Interpreter
                 bytesOut.Add(integers[bytes[i]]);
             }
             return null;
+        }
+
+        public void ReadTextResourceWithCallback(string path, Interpreter.Structs.Value cb)
+        {
+            string value = ReadTextResource(path);
+            ((Interpreter.Vm.EventLoop)this.Vm.environment.platformEventLoop).ExecuteFunctionPointerNativeArgs(cb, new object[] { value });
         }
 
         public string ReadTextResource(string path)

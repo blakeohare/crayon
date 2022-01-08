@@ -91,6 +91,8 @@ namespace Runtime
             string imageManifest = cbxBundle.ResourceDB.ImageResourceManifestFile.TextContent;
 
             Interpreter.Structs.VmContext vm = Interpreter.Vm.CrayonWrapper.createVm(byteCode, resourceManifest, imageManifest);
+            resourceReader.Vm = vm;
+
             Interpreter.Vm.CrayonWrapper.vmEnvSetCommandLineArgs(vm, runtimeArgs);
             Interpreter.Vm.CrayonWrapper.vmSetResourceReaderObj(vm, resourceReader);
             Interpreter.Vm.CrayonWrapper.vmSetWaxHub(vm, this.Hub);
