@@ -21,13 +21,26 @@
             "platform": "javascript-app-ios"
         },
         {
-            "name": "javascript",
-            "platform": "javascript-app",
-            "jsFilePrefix": "/"
+            "name": "dotnet",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportDotNet",
+                    "name": "guidSeed",
+                    "value": "org.crayonlang.demos.WaveFormPiano,v1,%TARGET_NAME%"
+                }
+            ]
         },
         {
-            "name": "csharp",
-            "platform": "csharp-app"
+            "name": "web",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportWeb",
+                    "name": "jsFilePrefix",
+                    "value": "/demos/waveformpiano"
+                }
+            ]
         }
     ]
 }
