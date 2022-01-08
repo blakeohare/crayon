@@ -20,7 +20,9 @@
 		
 		let readText = (reader, path, isText, cb) => {
 			if (isText) {
-				throw new Error("Not implemented");
+				reader.cbxBundle.getTextResource(path).then(res => {
+					reader.evLoop.runVmWithNativeArgs(cb, [res]);
+				});
 			} else {
 				reader.cbxBundle.getBinaryResource(path, false).then(res => {
 					let s = [0];
