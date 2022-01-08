@@ -25,38 +25,39 @@ const createRuntimeService = (hub) => {
         queueEvSpin(evLoop);
     };
 
+    let getType = (t) => {
+        if (typeof t == 'string') return 'S';
+        if (!t) return t === false ? 'B' : t === 0 ? 'I' : 'N';
+        if (t === true) return 'B';
+        if (typeof t == 'number') return (t % 1 == 0) ? 'I' : 'F';
+        if (typeof t == 'object') return Array.isArray(t) ? 'L' : 'O';
+        return 'null';
+    };
+    let convertToValue = (g, v) => {
+        switch (getType(v)) {
+            case 'N': return GEN.buildNull(g);
+            case 'B': return GEN.buildBoolean(g, v);
+            case 'I': return GEN.buildInteger(g, v);
+            case 'F': return GEN.buildFloat(g, v);
+            case 'S': return GEN.buildString(g, v);
+            case 'L':
+                let list = [];
+                for (let m of v) list.push(convertToValue(g, m));
+                return GEN.buildList(list);
+            case 'O':
+                let keys = Object.keys(v);
+                let values = [];
+                for (let k of keys) values.push(convertToValue(g, v[k]));
+                return GEN.buildStringDictionary(g, keys, values);
+            default: return GEN.buildNull(g);
+        }
+    };
+
     let C$common$parseJson = (() => {
-        let getType = (t) => {
-            if (typeof t == "string") return 'S';
-            if (!t) return t === false ? 'B' : t === 0 ? 'I' : 'N';
-            if (t === true) return 'B';
-            if (typeof t == "number") return (t % 1 == 0) ? 'I' : 'F';
-            if (typeof t == 'object') return Array.isArray(t) ? 'L' : 'O';
-            return 'null';
-        };
-        let convert = (g, v) => {
-            switch (getType(v)) {
-                case 'N': return GEN.buildNull(g);
-                case 'B': return GEN.buildBoolean(g, v);
-                case 'I': return GEN.buildInteger(g, v);
-                case 'F': return GEN.buildFloat(g, v);
-                case 'S': return GEN.buildString(g, v);
-                case 'L':
-                    let list = [];
-                    for (let m of v) list.push(convert(g, m));
-                    return GEN.buildList(list);
-                case 'O':
-                    let keys = Object.keys(v);
-                    let values = [];
-                    for (let k of keys) values.push(convert(g, v[k]));
-                    return GEN.buildStringDictionary(g, keys, values);
-                default: return GEN.buildNull(g);
-            }
-        };
         
         return (globals, txt) => {
             try {
-                return convert(globals, JSON.parse(txt));
+                return convertToValue(globals, JSON.parse(txt));
             } catch (e) {
                 return null;
             }
@@ -75,14 +76,23 @@ const createRuntimeService = (hub) => {
             buildString,
             buildStringDictionary,
             createVm,
+            getVmReinvokeDelay,
+            getVmResultExecId,
+            getVmResultStatus,
+            isVmResultRootExecContext,
             startVm,
             runInterpreter,
             runInterpreterWithFunctionPointer,
             vmEnableLibStackTrace,
+            vmGetEventLoopObj,
             vmGetGlobals,
+            vmGetResourceReaderObj,
             vmSetEventLoopObj,
+            vmSetResourceReaderObj,
         };
     })();
+
+    COMMON.setRuntime(GEN);
 
     let runEventLoopIteration = (evLoop) => {
         if (!evLoop.isRunning || evLoop.items.length === 0) return;
@@ -99,23 +109,30 @@ const createRuntimeService = (hub) => {
             let args = item.functionPointerArgs;
             if (!args) {
                 let nativeArgs = item.functionPointerNativeArgs;
-                throw new Error("TODO: native arg function pointer invocation in VM event loop");
+                let globals = GEN.vmGetGlobals(vm);
+                args = nativeArgs.map(arg => convertToValue(globals, arg));
             }
             result = GEN.runInterpreterWithFunctionPointer(vm, item.functionPointer, args);
         } else {
             throw new Error(); // unknown condition
         }
-        switch (result.status) {
+        switch (GEN.getVmResultStatus(result)) {
             case 1: // FINISHED
-                throw new Error("TODO: getter for isRootContext");
+            case 3: // FATAL ERROR
+                if (GEN.isVmResultRootExecContext(result)) {
+                    evLoop.isRunning = false;
+                }
+                break;
             case 2: // SUSPENDED
                 break;
-            case 3: // FATAL ERROR
-                throw new Error("TODO: getter for isRootContext");
             case 5: // RESUME
-                throw new Error("TODO: not implemented");
+                setTimeout(() => {
+                    evLoop.queueExecId(GEN.getVmResultExecId(result));
+                    queueEvSpin(evLoop);
+                }, Math.max(0, Math.floor(1000 * GEN.getVmReinvokeDelay(result) + .5)));
+                break;
             case 7: // BREAKPOINT
-                throw new Error("TODO: not implemented");
+                throw new Error("Not implemented");
         }
     };
 
@@ -129,7 +146,7 @@ const createRuntimeService = (hub) => {
         }
     };
 
-    let runVmEventLoop = (vm) => {
+    let runVmEventLoop = (vm, cbxBundle) => {
         let evLoop = null;
         evLoop = {
             vm,
@@ -139,11 +156,24 @@ const createRuntimeService = (hub) => {
             queueExecId: id => {
                 evLoop.items.push({ execId: id });
             },
+            runVmWithNativeArgs: (fp, args) => {
+                evLoop.items.push({
+                    functionPointer: fp,
+                    functionPointerNativeArgs: [...args],
+                });
+                queueEvSpin(evLoop);
+            },
         };
 
         return new Promise(res => {
             evLoop.isDoneCb = () => res(1);
             GEN.vmSetEventLoopObj(vm, evLoop);
+            let resReader = {
+                vm,
+                evLoop,
+                cbxBundle,
+            };
+            GEN.vmSetResourceReaderObj(vm, resReader);
             evSpin(evLoop);
         });
     };
@@ -154,8 +184,9 @@ const createRuntimeService = (hub) => {
         console.log(req);
         
         let vm = null;
+        let cbxBundle = null;
         if (req.cbxPath) {
-            let cbxBundle = CBX.getBundle(req.cbxPath);
+            cbxBundle = CBX.getBundle(req.cbxPath);
             if (!cbxBundle) return { errors: ["CBX file not found: " + req.cbxPath] };
             
             vm = GEN.createVm(
@@ -168,7 +199,7 @@ const createRuntimeService = (hub) => {
         }
         GEN.vmEnableLibStackTrace(vm);
         
-        return runVmEventLoop(vm).then(() => {
+        return runVmEventLoop(vm, cbxBundle).then(() => {
             let res = GEN.vmGetWaxResponse(vm);
             if (res === null) res = '{}';
             return JSON.parse(res);

@@ -168,7 +168,7 @@ class JavaScriptExporter {
             } else {
                 emitFile = FileData.createBinaryFileFromB64(file.getBytesB64());
             }
-            filesOut['resources/images/' + name] = emitFile;
+            filesOut['resources/' + name] = emitFile;
         }
     }
 

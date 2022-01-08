@@ -1000,7 +1000,7 @@ var DateTime_getNativeTimezone = function(value) {
 var DateTime_getUtcOffsetAt = function(vm, arg1, arg2) {
 	var nativeTz = DateTime_getNativeTimezone(arg1);
 	var unixTime = arg2[1];
-	var offsetSeconds = LIB$datetime$getUtcOffsetAt(nativeTz, unixTime);
+	var offsetSeconds = COMMON.dateTime.getUtcOffsetAt(nativeTz, unixTime);
 	return buildInteger(vm[13], offsetSeconds);
 };
 
@@ -1015,7 +1015,7 @@ var DateTime_initTimeZone = function(vm, arg1, arg2, arg3) {
 	if ((arg2[0] == 1)) {
 		var strOut = PST$stringBuffer16;
 		var intOut = PST$intBuffer16;
-		nativeTzRef = LIB$datetime$getDataForLocalTimeZone(strOut, intOut);
+		nativeTzRef = COMMON.dateTime.getDataForLocalTimeZone(strOut, intOut);
 		readableName = strOut[0];
 		fingerprint = strOut[1];
 		offsetFromUtc = intOut[0];
@@ -1040,7 +1040,7 @@ var DateTime_initTimeZone = function(vm, arg1, arg2, arg3) {
 var DateTime_initTimeZoneList = function(vm, arg1) {
 	var obj = arg1[1];
 	obj[3] = PST$createNewArray(1);
-	var timezones = LIB$datetime$initializeTimeZoneList();
+	var timezones = COMMON.dateTime.initializeTimeZoneList();
 	obj[3][0] = timezones;
 	var length = timezones.length;
 	return buildInteger(vm[13], length);
@@ -1049,7 +1049,7 @@ var DateTime_initTimeZoneList = function(vm, arg1) {
 var DateTime_isDstOccurringAt = function(vm, arg1, arg2) {
 	var nativeTz = DateTime_getNativeTimezone(arg1);
 	var unixtime = arg2[1];
-	return buildBoolean(vm[13], LIB$datetime$isDstOccurringAt(nativeTz, unixtime));
+	return buildBoolean(vm[13], COMMON.dateTime.isDstOccurringAt(nativeTz, unixtime));
 };
 
 var DateTime_parseDate = function(vm, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
@@ -1062,7 +1062,7 @@ var DateTime_parseDate = function(vm, arg1, arg2, arg3, arg4, arg5, arg6, arg7) 
 	var nullableTimeZone = DateTime_getNativeTimezone(arg7);
 	if (((year >= 1970) && (year < 2100) && (month >= 1) && (month <= 12) && (day >= 1) && (day <= 31) && (hour >= 0) && (hour < 24) && (minute >= 0) && (minute < 60) && (microseconds >= 0) && (microseconds < 60000000))) {
 		var intOut = PST$intBuffer16;
-		LIB$datetime$parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
+		COMMON.dateTime.parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
 		if ((intOut[0] == 1)) {
 			var unixFloat = (intOut[1] + (intOut[2] / 1000000.0));
 			return buildFloat(vm[13], unixFloat);
@@ -1076,7 +1076,7 @@ var DateTime_unixToStructured = function(vm, arg1, arg2) {
 	var nullableTimeZone = DateTime_getNativeTimezone(arg2);
 	var output = [];
 	var intOut = PST$intBuffer16;
-	var success = LIB$datetime$unixToStructured(intOut, nullableTimeZone, unixTime);
+	var success = COMMON.dateTime.unixToStructured(intOut, nullableTimeZone, unixTime);
 	if (!success) {
 		return vm[14];
 	}
@@ -1697,7 +1697,7 @@ var ImageHelper_LoadChunk = function(vm, cacheWrapper, chunkId, allChunkIds, loa
 		chunkIds[i] = allChunkIds[2][i][1];
 		++i;
 	}
-	COMMON.imageUtil.chunkLoadAsync(ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
+	COMMON.imageUtil.chunkLoadAsync(vm, ImageHelper_GetChunkCache(cacheWrapper), chunkId, chunkIds, loadedCallback);
 };
 
 var ImageHelper_Scale = function(src, dest, newWidth, newHeight, algo) {
@@ -4776,7 +4776,7 @@ var interpretImpl = function(vm, executionContextId) {
 						valueStackSize -= 2;
 						arg2 = valueStack[(valueStackSize + 1)];
 						arg1 = valueStack[valueStackSize];
-						string1 = C$common$readResourceText(arg1[1], arg2[1]);
+						string1 = COMMON.res.readText(vm[11][5], arg1[1], arg2[1]);
 						if ((string1 == null)) {
 							output = vm[14];
 						} else {
@@ -5158,7 +5158,7 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 90:
 						// environmentDescriptor;
-						output = buildString(globals, COMMON.envDescriptor());
+						output = buildString(globals, COMMON.environment.descriptor);
 						break;
 					case 91:
 						// jsonParse;
@@ -5194,7 +5194,7 @@ var interpretImpl = function(vm, executionContextId) {
 						} else {
 							float1 = arg2[1];
 						}
-						C$common$timedCallback(arg1, float1);
+						COMMON.timedCallback(vm, arg1, float1);
 						break;
 					case 95:
 						// diskGetUserDirectory;
@@ -5360,7 +5360,7 @@ var interpretImpl = function(vm, executionContextId) {
 						break;
 					case 115:
 						// environmentIsMobile;
-						output = buildBoolean(globals, COMMON.envIsMobile());
+						output = buildBoolean(globals, COMMON.environment.isMobile);
 						break;
 					case 116:
 						// ipcUnixSocketClientCreate;
@@ -5446,7 +5446,7 @@ var interpretImpl = function(vm, executionContextId) {
 						arg1 = valueStack[valueStackSize];
 						bool1 = arg3[1];
 						valueList1 = [];
-						string1 = C$common$readResourceBytes(arg1[1], arg2[1], bool1, valueList1, globals[9]);
+						string1 = COMMON.res.readBytes(vm[11][5], arg1[1], arg2[1], bool1, valueList1, globals[9]);
 						if (bool1) {
 							output = buildString(globals, string1);
 						} else {
