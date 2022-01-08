@@ -2,7 +2,6 @@
 {
 #if WINDOWS
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     internal class U3WindowWindows : U3Window
