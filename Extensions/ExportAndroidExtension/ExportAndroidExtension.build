@@ -1,0 +1,10 @@
+﻿{
+    "id": "ExportAndroidExtension",
+    "source": "source/",
+    "title": "ExportAndroidExtension",
+    "version": "2.9.0",
+	"delegateMainTo": "Extensions",
+	"dependencies": [
+		"../libs/CrayonExporter"
+	]
+}

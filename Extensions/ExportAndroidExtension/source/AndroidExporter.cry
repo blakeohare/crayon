@@ -1,0 +1,57 @@
+﻿import Base64;
+import CrayonExporter;
+import FileIOTemp;
+import Json;
+import Resources;
+import TextEncoding;
+import Wax;
+
+class AndroidExporter {
+
+    field buildData;
+    field resDb;
+    field properties;
+    field cbxBundle;
+    field templates;
+    field outputDir;
+    field args;
+
+    constructor(buildData, useTempDir, args) {
+        this.buildData = buildData;
+        this.cbxBundle = this.buildData.getCbxBundle();
+        this.resDb = this.cbxBundle.getResourceDatabase();
+        this.properties = this.buildData.getExportProperties();
+        this.templates = new TemplateLoader();
+        this.outputDir = useTempDir
+            ? FileIOTemp.TempFiles.createDirectory(5 * 60) // temp dir exists for 5 minutes
+            : this.properties.getOutputDirectory();
+        this.args = args;
+    }
+
+    function export() {
+        print("The buildData JSON is: " + this.buildData._data);
+        print("About to send to JS export");
+        response = WaxHub.getActiveHub().awaitSendRequest('ExportWebExtension', {
+            'buildData': this.buildData._data,
+            'extArgs': {
+                'useTmpDir': true,
+                'filePrefix': '/',
+                'fullPage': true,
+                'min': false,
+            }
+        });
+        print("JS exported. Here's the response:");
+
+        print(response);
+        print("\nContinuing...");
+
+        files = {};
+        this.doExport(files);
+        FileData.writeToDisk(this.outputDir, files);
+    }
+
+    function doExport(filesOut) {
+        projectId = this.buildData.getProjectId();
+        filesOut['android.txt'] = FileData.createTextFile("TODO: export android project");
+    }
+}

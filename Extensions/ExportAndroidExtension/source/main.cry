@@ -1,0 +1,40 @@
+﻿import Extensions;
+import CrayonExporter;
+
+class ExportAndroidExtensionService : ExtensionService {
+
+    function orientationParse(orientations) {
+        if (typeof(orientations) != Type.LIST) return [];
+        output = {};
+        for (raw : orientations) {
+            canonical = (raw + '').trim().lower();
+            switch (canonical) {
+                case 'portrait':
+                case 'landscape':
+                case 'landscaperight':
+                case 'upsidedown':
+                    output[canonical] = true;
+                    break;
+            }
+        }
+        return output.keys();
+    }
+
+    function handleRequest(args, cb) {
+        buildData = new CrayonExporter.BuildData(this.getBuildData());
+        orientations = this.orientationParse(args.get('orientation'));
+        exporter = new AndroidExporter(
+            buildData,
+            args.get('useTmpDir') == true,
+            {
+                'orientations': orientations.length == 0 ? ['portrait'] : orientations,
+            }
+        );
+        exporter.export();
+
+        cb({
+            'errors': [],
+            'outputDir': exporter.outputDir
+        });
+    }
+}
