@@ -197,7 +197,7 @@ class JavaScriptExporter {
             file = fileData[i];
             name = fileNames[i]['res/'.length:]; // trim "res/"
             if (file.getType() == 'text') {
-                // emitFile = FileData.createTextFile(file.getTextContent());
+                lines.add("    .setTextResourceLiteral(" + Json.serializeJson(name) + ", " + Json.serializeJson(file.getTextContent()) + ")");
             } else {
                 // TODO: consider placing a limit on this and instead relying on reading files via XHR. That would be okay since resource reader is now asynchronous.
                 lines.add("    .setBinaryResourceLiteral(" + Json.serializeJson(name) + ", '" + file.getBytesB64() + "')");

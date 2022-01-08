@@ -21,13 +21,27 @@
             "platform": "javascript-app-ios"
         },
         {
-            "name": "javascript",
-            "platform": "javascript-app",
-            "jsFilePrefix": "/website/relative/path/from/domain/root"
+            "name": "dotnet",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportDotNet",
+                    "name": "guidSeed",
+                    "value": "org.crayonlang.demos.Draw,v1,%TARGET_NAME%"
+                }
+            ]
         },
         {
-            "name": "csharp",
-            "platform": "csharp-app"
+            "name": "web",
+            "source": "source",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportWeb",
+                    "name": "jsFilePrefix",
+                    "value": "/demos/draw"
+                }
+            ]
         }
     ]
 }
