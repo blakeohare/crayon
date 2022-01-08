@@ -9,9 +9,8 @@
 		console.log(v);
 	};
 
-	let timedCallback = (vm, fn, delay) => { 
-		// setTimeout(() => C$runInterpreterWithFunctionPointer(fn, []), Math.floor(delay * 1000 + .5)); 
-		throw new Error("Not implemented");
+	let timedCallback = (vm, fp, delay) => { 
+		setTimeout(() => runtime.vmGetEventLoopObj(vm).runVmWithNativeArgs(fp, []), Math.floor(delay * 1000 + .5));
 	};
 	
 	let res = (() => {
