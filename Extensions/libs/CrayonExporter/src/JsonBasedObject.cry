@@ -5,7 +5,7 @@
         field _data;
 
         constructor(data = null) {
-            this._data = data.clone() ?? {};
+            this._data = (data ?? {}).clone();
         }
 
         function clearItem(key) {

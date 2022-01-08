@@ -16,10 +16,6 @@
 
     "targets": [
         {
-            "name": "android",
-            "platform": "javascript-app-android"
-        },
-        {
             "name": "ios",
             "platform": "javascript-app-ios"
         },
@@ -46,6 +42,18 @@
         {
             "name": "csharp",
             "platform": "csharp-app"
+        },
+        {
+            "name": "android",
+            "skipRun": true,
+            "orientation": ["portrait"],
+            "extensions": [
+                {
+                    "extension": "ExportAndroid",
+                    "name": "x",
+                    "value": true
+                }
+            ]
         },
         {
             "name": "web",
