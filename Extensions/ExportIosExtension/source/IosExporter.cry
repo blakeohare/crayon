@@ -9,7 +9,7 @@ import Resources;
 import TextEncoding;
 import Wax;
 
-class AndroidExporter {
+class IosExporter {
 
     field buildData;
     field resDb;
@@ -75,22 +75,6 @@ class AndroidExporter {
         return 'fullSensor'; // enabling both orientations in one direction but only allowing one orientation in the transverse direction isn't a valid supported option in android, at least at the moment and as far as I can tell.
     }
 
-    function getEscapedAndroidSdk() {
-        androidSdk = this.args.get('androidSdk');
-        if (androidSdk == '') return null;
-
-        sb = [];
-        for (i = 0; i < androidSdk.length; i++) {
-            c = androidSdk[i];
-            switch (c) {
-                case ':': sb.add('\\:'); break;
-                case '\\': sb.add('\\\\'); break;
-                default: sb.add(c); break;
-            }
-        }
-        return sb.join('');
-    }
-
     function exportJsBaseProject() {
 
         response = WaxHub.getActiveHub().awaitSendRequest('ExportWebExtension', {
@@ -111,22 +95,10 @@ class AndroidExporter {
 
         projectId = this.buildData.getProjectId();
 
-        androidSdkEscaped = this.getEscapedAndroidSdk();
-        if (androidSdkEscaped == null) {
-            errors.add("Cannot export Android projects without having the ANDROID_HOME environment variable set to the location of the Android SDK. This can be overridden with the androidSdk extension argument.");
-        }
-
         title = this.args.get('title');
         if (title.length == 0) {
             errors.add("App title is blank.");
         }
-
-        javaPkg = this.args.get('javaPackage');
-        if (javaPkg.length == 0) {
-            errors.add("Java Package name is blank.");
-        }
-
-        // TODO: validate java package name
 
         if (errors.length > 0) {
             return { "errors": errors };
@@ -135,10 +107,8 @@ class AndroidExporter {
         this.templates
             .addReplacement('PROJECT_ID', projectId)
             .addReplacement('PROJECT_ID_LOWERCASE', projectId.lower())
-            .addReplacement('ANDROID_SDK_LOCATION', androidSdkEscaped)
-            .addReplacement('JAVA_PACKAGE', javaPkg)
-            .addReplacement('PROJECT_TITLE', title)
-            .addReplacement('ANDROID_ORIENTATION', this.getOrientation());
+            .addReplacement('PROJECT_TITLE', title);
+            //.addReplacement('ANDROID_ORIENTATION', this.getOrientation());
 
         response = this.exportJsBaseProject();
         errors = response.get('errors') ?? [];
@@ -163,8 +133,6 @@ class AndroidExporter {
 
     function doExport(jsProjDir, filesOut, includeWorkspace) {
         projectId = this.buildData.getProjectId();
-        javaPackage = this.args.get('javaPackage');
-        javaPackageDir = javaPackage.replace('.', '/');
 
         files = {};
         for (file : this.gatherFilePaths(jsProjDir)) {
@@ -187,47 +155,12 @@ class AndroidExporter {
             }
         }
 
-        filesOut['app/src/main/assets/android.js'] = FileData.createTextFile(this.templates.getText('app/src/main/assets/android.js'));
-
-        ideaXmlFiles = ['compiler', 'encodings', 'gradle', 'misc', 'modules', 'vcs', 'copyright/profile_settings', 'scopes/scope_settings'];
-        if (includeWorkspace) {
-            // only add .idea/workspace.xml if one does not already exist in the target folder.
-            ideaXmlFiles.add('workspace');
-        }
-        for (ideaFile : ideaXmlFiles) {
-            filesOut['.idea/' + ideaFile + '.xml'] = this.getTextFile('idea/' + ideaFile + '.xml');
-        }
-
-        filesOut['app/.gitignore'] = this.getTextFile('app/gitignore.txt');
-        filesOut['app/app.iml'] = this.getTextFile('app/app.iml');
-        filesOut['app/build.gradle'] = this.getTextFile('app/build.gradle');
-        filesOut['app/proguard-rules.txt'] = this.getTextFile('app/proguard-rules.txt');
-        filesOut['app/src/main/AndroidManifest.xml'] = this.getTextFile('app/src/main/AndroidManifest.xml');
-
-        filesOut['gradle/wrapper/gradle-wrapper.jar'] = FileData.createBinaryFileFromBytes(this.templates.getBinary('gradle/wrapper/gradle-wrapper.jar'));
-        filesOut['gradle/wrapper/gradle-wrapper.properties'] = this.getTextFile('gradle/wrapper/gradle-wrapper.properties');
-
-        filesOut['.gitignore'] = this.getTextFile('gitignore.txt');
-        filesOut['build.gradle'] = this.getTextFile('build.gradle');
-        filesOut[projectId.lower() + '.iml'] = this.getTextFile('PROJECT_ID.iml');
-        filesOut['gradle.properties'] = this.getTextFile('gradle.properties');
-        filesOut['gradlew'] = this.getTextFile('gradlew');
-        filesOut['gradlew.bat'] = this.getTextFile('gradlew.bat');
-        filesOut['local.properties'] = this.getTextFile('local.properties');
-        filesOut['settings.gradle'] = this.getTextFile('settings.gradle');
-
-        filesOut['app/src/main/java/' + javaPackageDir + '/app/CrayonWebView.java'] = this.getTextFile('app/src/main/java/CrayonWebView.java');
-        filesOut['app/src/main/java/' + javaPackageDir + '/app/MainActivity.java'] = this.getTextFile('app/src/main/java/MainActivity.java');
-
-        filesOut['app/src/main/res/layout/activity_main.xml'] = this.getTextFile('app/src/main/res/layout/activity_main.xml');
-        filesOut['app/src/main/res/menu/main.xml'] = this.getTextFile('app/src/main/res/menu/main.xml');
-        filesOut['app/src/main/res/values/dimens.xml'] = this.getTextFile('app/src/main/res/values/dimens.xml');
-        filesOut['app/src/main/res/values/strings.xml'] = this.getTextFile('app/src/main/res/values/strings.xml');
-        filesOut['app/src/main/res/values/styles.xml'] = this.getTextFile('app/src/main/res/values/styles.xml');
+        filesOut['app/src/main/assets/ios.js'] = FileData.createTextFile(this.templates.getText('app/src/main/assets/ios.js'));
 
         this.exportIcons(filesOut);
     }
 
+    // TODO: this is directly from the Android exporter. Update this to the ios format.
     function exportIcons(filesOut) {
 
         // Export icons for each of the various DPI's by using the provided icons and figuring out what the best fit is, size-wise.
@@ -314,7 +247,7 @@ class AndroidExporter {
             if (line.contains('favicon.ico')) continue;
             if (line.trim() == '</head>') {
                 newLines.add(
-                    "<script src=\"android.js\"></script>",
+                    "<script src=\"ios.js\"></script>",
                     "<style type=\"text/css\">",
                     "  body { margin:0px; background-color:#000; }",
                     "  #crayon_host {",
@@ -329,10 +262,11 @@ class AndroidExporter {
         }
 
         code = newLines.join('\n');
+        /*
         code = code.replace(
             '<script src="',
             '<script src="file:///android_asset/');
-
+        */
         return code;
     }
 

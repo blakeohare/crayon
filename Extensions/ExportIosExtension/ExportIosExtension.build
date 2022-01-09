@@ -1,0 +1,10 @@
+﻿{
+    "id": "ExportIosExtension",
+    "source": "source/",
+    "title": "ExportIosExtension",
+    "version": "2.9.0",
+	"delegateMainTo": "Extensions",
+	"dependencies": [
+		"../libs/CrayonExporter"
+	]
+}
