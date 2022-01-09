@@ -1,20 +1,35 @@
-﻿import Extensions;
+﻿import Environment;
+import Extensions;
 import CrayonExporter;
-
+/*
+    {
+        buildData: build data
+        extArgs: {
+            androidSdk: [optional] path to the Android SDK. If not specified, %ANDROID_HOME% environment variable is used instead.
+            orientations: case-insensitive string or list of strings of acceptable orientations. Must be portrait | landscape | landscapeLeft | landscapeRight | upsideDown | all
+            javaPackage: [optional] the Java package to use for the native code. If not specified, the lowercase project ID is used.
+        }
+*/
 class ExportAndroidExtensionService : ExtensionService {
 
     function orientationParse(orientations) {
-        if (typeof(orientations) != Type.LIST) return [];
         output = {};
-        for (raw : orientations) {
+        for (raw : (orientations + '').split(',')) {
             canonical = (raw + '').trim().lower();
+
             switch (canonical) {
+                case '':
+                    break;
                 case 'portrait':
                 case 'landscape':
+                case 'landscapeleft':
                 case 'landscaperight':
                 case 'upsidedown':
+                case 'all':
                     output[canonical] = true;
                     break;
+                default:
+                    return null;
             }
         }
         return output.keys();
@@ -22,19 +37,34 @@ class ExportAndroidExtensionService : ExtensionService {
 
     function handleRequest(args, cb) {
         buildData = new CrayonExporter.BuildData(this.getBuildData());
-        orientations = this.orientationParse(args.get('orientation'));
+        projectId = buildData.getProjectId();
+        rawOrientations = args.get('orientations');
+        orientations = rawOrientations == null ? [] : this.orientationParse(rawOrientations);
+        if (orientations == null) {
+            cb({ 'errors': ["Invalid value for orientations. Must be a comma-delimited list of strings. Found: " + args.get('orientations')] });
+            return;
+        }
+
         exporter = new AndroidExporter(
             buildData,
             args.get('useTmpDir') == true,
             {
-                'orientations': orientations.length == 0 ? ['portrait'] : orientations,
+                'androidSdk': ((args.get('androidSdk') ?? Environment.getEnvironmentVariable('ANDROID_HOME') ?? '') + '').trim(),
+                'javaPackage': ((args.get('javaPackage') ?? projectId.lower()) + '').trim(),
+                'orientations': orientations,
+                'title': (buildData.getExportProperties().getProjectTitle() ?? projectId).trim(),
             }
         );
-        exporter.export();
 
-        cb({
-            'errors': [],
-            'outputDir': exporter.outputDir
-        });
+        response = exporter.export();
+
+        if (response == null || response.get('errors', []).length == 0) {
+            response = {
+                'errors': [],
+                'outputDir': exporter.outputDir
+            };
+        }
+
+        cb(response);
     }
 }

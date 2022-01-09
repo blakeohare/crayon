@@ -108,7 +108,7 @@ namespace Interpreter
             Interpreter.Vm.EventLoop evLoop = (Interpreter.Vm.EventLoop)this.Vm.environment.platformEventLoop;
             if (output == null)
             {
-                evLoop.ExecuteFunctionPointer(callback, bytesOut);
+                evLoop.ExecuteFunctionPointerNativeArgs(callback, new object[] { null });
             }
             else
             {

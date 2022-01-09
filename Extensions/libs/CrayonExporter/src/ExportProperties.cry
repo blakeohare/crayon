@@ -7,6 +7,7 @@
         function hasIcons() { return this.hasItems('iconPaths'); }
         function getVersion() { return this.getString('version'); }
         function getDescription() { return this.getString('description'); }
+        function getProjectTitle() { return this.getString('title'); }
 
         function getProjectDirectory() { return this.getString('projectDirectory'); }
         function getOutputDirectory() { return this.getString('outputDirectory'); }

@@ -101,15 +101,13 @@ class JavaScriptExporter {
             ].join('\n')
             : '');
         this.templates.addReplacement('JS_EXTRA_HEAD', [
-            this.buildData.usesU3() == true ? '<script src=\"u3.js\"></script>' : '',
-            this.args.get('fullPage') == true ? '<script type="text/javascript">C$common$globalOptions["fullscreen"] = true;</script>' : '',
+            this.buildData.usesU3() == true ? '<script src="u3.js"></script>' : '',
         ].join('\n'));
 
         filesOut['test_server.py'] = FileData.createTextFile(this.templates.getText('test_server.py'));
         filesOut['index.html'] = FileData.createTextFile(this.templates.getText('index.html'));
         filesOut['common.js'] = FileData.createTextFile(this.templates.getText('common.js'));
         filesOut['cbx.js'] = FileData.createTextFile(this.templates.getText('cbx.js'));
-        filesOut['bytecode.js'] = FileData.createTextFile('C$bytecode = ' + Json.serializeJson(this.cbxBundle.getByteCode()) + ';\n');
         filesOut['u3.js'] = FileData.createTextFile(this.getU3Files());
 
         filesOut['main.js'] = FileData.createTextFile(this.getJsFileWithSwaps('main.js'));
