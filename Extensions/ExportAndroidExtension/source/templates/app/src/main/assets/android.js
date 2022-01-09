@@ -3,7 +3,7 @@
     COMMON.environment.descriptor = 'android|javascript';
     COMMON.environment.isMobile = true;
     COMMON.environment.fullscreen = true;
-    COMMON.environmment.isAndroid = true;
+    COMMON.environment.isAndroid = true;
     COMMON.environment.aspectRatio = 1.0;
     
     let receiveMessageDecoder = function(s) {
