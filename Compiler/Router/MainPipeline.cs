@@ -100,7 +100,7 @@ namespace Router
             {
                 NotifyStatusChange("EXTENSIONS-SKIP");
             }
-            foreach (string extensionName in extensionArgs.Select(ea => ea.Extension))
+            foreach (string extensionName in extensionArgs.Select(ea => ea.Extension).Distinct())
             {
                 NotifyStatusChange("EXTENSION-RUN-START:" + extensionName);
                 Dictionary<string, object> extensionRequest = new Dictionary<string, object>();
