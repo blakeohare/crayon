@@ -2,7 +2,9 @@
 import CrayonExporter;
 import FileIO;
 import FileIOTemp;
+import Images;
 import Json;
+import Math;
 import Resources;
 import TextEncoding;
 import Wax;
@@ -188,7 +190,10 @@ class AndroidExporter {
         filesOut['app/src/main/assets/android.js'] = FileData.createTextFile(this.templates.getText('app/src/main/assets/android.js'));
 
         ideaXmlFiles = ['compiler', 'encodings', 'gradle', 'misc', 'modules', 'vcs', 'copyright/profile_settings', 'scopes/scope_settings'];
-        if (includeWorkspace) ideaXmlFiles.add('workspace');
+        if (includeWorkspace) {
+            // only add .idea/workspace.xml if one does not already exist in the target folder.
+            ideaXmlFiles.add('workspace');
+        }
         for (ideaFile : ideaXmlFiles) {
             filesOut['.idea/' + ideaFile + '.xml'] = this.getTextFile('idea/' + ideaFile + '.xml');
         }
@@ -213,6 +218,76 @@ class AndroidExporter {
 
         filesOut['app/src/main/java/' + javaPackageDir + '/app/CrayonWebView.java'] = this.getTextFile('app/src/main/java/CrayonWebView.java');
         filesOut['app/src/main/java/' + javaPackageDir + '/app/MainActivity.java'] = this.getTextFile('app/src/main/java/MainActivity.java');
+
+        filesOut['app/src/main/res/layout/activity_main.xml'] = this.getTextFile('app/src/main/res/layout/activity_main.xml');
+        filesOut['app/src/main/res/menu/main.xml'] = this.getTextFile('app/src/main/res/menu/main.xml');
+        filesOut['app/src/main/res/values/dimens.xml'] = this.getTextFile('app/src/main/res/values/dimens.xml');
+        filesOut['app/src/main/res/values/strings.xml'] = this.getTextFile('app/src/main/res/values/strings.xml');
+        filesOut['app/src/main/res/values/styles.xml'] = this.getTextFile('app/src/main/res/values/styles.xml');
+
+        this.exportIcons(filesOut);
+    }
+
+    function exportIcons(filesOut) {
+        
+        // Export icons for each of the various DPI's by using the provided icons and figuring out what the best fit is, size-wise.
+
+        icons = [];
+        for (iconPath : this.properties.getIconPaths()) {
+            icons.add(Bitmap.fromBytes(FileIO.fileReadBytes(iconPath)));
+        }
+        if (icons.length == 0) icons.add(Bitmap.fromResource('app/src/main/IcLauncherWeb.png'));
+
+        largest = icons[0];
+        smallest = icons[0];
+        for (i = 1; i < icons.length; i++) {
+            icon = icons[i];
+            if (Math.max(icon.width, icon.height) > Math.max(largest.width, largest.height)) largest = icon;
+            if (Math.max(icon.width, icon.height) < Math.max(smallest.width, smallest.height)) smallest = icon;
+        }
+
+        dimensions = {
+            'Hdpi': 72,
+            'Mdpi': 48,
+            'Xhdpi': 96,
+            'Xxhdpi': 144,
+        };
+
+        for (dim : dimensions.keys()) {
+            size = dimensions[dim];
+            icon = null;
+            if (size > Math.max(largest.width, largest.height)) icon = largest;
+            else if (size < Math.max(largest.width, largest.height)) icon = smallest;
+            else {
+                best = largest;
+                // find the smallest icon that is larger than the given size
+                for (candidate : icons) {
+                    cSz = Math.max(candidate.width, candidate.height);
+                    if (cSz >= size && cSz < Math.max(best.width, best.height)) {
+                        best = candidate;
+                    }
+                }
+                icon = best;
+            }
+
+            iconCopy = new Bitmap(size, size);
+            if (icon.width == icon.height) {
+                newWidth = size;
+                newHeight = size;
+            } else if (icon.width > icon.height) {
+                newHeight = size * icon.height / icon.width;
+                newWidth = size;
+            } else {
+                newWidth = size * icon.width / icon.height;
+                newHeight = size;
+            }
+            iconCopy
+                .edit()
+                .drawImageStretched(icon, (size - newWidth) / 2, (size - newHeight) / 2, newWidth, newHeight)
+                .finish();
+
+            filesOut['app/src/main/res/drawable-' + dim.lower() + '/ic_launcher.png'] = FileData.createBinaryFileFromBytes(iconCopy.toBytes(ImageFormat.PNG));
+        }
     }
 
     function getTextFile(path) {
@@ -262,7 +337,7 @@ class AndroidExporter {
     }
 
     function gatherFilePathsImpl(dir, prefix, out) {
-        for (file : FileIO.directoryList(dir)) {
+        for (file : FileIO.directoryList(this.canonicalizePath(dir))) {
             skip = false;
             switch (file.lower()) {
                 case '.ds_store':
@@ -277,7 +352,7 @@ class AndroidExporter {
             absPath = dir + '/' + file;
             relPath = prefix + (prefix == '' ? '' : '/') + file;
 
-            if (FileIO.directoryExists(absPath)) {
+            if (FileIO.directoryExists(this.canonicalizePath(absPath))) {
                 this.gatherFilePathsImpl(absPath, relPath, out);
             } else {
                 out.add(relPath);
