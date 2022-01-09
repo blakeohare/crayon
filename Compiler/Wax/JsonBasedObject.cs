@@ -193,7 +193,11 @@ namespace Wax
 
         internal static void ItemToJson(System.Text.StringBuilder sb, object value)
         {
-            if (value is bool)
+            if (value == null)
+            {
+                sb.Append("null");
+            }
+            else if (value is bool)
             {
                 sb.Append((bool)value ? "true" : "false");
             }

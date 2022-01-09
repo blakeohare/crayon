@@ -46,12 +46,16 @@
         {
             "name": "android",
             "skipRun": true,
-            "orientation": ["portrait"],
             "extensions": [
                 {
                     "extension": "ExportAndroid",
-                    "name": "x",
-                    "value": true
+                    "name": "orientations",
+                    "value": "portrait"
+                },
+                {
+                    "extension": "ExportAndroid",
+                    "name": "javaPackage",
+                    "value": "org.crayonlang.demos.squishysquid"
                 }
             ]
         },

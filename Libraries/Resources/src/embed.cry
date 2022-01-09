@@ -21,8 +21,9 @@ namespace Resources {
     function _readBytes(filepath, useB64 = false) {
         node = _getNode(filepath, false);
         lock = new ExecutionLock();
-        $$$('resourceGetBytes', node.realPath, node.type == ResourceNodeType.TEXT, useB64 == true, [], res => {
-            lock.unblockCallback(res);
+        bytesOut = [];
+        $$$('resourceGetBytes', node.realPath, node.type == ResourceNodeType.TEXT, useB64 == true, bytesOut, res => {
+            lock.unblockCallback(res ?? bytesOut);
         });
         return lock.block();
     }

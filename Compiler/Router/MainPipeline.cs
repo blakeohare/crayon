@@ -113,7 +113,7 @@ namespace Router
                     extensionDirectArgs[extensionArg.Name] = extensionArg.Value;
                 }
                 Dictionary<string, object> extensionResult = await waxHub.SendRequest(extensionName, extensionRequest);
-                Error[] extensionErrors = Error.GetErrorList(extensionResult);
+                Error[] extensionErrors = Error.GetErrorsFromResult(extensionResult);
                 if (extensionErrors.Length > 0) return extensionErrors;
                 NotifyStatusChange("EXTENSION-RUN-END:" + extensionName);
             }

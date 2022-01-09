@@ -27,6 +27,13 @@ namespace Wax
             {
                 object[] array = (object[])jsonData;
                 return array
+                    .Select(o => {
+                        if (o is string)
+                        {
+                            return new Dictionary<string, object>() { { "msg", o } };
+                        }
+                        return o;
+                    })
                     .OfType<Dictionary<string, object>>().Select(d => new Error(d))
                     .Concat(
                         array.OfType<JsonBasedObject>().Select(jbo => new Error(jbo.GetRawData())))
