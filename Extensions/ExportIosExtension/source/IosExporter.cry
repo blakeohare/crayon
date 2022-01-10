@@ -33,46 +33,31 @@ class IosExporter {
     }
 
     function getOrientation() {
-        orientations = this.args.get('orientations') ?? [];
-        up = false;
-        down = false;
-        left = false;
-        right = false;
-
-        for (raw : orientations) {
-            switch (raw) {
-                case 'portrait': up = true; break;
-                case 'upsidedown': down = true; break;
-                case 'landscape': left = true; right = true; break;
-                case 'landscapeleft': left = true; break;
-                case 'landscaperight': right = true; break;
-                case 'all': return 'fullSensor';
-                default: return null;
-            }
+        orientations = {};
+        for (str : this.args.get('orientations') ?? []) {
+            orientations[str.lower().trim()] = true;
         }
 
-        vert = up && down;
-        hor = left && right;
-        anyVert = up || down;
-        anyHor = left || right;
-
-        if (!anyHor && !anyVert) return 'unspecified';
-
-        if (!anyHor) {
-            if (vert) return 'sensorPortrait';
-            if (up) return 'portrait';
-            return 'reversePortrait';
-        }
-
-        if (!anyVert) {
-            if (hor) return 'sensorLandscape';
-            if (left) return 'landscape';
-            return 'reverseLandscape';
-        }
-
-        if (hor && vert) return 'fullSensor';
-
-        return 'fullSensor'; // enabling both orientations in one direction but only allowing one orientation in the transverse direction isn't a valid supported option in android, at least at the moment and as far as I can tell.
+        return {
+            '    ': 'unspecified',
+            ' ^  ': 'portrait',
+            '   v': 'reversePortrait',
+            ' ^ v': 'sensorPortrait',
+            '<   ': 'landscape',
+            '  > ': 'reverseLandscape',
+            '< > ': 'sensorLandscape',
+            '<^>v': 'fullSensor',
+        }.get([
+            orientations.get('landscape', false) || orientations.get('landscapeleft', false) || orientations.get('all', false)
+                ? '<' : ' ',
+            orientations.get('portrait', false) || orientations.get('all', false)
+                ? '^' : ' ',
+            orientations.get('landscape', false) || orientations.get('landscaperight', false) || orientations.get('all', false)
+                ? '>' : ' ',
+            orientations.get('upsidedown', false) || orientations.get('all', false)
+                ? 'v' : ' ',
+        ].join(''))
+            ?? 'fullSensor'; // enabling both orientations in one direction but only allowing one orientation in the transverse direction isn't a valid supported option in android, at least at the moment and as far as I can tell.
     }
 
     function exportJsBaseProject() {
@@ -140,6 +125,7 @@ class IosExporter {
         }
         files['test_server.py'] = false;
 
+        jsDir = projectId + '/' + projectId + '/jsres';
         for (path : files.keys()) {
             if (files[path]) {
                 absPath = this.canonicalizePath(jsProjDir + '/' + path);
@@ -151,17 +137,33 @@ class IosExporter {
                     bytes = FileIO.fileReadBytes(absPath);
                     file = FileData.createBinaryFileFromBytes(bytes);
                 }
-                filesOut['app/src/main/assets/' + path] = file;
+                filesOut[jsDir + '/' + path] = file;
             }
         }
 
-        filesOut['app/src/main/assets/ios.js'] = FileData.createTextFile(this.templates.getText('app/src/main/assets/ios.js'));
+        prefix = projectId + '/' + projectId + '/';
+        filesOut[jsDir + '/ios.js'] = FileData.createTextFile(this.templates.getText('ios.js'));
+        filesOut[projectId + '/' + projectId + '.xcodeproj/project.pbxproj'] = this.getTextFile('project.pbxproj');
 
-        this.exportIcons(filesOut);
+        simpleCopies = {
+            'AppDelegate.swift': 'AppDelegate.swift',
+            'Assets.xcassets/AppIcon.appiconset/Contents.json': 'IconSetContent.json',
+            'Assets.xcassets/Launchscreen.imageset/Contents.json': 'ImageSetContent.json',
+            'Base.lproj/LaunchScreen.storyboard': 'LaunchScreen.storyboard',
+            'Base.lproj/Main.storyboard': 'Main.storyboard',
+            'Info.plist': 'Info.plist',
+            'ViewController.swift': 'ViewController.swift',
+            'jsres/ios.js': 'ios.js',
+        };
+        for (simpleCopyTarget : simpleCopies.keys()) {
+            simpleCopySource = simpleCopies[simpleCopyTarget];
+            filesOut[prefix + simpleCopyTarget] = this.getTextFile(simpleCopySource);
+        }
+
+        this.exportIcons(prefix, filesOut);
     }
 
-    // TODO: this is directly from the Android exporter. Update this to the ios format.
-    function exportIcons(filesOut) {
+    function exportIcons(prefix, filesOut) {
 
         // Export icons for each of the various DPI's by using the provided icons and figuring out what the best fit is, size-wise.
 
@@ -169,32 +171,59 @@ class IosExporter {
         for (iconPath : this.properties.getIconPaths()) {
             icons.add(Bitmap.fromBytes(FileIO.fileReadBytes(iconPath)));
         }
-        if (icons.length == 0) icons.add(Bitmap.fromResource('app/src/main/IcLauncherWeb.png'));
+        if (icons.length == 0) throw new Exception();
 
-        largest = icons[0];
-        smallest = icons[0];
-        for (i = 1; i < icons.length; i++) {
-            icon = icons[i];
+        for (icon : this.iconBatchResizer(icons, [
+            20 * 1,
+            20 * 2,
+            20 * 3,
+            29 * 1,
+            29 * 2,
+            29 * 3,
+            40 * 1,
+            40 * 2,
+            40 * 3,
+            60 * 2,
+            60 * 3,
+            76 * 1,
+            76 * 2,
+            167, // 83.5 * 2,
+            1024,
+        ])) {
+            filesOut[prefix + '/Assets.xcassets/AppIcon.appiconset/icon' + icon.width + '.png'] = FileData.createBinaryFileFromBytes(icon.toBytes(ImageFormat.PNG));
+        }
+    }
+
+    // TODO: refactor this to make it shared between Android and iOS exporters.
+    function iconBatchResizer(originalIcons, requiredSizes) {
+
+        if (originalIcons.length == 0) throw new Exception("Must provide at least one icon");
+
+        largest = originalIcons[0];
+        smallest = originalIcons[0];
+        for (i = 1; i < originalIcons.length; i++) {
+            icon = originalIcons[i];
             if (Math.max(icon.width, icon.height) > Math.max(largest.width, largest.height)) largest = icon;
             if (Math.max(icon.width, icon.height) < Math.max(smallest.width, smallest.height)) smallest = icon;
         }
 
-        dimensions = {
-            'Hdpi': 72,
-            'Mdpi': 48,
-            'Xhdpi': 96,
-            'Xxhdpi': 144,
-        };
+        unique = {};
+        for (dim : requiredSizes) {
+            unique[dim] = true;
+        }
+        dimensions = unique.keys();
+        dimensions.sort();
 
-        for (dim : dimensions.keys()) {
-            size = dimensions[dim];
+        output = [];
+
+        for (size : dimensions) {
             icon = null;
             if (size > Math.max(largest.width, largest.height)) icon = largest;
             else if (size < Math.max(largest.width, largest.height)) icon = smallest;
             else {
                 best = largest;
                 // find the smallest icon that is larger than the given size
-                for (candidate : icons) {
+                for (candidate : originalIcons) {
                     cSz = Math.max(candidate.width, candidate.height);
                     if (cSz >= size && cSz < Math.max(best.width, best.height)) {
                         best = candidate;
@@ -218,9 +247,10 @@ class IosExporter {
                 .edit()
                 .drawImageStretched(icon, (size - newWidth) / 2, (size - newHeight) / 2, newWidth, newHeight)
                 .finish();
-
-            filesOut['app/src/main/res/drawable-' + dim.lower() + '/ic_launcher.png'] = FileData.createBinaryFileFromBytes(iconCopy.toBytes(ImageFormat.PNG));
+            output.add(iconCopy);
         }
+
+        return output;
     }
 
     function getTextFile(path) {
