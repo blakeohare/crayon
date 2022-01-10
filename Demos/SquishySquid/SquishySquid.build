@@ -16,10 +16,6 @@
 
     "targets": [
         {
-            "name": "ios",
-            "platform": "javascript-app-ios"
-        },
-        {
             "name": "javascript",
             "platform": "javascript-app",
             "jsFilePrefix": "demos/squishysquid"
@@ -56,6 +52,17 @@
                     "extension": "ExportAndroid",
                     "name": "javaPackage",
                     "value": "org.crayonlang.demos.squishysquid"
+                }
+            ]
+        },
+        {
+            "name": "ios",
+            "skipRun": true,
+            "extensions": [
+                {
+                    "extension": "ExportIos",
+                    "name": "orientations",
+                    "value": "portrait"
                 }
             ]
         },
