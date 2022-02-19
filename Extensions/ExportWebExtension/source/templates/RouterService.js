@@ -5,13 +5,10 @@ const createRouterServicce = (hub) => {
         // TODO: build phase
 
         // Get bundle phase
-        console.log(req);
         let cbxFile = null;
         if (req.cbxFile) {
             cbxFile = req.cbxFile;
         }
-
-        console.log(cbxFile);
 
         // Extension phase
         // TODO: this
@@ -26,9 +23,7 @@ const createRouterServicce = (hub) => {
                 cbxPath: cbxFile,
             };
 
-            let response = await waxhub.sendRequest('runtime', runtimeReq);
-            console.log("RUNTIME COMPLETED:");
-            console.log(response);
+            await waxhub.sendRequest('runtime', runtimeReq);
         }
     };
 

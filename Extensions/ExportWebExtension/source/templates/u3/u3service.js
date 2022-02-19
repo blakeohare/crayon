@@ -85,7 +85,6 @@ const createU3Service = (hub) => {
     };
 
     let addListener = (req, cb) => {
-        console.log(req);
         let inst = instances[req.windowId];
         if (!inst) return;
         inst.listeners[req.type] = cb;

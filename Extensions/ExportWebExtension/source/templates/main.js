@@ -28,7 +28,6 @@ const Wax = (() => {
                 }
             }
             let cmd = argParse(args);
-            console.log(cmd);
             hub.sendRequest('router', cmd)
         },
     };
