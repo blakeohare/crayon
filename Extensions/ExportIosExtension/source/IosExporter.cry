@@ -102,7 +102,10 @@ class IosExporter {
         }
         jsDir = response.get('outputDir');
         files = {};
+
+        // TODO: this roughly corresponds to xcshareddata
         includeWorkspace = !FileIO.fileExists(this.canonicalizePath(this.outputDir + '/.idea/workspace.xml'));
+
         this.doExport(jsDir, files, includeWorkspace);
         FileData.writeToDisk(this.outputDir, files);
     }
@@ -142,27 +145,30 @@ class IosExporter {
         }
 
         prefix = projectId + '/' + projectId + '/';
-        filesOut[jsDir + '/ios.js'] = FileData.createTextFile(this.templates.getText('ios.js'));
-        filesOut[projectId + '/' + projectId + '.xcodeproj/project.pbxproj'] = this.getTextFile('project.pbxproj');
+        
+        filesOut[projectId + '/' + projectId + '.xcodeproj/project.pbxproj'] = this.getTextFile('project_xcodeproj/project.pbxproj');
+        filesOut[projectId + '/' + projectId + '.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist'] = this.getTextFile('project_xcodeproj/project_xcworkspace/xcshareddata/IDEWorkspaceChecks.plist');
 
-        simpleCopies = {
-            'AppDelegate.swift': 'AppDelegate.swift',
-            'Assets.xcassets/AppIcon.appiconset/Contents.json': 'IconSetContent.json',
-            'Assets.xcassets/Launchscreen.imageset/Contents.json': 'ImageSetContent.json',
-            'Base.lproj/LaunchScreen.storyboard': 'LaunchScreen.storyboard',
-            'Base.lproj/Main.storyboard': 'Main.storyboard',
-            'Info.plist': 'Info.plist',
-            'ViewController.swift': 'ViewController.swift',
-            'jsres/ios.js': 'ios.js',
-        };
-        for (simpleCopyTarget : simpleCopies.keys()) {
-            simpleCopySource = simpleCopies[simpleCopyTarget];
-            filesOut[prefix + simpleCopyTarget] = this.getTextFile(simpleCopySource);
+        for (simpleCopyPath : [
+            'Assets.xcassets/AccentColor.colorset/Contents.json',
+            'Assets.xcassets/AppIcon.appiconset/Contents.json',
+            'Assets.xcassets/Contents.json',
+            'Base.lproj/LaunchScreen.storyboard',
+            'Base.lproj/Main.storyboard',
+            'jsres/base64.js',
+            'jsres/ios.js',
+            'AppDelegate.swift',
+            'Info.plist',
+            'SceneDelegate.swift',
+            'ViewController.swift',
+        ]) {
+            filesOut[prefix + simpleCopyPath] = this.getTextFile('project/' + simpleCopyPath);
         }
 
-        this.exportIcons(prefix, filesOut);
+        //this.exportIcons(prefix, filesOut);
     }
 
+/*
     function exportIcons(prefix, filesOut) {
 
         // Export icons for each of the various DPI's by using the provided icons and figuring out what the best fit is, size-wise.
@@ -193,7 +199,9 @@ class IosExporter {
             filesOut[prefix + '/Assets.xcassets/AppIcon.appiconset/icon' + icon.width + '.png'] = FileData.createBinaryFileFromBytes(icon.toBytes(ImageFormat.PNG));
         }
     }
+*/
 
+/*
     // TODO: refactor this to make it shared between Android and iOS exporters.
     function iconBatchResizer(originalIcons, requiredSizes) {
 
@@ -252,6 +260,7 @@ class IosExporter {
 
         return output;
     }
+*/
 
     function getTextFile(path) {
         return FileData.createTextFile(this.templates.getText(path));
