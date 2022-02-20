@@ -104,7 +104,7 @@ namespace Builder
                 {
                     string absolutePath = FileUtil.GetCanonicalizeUniversalPath(sourceRoot.AbsolutePath + "/" + relativeFilePath);
                     string relativePath = sourceRoot.GetRelativePath(absolutePath);
-                    string fileName = Path.GetFileName(absolutePath);
+                    string fileName = DiskUtil.GetFileName(absolutePath);
                     string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
 
                     FileCategory category;

@@ -61,7 +61,7 @@ namespace AssemblyResolver
 
             foreach (string dir in unverifiedLibraryDirectories)
             {
-                string manifestPath = FileUtil.JoinPath(dir, "manifest.json");
+                string manifestPath = Wax.Util.Disk.DiskUtil.JoinPathNative(dir, "manifest.json");
                 if (FileUtil.FileExists(manifestPath))
                 {
                     verifiedLibraryPaths.Add(dir);
@@ -75,7 +75,7 @@ namespace AssemblyResolver
             Dictionary<string, InternalAssemblyMetadata> uniqueAssemblies = new Dictionary<string, InternalAssemblyMetadata>();
             foreach (string path in verifiedLibraryPaths.Reverse<string>())
             {
-                string defaultName = Path.GetFileName(path);
+                string defaultName = Wax.Util.Disk.DiskUtil.GetFileName(path);
                 InternalAssemblyMetadata metadata = AssemblyMetadataFactory.CreateLibrary(path, defaultName);
 
                 // TODO: don't hardcode EN

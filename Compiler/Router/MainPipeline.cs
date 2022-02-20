@@ -59,7 +59,7 @@ namespace Router
                 string outputFolder = (command.CbxExportPath ?? "").Length > 0
                     ? command.CbxExportPath
                     : buildResult.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
-                if (!Path.IsAbsolute(outputFolder))
+                if (!DiskUtil.IsAbsolute(outputFolder))
                 {
                     outputFolder = FileUtil.JoinPath(
                         buildResult.ExportProperties.ProjectDirectory,

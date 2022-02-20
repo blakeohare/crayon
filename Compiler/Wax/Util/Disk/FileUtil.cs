@@ -335,12 +335,12 @@ namespace Wax.Util.Disk
 
         public static string GetAbsolutePathFromRelativeOrAbsolutePath(string path)
         {
-            return GetAbsolutePathFromRelativeOrAbsolutePath(Path.GetCurrentDirectory(), path);
+            return GetAbsolutePathFromRelativeOrAbsolutePath(DiskUtil.GetCurrentDirectory(), path);
         }
 
         public static string GetAbsolutePathFromRelativeOrAbsolutePath(string dirForAbsoluteFallback, string path)
         {
-            if (Path.IsAbsolute(path)) return path;
+            if (DiskUtil.IsAbsolute(path)) return path;
 
             return System.IO.Path.GetFullPath(
                 System.IO.Path.Combine(

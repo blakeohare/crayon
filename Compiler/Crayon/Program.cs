@@ -45,6 +45,7 @@ namespace Crayon
             waxHub.RegisterService(new AssemblyResolver.AssemblyService());
             waxHub.RegisterService(new Runtime.RuntimeService());
             waxHub.RegisterService(new Builder.BuilderService());
+            waxHub.RegisterService(new DiskService());
             waxHub.RegisterService(new U3.U3Service());
 
             Wax.ToolchainCommand command = FlagParser.Parse(args);

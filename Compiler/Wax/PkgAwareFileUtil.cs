@@ -141,7 +141,9 @@ namespace Wax
             {
                 if (!packageStatuses.ContainsKey(pkgPath))
                 {
-                    string pkgRealPath = pkgPath.Replace("/", Path.Separator);
+                    char rightSep = System.IO.Path.DirectorySeparatorChar;
+                    char wrongSep = rightSep == '/' ? '\\' : '/';
+                    string pkgRealPath = pkgPath.Replace(wrongSep, rightSep);
                     if (File.Exists(pkgRealPath))
                     {
                         Wax.CryPkgDecoder pkg = new Wax.CryPkgDecoder(File.ReadBytes(pkgRealPath));
