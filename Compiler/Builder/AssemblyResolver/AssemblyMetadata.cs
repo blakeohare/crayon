@@ -36,15 +36,15 @@ namespace AssemblyResolver
             return this.NameByLocale.ContainsKey(locale.ID) ? this.NameByLocale[locale.ID] : this.ID;
         }
 
-        internal Dictionary<string, string> GetSourceCode()
+        internal async System.Threading.Tasks.Task<Dictionary<string, string>> GetSourceCodeAsync()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             string srcDir = DiskUtil.JoinPathNative(this.Directory, "src");
-            if (!FileUtil.DirectoryExists_DEPRECATED(srcDir))
+            if (!await FileUtil.DirectoryExistsAsync(srcDir))
             {
                 throw new System.InvalidOperationException(this.Directory + " is missing a 'src' directory");
             }
-            string[] srcFiles = FileUtil.GetAllFilePathsRelativeToRoot_DEPRECATED(srcDir);
+            string[] srcFiles = await FileUtil.GetAllFilePathsRelativeToRootAsync(srcDir);
             foreach (string srcFile in srcFiles.Where(name => name.ToLowerInvariant().EndsWith(".cry")))
             {
                 string code = this.ReadFile(false, "src/" + srcFile, false);

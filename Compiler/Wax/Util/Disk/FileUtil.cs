@@ -181,10 +181,10 @@ namespace Wax.Util.Disk
 
         public static Task<bool> FileExistsAsync(string path)
         {
-            return Task.FromResult(FileExists(path));
+            return Task.FromResult(FileExists_DEPRECATED(path));
         }
 
-        public static bool FileExists(string path)
+        public static bool FileExists_DEPRECATED(string path)
         {
             path = NormalizePath(path);
             return System.IO.File.Exists(path);
@@ -393,7 +393,7 @@ namespace Wax.Util.Disk
             return homedir + path.Substring(1);
         }
 
-        public static string GetParentDirectory(string path)
+        public static string GetParentDirectory_DEPRECATED(string path)
         {
             return System.IO.Path.GetDirectoryName(path);
         }

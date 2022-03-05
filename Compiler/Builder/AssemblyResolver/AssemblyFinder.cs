@@ -89,7 +89,7 @@ namespace AssemblyResolver
             foreach (string dir in unverifiedLibraryDirectories)
             {
                 string manifestPath = Wax.Util.Disk.DiskUtil.JoinPathNative(dir, "manifest.json");
-                if (FileUtil.FileExists(manifestPath))
+                if (FileUtil.FileExists_DEPRECATED(manifestPath))
                 {
                     verifiedLibraryPaths.Add(dir);
                 }

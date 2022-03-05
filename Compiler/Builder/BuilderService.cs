@@ -67,7 +67,7 @@ namespace Builder
 
             buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile, hub);
 
-            string projectDirectory = Wax.Util.Disk.FileUtil.GetParentDirectory(buildFile);
+            string projectDirectory = Wax.Util.Disk.FileUtil.GetParentDirectory_DEPRECATED(buildFile);
             string buildFileContent = await diskUtil.FileReadText(buildFile);
 
             BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, buildArgOverrides, extensionArgOverrides, diskUtil);

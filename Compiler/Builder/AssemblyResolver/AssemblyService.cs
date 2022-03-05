@@ -59,7 +59,7 @@ namespace AssemblyResolver
 
                         if (includeSource)
                         {
-                            Dictionary<string, string> code = md.GetSourceCode();
+                            Dictionary<string, string> code = await md.GetSourceCodeAsync();
                             List<string> codeOut = new List<string>();
                             foreach (string file in code.Keys.OrderBy(k => k))
                             {

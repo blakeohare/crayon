@@ -366,7 +366,7 @@ namespace Builder
                 buildFilePath = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(buildFilePath);
             }
 
-            if (!FileUtil.FileExists(buildFilePath))
+            if (!FileUtil.FileExists_DEPRECATED(buildFilePath))
             {
                 return null;
             }

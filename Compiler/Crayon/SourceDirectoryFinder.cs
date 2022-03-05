@@ -9,7 +9,6 @@ namespace Crayon
         {
             // Presumably running from source. Walk up to the root directory and find the Libraries directory.
             // From there use the list of folders.
-            // TODO: mark this as DEBUG only
             get
             {
 #if DEBUG
@@ -19,13 +18,13 @@ namespace Crayon
                     while (!string.IsNullOrEmpty(currentDirectory))
                     {
                         string librariesPath = DiskUtil.JoinPathNative(currentDirectory, "Libraries");
-                        if (FileUtil.DirectoryExists_DEPRECATED(librariesPath) &&
-                            FileUtil.FileExists(DiskUtil.JoinPathNative(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
+                        if (System.IO.Directory.Exists(librariesPath) &&
+                            System.IO.File.Exists(DiskUtil.JoinPathNative(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
                         {
                             crayonSourceDirectoryCached = currentDirectory;
                             break;
                         }
-                        currentDirectory = FileUtil.GetParentDirectory(currentDirectory);
+                        currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
                     }
                 }
 #endif
