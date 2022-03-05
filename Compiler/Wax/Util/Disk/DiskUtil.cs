@@ -36,14 +36,26 @@ namespace Wax.Util.Disk
             this.diskId = (string)result["diskId"];
         }
 
+        private static string JoinPath(string[] args, char sep)
+        {
+            string path = string.Join('/', args);
+            path = path.Replace('\\', '/');
+            while (path.Contains("//"))
+            {
+                path = path.Replace("//", "/");
+            }
+            if (sep != '/') path.Replace('/', sep);
+            return path;
+        }
+
         public static string JoinPathCanonical(params string[] args)
         {
-            return string.Join('/', args);
+            return JoinPath(args, '/');
         }
 
         public static string JoinPathNative(params string[] args)
         {
-            return string.Join(System.IO.Path.DirectorySeparatorChar, args);
+            return JoinPath(args, System.IO.Path.DirectorySeparatorChar);
         }
 
         public static string GetFileName(string path)

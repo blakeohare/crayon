@@ -211,7 +211,7 @@ namespace Builder
                     case "title": buildContext.ProjectTitle = pr.Replace(value); break;
                     case "description": buildContext.Description = pr.Replace(value); break;
                     case "orientation": buildContext.Orientation = ParseOrientations(value); break;
-                    case "output": buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath_DEPRECATED(projectDir, pr.Replace(value)); break;
+                    case "output": buildContext.OutputFolder = DiskUtil.JoinPathCanonical(projectDir, pr.Replace(value)); break;
                     case "delegateMainTo": buildContext.DelegateMainTo = value; break;
                     case "removeSymbols": buildContext.RemoveSymbols = GetBoolValue(value); break;
                     case "skipRun": buildContext.SkipRun = GetBoolValue(value); break;

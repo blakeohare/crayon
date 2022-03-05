@@ -28,7 +28,7 @@ namespace Wax
 
         private void ExportFile(string path, FileOutput file)
         {
-            string absolutePath = FileUtil.JoinPath_DEPRECATED(this.targetDirectory, path);
+            string absolutePath = DiskUtil.JoinPathNative(this.targetDirectory, path);
 
             FileUtil.EnsureParentFolderExists_DEPRECATED(absolutePath);
 

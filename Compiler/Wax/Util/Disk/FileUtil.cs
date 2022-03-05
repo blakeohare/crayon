@@ -50,7 +50,7 @@ namespace Wax.Util.Disk
             return System.IO.File.ReadAllBytes(path);
         }
 
-        public static string JoinPath_DEPRECATED(params string[] parts)
+        private static string JoinPath_DEPRECATED(params string[] parts)
         {
             string output = NormalizePath(string.Join(DIR_SEP, parts));
             while (output.Contains(DIR_SEP + DIR_SEP))
@@ -60,7 +60,7 @@ namespace Wax.Util.Disk
             return output;
         }
 
-        public static string JoinAndCanonicalizePath_DEPRECATED(params string[] parts)
+        private static string JoinAndCanonicalizePath_DEPRECATED(params string[] parts)
         {
             string path = JoinPath_DEPRECATED(parts);
             path = GetCanonicalizeUniversalPath(path);

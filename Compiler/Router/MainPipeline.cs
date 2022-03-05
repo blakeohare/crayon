@@ -61,7 +61,7 @@ namespace Router
                     : buildResult.ExportProperties.OutputDirectory.Replace("%TARGET_NAME%", "cbx");
                 if (!DiskUtil.IsAbsolute(outputFolder))
                 {
-                    outputFolder = FileUtil.JoinPath_DEPRECATED(
+                    outputFolder = DiskUtil.JoinPathNative(
                         buildResult.ExportProperties.ProjectDirectory,
                         outputFolder);
                 }
@@ -69,7 +69,7 @@ namespace Router
                 byte[] cbxFileBytes = CbxFileEncoder.Encode(buildResult.CbxBundle);
 
                 await FileUtil.EnsureFolderExistsAsync(outputFolder);
-                cbxFilePath = FileUtil.JoinPath_DEPRECATED(outputFolder, buildResult.ProjectID + ".cbx");
+                cbxFilePath = DiskUtil.JoinPathNative(outputFolder, buildResult.ProjectID + ".cbx");
                 System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
             }
             else

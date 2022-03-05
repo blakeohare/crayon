@@ -39,7 +39,7 @@ namespace AssemblyResolver
         internal Dictionary<string, string> GetSourceCode()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            string srcDir = FileUtil.JoinPath_DEPRECATED(this.Directory, "src");
+            string srcDir = DiskUtil.JoinPathNative(this.Directory, "src");
             if (!FileUtil.DirectoryExists_DEPRECATED(srcDir))
             {
                 throw new System.InvalidOperationException(this.Directory + " is missing a 'src' directory");
@@ -57,7 +57,7 @@ namespace AssemblyResolver
 
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {
-            string fullPath = FileUtil.JoinPath_DEPRECATED(this.Directory, pathRelativeToLibraryRoot);
+            string fullPath = DiskUtil.JoinPathNative(this.Directory, pathRelativeToLibraryRoot);
             if (fileUtil.FileExists(fullPath))
             {
                 return fileUtil.ReadFileBytes(fullPath);
@@ -67,7 +67,7 @@ namespace AssemblyResolver
 
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
         {
-            string fullPath = FileUtil.JoinPath_DEPRECATED(this.Directory, pathRelativeToLibraryRoot);
+            string fullPath = DiskUtil.JoinPathNative(this.Directory, pathRelativeToLibraryRoot);
             if (fileUtil.FileExists(fullPath))
             {
                 return fileUtil.ReadFileText(fullPath);
