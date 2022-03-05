@@ -1,42 +1,69 @@
 ﻿using Builder.Localization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wax.Util.Disk;
 
 namespace AssemblyResolver
 {
     internal class AssemblyFinder
     {
-        public InternalAssemblyMetadata[] AssemblyFlatList { get; private set; }
-        private Dictionary<string, InternalAssemblyMetadata> libraryLookup;
+        private InternalAssemblyMetadata[] assemblyFlatList = null;
+        private Dictionary<string, InternalAssemblyMetadata> libraryLookup = null;
+
+        private DiskUtil diskUtil;
+        private string[] nullableBuildFileLocalDepsList;
+        private string[] libraryDirectories;
+        private string nullableProjectDirectory;
 
         public AssemblyFinder(
+            DiskUtil diskUtil,
             string[] nullableBuildFileLocalDepsList,
             string[] libraryDirectories,
-            string nullableProjectDirectory,
-            string nullableCrayonSourceRoot)
+            string nullableProjectDirectory)
         {
-            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, libraryDirectories, nullableProjectDirectory).ToArray();
-
-            libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
-            foreach (InternalAssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
-            {
-                foreach (Locale supportedLocale in assemblyMetadata.SupportedLocales)
-                {
-                    libraryLookup[supportedLocale.ID + ":" + assemblyMetadata.GetName(supportedLocale)] = assemblyMetadata;
-                }
-            }
+            this.diskUtil = diskUtil;
+            this.nullableBuildFileLocalDepsList = nullableBuildFileLocalDepsList;
+            this.libraryDirectories = libraryDirectories;
+            this.nullableProjectDirectory = nullableProjectDirectory;
         }
 
-        public InternalAssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string name)
+        private async Task<Dictionary<string, InternalAssemblyMetadata>> GetLibraryLookup()
+        {
+            if (this.libraryLookup == null)
+            {
+                InternalAssemblyMetadata[] assemblyFlatList = await this.GetAssemblyFlatList();
+                this.libraryLookup = assemblyFlatList.ToDictionary(metadata => metadata.ID);
+                foreach (InternalAssemblyMetadata assemblyMetadata in this.assemblyFlatList)
+                {
+                    foreach (Locale supportedLocale in assemblyMetadata.SupportedLocales)
+                    {
+                        libraryLookup[supportedLocale.ID + ":" + assemblyMetadata.GetName(supportedLocale)] = assemblyMetadata;
+                    }
+                }
+            }
+            return this.libraryLookup;
+        }
+
+        public async Task<InternalAssemblyMetadata[]> GetAssemblyFlatList()
+        {
+            if (this.assemblyFlatList == null)
+            {
+                this.assemblyFlatList = (await GetAvailableLibraryPathsByLibraryName(diskUtil, nullableBuildFileLocalDepsList, libraryDirectories, nullableProjectDirectory));
+            }
+            return this.assemblyFlatList;
+        }
+
+        public async Task<InternalAssemblyMetadata> GetAssemblyMetadataFromAnyPossibleKey(string name)
         {
             InternalAssemblyMetadata assembly;
-            return libraryLookup.TryGetValue(name, out assembly)
+            return (await this.GetLibraryLookup()).TryGetValue(name, out assembly)
                 ? assembly
                 : null;
         }
 
-        private static InternalAssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
+        private static async Task<InternalAssemblyMetadata[]> GetAvailableLibraryPathsByLibraryName(
+            DiskUtil diskUtil,
             string[] nullableBuildFileLocalDepsList,
             string[] libraryDirectories,
             string nullableProjectDirectory)
@@ -76,7 +103,7 @@ namespace AssemblyResolver
             foreach (string path in verifiedLibraryPaths.Reverse<string>())
             {
                 string defaultName = Wax.Util.Disk.DiskUtil.GetFileName(path);
-                InternalAssemblyMetadata metadata = AssemblyMetadataFactory.CreateLibrary(path, defaultName);
+                InternalAssemblyMetadata metadata = await AssemblyMetadataFactory.CreateLibrary(diskUtil, path, defaultName);
 
                 // TODO: don't hardcode EN
                 string uniqueKey = "en:" + metadata.ID;

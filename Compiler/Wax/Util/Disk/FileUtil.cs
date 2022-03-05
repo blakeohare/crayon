@@ -20,13 +20,6 @@ namespace Wax.Util.Disk
             System.IO.File.WriteAllText(path, content, System.Text.Encoding.UTF8);
         }
 
-        public static string ReadFileText(string path)
-        {
-            path = NormalizePath(path);
-            byte[] bytes = System.IO.File.ReadAllBytes(path);
-            return UniversalTextDecoder.Decode(bytes);
-        }
-
         public static void WriteFileBytes(string path, byte[] content)
         {
             path = NormalizePath(path);

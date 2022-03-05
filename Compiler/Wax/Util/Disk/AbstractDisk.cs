@@ -19,11 +19,22 @@ namespace Wax.Util.Disk
         public PhysicalDisk(string id) : base(id)
         { }
 
+        private static string NormalizePath(string dir)
+        {
+            dir = dir.Trim().Replace('\\', '/').TrimEnd('/');
+            if (dir.Length == 0) dir = "/";
+            return dir.Replace('/', System.IO.Path.DirectorySeparatorChar);
+        }
+
         public override Task<string> FileReadText(string path)
         {
+            path = NormalizePath(path);
             if (System.IO.File.Exists(path))
             {
-                return Task.FromResult(System.IO.File.ReadAllText(path));
+                path = NormalizePath(path);
+                byte[] bytes = System.IO.File.ReadAllBytes(path);
+                string text = UniversalTextDecoder.Decode(bytes);
+                return Task.FromResult(text);
             }
             return Task.FromResult<string>(null);
         }

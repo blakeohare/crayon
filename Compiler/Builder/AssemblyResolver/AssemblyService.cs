@@ -11,17 +11,20 @@ namespace AssemblyResolver
 
         public AssemblyService() : base("assembly") { }
 
-        private AssemblyFinder GetAssemblyFinder(string[] localDeps, string projectDir, string nullableCrayonSourceRoot)
+        private async Task<AssemblyFinder> GetAssemblyFinder(string[] localDeps, string projectDir, string nullableCrayonSourceRoot)
         {
+            Wax.Util.Disk.DiskUtil diskUtil = new Wax.Util.Disk.DiskUtil(this.Hub);
+            await diskUtil.InitializePhysicalDisk();
+
             string finderKey = string.Join(';', localDeps) + ";PROJ:" + projectDir;
             if (!this.assemblyFinderCache.ContainsKey(finderKey))
             {
-                this.assemblyFinderCache[finderKey] = new AssemblyFinder(localDeps, this.Hub.GetLibraryDirectories(), projectDir, nullableCrayonSourceRoot);
+                this.assemblyFinderCache[finderKey] = new AssemblyFinder(diskUtil, localDeps, this.Hub.GetLibraryDirectories(), projectDir);
             }
             return this.assemblyFinderCache[finderKey];
         }
 
-        public override Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
+        public override async Task<Dictionary<string, object>> HandleRequest(Dictionary<string, object> request)
         {
             switch ((string)request["command"])
             {
@@ -31,8 +34,8 @@ namespace AssemblyResolver
                     string[] localDeps = (string[])request["localDeps"];
                     string projectDir = (string)request["projectDir"];
                     bool includeSource = (bool)request["includeSource"];
-                    AssemblyFinder af = this.GetAssemblyFinder(localDeps, projectDir, this.Hub.SourceRoot);
-                    InternalAssemblyMetadata md = af.GetAssemblyMetadataFromAnyPossibleKey(locale == null ? name : (locale + ":" + name));
+                    AssemblyFinder af = await this.GetAssemblyFinder(localDeps, projectDir, this.Hub.SourceRoot);
+                    InternalAssemblyMetadata md = await af.GetAssemblyMetadataFromAnyPossibleKey(locale == null ? name : (locale + ":" + name));
                     Dictionary<string, object> output = new Dictionary<string, object>();
                     if (md == null)
                     {
@@ -67,7 +70,7 @@ namespace AssemblyResolver
                         }
                     }
 
-                    return Task.FromResult(output);
+                    return output;
 
                 default:
                     throw new NotImplementedException();

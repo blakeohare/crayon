@@ -1,6 +1,7 @@
 ﻿using Builder.ImageSheets;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Wax;
 using Wax.Util.Disk;
 using Wax.Util.Images;
@@ -39,10 +40,10 @@ namespace Builder
             { "json", FileCategory.TEXT },
         };
 
-        internal static ResourceDatabase PrepareResources(BuildContext buildContext)
+        internal static async Task<ResourceDatabase> PrepareResources(BuildContext buildContext)
         {
             // This really needs to go in a separate helper file.
-            ResourceDatabase resourceDatabase = CreateResourceDatabase(buildContext);
+            ResourceDatabase resourceDatabase = await CreateResourceDatabase(buildContext);
 
             GenerateResourceMapping(resourceDatabase);
 
@@ -87,7 +88,7 @@ namespace Builder
             };
         }
 
-        internal static ResourceDatabase CreateResourceDatabase(BuildContext buildContext)
+        internal static async Task<ResourceDatabase> CreateResourceDatabase(BuildContext buildContext)
         {
             ResourceDatabase resDb = new ResourceDatabase();
 
@@ -148,7 +149,7 @@ namespace Builder
                             break;
 
                         case FileCategory.TEXT:
-                            string content = FileUtil.ReadFileText(absolutePath);
+                            string content = await buildContext.DiskUtil.FileReadText(absolutePath);
                             textResources.Add(new FileOutput()
                             {
                                 Type = FileOutputType.Text,

@@ -1,16 +1,17 @@
 ﻿using Builder.Localization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wax.Util.Disk;
 
 namespace AssemblyResolver
 {
     internal static class AssemblyMetadataFactory
     {
-        public static InternalAssemblyMetadata CreateLibrary(string directory, string id)
+        public static async Task<InternalAssemblyMetadata> CreateLibrary(DiskUtil diskUtil, string directory, string id)
         {
             Wax.Util.JsonLookup manifest;
-            string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
+            string manifestText = await diskUtil.FileReadText(DiskUtil.JoinPathCanonical(directory, "manifest.json"));
             try
             {
                 manifest = new Wax.Util.JsonLookup(new Wax.Util.JsonParser(manifestText)

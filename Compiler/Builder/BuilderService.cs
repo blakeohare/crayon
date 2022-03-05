@@ -29,7 +29,7 @@ namespace Builder
                 request.BuildArgOverrides,
                 request.ExtensionArgOverrides,
                 diskUtil);
-            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
+            ResourceDatabase resourceDatabase = await ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
             BuildData buildData = await Compile(buildContext, resourceDatabase, this.Hub);

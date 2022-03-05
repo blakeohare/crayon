@@ -38,7 +38,7 @@ namespace Builder
         public bool SkipRun { get; set; }
         public Wax.ExtensionArg[] ExtensionArgs { get; set; }
 
-        private DiskUtil diskUtil;
+        public DiskUtil DiskUtil { get; private set; }
 
         private static BuildRoot GetBuildRoot(string buildFile, string projectDir)
         {
@@ -201,7 +201,7 @@ namespace Builder
                     .ToArray(),
                 ExtensionArgs = extensionArgs.Select(arg => { arg.Value = pr.Replace(arg.Value); return arg; }).ToArray(),
             };
-            buildContext.diskUtil = diskUtil;
+            buildContext.DiskUtil = diskUtil;
 
             foreach (Wax.BuildArg buildArg in remainingBuildArgs)
             {
@@ -253,7 +253,7 @@ namespace Builder
                         string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
                             filepath,
                             this.ProjectDirectory);
-                        output[relativePath] = await diskUtil.FileReadText(filepath);
+                        output[relativePath] = await this.DiskUtil.FileReadText(filepath);
                     }
                 }
             }
