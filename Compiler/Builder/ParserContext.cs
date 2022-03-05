@@ -322,7 +322,7 @@ namespace Builder
 
         public async Task<TopLevelEntity[]> ParseAllTheThings()
         {
-            Dictionary<string, string> files = this.CompileRequest.GetCodeFiles();
+            Dictionary<string, string> files = await this.CompileRequest.GetCodeFiles();
 
             // When a syntax error is encountered, add it to this list (RELEASE builds only).
             // Only allow one syntax error per file. Libraries are considered stable and will

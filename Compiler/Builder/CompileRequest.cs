@@ -4,16 +4,17 @@ namespace Builder
 {
     internal class CompileRequest
     {
-        private Dictionary<string, string> codeFiles;
+        private Dictionary<string, string> codeFiles = null;
+        private BuildContext buildContext;
 
-        public CompileRequest(Builder.BuildContext buildContext, string sourceRoot)
+        public CompileRequest(BuildContext buildContext, string sourceRoot)
         {
+            this.buildContext = buildContext;
             this.ProjectId = buildContext.ProjectID;
             this.DelegateMainTo = buildContext.DelegateMainTo;
             this.CompilerLocale = Builder.Localization.Locale.Get(buildContext.CompilerLocale.ID);
             this.LocalDeps = buildContext.LocalDeps;
             this.ProjectDirectory = buildContext.ProjectDirectory;
-            this.codeFiles = buildContext.GetCodeFiles();
             this.RootProgrammingLanguage = buildContext.RootProgrammingLanguage;
             this.RemoveSymbols = buildContext.RemoveSymbols;
             this.ActiveCrayonSourceRoot = sourceRoot;
@@ -42,8 +43,12 @@ namespace Builder
         public Builder.ProgrammingLanguage RootProgrammingLanguage { get; private set; }
         public string ActiveCrayonSourceRoot { get; private set; }
 
-        public Dictionary<string, string> GetCodeFiles()
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> GetCodeFiles()
         {
+            if (this.codeFiles == null)
+            {
+                this.codeFiles = await buildContext.GetCodeFiles();
+            }
             return this.codeFiles;
         }
 

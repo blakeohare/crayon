@@ -126,9 +126,9 @@ namespace Crayon
                 if (crayonHome != null)
                 {
                     string debugArgsFile = FileUtil.JoinPath(crayonHome, "DEBUG_ARGS.txt");
-                    if (FileUtil.FileExists(debugArgsFile))
+                    if (System.IO.File.Exists(debugArgsFile))
                     {
-                        string[] debugArgs = FileUtil.ReadFileText(debugArgsFile).Trim().Split('\n');
+                        string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');
                         string lastArgSet = debugArgs[debugArgs.Length - 1].Trim();
                         if (lastArgSet.Length > 0)
                         {

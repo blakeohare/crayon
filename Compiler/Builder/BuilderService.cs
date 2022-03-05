@@ -18,12 +18,17 @@ namespace Builder
 
         private async Task<BuildData> HandleRequestImpl(BuildRequest request)
         {
-            BuildContext buildContext = GetBuildContext(
+            Wax.Util.Disk.DiskUtil diskUtil = new Wax.Util.Disk.DiskUtil(this.Hub);
+
+            await diskUtil.InitializePhysicalDisk();
+
+            BuildContext buildContext = await GetBuildContext(
                 request.BuildFile,
                 request.BuildTarget,
                 this.Hub,
                 request.BuildArgOverrides,
-                request.ExtensionArgOverrides);
+                request.ExtensionArgOverrides,
+                diskUtil);
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext);
 
             // TODO: this should no longer be a wax request and can be called directly.
@@ -43,12 +48,13 @@ namespace Builder
             return buildData;
         }
 
-        private static BuildContext GetBuildContext(
+        private static async Task<BuildContext> GetBuildContext(
             string buildFilePath,
             string buildTarget,
             WaxHub hub,
             IList<BuildArg> buildArgOverrides,
-            IList<ExtensionArg> extensionArgOverrides)
+            IList<ExtensionArg> extensionArgOverrides,
+            Wax.Util.Disk.DiskUtil diskUtil)
         {
             string buildFile = buildFilePath;
 
@@ -62,9 +68,9 @@ namespace Builder
             buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile, hub);
 
             string projectDirectory = Wax.Util.Disk.FileUtil.GetParentDirectory(buildFile);
-            string buildFileContent = Wax.Util.Disk.FileUtil.ReadFileText(buildFile);
+            string buildFileContent = await diskUtil.FileReadText(buildFile);
 
-            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, buildArgOverrides, extensionArgOverrides);
+            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, target, buildArgOverrides, extensionArgOverrides, diskUtil);
 
             if (buildContext.SourceFolders.Length == 0)
             {

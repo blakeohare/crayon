@@ -3,6 +3,7 @@ using Builder.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Wax.Util.Disk;
 
 namespace Builder
@@ -37,6 +38,8 @@ namespace Builder
         public bool SkipRun { get; set; }
         public Wax.ExtensionArg[] ExtensionArgs { get; set; }
 
+        private DiskUtil diskUtil;
+
         private static BuildRoot GetBuildRoot(string buildFile, string projectDir)
         {
             try
@@ -54,7 +57,8 @@ namespace Builder
             string buildFile,
             string nullableTargetName,
             IList<Wax.BuildArg> buildArgOverrides,
-            IList<Wax.ExtensionArg> extensionArgOverrides)
+            IList<Wax.ExtensionArg> extensionArgOverrides,
+            DiskUtil diskUtil)
         {
             BuildRoot buildInput = GetBuildRoot(buildFile, projectDir);
 
@@ -197,6 +201,7 @@ namespace Builder
                     .ToArray(),
                 ExtensionArgs = extensionArgs.Select(arg => { arg.Value = pr.Replace(arg.Value); return arg; }).ToArray(),
             };
+            buildContext.diskUtil = diskUtil;
 
             foreach (Wax.BuildArg buildArg in remainingBuildArgs)
             {
@@ -234,7 +239,7 @@ namespace Builder
             }
         }
 
-        public Dictionary<string, string> GetCodeFiles()
+        public async Task<Dictionary<string, string>> GetCodeFiles()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             string fileExtension = ProgrammingLanguageParser.LangToFileExtension(this.RootProgrammingLanguage);
@@ -248,7 +253,7 @@ namespace Builder
                         string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
                             filepath,
                             this.ProjectDirectory);
-                        output[relativePath] = FileUtil.ReadFileText(filepath);
+                        output[relativePath] = await diskUtil.FileReadText(filepath);
                     }
                 }
             }
