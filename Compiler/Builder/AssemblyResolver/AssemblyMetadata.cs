@@ -39,12 +39,12 @@ namespace AssemblyResolver
         internal Dictionary<string, string> GetSourceCode()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            string srcDir = FileUtil.JoinPath(this.Directory, "src");
-            if (!FileUtil.DirectoryExists(srcDir))
+            string srcDir = FileUtil.JoinPath_DEPRECATED(this.Directory, "src");
+            if (!FileUtil.DirectoryExists_DEPRECATED(srcDir))
             {
                 throw new System.InvalidOperationException(this.Directory + " is missing a 'src' directory");
             }
-            string[] srcFiles = FileUtil.GetAllFilePathsRelativeToRoot(srcDir);
+            string[] srcFiles = FileUtil.GetAllFilePathsRelativeToRoot_DEPRECATED(srcDir);
             foreach (string srcFile in srcFiles.Where(name => name.ToLowerInvariant().EndsWith(".cry")))
             {
                 string code = this.ReadFile(false, "src/" + srcFile, false);
@@ -57,7 +57,7 @@ namespace AssemblyResolver
 
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {
-            string fullPath = FileUtil.JoinPath(this.Directory, pathRelativeToLibraryRoot);
+            string fullPath = FileUtil.JoinPath_DEPRECATED(this.Directory, pathRelativeToLibraryRoot);
             if (fileUtil.FileExists(fullPath))
             {
                 return fileUtil.ReadFileBytes(fullPath);
@@ -67,7 +67,7 @@ namespace AssemblyResolver
 
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
         {
-            string fullPath = FileUtil.JoinPath(this.Directory, pathRelativeToLibraryRoot);
+            string fullPath = FileUtil.JoinPath_DEPRECATED(this.Directory, pathRelativeToLibraryRoot);
             if (fileUtil.FileExists(fullPath))
             {
                 return fileUtil.ReadFileText(fullPath);

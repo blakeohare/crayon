@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Wax.Util.Disk
 {
@@ -14,25 +15,42 @@ namespace Wax.Util.Disk
             return output.Substring(1).ToLowerInvariant();
         }
 
-        public static void WriteFileText(string path, string content)
+        public static Task WriteFileTextAsync(string path, string content)
+        {
+            WriteFileText_DEPRECATED(path, content);
+            return Task.CompletedTask;
+        }
+
+        public static void WriteFileText_DEPRECATED(string path, string content)
         {
             path = NormalizePath(path);
             System.IO.File.WriteAllText(path, content, System.Text.Encoding.UTF8);
         }
 
-        public static void WriteFileBytes(string path, byte[] content)
+        public static Task WriteFileBytesAsync(string path, byte[] content)
+        {
+            WriteFileBytes_DEPRECATED(path, content);
+            return Task.CompletedTask;
+        }
+
+        public static void WriteFileBytes_DEPRECATED(string path, byte[] content)
         {
             path = NormalizePath(path);
             System.IO.File.WriteAllBytes(path, content);
         }
 
-        public static byte[] ReadFileBytes(string path)
+        public static Task<byte[]> ReadFileBytesAsync(string path)
+        {
+            return Task.FromResult(ReadFileBytes_DEPRECATED(path));
+        }
+
+        public static byte[] ReadFileBytes_DEPRECATED(string path)
         {
             path = NormalizePath(path);
             return System.IO.File.ReadAllBytes(path);
         }
 
-        public static string JoinPath(params string[] parts)
+        public static string JoinPath_DEPRECATED(params string[] parts)
         {
             string output = NormalizePath(string.Join(DIR_SEP, parts));
             while (output.Contains(DIR_SEP + DIR_SEP))
@@ -42,74 +60,128 @@ namespace Wax.Util.Disk
             return output;
         }
 
-        public static string JoinAndCanonicalizePath(params string[] parts)
+        public static string JoinAndCanonicalizePath_DEPRECATED(params string[] parts)
         {
-            string path = JoinPath(parts);
+            string path = JoinPath_DEPRECATED(parts);
             path = GetCanonicalizeUniversalPath(path);
             path = GetPlatformPath(path);
             return path;
         }
 
-        public static string[] DirectoryListFileNames(string dir)
+        public static Task<string[]> DirectoryListFileNamesAsync(string dir)
+        {
+            return Task.FromResult(DirectoryListFileNames_DEPRECATED(dir));
+        }
+
+        public static string[] DirectoryListFileNames_DEPRECATED(string dir)
         {
             return ListDirImpl(dir, true, false);
         }
 
-        public static string[] DirectoryListFilePaths(string dir)
+        public static Task<string[]> DirectoryListFilePathsAsync(string dir)
+        {
+            return Task.FromResult(DirectoryListFilePaths_DEPRECATED(dir));
+        }
+
+        public static string[] DirectoryListFilePaths_DEPRECATED(string dir)
         {
             return ListDirImpl(dir, true, true);
         }
 
-        public static string[] DirectoryListDirectoryNames(string dir)
+        public static Task<string[]> DirectoryListDirectoryNamesAsync(string dir)
+        {
+            return Task.FromResult(DirectoryListDirectoryNames_DEPRECATED(dir));
+        }
+
+        public static string[] DirectoryListDirectoryNames_DEPRECATED(string dir)
         {
             return ListDirImpl(dir, false, false);
         }
 
-        public static string[] DirectoryListDirectoryPaths(string dir)
+        public static Task<string[]> DirectoryListDirectoryPathsAsync(string dir)
+        {
+            return Task.FromResult(DirectoryListDirectoryPaths_DEPRECATED(dir));
+        }
+
+        public static string[] DirectoryListDirectoryPaths_DEPRECATED(string dir)
         {
             return ListDirImpl(dir, false, true);
         }
 
-        public static void DirectoryDelete(string dir)
+        public static Task DirectoryDeleteAsync(string dir)
         {
-            string path = JoinAndCanonicalizePath(dir);
+            DirectoryDelete_DEPRECATED(dir);
+            return Task.CompletedTask;
+        }
+
+        public static void DirectoryDelete_DEPRECATED(string dir)
+        {
+            string path = JoinAndCanonicalizePath_DEPRECATED(dir);
             System.IO.Directory.Delete(dir, true);
         }
 
-        public static void EnsureFolderExists(string path)
+        public static Task EnsureFolderExistsAsync(string path)
+        {
+            EnsureFolderExists_DEPRECATED(path);
+            return Task.CompletedTask;
+        }
+
+        public static void EnsureFolderExists_DEPRECATED(string path)
         {
             path = path.Trim();
-            if (!DirectoryExists(path))
+            if (!DirectoryExists_DEPRECATED(path))
             {
-                EnsureParentFolderExists(path);
-                CreateDirectory(path);
+                EnsureParentFolderExists_DEPRECATED(path);
+                CreateDirectory_DEPRECATED(path);
             }
         }
 
-        public static void EnsureParentFolderExists(string path)
+        public static Task EnsureParentFolderExistsAsync(string path)
+        {
+            EnsureParentFolderExists_DEPRECATED(path);
+            return Task.CompletedTask;
+        }
+
+        public static void EnsureParentFolderExists_DEPRECATED(string path)
         {
             path = path.Trim();
             if (path.Length > 0)
             {
                 string folder = System.IO.Path.GetDirectoryName(path);
-                if (folder.Length > 0 && !DirectoryExists(folder))
+                if (folder.Length > 0 && !DirectoryExists_DEPRECATED(folder))
                 {
-                    EnsureParentFolderExists(folder);
-                    CreateDirectory(folder);
+                    EnsureParentFolderExists_DEPRECATED(folder);
+                    CreateDirectory_DEPRECATED(folder);
                 }
             }
         }
 
-        public static void CreateDirectory(string path)
+        public static Task CreateDirectoryAsync(string path)
+        {
+            CreateDirectory_DEPRECATED(path);
+            return Task.CompletedTask;
+        }
+
+        public static void CreateDirectory_DEPRECATED(string path)
         {
             path = NormalizePath(path);
             System.IO.Directory.CreateDirectory(path);
         }
 
-        public static bool DirectoryExists(string path)
+        public static Task<bool> DirectoryExistsAsync(string path)
+        {
+            return Task.FromResult(DirectoryExists_DEPRECATED(path));
+        }
+
+        public static bool DirectoryExists_DEPRECATED(string path)
         {
             path = NormalizePath(path);
             return System.IO.Directory.Exists(path);
+        }
+
+        public static Task<bool> FileExistsAsync(string path)
+        {
+            return Task.FromResult(FileExists(path));
         }
 
         public static bool FileExists(string path)
@@ -118,9 +190,14 @@ namespace Wax.Util.Disk
             return System.IO.File.Exists(path);
         }
 
-        public static string[] GetAllAbsoluteFilePathsDescendentsOf(string absoluteRoot)
+        public static Task<string[]> GetAllAbsoluteFilePathsDescendentsOfAsync(string absoluteRoot)
         {
-            string[] output = GetAllFilePathsRelativeToRoot(absoluteRoot);
+            return Task.FromResult(GetAllAbsoluteFilePathsDescendentsOf_DEPRECATED(absoluteRoot));
+        }
+
+        public static string[] GetAllAbsoluteFilePathsDescendentsOf_DEPRECATED(string absoluteRoot)
+        {
+            string[] output = GetAllFilePathsRelativeToRoot_DEPRECATED(absoluteRoot);
             for (int i = 0; i < output.Length; ++i)
             {
                 output[i] = FileUtil.GetCanonicalizeUniversalPath(absoluteRoot + "/" + output[i]);
@@ -129,7 +206,12 @@ namespace Wax.Util.Disk
         }
 
         // ignores silly files such as thumbs.db, .ds_store, .svn/*, etc
-        public static string[] GetAllFilePathsRelativeToRoot(string root)
+        public static Task<string[]> GetAllFilePathsRelativeToRootAsync(string root)
+        {
+            return Task.FromResult(GetAllFilePathsRelativeToRoot_DEPRECATED(root));
+        }
+
+        public static string[] GetAllFilePathsRelativeToRoot_DEPRECATED(string root)
         {
             List<string> files = new List<string>();
             GetAllFilePathsRelativeToRootImpl(root, files);
@@ -160,7 +242,7 @@ namespace Wax.Util.Disk
             {
                 if (!IGNORED_DIRECTORIES.Contains(directory))
                 {
-                    GetAllFilePathsRelativeToRootImpl(JoinPath(currentRoot, directory), output);
+                    GetAllFilePathsRelativeToRootImpl(JoinPath_DEPRECATED(currentRoot, directory), output);
                 }
             }
 
@@ -169,7 +251,7 @@ namespace Wax.Util.Disk
             {
                 if (!IGNORED_FILES.Contains(file))
                 {
-                    output.Add(JoinPath(currentRoot, file));
+                    output.Add(JoinPath_DEPRECATED(currentRoot, file));
                 }
             }
         }

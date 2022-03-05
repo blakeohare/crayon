@@ -125,7 +125,7 @@ namespace Crayon
                 string crayonHome = SourceDirectoryFinder.CrayonSourceDirectory;
                 if (crayonHome != null)
                 {
-                    string debugArgsFile = FileUtil.JoinPath(crayonHome, "DEBUG_ARGS.txt");
+                    string debugArgsFile = FileUtil.JoinPath_DEPRECATED(crayonHome, "DEBUG_ARGS.txt");
                     if (System.IO.File.Exists(debugArgsFile))
                     {
                         string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');

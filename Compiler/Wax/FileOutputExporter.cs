@@ -15,7 +15,7 @@ namespace Wax
         public FileOutputExporter(string targetDirectory)
         {
             this.targetDirectory = targetDirectory;
-            FileUtil.EnsureFolderExists(targetDirectory);
+            FileUtil.EnsureFolderExists_DEPRECATED(targetDirectory);
         }
 
         public void ExportFiles(Dictionary<string, FileOutput> files)
@@ -28,9 +28,9 @@ namespace Wax
 
         private void ExportFile(string path, FileOutput file)
         {
-            string absolutePath = FileUtil.JoinPath(this.targetDirectory, path);
+            string absolutePath = FileUtil.JoinPath_DEPRECATED(this.targetDirectory, path);
 
-            FileUtil.EnsureParentFolderExists(absolutePath);
+            FileUtil.EnsureParentFolderExists_DEPRECATED(absolutePath);
 
             switch (file.Type)
             {
@@ -68,7 +68,7 @@ namespace Wax
 
         private void ExportBinaryFile(string path, byte[] content)
         {
-            FileUtil.WriteFileBytes(path, content);
+            FileUtil.WriteFileBytes_DEPRECATED(path, content);
         }
 
         private void ExportCopiedFile(string path, string originalAbsolutePath, bool isMove)
@@ -99,7 +99,7 @@ namespace Wax
             }
             else
             {
-                FileUtil.WriteFileText(path, content);
+                FileUtil.WriteFileText_DEPRECATED(path, content);
             }
         }
     }

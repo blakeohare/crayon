@@ -79,7 +79,7 @@ namespace Builder
 
             foreach (ProjectFilePath sourceFolder in buildContext.SourceFolders)
             {
-                if (!Wax.Util.Disk.FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
+                if (!Wax.Util.Disk.FileUtil.DirectoryExists_DEPRECATED(sourceFolder.AbsolutePath))
                 {
                     throw new InvalidOperationException("Source folder does not exist: '" + sourceFolder.AbsolutePath + "'.");
                 }

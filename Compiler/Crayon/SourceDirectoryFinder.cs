@@ -19,7 +19,7 @@ namespace Crayon
                     while (!string.IsNullOrEmpty(currentDirectory))
                     {
                         string librariesPath = DiskUtil.JoinPathNative(currentDirectory, "Libraries");
-                        if (FileUtil.DirectoryExists(librariesPath) &&
+                        if (FileUtil.DirectoryExists_DEPRECATED(librariesPath) &&
                             FileUtil.FileExists(DiskUtil.JoinPathNative(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
                         {
                             crayonSourceDirectoryCached = currentDirectory;

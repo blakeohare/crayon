@@ -98,7 +98,7 @@ namespace Builder
             List<FileOutput> binaryResources = new List<FileOutput>();
             foreach (ProjectFilePath sourceRoot in buildContext.SourceFolders)
             {
-                string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
+                string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot_DEPRECATED(sourceRoot.AbsolutePath);
 
                 // Everything is just a basic copy resource at first.
                 foreach (string relativeFilePath in relativePaths)

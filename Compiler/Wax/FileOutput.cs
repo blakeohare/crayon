@@ -106,7 +106,7 @@ namespace Wax
                     return this.BinaryContent;
 
                 case FileOutputType.Copy:
-                    return FileUtil.ReadFileBytes(this.AbsoluteInputPath);
+                    return FileUtil.ReadFileBytes_DEPRECATED(this.AbsoluteInputPath);
 
                 case FileOutputType.Text:
                     if (this.BinaryContent != null) return this.BinaryContent;
