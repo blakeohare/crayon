@@ -245,7 +245,7 @@ namespace Builder
             string fileExtension = ProgrammingLanguageParser.LangToFileExtension(this.RootProgrammingLanguage);
             foreach (ProjectFilePath sourceDir in this.SourceFolders)
             {
-                string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf_DEPRECATED(sourceDir.AbsolutePath);
+                string[] files = await FileUtil.GetAllAbsoluteFilePathsDescendentsOfAsync(sourceDir.AbsolutePath);
                 foreach (string filepath in files)
                 {
                     if (filepath.ToLowerInvariant().EndsWith(fileExtension))

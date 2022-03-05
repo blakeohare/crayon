@@ -81,7 +81,7 @@ namespace AssemblyResolver
 
             foreach (string registeredLibraryPath in libraryDirectories)
             {
-                unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths_DEPRECATED(registeredLibraryPath));
+                unverifiedLibraryDirectories.AddRange(await FileUtil.DirectoryListDirectoryPathsAsync(registeredLibraryPath));
             }
 
             List<string> verifiedLibraryPaths = new List<string>();

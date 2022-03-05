@@ -68,7 +68,7 @@ namespace Router
 
                 byte[] cbxFileBytes = CbxFileEncoder.Encode(buildResult.CbxBundle);
 
-                FileUtil.EnsureFolderExists_DEPRECATED(outputFolder);
+                await FileUtil.EnsureFolderExistsAsync(outputFolder);
                 cbxFilePath = FileUtil.JoinPath_DEPRECATED(outputFolder, buildResult.ProjectID + ".cbx");
                 System.IO.File.WriteAllBytes(cbxFilePath, cbxFileBytes);
             }

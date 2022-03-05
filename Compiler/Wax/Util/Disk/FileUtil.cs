@@ -195,7 +195,7 @@ namespace Wax.Util.Disk
             return Task.FromResult(GetAllAbsoluteFilePathsDescendentsOf_DEPRECATED(absoluteRoot));
         }
 
-        public static string[] GetAllAbsoluteFilePathsDescendentsOf_DEPRECATED(string absoluteRoot)
+        private static string[] GetAllAbsoluteFilePathsDescendentsOf_DEPRECATED(string absoluteRoot)
         {
             string[] output = GetAllFilePathsRelativeToRoot_DEPRECATED(absoluteRoot);
             for (int i = 0; i < output.Length; ++i)
