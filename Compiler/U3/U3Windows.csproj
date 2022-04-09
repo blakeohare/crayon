@@ -9,6 +9,10 @@
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>RELEASE;TRACE;WINDOWS</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="u3\*.html" />
   <EmbeddedResource Include="u3\*.js" />
