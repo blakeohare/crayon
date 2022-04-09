@@ -213,7 +213,12 @@ namespace Builder
                 }
             }
 
-            buildContext.BuildVariableLookup = buildVars.ToDictionary(bv => bv.ID);
+            Dictionary<string, BuildVar> buildVarLookup = new Dictionary<string, BuildVar>();
+            foreach (BuildVar bv in buildVars)
+            {
+                buildVarLookup[bv.ID] = bv;
+            }
+            buildContext.BuildVariableLookup = buildVarLookup;
 
             return buildContext;
         }
