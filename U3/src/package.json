@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^11.5.0"
+    "electron": "^18.3.7"
   },
   "build": {
     "appId": "org.crayonlang.u3",
